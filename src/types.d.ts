@@ -16,11 +16,10 @@ export interface User extends AudtiMetadata {
   familyName: string
   middleName?: string
   email: string
-  phoneNumber?: string
   avatar?: string
   accountNonLocked?: boolean
-  accountExpiresAt?: string
-  credentialsExpiresAt?: string
+  accountExpiresAt?: Date
+  credentialsExpiresAt?: Date
   enabled?: boolean
 }
 
@@ -123,10 +122,16 @@ export interface PrivilegeTreeNode extends TreeNode {
   children?: PrivilegeTreeNode[]
 }
 
+export interface TemplateTreeNode extends TreeNode {
+  content?: string
+  type?: string
+  suffix?: string
+  children?: TemplateTreeNode[]
+}
+
 export interface OperationLog extends AudtiMetadata {
   operation: string
   content: string
-  operator?: string
   ip: string
   location: string
   referer?: string
@@ -170,7 +175,7 @@ export interface SchedulerLog extends AudtiMetadata {
   executedTimes?: number
   nextExecuteTime?: Date
   status?: number
-  record?: string 
+  record?: string
 }
 
 export interface FileRecord extends AudtiMetadata {
@@ -181,9 +186,9 @@ export interface FileRecord extends AudtiMetadata {
 
 export interface Schema extends AudtiMetadata {
   name: string
-  comment: string
-  reference: string
-  domain: string
+  connectionId: number | undefined
+  prefix?: string
+  packagePath: string
   enabled?: boolean
   templates: number[]
 }
@@ -194,11 +199,11 @@ export interface Field extends AudtiMetadata {
   length: number
   fieldType: string
   formType: string
-  tsType: string
   nullable: boolean
   queryable: boolean
+  queryType: string | undefined
   editable: boolean
-  comment: string
+  sortable: boolean
   description: string
 }
 
@@ -206,21 +211,25 @@ export interface Template extends AudtiMetadata {
   name: string
   suffix: string
   content: string
-  type?: number
+  type: string | undefined
   version: string
   enabled?: boolean
 }
 
 export interface Script extends AudtiMetadata {
   name: string
-  type?: number
+  type: string | undefined
   icon: string
   version: string
   content: string
-  description: string
 }
 
-export interface TableInfo {
-  tableName: string
-  tableComment: string
+export interface Database extends AudtiMetadata {
+  name: string
+  host: string
+  port: number | undefined
+  username: string
+  password?: string
+  enabled?: boolean
+  tables?: string[]
 }

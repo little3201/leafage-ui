@@ -1,6 +1,7 @@
 export const lineOptions = {
   chart: {
     height: 350,
+    background: 'transparent',
     type: 'line',
     toolbar: {
       show: false

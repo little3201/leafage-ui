@@ -15,6 +15,7 @@ export const SERVER_URL = {
 
   // hypervisor
   USER: SERVER_PREFIX.HYPERVISOR.concat('/users'), // 用户
+  ROLE: SERVER_PREFIX.HYPERVISOR.concat('/roles'), // 角色
   PRIVILEGE: SERVER_PREFIX.HYPERVISOR.concat('/privileges'), // 权限
   GROUP: SERVER_PREFIX.HYPERVISOR.concat('/groups'), // 分组
   DICTIONARY: SERVER_PREFIX.HYPERVISOR.concat('/dictionaries'), // 字典
@@ -33,40 +34,57 @@ export const SERVER_URL = {
   STATISTICS: SERVER_PREFIX.ASSETS.concat('/statistics'), // 统计
   COMMENT: SERVER_PREFIX.ASSETS.concat('/comments'), // 评论
 
-  SIGNIN: SERVER_PREFIX.ASSETS.concat('/signin'), // 登录
-  SIGNOUT: SERVER_PREFIX.ASSETS.concat('/signout'), // 退出
-
   // exploiters
   SCRIPT: SERVER_PREFIX.EXPLOITER.concat('/scripts'), // 脚本
   SCHEMA: SERVER_PREFIX.EXPLOITER.concat('/schemas'), // 表配置
-  TEMPLATE: SERVER_PREFIX.EXPLOITER.concat('/templates'), // 模板
-  DB: SERVER_PREFIX.EXPLOITER.concat('/db') // 表
+  MASTER_PLATE: SERVER_PREFIX.EXPLOITER.concat('/master-plates'), // 母版
+  CONNECTIONS: SERVER_PREFIX.EXPLOITER.concat('/connections') // 库连接
 }
 
-export const actions: { [key: string]: string } = {
+// 按钮对应tag类型
+export const actions: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
   create: 'primary',
   modify: 'primary',
   upload: 'primary',
+  logout: 'primary',
 
   import: 'warning',
 
-  remove: 'negative',
-  clear: 'negative',
+  remove: 'danger',
+  clear: 'danger',
 
-  export: 'secondary',
-  download: 'secondary',
+  relation: 'success',
+  authorize: 'success',
+  download: 'success',
+  config: 'success',
+  export: 'success',
+  login: 'success',
 
-  relation: 'positive',
-  config: 'positive',
-
-  preview: 'info',
-  detail: 'info'
+  preview: 'info'
 }
 
-export const httpMethods: { [key: string]: string } = {
-  GET: 'positive',
+// http method对应tag类型
+export const httpMethods: { [key: string]: 'success' | 'warning' | 'info' | 'primary' | 'danger' } = {
+  GET: 'success',
   POST: 'warning',
   PUT: 'primary',
   PATCH: 'primary',
-  DELETE: 'negative'
+  DELETE: 'danger'
 }
+
+// 查询匹配方式
+export const queryTypes: { [key: string]: string } = {
+  eq: '=',
+  neq: '<>',
+  gt: '>',
+  egt: '>=',
+  lt: '<',
+  elt: '<=',
+  like: 'LIKE',
+  in: 'IN',
+  notIn: 'NOT IN',
+  between: 'BETWEEN',
+  notBetween: 'NOT BETWEEN',
+  isNull: 'IS NULL',
+  isNotNull: 'IS NOT NULL'
+};

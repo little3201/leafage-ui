@@ -1,134 +1,37 @@
-<template>
-  <q-page padding>
-
-    <q-dialog v-model="visible">
-      <q-card>
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">{{ $t('accessLog') }}</div>
-          <q-space />
-          <q-btn icon="sym_r_close" flat round dense v-close-popup />
-        </q-card-section>
-
-        <q-card-section>
-          <p><strong>{{ $t('url') }}</strong>
-            {{ row.url }}
-          </p>
-          <p><strong>{{ $t('httpMethod') }}</strong>{{ row.httpMethod }}</p>
-          <p><strong>{{ $t('ip') }}</strong>
-            {{ row.ip }}
-          </p>
-          <p><strong>{{ $t('location') }}</strong>
-            {{ row.location }}
-          </p>
-          <p><strong>{{ $t('params') }}</strong>
-            {{ row.params }}
-          </p>
-          <p v-if="row.body"><strong>{{ $t('body') }}</strong>
-            {{ row.body }}
-          </p>
-          <p><strong>{{ $t('operator') }}</strong>
-            {{ row.operator }}
-          </p>
-          <p>
-            <strong>{{ $t('statusCode') }}</strong>
-            <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
-              text-color="white">{{ row.statusCode }}</q-chip>
-            <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning" text-color="white">{{
-              row.statusCode }}</q-chip>
-            <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
-          </p>
-          <p><strong>{{ $t('responseTimes') }}</strong>
-            {{ row.responseTimes ? formatDuration(row.responseTimes) : '' }}
-          </p>
-          <p><strong>{{ $t('responseMessage') }}</strong>
-            {{ row.responseMessage }}
-          </p>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-table flat ref="tableRef" :title="$t('accessLog')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="sym_r_search" />
-          </template>
-        </q-input>
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
-        <q-btn title="clear" round padding="xs" flat color="negative" class="q-mx-sm" icon="sym_r_clear_all" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
-      </template>
-
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
-          </q-th>
-        </q-tr>
-      </template>
-
-      <template v-slot:body-cell-url="props">
-        <q-td :props="props">
-          <q-btn :title="props.row.url" flat rounded no-caps color="primary" @click="showRow(props.row.id)">
-            {{ props.row.url }}
-          </q-btn>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-httpMethod="props">
-        <q-td :props="props">
-          <q-badge :color="httpMethods[props.row.httpMethod]" rounded class="q-mr-xs" />
-          {{ props.row.httpMethod }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-statusCode="props">
-        <q-td :props="props">
-          <q-chip v-if="props.row.statusCode >= 200 && props.row.statusCode < 300" size="sm" color="positive"
-            text-color="white">{{ props.row.statusCode }}</q-chip>
-          <q-chip v-else-if="props.row.statusCode >= 500" size="sm" color="warning" text-color="white">{{
-            props.row.statusCode }}</q-chip>
-          <q-chip v-else size="sm" color="negative" text-color="white">{{ props.row.statusCode }}</q-chip>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-responseTimes="props">
-        <q-td :props="props">
-          {{ props.row.responseTimes ? formatDuration(props.row.responseTimes) : '-' }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-id="props">
-        <q-td :props="props">
-          <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
-        </q-td>
-      </template>
-    </q-table>
-  </q-page>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile } from 'quasar'
-import { retrieveAccessLogs, fetchAccessLog } from 'src/api/access-logs'
-import { formatDuration } from 'src/utils'
+import { ref, onMounted, reactive } from 'vue'
+import type { TableInstance, CheckboxValueType } from 'element-plus'
+import draggable from 'vuedraggable'
+import DialogView from 'components/DialogView.vue'
+import { retrieveAccessLogs, fetchAccessLog, removeAccessLog } from 'src/api/access-logs'
+import type { Pagination, AccessLog } from 'src/types'
+import { Icon } from '@iconify/vue'
+import { formatDuration, hasAction } from 'src/utils'
 import { httpMethods } from 'src/constants'
-import type { AccessLog } from 'src/types'
 
-const $q = useQuasar()
-
-const visible = ref<boolean>(false)
-
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
-const filter = ref('')
 const loading = ref<boolean>(false)
+const datas = ref<Array<AccessLog>>([])
+const total = ref<number>(0)
 
+const tableRef = ref<TableInstance>()
+const pagination = reactive<Pagination>({
+  page: 1,
+  size: 10
+})
+
+const checkAll = ref<boolean>(true)
+const isIndeterminate = ref<boolean>(false)
+const checkedColumns = ref<Array<string>>(['url', 'httpMethod', 'params', 'body', 'ip', 'location', 'statusCode', 'responseTimes'])
+const columns = ref<Array<string>>(['url', 'httpMethod', 'params', 'body', 'ip', 'location', 'statusCode', 'responseTimes'])
+
+const filters = ref({
+  url: null,
+  statusCode: null
+})
+
+const detailLoading = ref<boolean>(false)
 const initialValues: AccessLog = {
   id: undefined,
-  operator: '',
   url: '',
   httpMethod: '',
   ip: '',
@@ -137,114 +40,272 @@ const initialValues: AccessLog = {
 }
 const row = ref<AccessLog>({ ...initialValues })
 
-const pagination = ref({
-  sortBy: 'id',
-  descending: true,
-  page: 1,
-  rowsPerPage: 7,
-  rowsNumber: 0
-})
+const visible = ref<boolean>(false)
+/**
+ * 分页变化
+ * @param value 当前页码
+ */
+function pageChange(currentPage: number, pageSize: number) {
+  pagination.page = currentPage
+  pagination.size = pageSize
+  load()
+}
 
-const selected = ref([])
+/**
+ * 加载列表
+ */
+async function load() {
+  loading.value = true
+  retrieveAccessLogs(pagination, filters.value).then(res => {
+    datas.value = res.data.content
+    total.value = res.data.page.totalElements
+  }).finally(() => { loading.value = false })
+}
 
-const columns: QTableProps['columns'] = [
-  { name: 'url', label: 'url', align: 'left', field: 'url' },
-  { name: 'httpMethod', label: 'httpMethod', align: 'left', field: 'httpMethod' },
-  { name: 'params', label: 'params', align: 'left', field: 'params' },
-  { name: 'body', label: 'body', align: 'left', field: 'body' },
-  { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
-  { name: 'location', label: 'location', align: 'center', field: 'location' },
-  { name: 'operator', label: 'operator', align: 'center', field: 'operator' },
-  { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
-  { name: 'responseTimes', label: 'responseTimes', align: 'center', field: 'responseTimes' },
-  { name: 'responseMessage', label: 'responseMessage', align: 'center', field: 'responseMessage' },
-  { name: 'id', label: 'actions', field: 'id' }
-]
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  detailLoading.value = true
+  fetchAccessLog(id).then(res => {
+    row.value = res.data
+  }).finally(() => { detailLoading.value = false })
+}
+
+/**
+ * reset
+ */
+function reset() {
+  filters.value = {
+    url: null,
+    statusCode: null
+  }
+  load()
+}
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  load()
 })
 
 /**
- * 查询列表
+ * 导出
  */
-async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
-  loading.value = true
-
-  const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
-
-  const params = { page, size: rowsPerPage, sortBy, descending }
-
-  retrieveAccessLogs({ ...params }, filter).then(res => {
-    pagination.value.page = page
-    pagination.value.rowsPerPage = rowsPerPage
-    pagination.value.sortBy = sortBy
-    pagination.value.descending = descending
-
-    rows.value = res.data.content
-    pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
-    loading.value = false
-  })
+async function exportRows() {
+  const selectedRows = tableRef.value?.getSelectionRows()
+  console.log('selectedRows:', selectedRows)
 }
 
-function refresh() {
-  tableRef.value.requestServerInteraction()
-}
-
+/**
+ * 详情
+ * @param id 主键
+ */
 function showRow(id: number) {
+  row.value = { ...initialValues }
   visible.value = true
-  if (id) {
-    fetchAccessLog(id).then(res => { row.value = res.data })
-  }
+  loadOne(id)
 }
 
+/**
+ * 删除
+ * @param id 主键
+ */
 function removeRow(id: number) {
-  console.log('id: ', id)
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
+  removeAccessLog(id).then(() => load())
 }
 
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
+/**
+ * 清空
+ */
+function clearRows() {
 }
 
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
+/**
+ * 确认
+ * @param id 主键
+ */
+function confirmEvent(id: number) {
+  if (id) {
+    removeRow(id)
   }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
+}
 
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
+/**
+ * 全选操作
+ * @param val 是否全选
+ */
+function handleCheckAllChange(val: CheckboxValueType) {
+  checkedColumns.value = val ? columns.value : []
+  isIndeterminate.value = false
+}
 
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
+/**
+ * 选中操作
+ * @param value 选中的值
+ */
+function handleCheckedChange(value: CheckboxValueType[]) {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === columns.value.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
 }
 </script>
+
+<template>
+  <ElSpace size="large" fill>
+    <ElCard shadow="never">
+      <ElForm inline :model="filters">
+        <ElFormItem :label="$t('url')" prop="url">
+          <ElInput v-model="filters.url" :placeholder="$t('inputText', { field: $t('url') })" />
+        </ElFormItem>
+        <ElFormItem :label="$t('statusCode')" prop="statusCode">
+          <ElInput v-model="filters.statusCode" :placeholder="$t('inputText', { field: $t('statusCode') })" />
+        </ElFormItem>
+        <ElFormItem>
+          <ElButton title="search" type="primary" @click="load">
+            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('search') }}
+          </ElButton>
+          <ElButton title="reset" @click="reset">
+            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('reset') }}
+          </ElButton>
+        </ElFormItem>
+      </ElForm>
+    </ElCard>
+
+    <ElCard shadow="never">
+      <ElRow :gutter="20" justify="space-between" class="mb-4">
+        <ElCol :span="16" class="text-left">
+          <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
+            <Icon icon="material-symbols:clear-all-rounded" width="18" height="18" />{{ $t('clear') }}
+          </ElButton>
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows">
+            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
+          </ElButton>
+        </ElCol>
+
+        <ElCol :span="8" class="text-right">
+          <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+            <ElButton title="refresh" type="primary" plain circle @click="load">
+              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+            </ElButton>
+          </ElTooltip>
+
+          <ElTooltip :content="$t('column') + $t('settings')" placement="top">
+            <div class="inline-flex items-center align-middle ml-3">
+              <ElPopover :width="200" trigger="click">
+                <template #reference>
+                  <ElButton title="settings" type="success" plain circle>
+                    <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
+                  </ElButton>
+                </template>
+                <div>
+                  <ElCheckbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+                    {{ $t('all') }}
+                  </ElCheckbox>
+                  <ElDivider />
+                  <ElCheckboxGroup v-model="checkedColumns" @change="handleCheckedChange">
+                    <draggable v-model="columns" item-key="simple">
+                      <template #item="{ element }">
+                        <div class="flex items-center space-x-2">
+                          <Icon icon="material-symbols:drag-indicator" width="18" height="18"
+                            class="hover:cursor-move" />
+                          <ElCheckbox :label="element" :value="element" :disabled="element === columns[0]">
+                            <div class="inline-flex items-center space-x-4">
+                              {{ $t(element) }}
+                            </div>
+                          </ElCheckbox>
+                        </div>
+                      </template>
+                    </draggable>
+                  </ElCheckboxGroup>
+                </div>
+              </ElPopover>
+            </div>
+          </ElTooltip>
+        </ElCol>
+      </ElRow>
+
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+        <ElTableColumn type="selection" width="55" />
+        <ElTableColumn type="index" :label="$t('no')" width="55" />
+        <ElTableColumn prop="url" :label="$t('url')" sortable>
+          <template #default="scope">
+            <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
+              {{ scope.row.url }}
+            </ElButton>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="httpMethod" :label="$t('httpMethod')" sortable>
+          <template #default="scope">
+            <ElBadge is-dot :type="httpMethods[scope.row.httpMethod]" class="mr-1" />{{ scope.row.httpMethod }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip prop="params" :label="$t('params')" />
+        <ElTableColumn show-overflow-tooltip prop="body" :label="$t('body')" />
+        <ElTableColumn prop="ip" :label="$t('ip')" sortable />
+        <ElTableColumn show-overflow-tooltip prop="location" :label="$t('location')" sortable />
+        <ElTableColumn prop="statusCode" :label="$t('statusCode')">
+          <template #default="scope">
+            <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
+              {{ scope.row.statusCode }}
+            </ElTag>
+            <ElTag v-else-if="scope.row.statusCode >= 500" type="warning" round>
+              {{ scope.row.statusCode }}
+            </ElTag>
+            <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="responseTimes" :label="$t('responseTimes')" sortable>
+          <template #default="scope">
+            {{ formatDuration(scope.row.responseTimes) }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn :label="$t('actions')">
+          <template #default="scope">
+            <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+              <template #reference>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
+                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
+                </ElButton>
+              </template>
+            </ElPopconfirm>
+          </template>
+        </ElTableColumn>
+      </ElTable>
+      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+    </ElCard>
+  </ElSpace>
+
+  <DialogView v-model="visible" show-close :title="$t('details')">
+    <ElDescriptions v-loading="detailLoading" border>
+      <ElDescriptionsItem :label="$t('url')">{{ row.url }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('httpMethod')">
+        <ElBadge is-dot :type="httpMethods[row.httpMethod as string]" />
+        {{ row.httpMethod }}
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('statusCode')">
+        <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>
+          {{ row.statusCode }}
+        </ElTag>
+        <ElTag v-else-if="row.statusCode && row.statusCode >= 500" type="warning" round>
+          {{ row.statusCode }}
+        </ElTag>
+        <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('params')" :span="3">{{ row.params }}</ElDescriptionsItem>
+      <ElDescriptionsItem v-if="row.body" :label="$t('body')" :span="3">{{ row.body }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('ip')">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('location')">{{ row.location }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('operator')">{{ row.operator }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('responseTimes')">{{ row.responseTimes ? formatDuration(row.responseTimes) : '-' }}
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('responseMessage')">{{ row.responseMessage }}</ElDescriptionsItem>
+    </ElDescriptions>
+  </DialogView>
+</template>
+
+<style lang="scss" scoped>
+.el-badge {
+  display: inline-flex;
+  vertical-align: baseline;
+}
+</style>

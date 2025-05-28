@@ -8,16 +8,16 @@ const datas: Script[] = [
     name: 'MySQL',
     icon: '/svgs/mysql.svg',
     version: '8.0.34',
-    content: '',
-    description: 'This is the description of row',
+    type: 'Database',
+    content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   }, {
     id: 2,
     name: 'Nginx',
     icon: '/svgs/nginx.svg',
     version: '1.8.12',
-    content: "user  www www;\nworker_processes  2;\npid /var/run/nginx.pid;\nerror_log  /var/log/nginx.error_log  debug | info | notice | warn | error | crit;\n\nevents {\n    connections   2000;\n    use kqueue | rtsig | epoll | /dev/poll | select | poll;\n}\n\nhttp {\n    log_format main      '$remote_addr - $remote_user[$time_local] '\n                         '\"$request\" $status $bytes_sent '\n                         '\"$http_referer\" \"$http_user_agent\" '\n                         '\"$gzip_ratio\"';\n\n    send_timeout 3m;\n    client_header_buffer_size 1k;\n",
-    description: 'This is the description of row',
+    type: 'Middleware',
+    content: '#!/bin/bash\necho \\"Starting Nginx...\\"\nservice nginx start\necho \\"Nginx is now running.\\"\n',
     lastModifiedDate: new Date()
   },
   {
@@ -25,8 +25,8 @@ const datas: Script[] = [
     name: 'Nodejs',
     icon: '/svgs/nodejs.svg',
     version: '20.5.6',
-    content: '',
-    description: 'This is the description of row',
+    type: 'Middleware',
+    content: 'npm install',
     lastModifiedDate: new Date()
   },
   {
@@ -34,17 +34,35 @@ const datas: Script[] = [
     name: 'PostgreSql',
     icon: '/svgs/postgresql.svg',
     version: '16.2.3',
-    content: '',
-    description: 'This is the description of row',
+    type: 'Database',
+    content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   },
   {
     id: 5,
     name: 'Redis',
     icon: '/svgs/redis.svg',
+    version: '6.0.1',
+    type: 'Middleware',
+    content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 6,
+    name: 'Redis',
+    icon: '/svgs/redis.svg',
     version: '7.0.1',
-    content: '',
-    description: 'This is the description of row',
+    type: 'Middleware',
+    content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 7,
+    name: 'Redis',
+    icon: '/svgs/redis.svg',
+    version: '3.0.1',
+    type: 'Middleware',
+    content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     lastModifiedDate: new Date()
   }
 ]

@@ -1,220 +1,258 @@
-<template>
-  <q-dialog v-model="visible" persistent>
-    <q-card style="min-width: 25em">
-      <q-form @submit="onSubmit">
-        <q-card-section>
-          <div class="text-h6">{{ $t('regions') }}</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-input v-model="form.name" label="Region name" lazy-rules
-            :rules="[val => val && val.length > 0 || $t('inputText')]" />
-
-          <q-input v-model="form.description" :label="$t('description')" type="textarea" />
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-          <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
-        </q-card-actions>
-
-      </q-form>
-    </q-card>
-  </q-dialog>
-
-  <q-table flat ref="subtableRef" :title="title" selection="multiple" v-model:selected="selected" :rows="rows"
-    :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-    binary-state-sort @request="onRequest" class="full-width" table-class="bg-transparent">
-    <template v-slot:top-right>
-      <q-input dense debounce="300" v-model="filter" placeholder="Search">
-        <template v-slot:append>
-          <q-icon name="sym_r_search" />
-        </template>
-      </q-input>
-      <q-btn title="create" round padding="xs" color="primary" class="q-mx-md" :disable="loading" icon="sym_r_add"
-        @click="saveRow()" />
-      <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-        icon="sym_r_refresh" @click="refresh" />
-      <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
-    </template>
-
-    <template v-slot:header="props">
-      <q-tr :props="props">
-        <q-th auto-width />
-        <q-th v-for="col in props.cols" :key="col.name" :props="props">
-          {{ $t(col.label) }}
-        </q-th>
-      </q-tr>
-    </template>
-
-    <template v-slot:body="props">
-      <q-tr :props="props">
-        <q-td auto-width>
-          <q-btn title="expand" round flat dense @click="props.expand = !props.expand"
-            :icon="props.expand ? 'sym_r_keyboard_arrow_down' : 'sym_r_keyboard_arrow_right'" />
-        </q-td>
-        <q-td v-for="col in props.cols" :key="col.name">
-          <div v-if="col.name === 'id'" class="text-right">
-            <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-              @click="saveRow(props.row.id)" class="q-mt-none" />
-            <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-              @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
-          </div>
-          <div v-else-if="col.name === 'enabled'" class="text-center">
-            <q-toggle v-model="props.row.enabled" @toogle="enableRow(props.row.id)" size="sm" color="positive" />
-          </div>
-          <span v-else>{{ col.value }}</span>
-        </q-td>
-      </q-tr>
-      <q-tr v-show="props.expand" :props="props">
-        <q-td colspan="100%" class="q-pr-none">
-          <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id" />
-        </q-td>
-      </q-tr>
-    </template>
-  </q-table>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile } from 'quasar'
-import { retrieveRegionSubset, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion } from 'src/api/regions'
-import type { Region } from 'src/types'
+import { ref, reactive, onMounted } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+import DialogView from 'components/DialogView.vue'
+import { retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, checkRegionExists } from 'src/api/regions'
+import type { Pagination, Region } from 'src/types'
+import { Icon } from '@iconify/vue'
+import { hasAction } from 'src/utils'
 
 
-const $q = useQuasar()
+const { t } = useI18n()
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
+  superiorId: number,
   title: string
-  superiorId?: number
-}>(), {
-  title: ''
+}>()
+
+const loading = ref<boolean>(false)
+const datas = ref<Array<Region>>([])
+const total = ref<number>(0)
+const pagination = reactive<Pagination>({
+  page: 1,
+  size: 10
 })
 
+const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const subtableRef = ref()
-const rows = ref<QTableProps['rows']>([])
-const filter = ref('')
-const loading = ref<boolean>(false)
-
+const formRef = ref<FormInstance>()
 const initialValues: Region = {
   id: undefined,
   name: '',
-  areaCode: 0,
-  postalCode: 0,
-  description: ''
+  superiorId: props.superiorId
 }
 const form = ref<Region>({ ...initialValues })
 
-const pagination = ref({
-  sortBy: 'id',
-  descending: true,
-  page: 1,
-  rowsPerPage: 7,
-  rowsNumber: 0
+const rules = reactive<FormRules<typeof form>>({
+  name: [
+    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' },
+    { validator: checkNameExistsence, trigger: 'blur' }
+  ]
 })
 
-const selected = ref([])
-
-const columns: QTableProps['columns'] = [
-  { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
-  { name: 'postalCode', label: 'postalCode', align: 'left', field: 'postalCode', sortable: true },
-  { name: 'areaCode', label: 'areaCode', align: 'left', field: 'areaCode', sortable: true },
-  { name: 'enabled', label: 'enabled', align: 'center', field: 'enabled' },
-  { name: 'description', label: 'description', align: 'left', field: 'description' },
-  { name: 'id', label: 'actions', field: 'id' }
-]
-
-onMounted(() => {
-  subtableRef.value.requestServerInteraction()
-})
-
-/**
- * 查询列表
- */
-async function onRequest() {
-  loading.value = true
-
-  if (props.superiorId) {
-    retrieveRegionSubset(props.superiorId).then(res => {
-      rows.value = res.data
-    }).finally(() => {
-      loading.value = false
+function checkNameExistsence(rule: unknown, value: string, callback: (error?: string | Error) => void) {
+  if (form.value.superiorId) {
+    checkRegionExists(form.value.superiorId, value, form.value.id).then(res => {
+      if (res.data) {
+        callback(new Error(t('alreadyExists', { field: t('name') })))
+      } else {
+        callback()
+      }
     })
   }
 }
 
-function refresh() {
-  subtableRef.value.requestServerInteraction()
+/**
+ * 分页变化
+ * @param currentPage 当前页码
+ * @param pageSize 分页大小
+ */
+function pageChange(currentPage: number, pageSize: number) {
+  pagination.page = currentPage
+  pagination.size = pageSize
+  load()
 }
 
-async function enableRow(id: number) {
-  enableRegion(id)
+/**
+ * 加载列表
+ */
+async function load() {
+  loading.value = true
+  retrieveRegions(pagination, { superiorId: props.superiorId }).then(res => {
+    datas.value = res.data.content
+    total.value = res.data.page.totalElements
+  }).finally(() => { loading.value = false })
 }
 
-async function saveRow(id?: number) {
+onMounted(() => {
+  load()
+})
+
+/**
+ * 弹出框
+ * @param id 主键
+ */
+function saveRow(id?: number) {
   form.value = { ...initialValues }
-  // You can populate the form with existing user data based on the id
   if (id) {
-    fetchRegion(id).then(res => { form.value = res.data })
+    loadOne(id)
   }
   visible.value = true
 }
 
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  fetchRegion(id).then(res => {
+    form.value = res.data
+  })
+}
+
+/**
+ * 启用、停用
+ * @param id 主键
+ */
+async function enableChange(id: number) {
+  enableRegion(id).then(() => { load() })
+}
+
+/**
+ * 表单提交
+ */
+function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
+
+  formEl.validate((valid) => {
+    if (valid) {
+      saveLoading.value = true
+      if (form.value.id) {
+        modifyRegion(form.value.id, form.value).then(() => {
+          load()
+          visible.value = false
+        }).finally(() => { saveLoading.value = false })
+      } else {
+        form.value.superiorId = props.superiorId
+        createRegion(form.value).then(() => {
+          load()
+          visible.value = false
+        }).finally(() => { saveLoading.value = false })
+      }
+    }
+  })
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
 function removeRow(id: number) {
-  loading.value = true
-  removeRegion(id).finally(() => { loading.value = false })
+  removeRegion(id).then(() => load())
 }
 
-function onSubmit() {
-  if (form.value.id) {
-    modifyRegion(form.value.id, form.value)
-  } else {
-    createRegion(form.value)
-  }
-
-  // Close the dialog after submitting
-  visible.value = false
-}
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
-}
-
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
-  }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
-
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
-
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
+/**
+ * 确认
+ * @param id 主键
+ */
+function confirmEvent(id: number) {
+  if (id) {
+    removeRow(id)
   }
 }
 </script>
+
+<template>
+  <ElCard shadow="never">
+    <ElRow :gutter="20" justify="end" align="middle" class="mb-4">
+      <ElCol :span="12" class="text-left">
+        <span class="text-xl">{{ title }}</span>
+      </ElCol>
+      <ElCol :span="12" class="text-right">
+        <ElButton v-if="hasAction($route.name, 'create')" type="primary" @click="saveRow()">
+          <Icon icon="material-symbols:add-rounded" width="18" height="18" />{{ $t('create') }}
+        </ElButton>
+        <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+          <ElButton type="primary" plain circle @click="load">
+            <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+          </ElButton>
+        </ElTooltip>
+      </ElCol>
+    </ElRow>
+
+    <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTableColumn type="selection" width="55" />
+      <ElTableColumn type="expand">
+        <template #default="props">
+          <SubPage :superior-id="props.row.id" :title="props.row.name" />
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="name" :label="$t('name')" sortable />
+      <ElTableColumn prop="areaCode" :label="$t('areaCode')" sortable />
+      <ElTableColumn prop="postalCode" :label="$t('postalCode')" sortable />
+      <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>
+        <template #default="scope">
+          <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
+            style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
+        </template>
+      </ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="description" :label="$t('description')" />
+      <ElTableColumn :label="$t('actions')">
+        <template #default="scope">
+          <ElButton v-if="hasAction($route.name, 'modify')" size="small" type="primary" link
+            @click="saveRow(scope.row.id)">
+            <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('modify') }}
+          </ElButton>
+          <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+            <template #reference>
+              <ElButton v-if="hasAction($route.name, 'remove')" size="small" type="danger" link>
+                <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
+              </ElButton>
+            </template>
+          </ElPopconfirm>
+        </template>
+      </ElTableColumn>
+    </ElTable>
+    <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+  </ElCard>
+
+  <DialogView v-model="visible" :title="$t('regions')" width="25%">
+    <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('name')" prop="name">
+            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('areaCode')" prop="areaCode">
+            <ElInput v-model="form.areaCode" :placeholder="$t('inputText', { field: $t('areaCode') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('postalCode')" prop="postalCode">
+            <ElInput v-model="form.postalCode" :placeholder="$t('inputText', { field: $t('postalCode') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('description')" prop="description">
+            <ElInput v-model="form.description" type="textarea"
+              :placeholder="$t('inputText', { field: $t('description') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+    </ElForm>
+    <template #footer>
+      <ElButton @click="visible = false">
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+      </ElButton>
+      <ElButton type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+      </ElButton>
+    </template>
+  </DialogView>
+</template>
+
+<style lang="scss" scoped>
+.el-card {
+  border: none !important;
+}
+</style>

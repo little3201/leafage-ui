@@ -1,140 +1,222 @@
-<template>
-  <q-dialog v-model="visible" persistent>
-    <q-card style="min-width: 25em">
-      <q-form @submit="onSubmit">
-        <q-card-section>
-          <div class="text-h6">{{ $t('dictionaries') }}</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-input v-model="form.name" :label="$t('name')" lazy-rules
-            :rules="[val => val && val.length > 0 || $t('inputText')]" />
-
-          <q-input v-model="form.description" :label="$t('description')" type="textarea" />
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-          <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
-        </q-card-actions>
-
-      </q-form>
-    </q-card>
-  </q-dialog>
-
-  <q-table flat ref="subtableRef" :title="title" :rows="rows" :columns="columns" row-key="id" binary-state-sort
-    @request="onRequest" hide-pagination hide-selected-banner class="full-width bg-transparent">
-    <template v-slot:top-right>
-      <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-        icon="sym_r_refresh" @click="refresh" />
-      <q-btn title="create" round padding="xs" color="primary" :disable="loading" icon="sym_r_add" @click="saveRow()" />
-    </template>
-
-    <template v-slot:header="props">
-      <q-tr :props="props">
-        <q-th v-for="col in props.cols" :key="col.name" :props="props">
-          {{ $t(col.label) }}
-        </q-th>
-      </q-tr>
-    </template>
-
-    <template v-slot:body-cell-enabled="props">
-      <q-td :props="props">
-        <q-toggle v-model="props.row.enabled" @toogle="enableRow(props.row.id)" size="sm" color="positive" />
-      </q-td>
-    </template>
-    <template v-slot:body-cell-id="props">
-      <q-td :props="props">
-        <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit" @click="saveRow(props.row.id)"
-          class="q-mt-none" />
-        <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-          @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
-      </q-td>
-    </template>
-  </q-table>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { retrieveDictionarySubset, fetchDictionary, createDictionary, modifyDictionary, enableDictionary, removeDictionary } from 'src/api/dictionaries'
+import { ref, reactive, onMounted } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+import DialogView from 'components/DialogView.vue'
+import {
+  retrieveDictionarySubset, fetchDictionary, createDictionary,
+  modifyDictionary, removeDictionary, enableDictionary, checkDictionaryExists
+} from 'src/api/dictionaries'
 import type { Dictionary } from 'src/types'
+import { Icon } from '@iconify/vue'
+import { hasAction } from 'src/utils'
 
 
-const props = withDefaults(defineProps<{
+const { t } = useI18n()
+const props = defineProps<{
+  superiorId: number,
   title: string
-  superiorId?: number
-}>(), {
-  title: ''
-})
+}>()
 
+const loading = ref<boolean>(false)
+const datas = ref<Array<Dictionary>>([])
+
+const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const subtableRef = ref()
-const rows = ref<QTableProps['rows']>([])
-const loading = ref<boolean>(false)
-
+const formRef = ref<FormInstance>()
 const initialValues: Dictionary = {
   id: undefined,
   name: '',
-  enabled: true
+  superiorId: props.superiorId
 }
 const form = ref<Dictionary>({ ...initialValues })
 
-const columns: QTableProps['columns'] = [
-  { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
-  { name: 'enabled', label: 'enabled', align: 'center', field: 'enabled' },
-  { name: 'description', label: 'description', align: 'left', field: 'description' },
-  { name: 'id', label: 'actions', field: 'id' }
-]
-
-onMounted(() => {
-  subtableRef.value.requestServerInteraction()
+const rules = reactive<FormRules<typeof form>>({
+  name: [
+    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' },
+    { validator: checkNameExistsence, trigger: 'blur' }
+  ]
 })
 
-/**
- * 查询列表
- */
-async function onRequest() {
-  loading.value = true
-  if (props.superiorId) {
-    retrieveDictionarySubset(props.superiorId).then(res => {
-      rows.value = res.data
-    }).finally(() => {
-      loading.value = false
+function checkNameExistsence(rule: unknown, value: string, callback: (error?: string | Error) => void) {
+  if (form.value.superiorId) {
+    checkDictionaryExists(form.value.superiorId, value, form.value.id).then(res => {
+      if (res.data) {
+        callback(new Error(t('alreadyExists', { field: t('name') })))
+      } else {
+        callback()
+      }
     })
   }
 }
 
-function refresh() {
-  subtableRef.value.requestServerInteraction()
-}
-
-function enableRow(id: number) {
-  enableDictionary(id)
-}
-
-async function saveRow(id?: number) {
-  visible.value = true
-  // You can populate the form with existing user data based on the id
-  if (id) {
-    fetchDictionary(id).then(res => { form.value = res.data })
-  }
-}
-
-function removeRow(id: number) {
+/**
+ * 加载列表
+ */
+async function load() {
   loading.value = true
-  removeDictionary(id).finally(() => { loading.value = false })
+  retrieveDictionarySubset(props.superiorId).then(res => {
+    datas.value = res.data
+  }).finally(() => { loading.value = false })
 }
 
-function onSubmit() {
-  if (form.value.id) {
-    modifyDictionary(form.value.id, form.value)
-  } else {
-    createDictionary(form.value)
+onMounted(() => {
+  load()
+})
+
+/**
+ * 弹出框
+ * @param id 主键
+ */
+function saveRow(id?: number) {
+  form.value = { ...initialValues }
+  if (id) {
+    loadOne(id)
   }
-
-  // Close the dialog after submitting
-  visible.value = false
+  visible.value = true
 }
+
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  fetchDictionary(id).then(res => {
+    form.value = res.data
+  })
+}
+
+/**
+ * 启用、停用
+ * @param id 主键
+ */
+async function enableChange(id: number) {
+  enableDictionary(id).then(() => { load() })
+}
+
+/**
+ * 表单提交
+ */
+function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
+
+  formEl.validate((valid) => {
+    if (valid) {
+      saveLoading.value = true
+      if (form.value.id) {
+        modifyDictionary(form.value.id, form.value).then(() => {
+          load()
+          visible.value = false
+        }).finally(() => { saveLoading.value = false })
+      } else {
+        createDictionary(form.value).then(() => {
+          load()
+          visible.value = false
+        }).finally(() => { saveLoading.value = false })
+      }
+    }
+  })
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
+function removeRow(id: number) {
+  removeDictionary(id)
+    .then(() => load())
+}
+
+/**
+ * 确认
+ * @param id 主键
+ */
+function confirmEvent(id: number) {
+  if (id) {
+    removeRow(id)
+  }
+}
+
 </script>
+
+<template>
+  <ElCard shadow="never">
+    <ElRow :gutter="20" justify="end" align="middle" class="mb-4">
+      <ElCol :span="12" class="text-left">
+        <span class="text-xl">{{ title }}</span>
+      </ElCol>
+      <ElCol :span="12" class="text-right">
+        <ElButton v-if="hasAction($route.name, 'create')" type="primary" @click="saveRow()">
+          <Icon icon="material-symbols:add-rounded" width="18" height="18" />{{ $t('create') }}
+        </ElButton>
+        <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+          <ElButton type="primary" plain circle @click="load">
+            <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+          </ElButton>
+        </ElTooltip>
+      </ElCol>
+    </ElRow>
+
+    <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTableColumn type="index" :label="$t('no')" width="55" />
+      <ElTableColumn prop="name" :label="$t('name')" sortable />
+      <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>
+        <template #default="scope">
+          <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
+            style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
+        </template>
+      </ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="description" :label="$t('description')" />
+      <ElTableColumn :label="$t('actions')">
+        <template #default="scope">
+          <ElButton v-if="hasAction($route.name, 'modify')" size="small" type="primary" link
+            @click="saveRow(scope.row.id)">
+            <Icon icon="material-symbols:edit-outline-rounded" width="18" height="18" />{{ $t('modify') }}
+          </ElButton>
+          <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+            <template #reference>
+              <ElButton v-if="hasAction($route.name, 'remove')" size="small" type="danger" link>
+                <Icon icon="material-symbols:delete-outline-rounded" width="18" height="18" />{{ $t('remove') }}
+              </ElButton>
+            </template>
+          </ElPopconfirm>
+        </template>
+      </ElTableColumn>
+    </ElTable>
+  </ElCard>
+
+  <DialogView v-model="visible" :title="$t('dictionaries')" width="25%">
+    <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol :span="24">
+          <ElFormItem :label="$t('name')" prop="name">
+            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol :span="24">
+          <ElFormItem :label="$t('description')" prop="description">
+            <ElInput v-model="form.description" type="textarea"
+              :placeholder="$t('inputText', { field: $t('description') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+    </ElForm>
+    <template #footer>
+      <ElButton @click="visible = false">
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+      </ElButton>
+      <ElButton type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="16" height="16" /> {{ $t('submit') }}
+      </ElButton>
+    </template>
+  </DialogView>
+</template>
+
+<style lang="scss" scoped>
+.el-card {
+  border: none !important;
+}
+</style>

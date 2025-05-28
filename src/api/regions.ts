@@ -13,15 +13,6 @@ export const retrieveRegions = (pagination: Pagination, filters?: object) => {
 }
 
 /**
- * Get row subset
- * @param id Row ID
- * @returns Subset data
- */
-export const retrieveRegionSubset = (id: number) => {
-  return api.get(`${SERVER_URL.REGION}/${id}/subset`)
-}
-
-/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data

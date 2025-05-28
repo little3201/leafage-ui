@@ -51,13 +51,13 @@ export const regionsHandlers = [
     return HttpResponse.json(filtered.length > 0)
   }),
   http.get(`/api${SERVER_URL.REGION}`, ({ request }) => {
-    const url = new URL(request.url)
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
     let filtered = []
-    const superiorId = url.searchParams.get('superiorId')
+    const superiorId = searchParams.get('superiorId')
     if (superiorId) {
       filtered = subDatas.filter(item => item.superiorId === Number(superiorId))
     } else {

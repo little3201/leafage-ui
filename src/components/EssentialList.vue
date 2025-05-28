@@ -1,25 +1,7 @@
-<template>
-  <q-expansion-item :icon="`sym_r_${essentialLink.meta.icon}`" :label="$t(essentialLink.name)">
-    <q-card>
-      <q-card-section>
-        <template v-for="link in essentialLink.children" :key="link.id">
-          <!-- children -->
-          <EssentialList v-if="link.children && link.children.length > 0" :essentialLink="link"
-            :parent-path="pathResolve(parentPath, link.meta.path)" />
-
-          <!-- single item -->
-          <EssentialLink v-else
-            v-bind="{ name: link.name, icon: link.meta.icon, path: link.meta.path, parentPath: parentPath || '' }" />
-        </template>
-      </q-card-section>
-    </q-card>
-  </q-expansion-item>
-</template>
-
 <script setup lang="ts">
-import EssentialLink from 'components/EssentialLink.vue'
 import type { PrivilegeTreeNode } from 'src/types'
 import { pathResolve } from 'src/utils'
+import { Icon } from '@iconify/vue'
 
 withDefaults(defineProps<{
   essentialLink: PrivilegeTreeNode
@@ -27,4 +9,22 @@ withDefaults(defineProps<{
 }>(), {
   parentPath: ''
 })
+
 </script>
+
+<template>
+  <ElSubMenu :index="essentialLink.meta.path">
+    <template #title>
+      <Icon :icon="`material-symbols:${essentialLink.meta.icon}-rounded`" width="18" height="18" class="mr-2" />
+      {{ $t(essentialLink.name) }}
+    </template>
+    <template v-for="link in essentialLink.children" :key="link.id">
+      <EssentialList v-if="link.children && link.children.length > 0" :essentialLink="link"
+        :parent-path="pathResolve(parentPath, link.meta.path)" />
+      <ElMenuItem v-else :index="pathResolve(parentPath, link.meta.path)">
+        <Icon :icon="`material-symbols:${link.meta.icon}-rounded`" width="18" height="18" class="mr-2" />
+        {{ $t(link.name) }}
+      </ElMenuItem>
+    </template>
+  </ElSubMenu>
+</template>

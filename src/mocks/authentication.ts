@@ -10,8 +10,8 @@ export const authenticationHandlers = [
   }),
 
   http.get(`/api${SERVER_URL.AUTHORIZE}`, ({ request }) => {
-    const url = new URL(request.url)
-    const state = url.searchParams.get('state')
+    const searchParams = new URL(request.url).searchParams
+    const state = searchParams.get('state')
     const code = 'Y0nE-MYHtJ2qwAV0oOCrqAP9AGCxRyEjfjtJUgZB1odj18MpIG1LjvC9la5wrr1DV5GlvEHYqpBkr2igSJJWrGx_9pOiddOzeM8D4Lmkk0IQIrvnsf-U14I3e_IRAs8T'
 
     return new HttpResponse(null, {

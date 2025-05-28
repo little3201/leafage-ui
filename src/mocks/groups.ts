@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Group, TreeNode, GroupMembers } from 'src/types'
+import type { Group, TreeNode, GroupMembers, GroupPrivileges } from 'src/types'
 
 const datas: Group[] = []
 
@@ -53,6 +53,18 @@ for (let i = 1; i < 14; i++) {
   members.push(row)
 }
 
+const privileges: GroupPrivileges[] = []
+
+for (let i = 1; i < 17; i++) {
+  const row: GroupPrivileges = {
+    id: i,
+    groupId: i,
+    privilegeId: i,
+    actions: ['create', 'modify', 'remove', 'import', 'export']
+  }
+  privileges.push(row)
+}
+
 export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/tree`, () => {
     return HttpResponse.json(treeNodes)
@@ -61,6 +73,14 @@ export const groupsHandlers = [
     const { id } = params
     if (id) {
       return HttpResponse.json(members.filter(item => item.groupId === Number(id)))
+    } else {
+      return HttpResponse.json([])
+    }
+  }),
+  http.get(`/api${SERVER_URL.GROUP}/:id/privileges`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json(privileges.filter(item => item.groupId === Number(id)))
     } else {
       return HttpResponse.json([])
     }
@@ -83,10 +103,10 @@ export const groupsHandlers = [
     return HttpResponse.json(filtered.length > 0)
   }),
   http.get(`/api${SERVER_URL.GROUP}`, ({ request }) => {
-    const url = new URL(request.url)
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
-    const superiorId = url.searchParams.get('superiorId')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
+    const superiorId = searchParams.get('superiorId')
 
     let data = {
       content: datas,
@@ -155,18 +175,19 @@ export const groupsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/members`, async ({ params, request }) => {
     const { id } = params
-    if (id) {
+    const data = await request.json()
+    if (id && data) {
       return HttpResponse.json()
     } else {
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/privileges/:privilegeId`, async ({ params, request }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges`, async ({ params, request }) => {
+    const { id } = params
     const data = await request.json()
-    const { privilegeId } = params
-    if (privilegeId && data) {
+    if (id && data) {
       return HttpResponse.json()
     } else {
       return HttpResponse.error()

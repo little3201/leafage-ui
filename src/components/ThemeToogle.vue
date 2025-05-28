@@ -1,16 +1,15 @@
-<template>
-  <q-toggle size="sm" v-model="$q.dark.isActive" icon="sym_r_dark_mode" unchecked-icon="sym_r_light_mode"
-    :color="$q.dark.isActive ? 'black' : ''" @update:model-value="handleChange" />
-</template>
-
 <script setup lang="ts">
-import { Cookies, useQuasar } from 'quasar'
+import { useDark, useToggle } from '@vueuse/core'
+import { Icon } from '@iconify/vue'
 
-const $q = useQuasar()
-$q.dark.set(Cookies.get('theme') === 'dark')
 
-function handleChange(value: boolean) {
-  Cookies.set('theme', value ? 'dark' : 'light', { secure: true, sameSite: 'Lax' })
-  $q.dark.set(value)
-}
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
 </script>
+
+<template>
+  <ElButton title="theme" type="default" link @click="() => toggleDark()">
+    <Icon :icon="isDark ? 'material-symbols:dark-mode-outline-rounded' : 'material-symbols:light-mode-outline-rounded'"
+      class="text-white" width="22" height="22" />
+  </ElButton>
+</template>

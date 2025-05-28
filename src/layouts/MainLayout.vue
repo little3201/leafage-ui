@@ -1,88 +1,81 @@
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { useUserStore } from 'stores/user-store'
+import ThemeToogle from 'components/ThemeToogle.vue'
+import LanguageSelector from 'components/LanguageSelector.vue'
+import EssentialList from 'components/EssentialList.vue'
+import { signOut } from 'src/api/authentication'
+import { Icon } from '@iconify/vue'
+
+
+const { push, currentRoute } = useRouter()
+const userStore = useUserStore()
+</script>
+
 <template>
-  <q-layout view="hHh LpR lff" :class="$q.dark.isActive ? '' : 'bg-grey-2'">
-    <q-header>
-      <q-toolbar>
-        <q-img alt="logo" src="/svgs/logo.svg" width="2em" height="2em" />
-        <q-toolbar-title :shrink="true">
-          Project Management
-        </q-toolbar-title>
-        <q-toolbar-title>
-          <q-btn title="drawer" type="button" dense flat round icon="sym_r_menu"
-            @click="leftDrawerOpen = !leftDrawerOpen" class="cursor-pointer" />
-        </q-toolbar-title>
+  <ElHeader class="fixed top-0 left-0 right-0 flex flex-nowrap bg-[var(--el-color-primary)] z-10" height="50px">
+    <div class="inline-flex flex-grow justify-between">
+      <div class="inline-flex items-center">
+        <ElImage src="/svgs/logo.svg" alt="avatar" class="w-8 h-8" />
+        <span class="ml-3 text-20px font-bold text-white">Project Management</span>
+      </div>
+
+      <div class="inline-flex justify-end items-center space-x-2">
+        <!-- theme -->
+        <ThemeToogle />
         <!-- language -->
         <LanguageSelector />
-        <!-- theme -->
-        <ThemeToogle class="q-mx-sm" />
+        <!-- faq -->
+        <ElButton title="faq" type="default" link @click="push('/faq')">
+          <Icon icon="material-symbols:help-outline-rounded" class="text-white" width="22" height="22" />
+        </ElButton>
+        <ElDropdown trigger="click" class="cursor-pointer">
+          <div class="inline-flex items-center">
+            <ElAvatar alt="avatar" :size="28" :src="userStore.avatar" />
+            <span class="ml-2 text-white">{{ userStore.username }}</span>
+          </div>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <RouterLink to="/profile" class="no-underline">
+                <ElDropdownItem>
+                  <Icon icon="material-symbols:manage-accounts-rounded" width="18" height="18" class="mr-2" />
+                  {{ $t('profile') }}
+                </ElDropdownItem>
+              </RouterLink>
+              <ElDropdownItem divided @click="signOut(userStore.idToken)">
+                <Icon icon="material-symbols:logout-rounded" width="18" height="18" class="mr-2" />
+                {{ $t('signout') }}
+              </ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
+      </div>
+    </div>
+  </ElHeader>
 
-        <div class="cursor-pointer">
-          <q-avatar size="md" color="green" icon="sym_r_person">
-          </q-avatar>
-          <span class="q-ml-sm">{{ userStore.username }}</span>
-          <q-menu>
-            <q-list dense separator>
-              <q-item clickable v-close-popup>
-                <q-item-section>{{ $t('profile') }}</q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup @click="signOut(userStore.idToken)">
-                <q-item-section>{{ $t('signout') }}</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </div>
-
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered :width="220">
-      <q-list>
-        <!-- home -->
-        <EssentialLink v-bind="{
-          name: 'home',
-          icon: 'home',
-          path: '/'
-        }" />
-        <!-- privileges -->
+  <ElAside class="fixed top-[50px] left-0" width="200px">
+    <ElScrollbar>
+      <ElMenu router unique-opened :default-active="currentRoute.fullPath">
+        <ElMenuItem :index="'/'">
+          <Icon icon="material-symbols:home-outline-rounded" width="18" height="18" class="mr-2" />{{ $t('home') }}
+        </ElMenuItem>
         <template v-for="link in userStore.privileges" :key="link.id">
           <EssentialList v-if="link.children && link.children.length > 0" :essentialLink="link"
             :parent-path="`/${link.meta.path}`" />
-          <EssentialLink v-else v-bind="{
-            name: link.name,
-            icon: link.meta.icon,
-            path: link.meta.path
-          }" />
+          <ElMenuItem v-else :index="`/${link.meta.path}`">
+            <Icon :icon="`material-symbols:${link.meta.icon}-rounded`" width="18" height="18" class="mr-2" />
+            {{ $t(link.name) }}
+          </ElMenuItem>
         </template>
-      </q-list>
-    </q-drawer>
+      </ElMenu>
+    </ElScrollbar>
+  </ElAside>
 
-    <q-page-container class="overflow-hidden">
-      <router-view />
-    </q-page-container>
+  <ElMain class="bg-[var(--el-bg-color-page)] min-h-[calc(100vh-100px)] ml-[200px] mt-[50px]">
+    <RouterView />
+  </ElMain>
 
-    <q-footer class="bg-transparent">
-      <q-toolbar>
-        <q-toolbar-title class="text-center text-body2" :class="$q.dark.isActive ? '' : 'text-black'">
-          &copy; {{ new Date().getFullYear() }} All Rights Reserved.
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>
-  </q-layout>
+  <ElFooter height="50px" class="bg-[var(--el-bg-color-page)] ml-[200px] text-center !pt-4">
+    <span class="text-sm">Copyright &copy; {{ new Date().getFullYear() }} All Rights Reserved.</span>
+  </ElFooter>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { useQuasar } from 'quasar'
-import { useUserStore } from 'stores/user-store'
-
-import EssentialLink from 'components/EssentialLink.vue'
-import EssentialList from 'components/EssentialList.vue'
-import LanguageSelector from 'components/LanguageSelector.vue'
-import ThemeToogle from 'components/ThemeToogle.vue'
-import { signOut } from 'src/api/authentication'
-
-
-const $q = useQuasar()
-const userStore = useUserStore()
-
-const leftDrawerOpen = ref<boolean>(false)
-</script>

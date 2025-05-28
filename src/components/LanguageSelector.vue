@@ -1,51 +1,38 @@
-<template>
-  <q-btn title="translate" icon="sym_r_translate" round flat dense>
-    <q-menu>
-      <q-list dense separator>
-        <q-item clickable v-close-popup v-for="option in langOptions" :key="option.value"
-          :active="locale === option.value" @click="changeLocale(option.value)">
-          <q-item-section>{{ option.label }}</q-item-section>
-        </q-item>
-      </q-list>
-    </q-menu>
-  </q-btn>
-</template>
-
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useQuasar, Cookies } from 'quasar'
-import languages from 'quasar/lang/index.json'
-import type { QuasarLanguage } from 'quasar'
+import Cookies from 'universal-cookie'
+import { localeOptions } from 'src/i18n'
+import { Icon } from '@iconify/vue'
 
-const $q = useQuasar()
 
 const { locale } = useI18n({ useScope: 'global' })
-locale.value = Cookies.get('lang') || $q.lang.isoName
-const modules = import.meta.glob('../../node_modules/quasar/lang/(en-US|zh-CN|zh-TW).js')
+const cookies = new Cookies(null, { path: '/' })
+locale.value = cookies.get('lang') || 'zh-CN'
 
-
-const langOptions = languages.filter(lang => ['en-US', 'zh-CN', 'zh-TW'].includes(lang.isoName))
-  .map(lang => ({ label: lang.nativeName, value: lang.isoName }))
-
-const lang = ref($q.lang.isoName)
-
-watch(lang, async (val) => {
-  const loadLangModule = modules[`../../node_modules/quasar/lang/${val}.js`]
-  if (loadLangModule) {
-    const langModule = await loadLangModule()
-    $q.lang.set((langModule as { default: QuasarLanguage }).default)
-  }
-})
-
-function changeLocale(langIso: string) {
-  lang.value = langIso
-  locale.value = langIso
-  Cookies.set('lang', langIso, { secure: true, sameSite: 'Lax' })
-  // set html lang
+function changeLocale(lang: string) {
+  locale.value = lang
+  // 设置lang
+  cookies.set('lang', lang, { secure: true, sameSite: 'lax' })
+  // 修改html中lang
   const htmlElement = document.querySelector('html')
+
   if (htmlElement) {
-    htmlElement.setAttribute('lang', langIso)
+    htmlElement.setAttribute('lang', lang)
   }
 }
 </script>
+
+<template>
+  <ElDropdown trigger="click" @command="changeLocale">
+    <ElButton title="language" type="default" link>
+      <Icon icon="material-symbols:translate" class="text-white" width="22" height="22" />
+    </ElButton>
+    <template #dropdown>
+      <ElDropdownMenu>
+        <ElDropdownItem v-for="item in localeOptions" :key="item.value" :command="item.value">
+          {{ item.label }}
+        </ElDropdownItem>
+      </ElDropdownMenu>
+    </template>
+  </ElDropdown>
+</template>

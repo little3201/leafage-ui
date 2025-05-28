@@ -1,234 +1,411 @@
-<template>
-  <q-page padding>
-
-    <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em">
-        <q-form @submit="onSubmit">
-          <q-card-section>
-            <div class="text-h6">{{ $t('regions') }}</div>
-          </q-card-section>
-
-          <q-card-section>
-            <q-input v-model="form.name" :label="$t('name')" lazy-rules
-            :rules="[val => val && val.length > 0 || $t('inputText')]" />
-
-            <q-input v-model="form.description" :label="$t('description')" type="textarea" />
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-            <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
-          </q-card-actions>
-
-        </q-form>
-      </q-card>
-    </q-dialog>
-
-    <q-table flat ref="tableRef" :title="$t('regions')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="sym_r_search" />
-          </template>
-        </q-input>
-        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
-          @click="saveRow()" />
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
-        <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_database_upload" @click="importRow" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
-      </template>
-
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
-          </q-th>
-        </q-tr>
-      </template>
-
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-btn title="expand" round flat dense @click="props.expand = !props.expand"
-              :icon="props.expand ? 'sym_r_keyboard_arrow_down' : 'sym_r_keyboard_arrow_right'" />
-          </q-td>
-          <q-td v-for="col in props.cols" :key="col.name">
-            <div v-if="col.name === 'id'" class="text-right">
-              <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-                @click="saveRow(props.row.id)" class="q-mt-none" />
-              <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-                @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
-            </div>
-            <div v-else-if="col.name === 'enabled'" class="text-center">
-              <q-toggle v-model="props.row.enabled" @toogle="enableRow(props.row.id)" size="sm" color="positive" />
-            </div>
-            <span v-else>{{ col.value }}</span>
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%" class="q-pr-none">
-            <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id" />
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
-  </q-page>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile } from 'quasar'
-import { retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion } from 'src/api/regions'
+import { ref, reactive, onMounted } from 'vue'
+import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions, CheckboxValueType } from 'element-plus'
+import draggable from 'vuedraggable'
+import { useI18n } from 'vue-i18n'
+import { useUserStore } from 'stores/user-store'
+import DialogView from 'components/DialogView.vue'
 import SubPage from './SubPage.vue'
-import type { Region } from 'src/types'
+import {
+  retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, importRegions
+} from 'src/api/regions'
+import type { Pagination, Region } from 'src/types'
+import { Icon } from '@iconify/vue'
+import { hasAction } from 'src/utils'
 
 
-const $q = useQuasar()
+const { t } = useI18n()
+const userStore = useUserStore()
 
-const visible = ref<boolean>(false)
-const importVisible = ref<boolean>(false)
-
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
-const filter = ref('')
 const loading = ref<boolean>(false)
+const datas = ref<Array<Region>>([])
+const total = ref<number>(0)
 
+const tableRef = ref<TableInstance>()
+const pagination = reactive<Pagination>({
+  page: 1,
+  size: 10
+})
+
+const checkAll = ref<boolean>(true)
+const isIndeterminate = ref<boolean>(false)
+const checkedColumns = ref<Array<string>>(['name', 'enabled', 'description'])
+const columns = ref<Array<string>>(['name', 'enabled', 'description'])
+
+const saveLoading = ref<boolean>(false)
+const visible = ref<boolean>(false)
+
+const importVisible = ref<boolean>(false)
+const importLoading = ref<boolean>(false)
+const exportLoading = ref<boolean>(false)
+const importRef = ref<UploadInstance>()
+
+const filters = ref({
+  name: null
+})
+
+const formRef = ref<FormInstance>()
 const initialValues: Region = {
   id: undefined,
-  name: '',
-  areaCode: 0,
-  postalCode: 0,
-  description: ''
+  name: ''
 }
 const form = ref<Region>({ ...initialValues })
 
-const pagination = ref({
-  sortBy: 'id',
-  descending: true,
-  page: 1,
-  rowsPerPage: 7,
-  rowsNumber: 0
-})
-
-const selected = ref([])
-
-const columns: QTableProps['columns'] = [
-  { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
-  { name: 'postalCode', label: 'postalCode', align: 'left', field: 'postalCode', sortable: true },
-  { name: 'areaCode', label: 'areaCode', align: 'left', field: 'areaCode', sortable: true },
-  { name: 'enabled', label: 'enabled', align: 'center', field: 'enabled' },
-  { name: 'description', label: 'description', align: 'left', field: 'description' },
-  { name: 'id', label: 'actions', field: 'id' }
-]
-
-onMounted(() => {
-  tableRef.value.requestServerInteraction()
+const rules = reactive<FormRules<typeof form>>({
+  name: [
+    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' }
+  ]
 })
 
 /**
- * 查询列表
+ * 分页变化
+ * @param currentPage 当前页码
+ * @param pageSize 分页大小
  */
-async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
-  loading.value = true
-
-  const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
-
-  const params = { page, size: rowsPerPage, sortBy, descending }
-
-  retrieveRegions({ ...params }, filter).then(res => {
-    pagination.value.page = page
-    pagination.value.rowsPerPage = rowsPerPage
-    pagination.value.sortBy = sortBy
-    pagination.value.descending = descending
-
-    rows.value = res.data.content
-    pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
-    loading.value = false
-  })
+function pageChange(currentPage: number, pageSize: number) {
+  pagination.page = currentPage
+  pagination.size = pageSize
+  load()
 }
 
-function importRow() {
+/**
+ * 加载列表
+ */
+async function load() {
+  loading.value = true
+  retrieveRegions(pagination, filters.value).then(res => {
+    datas.value = res.data.content
+    total.value = res.data.page.totalElements
+  }).finally(() => { loading.value = false })
+}
+
+/**
+ * reset
+ */
+function reset() {
+  filters.value = {
+    name: null
+  }
+  load()
+}
+
+onMounted(() => {
+  load()
+})
+
+/**
+ * 导入
+ */
+function importRows() {
   importVisible.value = true
 }
 
-function refresh() {
-  tableRef.value.requestServerInteraction()
+/**
+ * 导出
+ */
+function exportRows() {
+  exportLoading.value = true
+
+  const selectedRows = tableRef.value?.getSelectionRows()
+  if (selectedRows) {
+    console.log('selectedRows: ', selectedRows)
+  }
 }
 
-async function enableRow(id: number) {
-  enableRegion(id)
-}
-
-async function saveRow(id?: number) {
+/**
+ * 弹出框
+ * @param id 主键
+ */
+function saveRow(id?: number) {
   form.value = { ...initialValues }
-  // You can populate the form with existing user data based on the id
   if (id) {
-    fetchRegion(id).then(res => { form.value = res.data })
+    loadOne(id)
   }
   visible.value = true
 }
 
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  fetchRegion(id).then(res => {
+    form.value = res.data
+  })
+}
+
+/**
+ * 启用、停用
+ * @param id 主键
+ */
+async function enableChange(id: number) {
+  enableRegion(id).then(() => { load() })
+}
+
+/**
+ * 表单提交
+ */
+function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
+
+  formEl.validate((valid) => {
+    if (valid) {
+      saveLoading.value = true
+      if (form.value.id) {
+        modifyRegion(form.value.id, form.value).then(() => {
+          load()
+          visible.value = false
+        }).finally(() => { saveLoading.value = false })
+      } else {
+        createRegion(form.value).then(() => {
+          load()
+          visible.value = false
+        }).finally(() => { saveLoading.value = false })
+      }
+    }
+  })
+}
+
+/**
+ * 导入提交
+ */
+async function onImportSubmit(importEl: UploadInstance | undefined) {
+  if (!importEl) return
+  importLoading.value = true
+
+  importEl.submit()
+
+  importLoading.value = false
+  importVisible.value = false
+}
+
+function onUpload(options: UploadRequestOptions) {
+  return importRegions(options.file)
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
 function removeRow(id: number) {
-  loading.value = true
-  removeRegion(id).finally(() => { loading.value = false })
+  removeRegion(id).then(() => load())
 }
 
-function onSubmit() {
-  if (form.value.id) {
-    modifyRegion(form.value.id, form.value)
-  } else {
-    createRegion(form.value)
+/**
+ * 确认
+ * @param id 主键
+ */
+function confirmEvent(id: number) {
+  if (id) {
+    removeRow(id)
   }
-
-  // Close the dialog after submitting
-  visible.value = false
 }
 
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
+/**
+ * 全选操作
+ * @param val 是否全选
+ */
+function handleCheckAllChange(val: CheckboxValueType) {
+  checkedColumns.value = val ? columns.value : []
+  isIndeterminate.value = false
 }
 
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
-  }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
-
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
-
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
+/**
+ * 选中操作
+ * @param value 选中的值
+ */
+function handleCheckedChange(value: CheckboxValueType[]) {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === columns.value.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
 }
 </script>
+
+<template>
+  <ElSpace size="large" fill>
+    <ElCard shadow="never">
+      <ElForm inline :model="filters" @submit.prevent>
+        <ElFormItem :label="$t('name')" prop="name">
+          <ElInput v-model="filters.name" :placeholder="$t('inputText', { field: $t('name') })" />
+        </ElFormItem>
+        <ElFormItem>
+          <ElButton title="search" type="primary" @click="load">
+            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('search') }}
+          </ElButton>
+          <ElButton title="reset" @click="reset">
+            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('reset') }}
+          </ElButton>
+        </ElFormItem>
+      </ElForm>
+    </ElCard>
+
+    <ElCard shadow="never">
+      <ElRow :gutter="20" justify="space-between" class="mb-4">
+        <ElCol :span="16" class="text-left">
+          <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
+            <Icon icon="material-symbols:add-rounded" width="18" height="18" />{{ $t('create') }}
+          </ElButton>
+          <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain @click="importRows">
+            <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{ $t('import') }}
+          </ElButton>
+          <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
+            :loading="exportLoading">
+            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
+          </ElButton>
+        </ElCol>
+
+        <ElCol :span="8" class="text-right">
+          <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+            <ElButton title="refresh" type="primary" plain circle @click="load">
+              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+            </ElButton>
+          </ElTooltip>
+
+          <ElTooltip :content="$t('column') + $t('settings')" placement="top">
+            <div class="inline-flex items-center align-middle ml-3">
+              <ElPopover :width="200" trigger="click">
+                <template #reference>
+                  <ElButton title="settings" type="success" plain circle>
+                    <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
+                  </ElButton>
+                </template>
+                <div>
+                  <ElCheckbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+                    {{ $t('all') }}
+                  </ElCheckbox>
+                  <ElDivider />
+                  <ElCheckboxGroup v-model="checkedColumns" @change="handleCheckedChange">
+                    <draggable v-model="columns" item-key="simple">
+                      <template #item="{ element }">
+                        <div class="flex items-center space-x-2">
+                          <Icon icon="material-symbols:drag-indicator" width="18" height="18"
+                            class="hover:cursor-move" />
+                          <ElCheckbox :label="element" :value="element" :disabled="element === columns[0]">
+                            <div class="inline-flex items-center space-x-4">
+                              {{ $t(element) }}
+                            </div>
+                          </ElCheckbox>
+                        </div>
+                      </template>
+                    </draggable>
+                  </ElCheckboxGroup>
+                </div>
+              </ElPopover>
+            </div>
+          </ElTooltip>
+        </ElCol>
+      </ElRow>
+
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
+        highlight-current-row>
+        <ElTableColumn type="selection" width="55" />
+        <ElTableColumn type="expand">
+          <template #default="props">
+            <SubPage :superior-id="props.row.id" :title="props.row.name" />
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="name" :label="$t('name')" sortable />
+        <ElTableColumn prop="areaCode" :label="$t('areaCode')" sortable />
+        <ElTableColumn prop="postalCode" :label="$t('postalCode')" sortable />
+        <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>
+          <template #default="scope">
+            <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
+              style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip prop="description" :label="$t('description')" />
+        <ElTableColumn :label="$t('actions')">
+          <template #default="scope">
+            <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" size="small" type="primary" link
+              @click="saveRow(scope.row.id)">
+              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('modify') }}
+            </ElButton>
+            <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+              <template #reference>
+                <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" size="small" type="danger" link>
+                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
+                </ElButton>
+              </template>
+            </ElPopconfirm>
+          </template>
+        </ElTableColumn>
+      </ElTable>
+      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+    </ElCard>
+  </ElSpace>
+
+  <DialogView v-model="visible" :title="$t('regions')" width="25%">
+    <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('name')" prop="name">
+            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('areaCode')" prop="areaCode">
+            <ElInput v-model="form.areaCode" :placeholder="$t('inputText', { field: $t('areaCode') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('postalCode')" prop="postalCode">
+            <ElInput v-model="form.postalCode" :placeholder="$t('inputText', { field: $t('postalCode') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20" class="w-full !mx-0">
+        <ElCol>
+          <ElFormItem :label="$t('description')" prop="description">
+            <ElInput v-model="form.description" type="textarea"
+              :placeholder="$t('inputText', { field: $t('description') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+    </ElForm>
+    <template #footer>
+      <ElButton title="cancel" @click="visible = false">
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+      </ElButton>
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+      </ElButton>
+    </template>
+  </DialogView>
+
+  <!-- import -->
+  <DialogView v-model="importVisible" :title="$t('import')" width="36%">
+    <p>{{ $t('masterPlates') + ' ' + $t('download') }}：
+      <a :href="`templates/regions.xlsx`" :download="$t('regions') + '.xlsx'">
+        {{ $t('regions') }}.xlsx
+      </a>
+    </p>
+    <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
+      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+      :headers="{ Authorization: `Bearer ${userStore.accessToken}` }">
+      <div class="el-icon--upload inline-flex justify-center">
+        <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
+      </div>
+      <div class="el-upload__text">
+        {{ $t('drop2Here') }}<em>{{ $t('click2Upload') }}</em>
+      </div>
+      <template #tip>
+        <div class="el-upload__tip">
+          {{ $t('fileSizeLimit', { size: '50MB' }) }}
+        </div>
+      </template>
+    </ElUpload>
+    <p class="text-red">xxxx</p>
+    <template #footer>
+      <ElButton title="cancel" @click="importVisible = false">
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+      </ElButton>
+      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+      </ElButton>
+    </template>
+  </DialogView>
+</template>

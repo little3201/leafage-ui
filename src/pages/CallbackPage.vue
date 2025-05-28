@@ -1,23 +1,14 @@
-<template>
-  <q-layout>
-    <q-page-container class="h-screen">
-      <q-page class="flex flex-center">
-        <q-circular-progress indeterminate rounded size="xl" />
-      </q-page>
-    </q-page-container>
-  </q-layout>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from 'stores/user-store'
-import { Cookies } from 'quasar'
+import Cookies from 'universal-cookie'
 import { signIn, handleCallback } from 'src/api/authentication'
 
 
 const { replace } = useRouter()
 const userStore = useUserStore()
+const cookies = new Cookies(null, { path: '/' })
 
 const loading = ref(true)
 
@@ -32,7 +23,7 @@ onMounted(() => {
       })
       loading.value = false
       // 路由跳转
-      replace(Cookies.get('current_page') || '/')
+      replace(cookies.get('current_page') || '/')
     }
   }).catch(() => {
     // 回调失败，登录
@@ -40,3 +31,9 @@ onMounted(() => {
   })
 })
 </script>
+
+<template>
+  <ElContainer class="h-screen">
+    <ElMain v-loading="loading"></ElMain>
+  </ElContainer>
+</template>

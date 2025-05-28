@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import type { User } from 'src/types'
 import { SERVER_URL } from 'src/constants'
+import { dayjs } from 'element-plus'
 
 const datas: User[] = []
 
@@ -11,13 +12,12 @@ for (let i = 1; i < 28; i++) {
     givenName: '三' + i,
     middleName: i % 3 > 0 ? '五' : '',
     familyName: '张',
-    avatar: '/images/avatar.jpg',
-    email: 'usexxx' + '@test.com',
+    avatar: '/svgs/logo.svg',
+    email: 'use***' + '@**t.com',
+    accountNonLocked: i % 2 > 0,
     enabled: i % 2 > 0,
-    accountNonLocked: i % 3 > 0,
-    accountExpiresAt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 28).toISOString(),
-    credentialsExpiresAt: new Date(new Date().getFullYear() + 1, 12, 30).toISOString(),
-    lastModifiedDate: new Date()
+    accountExpiresAt: dayjs().add(Math.floor(Math.random() * 30), 'day').toDate(),
+    credentialsExpiresAt: dayjs().add(Math.floor(Math.random() * 30), 'day').toDate()
   }
   datas.push(row)
 }
@@ -37,7 +37,7 @@ export const usersHandlers = [
       givenName: '勒布朗',
       familyName: '詹姆斯',
       middleName: '雷蒙',
-      avatar: '/images/avatar.jpg',
+      avatar: '/svgs/logo.svg',
       email: 'test@test.com',
       accountExpiresAt: null,
       accountNonLocked: true,
@@ -61,9 +61,9 @@ export const usersHandlers = [
     return HttpResponse.json(filtered.length > 0)
   }),
   http.get(`/api${SERVER_URL.USER}`, ({ request }) => {
-    const url = new URL(request.url)
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {

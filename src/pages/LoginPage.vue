@@ -1,131 +1,64 @@
-<template>
-  <q-layout :class="['overflow-hidden', $q.dark.isActive ? '' : 'bg-light-blue-1']">
-    <q-header :class="['transparent', $q.dark.isActive ? '' : 'text-black']">
-      <q-toolbar>
-        <q-space />
-        <!-- language -->
-        <LanguageSelector />
-        <!-- theme -->
-        <ThemeToogle />
-      </q-toolbar>
-    </q-header>
-    <q-page-container>
-      <q-page padding class="row justify-center items-center">
-
-        <figure class="absolute bg-primary-gradient rounded-full"
-          style="height: 35em; width: 35em;  top: -19em; right: -14em; " />
-        <figure class="absolute bg-positive-gradient rounded-full"
-          style="height: 21em; width: 21em; bottom: 4em; right: -7em; " />
-        <figure class="absolute bg-warning-gradient rounded-full"
-          style="height: 42em; width: 42em; bottom: -19em; left: -14em; " />
-        <figure class="absolute bg-negative-gradient rounded-full"
-          style="height: 21em;  width: 21em; bottom: -16em; left: 14em; " />
-
-        <q-card bordered class="column justify-center items-center shadow-12 overflow-hidden"
-          style="height: 70vh; border-radius: 20px;" :style="{ width: $q.screen.lt.sm ? '100%' : '65vw' }">
-          <q-card-section horizontal :class="['full-height', $q.screen.lt.md ? 'hidden' : '']" style="width: 50%;">
-            <transition appear enter-active-class="animated slideInLeft" leave-active-class="animated slideOutLeft">
-              <div class="column inline justify-center items-center" style="margin-top: -60px">
-                <canvas ref="lottieRef" style="height: 32em; width: 32em" />
-                <div class="column q-gutter-y-xs">
-                  <span class="text-weight-bold text-h5" style="margin-top: -20px">
-                    {{ $t('welcome') }}
-                  </span>
-                  <span class="text-subtitle1">
-                    {{ $t('subtitle') }}
-                  </span>
-                </div>
-              </div>
-            </transition>
-          </q-card-section>
-          <q-separator vertical />
-          <q-card-section horizontal class="full-height no-border-radius"
-            :style="{ width: $q.screen.lt.md ? '100%' : '50%' }" :class="$q.dark.isActive ? '' : 'bg-light-blue-1'">
-            <transition appear enter-active-class="animated slideInRight" leave-active-class="animated slideOutRight">
-              <div class="column justify-center items-center full-width">
-                <div class="text-center">
-                  <q-img alt="logo" src="/svgs/logo.svg" width="8em" height="8em" />
-                </div>
-                <div class="text-h6 text-center q-mb-xs">
-                  {{ $t('signinTo') }}
-                </div>
-                <q-form @submit="onSubmit" class="q-mt-md full-width q-px-xl">
-                  <q-input :disable="loading" dense no-error-icon v-model.trim="form.username"
-                    :placeholder="$t('username')"
-                    :rules="[(val) => (val && val.length >= 5 && val.length <= 12) || $t('username')]">
-                  </q-input>
-                  <q-input :disable="loading" dense no-error-icon :type="showPwd ? 'password' : 'text'"
-                    v-model.trim="form.password" :placeholder="$t('password')"
-                    :rules="[(val) => (val && val.length >= 8 && val.length <= 32) || $t('password')]">
-                    <template v-slot:append>
-                      <q-icon size="xs" :name="showPwd ? 'sym_r_visibility_off' : 'sym_r_visibility'"
-                        class="cursor-pointer" @click="showPwd = !showPwd" />
-                    </template>
-                  </q-input>
-                  <q-checkbox :disable="loading" v-model="rememberMe" :label="$t('rememberMe')" dense
-                    @update:model-value="changeRememberMe" class="q-my-md" />
-                  <q-btn title="signin" no-caps rounded glossy :label="$t('signin')" type="submit" color="primary"
-                    :loading="loading" class="full-width" />
-                </q-form>
-              </div>
-            </transition>
-          </q-card-section>
-        </q-card>
-      </q-page>
-    </q-page-container>
-    <q-footer class="bg-transparent text-center" :class="$q.dark.isActive ? 'text-white' : 'text-black'">
-      <p :class="{ 'text-white': $q.dark.isActive }">&copy; {{ new Date().getFullYear() }}
-        All Rights Reserved.</p>
-    </q-footer>
-  </q-layout>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { ElFormItem, type FormInstance, type FormRules } from 'element-plus'
+import { Icon } from '@iconify/vue'
 import { DotLottie } from '@lottiefiles/dotlottie-web'
-import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
+import LanguageSelector from 'components/LanguageSelector.vue'
 import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
 
 
-const $q = useQuasar()
-
-const showPwd = ref<boolean>(true)
-const rememberMe = ref<boolean>(false)
-const loading = ref<boolean>(false)
+const { t } = useI18n()
 const lottieRef = ref<HTMLCanvasElement | null>(null)
 
-const form = ref({
+const loading = ref<boolean>(false)
+const formRef = ref<FormInstance>()
+const form = reactive({
   username: '',
-  password: ''
+  password: '',
+  rememberMe: false
+})
+
+const rules = reactive<FormRules<typeof form>>({
+  username: [
+    { required: true, message: t('inputText', { field: t('username') }), trigger: 'blur' },
+    { min: 5, max: 12, message: t('lengthRange', { min: 5, max: 12 }), trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: t('inputText', { field: t('password') }), trigger: 'blur' },
+    { min: 8, max: 32, message: t('lengthRange', { min: 8, max: 32 }), trigger: 'blur' }
+  ]
 })
 
 onMounted(() => {
   load()
 })
 
-function changeRememberMe(value: boolean) {
-  return value
-}
+async function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
 
-async function onSubmit() {
-  loading.value = true
-  const state = getRandomString(16)
-  const codeVerifier = generateVerifier()
-  // 存储code_verifier
-  localStorage.setItem('code_verifier', codeVerifier)
-  computeChallenge(codeVerifier).then(codeChallenge => {
-    const params = new URLSearchParams({
-      state: state,
-      code_challenge: codeChallenge
-    })
-    api.get(`${SERVER_URL.AUTHORIZE}?${params}`).then(res => {
-      loading.value = false
-      window.location.replace(res.request.responseURL)
-    })
+  formEl.validate((valid) => {
+    if (valid) {
+      loading.value = true
+
+      const state = getRandomString(16)
+      const codeVerifier = generateVerifier()
+      // 存储code_verifier
+      localStorage.setItem('code_verifier', codeVerifier)
+      computeChallenge(codeVerifier).then(codeChallenge => {
+        const params = new URLSearchParams({
+          state: state,
+          code_challenge: codeChallenge
+        })
+        api.get(`${SERVER_URL.AUTHORIZE}?${params}`).then(res => {
+          loading.value = false
+          window.location.replace(res.request.responseURL)
+        })
+      })
+    }
   })
 }
 
@@ -143,3 +76,117 @@ function load() {
   }
 }
 </script>
+
+<template>
+  <ElContainer
+    class="h-screen relative overflow-hidden bg-[var(--el-color-primary-light-9)] dark:bg-[var(--el-bg-color-page)]">
+    <figure class="absolute bg-primary-gradient rounded-full"
+      style="height: 31em; width: 31em;  top: -14em; right: -12em; ">
+    </figure>
+    <figure class="absolute bg-success-gradient rounded-full"
+      style="height: 19em; width: 19em; bottom: 6em; right: -7em; ">
+    </figure>
+    <figure class="absolute bg-warning-gradient rounded-full"
+      style="height: 40em; width: 40em; bottom: -17em; left: -15em;">
+    </figure>
+    <figure class="absolute bg-error-gradient rounded-full"
+      style="height: 19em;  width: 19em; bottom: -12em; left: 12em; ">
+    </figure>
+
+    <ElHeader class="flex flex-nowrap items-center z-10" height="50px">
+      <div class="inline-flex flex-1 justify-end items-center space-x-4">
+        <!-- language -->
+        <LanguageSelector />
+        <!-- theme -->
+        <ThemeToogle />
+      </div>
+    </ElHeader>
+    <ElMain class="items-center justify-center z-10">
+      <Transition appear name="el-zoom-in-center">
+        <ElCard class="w-full lg:w-1/2 xl:w-2/3" style="height: 70vh;border-radius: 1.5rem;"
+          body-class="flex items-center !p-0 h-full">
+          <div class="hidden-lg-and-down flex flex-col items-center h-full w-1/2  ">
+            <div class="inline-flex flex-grow items-center justify-center h-full">
+              <div class="inline-flex flex-col justify-center items-center" style="margin-top: -40px">
+                <canvas ref="lottieRef" style="height: 450px; width: 450px" />
+                <div class="-mt-8">
+                  <p class="font-bold text-xl text-left">
+                    {{ $t('welcome') }}
+                  </p>
+                  <p class="text-subtitle1">
+                    {{ $t('subtitle') }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex flex-row items-center w-full xl:w-1/2 h-full  bg-[var(--el-color-primary-light-9)] dark:bg-transparent">
+            <div class="flex flex-col w-full h-full space-y-2xl justify-center items-center">
+              <div class="text-center">
+                <ElImage src="/svgs/logo.svg" alt="logo" class="w-24 h-24" />
+              </div>
+              <div class="text-lg font-bold text-center mb-xs">
+                {{ $t('signinTo') }}
+              </div>
+              <ElForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit(formRef)"
+                class="bg-transparent w-full">
+                <ElRow class="px-12 my-3">
+                  <ElCol>
+                    <ElFormItem prop="username">
+                      <ElInput size="large" :disable="loading" v-model="form.username" :placeholder="$t('username')">
+                        <template #prefix>
+                          <Icon icon="material-symbols:person-outline-rounded" width="18" height="18" />
+                        </template>
+                      </ElInput>
+                    </ElFormItem>
+                  </ElCol>
+                </ElRow>
+                <ElRow class="px-12">
+                  <ElCol>
+                    <ElFormItem prop="password">
+                      <ElInput size="large" :disable="loading" type="password" v-model="form.password"
+                        :placeholder="$t('password')" show-password>
+                        <template #prefix>
+                          <Icon icon="material-symbols:key-vertical-outline-rounded" width="18" height="18" />
+                        </template>
+                      </ElInput>
+                    </ElFormItem>
+                  </ElCol>
+                </ElRow>
+                <ElRow class="px-12">
+                  <ElCol>
+                    <ElFormItem prop="rememberMe">
+                      <ElCheckbox :disable="loading" v-model="form.rememberMe" :label="$t('rememberMe')" dense
+                        v:model-value="changeRememberMe" />
+                    </ElFormItem>
+                    <ElFormItem>
+                      <ElButton title="signin" size="large" type="primary" :loading="loading" class="w-full"
+                        native-type="submit">
+                        {{ $t('signin') }}
+                      </ElButton>
+                    </ElFormItem>
+                  </ElCol>
+                </ElRow>
+              </ElForm>
+            </div>
+          </div>
+        </ElCard>
+      </Transition>
+    </ElMain>
+    <ElFooter class="z-10" height="50px">
+      <p class="text-sm text-center">&copy; {{ new Date().getFullYear() }}
+        All Rights Reserved.</p>
+    </ElFooter>
+  </ElContainer>
+</template>
+
+<style lang="scss" scoped>
+.el-main {
+  display: flex;
+}
+
+.el-form-item {
+  margin-bottom: 18px;
+}
+</style>

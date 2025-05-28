@@ -9,7 +9,7 @@ import type { Pagination, Template } from 'src/types'
  * @returns Rows data
  */
 export const retrieveTemplates = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.TEMPLATE, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+  return api.get(SERVER_URL.MASTER_PLATE, { params: { ...pagination, page: pagination.page - 1, ...filters } })
 }
 
 /**
@@ -18,7 +18,7 @@ export const retrieveTemplates = (pagination: Pagination, filters?: object) => {
  * @returns Row data
  */
 export const fetchTemplate = (id: number) => {
-  return api.get(`${SERVER_URL.TEMPLATE}/${id}`)
+  return api.get(`${SERVER_URL.MASTER_PLATE}/${id}`)
 }
 
 /**
@@ -28,7 +28,7 @@ export const fetchTemplate = (id: number) => {
  * @returns Row data
  */
 export const checkTemplateExists = (name: string, suffix: string, version: string, id?: number) => {
-  return api.get(`${SERVER_URL.TEMPLATE}/exists`, { params: { name, suffix, version, id } })
+  return api.get(`${SERVER_URL.MASTER_PLATE}/exists`, { params: { name, suffix, version, id } })
 }
 
 /**
@@ -37,7 +37,7 @@ export const checkTemplateExists = (name: string, suffix: string, version: strin
  * @returns Created row
  */
 export const createTemplate = (row: Template) => {
-  return api.post(SERVER_URL.TEMPLATE, row)
+  return api.post(SERVER_URL.MASTER_PLATE, row)
 }
 
 /**
@@ -47,7 +47,7 @@ export const createTemplate = (row: Template) => {
  * @returns Modified row
  */
 export const modifyTemplate = (id: number, row: Template) => {
-  return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row)
+  return api.put(`${SERVER_URL.MASTER_PLATE}/${id}`, row)
 }
 
 /**
@@ -56,7 +56,7 @@ export const modifyTemplate = (id: number, row: Template) => {
  * @returns Enable or Disable result
  */
 export const enableTemplate = (id: number) => {
-  return api.patch(`${SERVER_URL.TEMPLATE}/${id}`)
+  return api.patch(`${SERVER_URL.MASTER_PLATE}/${id}`)
 }
 
 /**
@@ -65,7 +65,7 @@ export const enableTemplate = (id: number) => {
  * @returns Deletion status
  */
 export const removeTemplate = (id: number) => {
-  return api.delete(`${SERVER_URL.TEMPLATE}/${id}`)
+  return api.delete(`${SERVER_URL.MASTER_PLATE}/${id}`)
 }
 
 /**
@@ -76,5 +76,5 @@ export const removeTemplate = (id: number) => {
 export const importTemplates = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
-  return api.post(`${SERVER_URL.TEMPLATE}/import`, formData)
+  return api.post(`${SERVER_URL.MASTER_PLATE}/import`, formData)
 }

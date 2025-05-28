@@ -9,7 +9,7 @@ const datas: Privilege[] = [
     component: '#',
     redirect: 'users',
     name: 'system',
-    icon: 'settings',
+    icon: 'settings-outline',
     count: 5,
     enabled: true,
     description: 'this is description for this row'
@@ -20,7 +20,7 @@ const datas: Privilege[] = [
     component: '#',
     redirect: 'operation',
     name: 'logs',
-    icon: 'lab_profile',
+    icon: 'lab-profile-outline',
     count: 3,
     enabled: true,
     description: 'this is description for this row'
@@ -30,30 +30,30 @@ const datas: Privilege[] = [
     path: 'regions',
     component: 'regions',
     name: 'regions',
-    icon: 'location_on',
+    icon: 'location-on-outline',
     actions: ['create', 'modify', 'remove', 'import', 'export'],
     count: 0,
     enabled: false,
     description: 'this is description for this row'
   },
   {
-    id: 14,
+    id: 13,
     path: 'files',
     component: 'files',
     name: 'files',
-    icon: 'folder_open',
+    icon: 'folder-open-outline',
     actions: ['upload', 'download', 'remove'],
     count: 0,
     enabled: true,
     description: 'this is description for this row'
   },
   {
-    id: 16,
+    id: 14,
     path: 'exploiters',
     component: '#',
     name: 'exploiters',
-    redirect: 'generators',
-    icon: 'build',
+    redirect: 'schemas',
+    icon: 'build-outline',
     count: 1,
     enabled: true,
     description: 'this is description for this row'
@@ -67,10 +67,10 @@ const subDatas: Privilege[] = [
     path: 'groups',
     component: 'system/groups',
     name: 'groups',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'enable'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'authorize', 'enable'],
     count: 0,
     enabled: true,
-    icon: 'account_tree',
+    icon: 'account-tree-outline',
     description: 'this is description for this row'
   },
   {
@@ -79,10 +79,10 @@ const subDatas: Privilege[] = [
     path: 'users',
     component: 'system/users',
     name: 'users',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable', 'unlock'],
     count: 0,
     enabled: true,
-    icon: 'person',
+    icon: 'person-outline',
     description: 'this is description for this row'
   },
   {
@@ -91,10 +91,22 @@ const subDatas: Privilege[] = [
     path: 'privileges',
     component: 'system/privileges',
     name: 'privileges',
-    actions: ['modify', 'authorize', 'import', 'export', 'enable'],
+    actions: ['modify', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
-    icon: 'admin_panel_settings',
+    icon: 'admin-panel-settings-outline',
+    description: 'this is description for this row'
+  },
+  {
+    id: 5,
+    superiorId: 1,
+    path: 'roles',
+    component: 'system/roles',
+    name: 'roles',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'authorize', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'shield-person-outline',
     description: 'this is description for this row'
   },
   {
@@ -106,7 +118,7 @@ const subDatas: Privilege[] = [
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
-    icon: 'book_3',
+    icon: 'book-3-outline',
     description: 'this is description for this row'
   },
   {
@@ -114,11 +126,11 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'operation',
     component: 'logs/operation',
-    name: 'operationLog',
+    name: 'operationLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
-    icon: 'clinical_notes',
+    icon: 'clinical-notes-outline',
     description: 'this is description for this row'
   },
   {
@@ -126,11 +138,11 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'access',
     component: 'logs/access',
-    name: 'accessLog',
+    name: 'accessLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
-    icon: 'sticky_note_2',
+    icon: 'sticky-note-2-outline',
     description: 'this is description for this row'
   },
   {
@@ -138,11 +150,11 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'audit',
     component: 'logs/audit',
-    name: 'auditLog',
+    name: 'auditLogs',
     actions: ['remove', 'export'],
     count: 0,
     enabled: true,
-    icon: 'note_alt',
+    icon: 'note-alt-outline',
     description: 'this is description for this row'
   },
   {
@@ -150,19 +162,19 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'scheduler',
     component: 'logs/scheduler',
-    name: 'schedulerLog',
+    name: 'schedulerLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
-    icon: 'event_note',
+    icon: 'event-note-outline',
     description: 'this is description for this row'
   },
   {
-    id: 17,
-    superiorId: 16,
-    path: 'generators',
-    name: 'generators',
-    component: 'exploiters/generators',
+    id: 15,
+    superiorId: 14,
+    path: 'schemas',
+    name: 'schemas',
+    component: 'exploiters/schemas',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'preview', 'enable'],
     count: 0,
     enabled: true,
@@ -170,8 +182,8 @@ const subDatas: Privilege[] = [
     description: 'this is description for this row'
   },
   {
-    id: 18,
-    superiorId: 16,
+    id: 16,
+    superiorId: 14,
     path: 'scripts',
     name: 'scripts',
     component: 'exploiters/scripts',
@@ -182,11 +194,11 @@ const subDatas: Privilege[] = [
     description: 'this is description for this row'
   },
   {
-    id: 19,
-    superiorId: 16,
-    path: 'templates',
-    name: 'templates',
-    component: 'exploiters/templates',
+    id: 17,
+    superiorId: 14,
+    path: 'master-plates',
+    name: 'masterPlates',
+    component: 'exploiters/master-plates',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
@@ -203,7 +215,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       path: 'system',
       component: '#',
       redirect: 'users',
-      icon: 'settings'
+      icon: 'settings-outline'
     },
     children: [
       {
@@ -212,8 +224,8 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'groups',
           component: 'system/groups',
-          icon: 'account_tree',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'enable']
+          icon: 'account-tree-outline',
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'authorize', 'enable']
         }
       },
       {
@@ -222,30 +234,40 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'users',
           component: 'system/users',
-          icon: 'person',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+          icon: 'person-outline',
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable', 'unlock']
         }
       },
       {
         id: 4,
-        name: 'privileges',
+        name: 'roles',
         meta: {
-          path: 'privileges',
-          component: 'system/privileges',
-          icon: 'admin_panel_settings',
-          actions: ['modify', 'authorize', 'import', 'export', 'enable']
+          path: 'roles',
+          component: 'system/roles',
+          icon: 'shield-person-outline',
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'authorize', 'enable']
         }
       },
       {
-        id: 6,
+        id: 5,
         name: 'dictionaries',
         meta: {
           path: 'dictionaries',
           component: 'system/dictionaries',
-          icon: 'book_3',
+          icon: 'book-3-outline',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
       },
+      {
+        id: 6,
+        name: 'privileges',
+        meta: {
+          path: 'privileges',
+          component: 'system/privileges',
+          icon: 'admin-panel-settings-outline',
+          actions: ['modify', 'import', 'export', 'enable']
+        }
+      }
     ]
   },
   {
@@ -255,47 +277,46 @@ const treeNodes: PrivilegeTreeNode[] = [
       path: 'logs',
       component: '#',
       redirect: 'operation',
-      icon: 'lab_profile',
-      actions: ['clear', 'remove', 'export']
+      icon: 'lab-profile-outline'
     },
     children: [
       {
         id: 8,
-        name: 'operationLog',
+        name: 'operationLogs',
         meta: {
           path: 'operation',
           component: 'logs/operation',
-          icon: 'clinical_notes',
+          icon: 'clinical-notes-outline',
           actions: ['clear', 'remove', 'export']
         }
       },
       {
         id: 9,
-        name: 'accessLog',
+        name: 'accessLogs',
         meta: {
           path: 'access',
           component: 'logs/access',
-          icon: 'sticky_note_2',
+          icon: 'sticky-note-2-outline',
           actions: ['clear', 'remove', 'export']
         }
       },
       {
         id: 10,
-        name: 'auditLog',
+        name: 'auditLogs',
         meta: {
           path: 'audit',
           component: 'logs/audit',
-          icon: 'note_alt',
+          icon: 'note-alt-outline',
           actions: ['remove', 'export']
         }
       },
       {
         id: 11,
-        name: 'schedulerLog',
+        name: 'schedulerLogs',
         meta: {
           path: 'scheduler',
           component: 'logs/scheduler',
-          icon: 'event_note',
+          icon: 'event-note-outline',
           actions: ['clear', 'remove', 'export']
         }
       }
@@ -307,42 +328,42 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'regions',
       component: 'regions',
-      icon: 'location_on',
+      icon: 'location-on-outline',
       actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
     }
   },
   {
-    id: 14,
+    id: 13,
     name: 'files',
     meta: {
       path: 'files',
       component: 'files',
-      icon: 'folder_open',
+      icon: 'folder-open-outline',
       actions: ['download', 'upload', 'remove']
     }
   },
   {
-    id: 16,
+    id: 14,
     name: 'exploiters',
     meta: {
       path: 'exploiters',
       component: '#',
-      redirect: 'generators',
-      icon: 'build'
+      redirect: 'schemas',
+      icon: 'build-outline'
     },
     children: [
       {
-        id: 17,
-        name: 'generators',
+        id: 15,
+        name: 'schemas',
         meta: {
-          path: 'generators',
-          component: 'exploiters/generators',
+          path: 'schemas',
+          component: 'exploiters/schemas',
           icon: 'genetics',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'sync', 'config', 'execute', 'enable']
         }
       },
       {
-        id: 18,
+        id: 16,
         name: 'scripts',
         meta: {
           path: 'scripts',
@@ -352,11 +373,11 @@ const treeNodes: PrivilegeTreeNode[] = [
         }
       },
       {
-        id: 19,
-        name: 'templates',
+        id: 17,
+        name: 'masterPlates',
         meta: {
-          path: 'templates',
-          component: 'exploiters/templates',
+          path: 'master-plates',
+          component: 'exploiters/master-plates',
           icon: 'code',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
@@ -405,30 +426,6 @@ for (let i = 1; i < 28; i++) {
 }
 
 export const privilegesHandlers = [
-  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/roles`, ({ params }) => {
-    const { id } = params
-    if (id) {
-      return HttpResponse.json(roles.filter(item => item.privilegeId === Number(id)))
-    } else {
-      return HttpResponse.json([])
-    }
-  }),
-  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/groups`, ({ params }) => {
-    const { id } = params
-    if (id) {
-      return HttpResponse.json(groups.filter(item => item.privilegeId === Number(id)))
-    } else {
-      return HttpResponse.json([])
-    }
-  }),
-  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/users`, ({ params }) => {
-    const { id } = params
-    if (id) {
-      return HttpResponse.json(users.filter(item => item.privilegeId === Number(id)))
-    } else {
-      return HttpResponse.json([])
-    }
-  }),
   http.get(`/api${SERVER_URL.PRIVILEGE}/tree`, () => {
     return HttpResponse.json(treeNodes)
   }),
@@ -469,9 +466,9 @@ export const privilegesHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.PRIVILEGE}`, ({ request }) => {
-    const url = new URL(request.url)
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
@@ -484,7 +481,7 @@ export const privilegesHandlers = [
     return HttpResponse.json(data)
   }),
   http.post(`/api${SERVER_URL.PRIVILEGE}/import`, async ({ request }) => {
-    // Read the intercepted request body as JSON.
+    // Read the intercepted request body as FormData.
     const data = await request.formData()
     const file = data.get('file')
 

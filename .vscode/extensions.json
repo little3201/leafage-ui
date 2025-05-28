@@ -3,7 +3,9 @@
     "Vue.volar",
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
-    "wayou.vscode-todo-highlight"
+    "lokalise.i18n-ally",
+    "bradlc.vscode-tailwindcss",
+    "streetsidesoftware.code-spell-checker"
   ],
   "unwantedRecommendations": [
     "octref.vetur",

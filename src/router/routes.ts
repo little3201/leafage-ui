@@ -1,7 +1,8 @@
 import type { RouteRecordRaw } from 'vue-router'
 import MainLayout from 'layouts/MainLayout.vue'
 
-const routes: RouteRecordRaw[] = [
+
+export const constantRouterMap: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
@@ -10,8 +11,17 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'index',
-        component: () => import('pages/IndexPage.vue'),
-        meta: { icon: 'sym_r_home' }
+        component: () => import('pages/IndexPage.vue')
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: () => import('pages/profile/IndexPage.vue')
+      },
+      {
+        path: '/faq',
+        name: 'faq',
+        component: () => import('pages/faq/IndexPage.vue')
       }
     ]
   },
@@ -21,5 +31,3 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/CallbackPage.vue')
   }
 ]
-
-export default routes

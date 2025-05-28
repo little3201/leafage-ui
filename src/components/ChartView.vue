@@ -1,17 +1,11 @@
-<template>
-  <div ref="elRef" :style="styles"></div>
-</template>
-
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onBeforeUnmount, onActivated } from 'vue'
-import { useQuasar, debounce, is } from 'quasar'
+import { useDark, useEventListener } from '@vueuse/core'
 import ApexCharts from 'apexcharts'
-
-
-const $q = useQuasar()
+import { isNumber } from 'src/utils'
 
 const props = withDefaults(defineProps<{
-  options: ApexCharts.ApexOptions
+  options: ApexCharts.ApexOptions // 使用 ApexCharts 的配置类型
   width?: number | string
   height?: number | string
 }>(), {
@@ -19,10 +13,12 @@ const props = withDefaults(defineProps<{
   height: '400px'
 })
 
+const isDark = useDark()
+
 const options = computed(() => {
   return Object.assign({}, props.options, {
     theme: {
-      mode: $q.dark.isActive ? 'dark' : 'light'
+      mode: isDark.value ? 'dark' : 'light'
     }
   })
 })
@@ -34,8 +30,8 @@ let chartRef: ApexCharts | null = null
 const contentEl = ref<Element>()
 
 const styles = computed(() => {
-  const width = is.number(props.width) ? `${props.width}px` : props.width
-  const height = is.number(props.height) ? `${props.height}px` : props.height
+  const width = isNumber(props.width) ? `${props.width}px` : props.width
+  const height = isNumber(props.height) ? `${props.height}px` : props.height
 
   return {
     width,
@@ -58,7 +54,8 @@ watch(
   () => options.value,
   (options) => {
     if (chartRef) {
-      chartRef?.updateOptions(options, true, false) // 第二个参数 true 表示对图表强制更新
+      // 第二个参数 true 表示对图表强制更新
+      chartRef?.updateOptions(options, true, false)
     }
   },
   {
@@ -66,12 +63,12 @@ watch(
   }
 )
 
-const resizeHandler = debounce(() => {
+const resizeHandler = () => {
   if (chartRef) {
-    chartRef?.destroy() // 销毁旧图表
-    initChart() // 重新初始化图表
+    chartRef?.destroy()
+    initChart()
   }
-}, 100)
+}
 
 const contentResizeHandler = async (e: TransitionEvent) => {
   if (e.propertyName === 'width') {
@@ -85,31 +82,30 @@ const handleContentResize = (e: TransitionEvent): void => {
   }
 }
 
-onMounted(() => {
-  initChart()
-
-  window.addEventListener('resize', resizeHandler)
-
-  contentEl.value = document.getElementsByClassName('q-page-container')[0]
+useEventListener(document, 'transitionend', (evt) => {
+  contentEl.value = document.getElementsByClassName('el-layout-content')[0]
   if (contentEl.value) {
-    (contentEl.value as Element).addEventListener('transitionend', handleContentResize as (event: Event) => void)
+    handleContentResize(evt)
   }
 })
 
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', resizeHandler)
-  if (contentEl.value) {
-    (contentEl.value as Element).removeEventListener('transitionend', handleContentResize as (event: Event) => void)
-  }
+onMounted(() => {
+  initChart()
+})
 
+onBeforeUnmount(() => {
   if (chartRef) {
-    chartRef.destroy() // 组件卸载时销毁图表
+    chartRef.destroy()
   }
 })
 
 onActivated(() => {
   if (chartRef) {
-    resizeHandler() // 图表重新激活时重新渲染
+    resizeHandler()
   }
 })
 </script>
+
+<template>
+  <div ref="elRef" :style="styles"></div>
+</template>

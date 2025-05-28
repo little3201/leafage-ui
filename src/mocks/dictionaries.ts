@@ -39,7 +39,7 @@ const datas: Dictionary[] = [
 
 const subDatas: Dictionary[] = [
   {
-    name: 'BusinessLogic',
+    name: 'Service',
     superiorId: 25,
     description: '包括Service和Service Implementation，用于业务逻辑处理。',
     id: 27,
@@ -47,7 +47,7 @@ const subDatas: Dictionary[] = [
     lastModifiedDate: new Date()
   },
   {
-    name: 'APIDefinition',
+    name: 'Controller',
     superiorId: 25,
     description: '定义API接口。',
     id: 59,
@@ -55,7 +55,7 @@ const subDatas: Dictionary[] = [
     lastModifiedDate: new Date()
   },
   {
-    name: 'DataModels',
+    name: 'Model',
     superiorId: 25,
     description: '包括Entity、DTO、BO和VO，用于定义数据模型。',
     id: 58,
@@ -63,7 +63,7 @@ const subDatas: Dictionary[] = [
     lastModifiedDate: new Date()
   },
   {
-    name: 'DataAccess',
+    name: 'Repository',
     superiorId: 25,
     description: '包括Repository和Mapper，用于操作ORM和数据访问。',
     id: 26,
@@ -71,7 +71,7 @@ const subDatas: Dictionary[] = [
     lastModifiedDate: new Date()
   },
   {
-    name: 'UIPage',
+    name: 'UI',
     superiorId: 25,
     description: '用户界面。',
     id: 56,
@@ -79,26 +79,10 @@ const subDatas: Dictionary[] = [
     lastModifiedDate: new Date()
   },
   {
-    name: 'APIManager',
+    name: 'TS',
     superiorId: 25,
-    description: '用于前端请求接口的管理。',
-    id: 28,
-    enabled: true,
-    lastModifiedDate: new Date()
-  },
-  {
-    name: 'Model',
-    superiorId: 25,
-    description: 'TypeScript对象类型定义。',
+    description: 'TypeScript文件。',
     id: 57,
-    enabled: true,
-    lastModifiedDate: new Date()
-  },
-  {
-    name: 'Config',
-    superiorId: 25,
-    description: '前端配置。',
-    id: 60,
     enabled: true,
     lastModifiedDate: new Date()
   },
@@ -152,13 +136,6 @@ const subDatas: Dictionary[] = [
     lastModifiedDate: new Date()
   },
   {
-    name: 'preview',
-    superiorId: 42,
-    id: 49,
-    enabled: true,
-    lastModifiedDate: new Date()
-  },
-  {
     name: 'config',
     superiorId: 42,
     id: 52,
@@ -195,6 +172,22 @@ const subDatas: Dictionary[] = [
     enabled: true,
     lastModifiedDate: new Date()
   },
+  {
+    name: 'Database',
+    superiorId: 68,
+    description: '数据库',
+    id: 57,
+    enabled: true,
+    lastModifiedDate: new Date()
+  },
+  {
+    name: 'Mmiddleware',
+    superiorId: 68,
+    description: '中间件',
+    id: 58,
+    enabled: true,
+    lastModifiedDate: new Date()
+  }
 ]
 
 export const dictionariesHandlers = [
@@ -223,10 +216,9 @@ export const dictionariesHandlers = [
     return HttpResponse.json(subDatas.filter(item => item.superiorId === Number(id)))
   }),
   http.get(`/api${SERVER_URL.DICTIONARY}`, ({ request }) => {
-    const url = new URL(request.url)
-
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
 
     // Construct a JSON response with the list of all Row
     // as the response body.

@@ -1,0 +1,119 @@
+// import dark theme
+@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+
+:root {
+  --el-border-radius-base: 8px;
+  --el-menu-item-height: 48px !important;
+}
+
+body {
+  font-family: Inter, system-ui, Avenir, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+// app global css in SCSS
+
+.bg-primary-gradient {
+  background: radial-gradient(circle at top right, var(--el-color-white), var(--el-color-primary-dark-2));
+}
+
+.bg-error-gradient {
+  background: radial-gradient(circle at center left, var(--el-color-danger), var(--el-color-danger-dark-2));
+}
+
+.bg-success-gradient {
+  background: radial-gradient(circle at center right, var(--el-color-success), var(--el-color-success-dark-2));
+}
+
+.bg-warning-gradient {
+  background: radial-gradient(circle at center top, var(--el-color-warning), var(--el-color-warning-dark-2));
+}
+
+.el-main {
+  --el-main-padding: 16px !important;
+}
+
+.el-menu {
+  border-right: initial !important;
+  .el-sub-menu.is-active {
+    .el-sub-menu__title {
+      background-color: var(--el-menu-hover-bg-color);
+    }
+  }
+}
+
+.el-menu--inline {
+  li {
+    margin: 6px;
+    border-radius: var(--el-border-radius-base);
+  }
+}
+
+.el-dialog {
+  --el-dialog-border-radius: var(--el-border-radius-base) !important;
+}
+
+.el-divider--horizontal {
+  margin: 12px 0 !important;
+}
+
+.el-card {
+  --el-card-border-radius: var(--el-border-radius-base) !important;
+}
+
+.el-card__body {
+  .el-form--inline {
+    .el-form-item {
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.el-transfer {
+  --el-transfer-panel-body-height: 420px !important;
+}
+
+.el-input-number {
+  width: 100% !important;
+}
+
+.el-icon {
+  width: 1.25em;
+  height: 1.25em;
+
+  svg {
+    width: 1.25em;
+    height: 1.25em;
+  }
+}
+
+.search {
+  .el-card__body {
+    padding-bottom: 0;
+  }
+}
+
+.apexcharts-theme-dark {
+  foreignObject {
+    background-color: var(--el-bg-color-overlay);
+  }
+}
+
+.spin {
+  animation: spin 2s linear infinite;
+}
+
+
+/* keyframes */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

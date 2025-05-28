@@ -1,234 +1,302 @@
-<template>
-  <q-page padding>
-
-    <q-dialog v-model="visible" persistent>
-      <q-card>
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">{{ $t('schedulerLog') }}</div>
-          <q-space />
-          <q-btn icon="sym_r_close" flat round dense v-close-popup />
-        </q-card-section>
-
-        <q-card-section>
-          <p><strong>{{ $t('name') }}</strong>{{ row.name }}</p>
-          <p><strong>{{ $t('startTime') }}</strong>
-            {{ row.startTime ? date.formatDate(row.startTime, 'YYYY-MM-DD HH:mm') : '-' }}
-          </p>
-          <p><strong>{{ $t('executedTimes') }}</strong>
-            {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
-          </p>
-          <p>
-            <strong>{{ $t('status') }}</strong>
-            <q-chip v-if="row.status === 0" size="sm" icon="sym_r_progress_activity" color="primary" text-color="white">
-              {{ $t('processing') }}
-            </q-chip>
-            <q-chip v-else-if="row.status === 1" size="sm" icon="sym_r_check" color="positive" text-color="white">
-              {{ $t('done') }}
-            </q-chip>
-            <q-chip v-else size="sm" icon="sym_r_error" color="negative" text-color="white">{{ $t('failure') }}</q-chip>
-          </p>
-          <p><strong>{{ $t('nextExecuteTime') }}</strong>
-            {{ row.nextExecuteTime ? date.formatDate(row.nextExecuteTime, 'YYYY-MM-DD HH:mm') : '-' }}
-          </p>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
-    <q-table flat ref="tableRef" :title="$t('schedulerLog')" selection="multiple" v-model:selected="selected"
-      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="sym_r_search" />
-          </template>
-        </q-input>
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
-        <q-btn title="clear" round padding="xs" flat color="negative" class="q-mx-sm" icon="sym_r_clear_all" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
-      </template>
-
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
-          </q-th>
-        </q-tr>
-      </template>
-
-      <template v-slot:body-cell-name="props">
-        <q-td :props="props">
-          <q-btn :title="props.row.name" flat rounded no-caps color="primary" @click="showRow(props.row.id)">
-            {{ props.row.name }}
-          </q-btn>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-startTime="props">
-        <q-td :props="props">
-          {{ props.row.startTime ? date.formatDate(props.row.startTime, 'YYYY-MM-DD HH:mm') : '-' }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-status="props">
-        <q-td :props="props">
-          <q-chip v-if="props.row.status === 0" size="sm" icon="sym_r_progress_activity" color="primary"
-            text-color="white">
-            {{ $t('processing') }}
-          </q-chip>
-          <q-chip v-else-if="props.row.status === 1" size="sm" icon="sym_r_check" color="positive" text-color="white">
-            {{ $t('done') }}
-          </q-chip>
-          <q-chip v-else size="sm" icon="sym_r_error" color="negative" text-color="white">{{ $t('failure') }}</q-chip>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-executedTimes="props">
-        <q-td :props="props">
-          {{ props.row.executedTimes ? formatDuration(props.row.executedTimes) : '-' }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-nextExecuteTime="props">
-        <q-td :props="props">
-          {{ props.row.nextExecuteTime ? date.formatDate(props.row.nextExecuteTime, 'YYYY-MM-DD HH:mm') : '-' }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-id="props">
-        <q-td :props="props">
-          <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
-        </q-td>
-      </template>
-    </q-table>
-  </q-page>
-</template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile, date } from 'quasar'
+import { ref, onMounted, reactive } from 'vue'
+import { dayjs } from 'element-plus'
+import type { TableInstance, CheckboxValueType } from 'element-plus'
+import draggable from 'vuedraggable'
+import DialogView from 'components/DialogView.vue'
 import { retrieveSchedulerLogs, fetchSchedulerLog } from 'src/api/scheduler-logs'
-import { formatDuration } from 'src/utils'
-import type { SchedulerLog } from 'src/types'
+import type { Pagination, SchedulerLog } from 'src/types'
+import { Icon } from '@iconify/vue'
+import { formatDuration, hasAction } from 'src/utils'
 
-const $q = useQuasar()
-
-const visible = ref<boolean>(false)
-
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
-const filter = ref('')
 const loading = ref<boolean>(false)
+const datas = ref<Array<SchedulerLog>>([])
+const total = ref<number>(0)
 
+const tableRef = ref<TableInstance>()
+const pagination = reactive<Pagination>({
+  page: 1,
+  size: 10
+})
+
+const checkAll = ref<boolean>(true)
+const isIndeterminate = ref<boolean>(false)
+const checkedColumns = ref<Array<string>>(['name', 'startTime', 'status', 'executedTimes', 'nextExecuteTime'])
+const columns = ref<Array<string>>(['name', 'startTime', 'status', 'executedTimes', 'nextExecuteTime'])
+
+const filters = ref({
+  name: null,
+  method: null
+})
+
+const detailLoading = ref<boolean>(false)
 const initialValues: SchedulerLog = {
   id: undefined,
   name: ''
 }
 const row = ref<SchedulerLog>({ ...initialValues })
 
-const pagination = ref({
-  sortBy: 'id',
-  descending: true,
-  page: 1,
-  rowsPerPage: 7,
-  rowsNumber: 0
-})
+const visible = ref<boolean>(false)
+/**
+ * 分页变化
+ * @param value 当前页码
+ */
+function pageChange(currentPage: number, pageSize: number) {
+  pagination.page = currentPage
+  pagination.size = pageSize
+  load()
+}
 
-const selected = ref([])
+/**
+ * 加载列表
+ */
+async function load() {
+  retrieveSchedulerLogs(pagination, filters.value).then(res => {
+    datas.value = res.data.content
+    total.value = res.data.page.totalElements
+  }).finally(() => { loading.value = false })
+}
 
-const columns: QTableProps['columns'] = [
-  { name: 'name', label: 'name', align: 'left', field: 'name' },
-  { name: 'startTime', label: 'startTime', align: 'center', field: 'startTime' },
-  { name: 'status', label: 'status', align: 'center', field: 'status' },
-  { name: 'executedTimes', label: 'executedTimes', align: 'center', field: 'executedTimes' },
-  { name: 'nextExecuteTime', label: 'nextExecuteTime', align: 'center', field: 'nextExecuteTime' },
-  { name: 'id', label: 'actions', field: 'id' }
-]
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  detailLoading.value = true
+  fetchSchedulerLog(id).then(res => {
+    row.value = res.data
+  }).finally(() => { detailLoading.value = false })
+}
+
+/**
+ * reset
+ */
+function reset() {
+  filters.value = {
+    name: null,
+    method: null
+  }
+  load()
+}
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  load()
 })
 
 /**
- * 查询列表
+ * 导出
  */
-async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
-  loading.value = true
-
-  const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
-
-  const params = { page, size: rowsPerPage, sortBy, descending }
-
-  retrieveSchedulerLogs({ ...params }, filter).then(res => {
-    pagination.value.page = page
-    pagination.value.rowsPerPage = rowsPerPage
-    pagination.value.sortBy = sortBy
-    pagination.value.descending = descending
-
-    rows.value = res.data.content
-    pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
-    loading.value = false
-  })
+async function exportRows() {
+  const selectedRows = tableRef.value?.getSelectionRows()
+  console.log('selectedRows:', selectedRows)
 }
 
-function refresh() {
-  tableRef.value.requestServerInteraction()
-}
-
+/**
+ * 详情
+ * @param id 主键
+ */
 function showRow(id: number) {
   row.value = { ...initialValues }
   visible.value = true
-  if (id) {
-    fetchSchedulerLog(id).then(res => { row.value = res.data })
-  }
+  loadOne(id)
 }
 
+/**
+ * 删除
+ * @param id 主键
+ */
 function removeRow(id: number) {
-  console.log('id: ', id)
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
+  datas.value = datas.value.filter(item => item.id !== id)
 }
 
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
+/**
+ * 清空
+ */
+function clearRows() {
 }
 
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
+/**
+ * 确认
+ * @param id 主键
+ */
+function confirmEvent(id: number) {
+  if (id) {
+    removeRow(id)
   }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
+}
 
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
+/**
+ * 全选操作
+ * @param val 是否全选
+ */
+function handleCheckAllChange(val: CheckboxValueType) {
+  checkedColumns.value = val ? columns.value : []
+  isIndeterminate.value = false
+}
 
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
+/**
+ * 选中操作
+ * @param value 选中的值
+ */
+function handleCheckedChange(value: CheckboxValueType[]) {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === columns.value.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
 }
 </script>
+
+<template>
+  <ElSpace size="large" fill>
+    <ElCard shadow="never">
+      <ElForm inline :model="filters">
+        <ElFormItem :label="$t('name')" prop="name">
+          <ElInput v-model="filters.name" :placeholder="$t('inputText', { field: $t('name') })" />
+        </ElFormItem>
+        <ElFormItem>
+          <ElButton title="search" type="primary" @click="load">
+            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('search') }}
+          </ElButton>
+          <ElButton title="reset" @click="reset">
+            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('reset') }}
+          </ElButton>
+        </ElFormItem>
+      </ElForm>
+    </ElCard>
+
+    <ElCard shadow="never">
+      <ElRow :gutter="20" justify="space-between" class="mb-4">
+        <ElCol :span="16" class="text-left">
+          <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
+            <Icon icon="material-symbols:clear-all-rounded" width="18" height="18" />{{ $t('clear') }}
+          </ElButton>
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows">
+            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
+          </ElButton>
+        </ElCol>
+
+        <ElCol :span="8" class="text-right">
+          <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+            <ElButton title="refresh" type="primary" plain circle @click="load">
+              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+            </ElButton>
+          </ElTooltip>
+
+          <ElTooltip :content="$t('column') + $t('settings')" placement="top">
+            <div class="inline-flex items-center align-middle ml-3">
+              <ElPopover :width="200" trigger="click">
+                <template #reference>
+                  <ElButton title="setgings" type="success" plain circle>
+                    <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
+                  </ElButton>
+                </template>
+                <div>
+                  <ElCheckbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+                    {{ $t('all') }}
+                  </ElCheckbox>
+                  <ElDivider />
+                  <ElCheckboxGroup v-model="checkedColumns" @change="handleCheckedChange">
+                    <draggable v-model="columns" item-key="simple">
+                      <template #item="{ element }">
+                        <div class="flex items-center space-x-2">
+                          <Icon icon="material-symbols:drag-indicator" width="18" height="18"
+                            class="hover:cursor-move" />
+                          <ElCheckbox :label="element" :value="element" :disabled="element === columns[0]">
+                            <div class="inline-flex items-center space-x-4">
+                              {{ $t(element) }}
+                            </div>
+                          </ElCheckbox>
+                        </div>
+                      </template>
+                    </draggable>
+                  </ElCheckboxGroup>
+                </div>
+              </ElPopover>
+            </div>
+          </ElTooltip>
+        </ElCol>
+      </ElRow>
+
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+        <ElTableColumn type="selection" width="55" />
+        <ElTableColumn type="index" :label="$t('no')" width="55" />
+        <ElTableColumn prop="name" :label="$t('name')" sortable>
+          <template #default="scope">
+            <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
+              {{ scope.row.name }}
+            </ElButton>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="startTime" :label="$t('startTime')" sortable>
+          <template #default="scope">
+            {{ dayjs(scope.row.startTime).format('YYYY-MM-DD HH:mm') }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="status" :label="$t('status')" sortable>
+          <template #default="scope">
+            <ElTag v-if="scope.row.status === 0" type="primary" round>
+              <Icon icon="material-symbols:progress-activity" class="spin mr-1" />{{ $t('processing') }}
+            </ElTag>
+            <ElTag v-else-if="scope.row.status === 1" type="success" round>
+              <Icon icon="material-symbols:check-rounded" class="mr-1" />{{ $t('done') }}
+            </ElTag>
+            <ElTag v-else type="danger" round>
+              <Icon icon="material-symbols:error-outline-rounded" class="mr-1" />{{ $t('failure') }}
+            </ElTag>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="executedTimes" :label="$t('executedTimes')" sortable>
+          <template #default="scope">
+            {{ scope.row.executedTimes ? formatDuration(scope.row.executedTimes) : '-' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="nextExecuteTime" :label="$t('nextExecuteTime')" sortable>
+          <template #default="scope">
+            {{ dayjs(scope.row.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn :label="$t('actions')">
+          <template #default="scope">
+            <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+              <template #reference>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
+                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
+                </ElButton>
+              </template>
+            </ElPopconfirm>
+          </template>
+        </ElTableColumn>
+      </ElTable>
+      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+    </ElCard>
+  </ElSpace>
+
+  <DialogView v-model="visible" show-close :title="$t('details')">
+    <ElDescriptions v-loading="detailLoading" border>
+      <ElDescriptionsItem :label="$t('name')">{{ row.name }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('startTime')">
+        {{ dayjs(row.startTime).format('YYYY-MM-DD HH:mm') }}
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('executedTimes')">
+        {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('status')">
+        <ElTag v-if="row.status === 0" type="primary" round>{{ $t('processing') }}</ElTag>
+        <ElTag v-else-if="row.status === 1" type="success" round>{{ $t('done') }}</ElTag>
+        <ElTag v-else type="danger" round>{{ $t('failure') }}</ElTag>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('nextExecuteTime')" :span="2">
+        {{ dayjs(row.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('logs')" :span="3">
+        {{ row.record }}
+      </ElDescriptionsItem>
+    </ElDescriptions>
+  </DialogView>
+</template>
+
+<style lang="scss">
+.el-tag__content {
+  display: inline-flex;
+  align-items: center;
+}
+</style>

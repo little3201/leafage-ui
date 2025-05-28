@@ -1,20 +1,25 @@
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const { push } = useRouter()
+</script>
+
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md row flex-center">
-    <div>
-      <div style="font-size: 30vh">
-        404
+  <ElContainer class="h-screen">
+    <ElMain class="flex-col tems-center justify-center">
+      <ElImage :alt="404" src="/svgs/404.svg" class="w-1/3 mx-auto" />
+      <div class="text-center">
+        <div class="text-2xl text-[var(--el-color-info)]">Oops. Nothing here...</div>
+        <div class="mt-8">
+          <ElButton size="large" type="primary" @click="push('/')">{{ $t('goHome') }}</ElButton>
+        </div>
       </div>
-
-      <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
-      </div>
-
-      <q-btn type="button" title="go_home" class="q-mt-xl" color="white" text-color="blue" unelevated to="/"
-        :label="$t('goHome')" no-caps />
-    </div>
-  </div>
+    </ElMain>
+  </ElContainer>
 </template>
 
-<script setup lang="ts">
-
-</script>
+<style lang="scss" scoped>
+.el-main {
+  display: flex;
+}
+</style>
