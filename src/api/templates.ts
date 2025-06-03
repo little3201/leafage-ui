@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Template } from 'src/types'
+import type { Pagination, MasterPlate } from 'src/types'
 
 /**
  * Retrieve rows
@@ -8,7 +8,7 @@ import type { Pagination, Template } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveTemplates = (pagination: Pagination, filters?: object) => {
+export const retrieveMasterPlates = (pagination: Pagination, filters?: object) => {
   return api.get(SERVER_URL.TEMPLATE, { params: { ...pagination, page: pagination.page - 1, ...filters } })
 }
 
@@ -17,7 +17,7 @@ export const retrieveTemplates = (pagination: Pagination, filters?: object) => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchTemplate = (id: number) => {
+export const fetchMasterPlate = (id: number) => {
   return api.get(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
@@ -27,7 +27,7 @@ export const fetchTemplate = (id: number) => {
  * @param id Row ID
  * @returns Row data
  */
-export const checkTemplateExists = (name: string, suffix: string, version: string, id?: number) => {
+export const checkMasterPlateExists = (name: string, suffix: string, version: string, id?: number) => {
   return api.get(`${SERVER_URL.TEMPLATE}/exists`, { params: { name, suffix, version, id } })
 }
 
@@ -36,7 +36,7 @@ export const checkTemplateExists = (name: string, suffix: string, version: strin
  * @param row Row data
  * @returns Created row
  */
-export const createTemplate = (row: Template) => {
+export const createMasterPlate = (row: MasterPlate) => {
   return api.post(SERVER_URL.TEMPLATE, row)
 }
 
@@ -46,7 +46,7 @@ export const createTemplate = (row: Template) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyTemplate = (id: number, row: Template) => {
+export const modifyMasterPlate = (id: number, row: MasterPlate) => {
   return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row)
 }
 
@@ -55,7 +55,7 @@ export const modifyTemplate = (id: number, row: Template) => {
  * @param id Row ID
  * @returns Enable or Disable result
  */
-export const enableTemplate = (id: number) => {
+export const enableMasterPlate = (id: number) => {
   return api.patch(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
@@ -64,7 +64,7 @@ export const enableTemplate = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeTemplate = (id: number) => {
+export const removeMasterPlate = (id: number) => {
   return api.delete(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
@@ -73,7 +73,7 @@ export const removeTemplate = (id: number) => {
  * @param file file
  * @returns
  */
-export const importTemplates = (file: File) => {
+export const importMasterPlates = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
   return api.post(`${SERVER_URL.TEMPLATE}/import`, formData)

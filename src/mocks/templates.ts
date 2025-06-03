@@ -1,8 +1,8 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Template } from 'src/types'
+import type { MasterPlate } from 'src/types'
 
-const datas: Template[] = [
+const datas: MasterPlate[] = [
   {
     id: 1,
     name: 'IndexPage',
@@ -83,7 +83,7 @@ export const templatesHandlers = [
   }),
   http.post(`/api${SERVER_URL.TEMPLATE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Template
+    const newData = await request.json() as MasterPlate
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -95,7 +95,7 @@ export const templatesHandlers = [
   http.put(`/api${SERVER_URL.TEMPLATE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Template
+    const newData = await request.json() as MasterPlate
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"

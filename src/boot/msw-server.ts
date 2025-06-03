@@ -4,7 +4,7 @@ import { handlers } from 'src/mocks' // 您的请求处理程序
 
 export default defineBoot(async ({ router }) => {
   // dev
-  if (process.env.DEV) {
+  if (!process.env.DEV) {
 
     router.addRoute({
       path: '/login',

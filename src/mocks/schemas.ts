@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Schema, Field, Template } from 'src/types'
+import type { Schema, Field, MasterPlate } from 'src/types'
 
 const datas: Schema[] = [
 ]
@@ -38,7 +38,7 @@ for (let i = 1; i < 28; i++) {
   fields.push(field)
 }
 
-const templates: Template[] = [
+const templates: MasterPlate[] = [
   {
     id: 1,
     name: 'IndexPage',
@@ -121,11 +121,11 @@ export const schemasHandlers = [
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
-    
+
     if (!file) {
       return new HttpResponse('Missing document', { status: 400 })
     }
- 
+
     if (!(file instanceof File)) {
       return new HttpResponse('Uploaded document is not a File', {
         status: 400,
@@ -160,12 +160,12 @@ export const schemasHandlers = [
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
       // response and send back the newly created Row!
-      return HttpResponse.json({...newData, id: id}, { status: 202 })
+      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
     } else {
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/:id`, async({ params }) => {
+  http.patch(`/api${SERVER_URL.SCHEMA}/:id`, async ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
