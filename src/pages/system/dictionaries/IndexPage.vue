@@ -11,7 +11,7 @@ import {
 } from 'src/api/dictionaries'
 import type { Pagination, Dictionary } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { hasAction } from 'src/utils'
+import { hasAction, exportToCSV } from 'src/utils'
 
 
 const { t } = useI18n()
@@ -113,9 +113,10 @@ function exportRows() {
   exportLoading.value = true
 
   const selectedRows = tableRef.value?.getSelectionRows()
-  if (selectedRows) {
-    console.log('selectedRows: ', selectedRows)
+  if (selectedRows && selectedRows.length) {
+    exportToCSV(selectedRows, 'dictionaries')
   }
+  exportLoading.value = false
 }
 
 /**
@@ -334,7 +335,7 @@ function handleCheckedChange(value: CheckboxValueType[]) {
 
   <!-- import -->
   <DialogView v-model="importVisible" :title="$t('import')" width="36%">
-    <p>{{ $t('masterPlates') + ' ' + $t('download') }}：
+    <p>{{ $t('master_plates') + ' ' + $t('download') }}：
       <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx
       </a>

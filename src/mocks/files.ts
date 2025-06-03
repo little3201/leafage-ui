@@ -40,7 +40,7 @@ export const filesHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.FILE}/upload`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.FILE}`, async ({ request }) => {
     const data = await request.formData()
     const file = data.get('file')
 

@@ -29,7 +29,7 @@ export const fetchFile = (id: number) => {
 export const uploadFile = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
-  return api.post(`${SERVER_URL.FILE}/upload`, formData)
+  return api.post(`${SERVER_URL.FILE}`, formData)
 }
 
 /**

@@ -12,7 +12,7 @@ import {
 import { retrieveUsers } from 'src/api/users'
 import type { Pagination, Group, TreeNode, GroupMembers, User, GroupPrivileges } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { hasAction } from 'src/utils'
+import { hasAction, exportToCSV } from 'src/utils'
 import { actions } from 'src/constants'
 
 
@@ -199,9 +199,10 @@ function exportRows() {
   exportLoading.value = true
 
   const selectedRows = tableRef.value?.getSelectionRows()
-  if (selectedRows) {
-    console.log('selectedRows: ', selectedRows)
+  if (selectedRows && selectedRows.length) {
+    exportToCSV(selectedRows, 'groups')
   }
+  exportLoading.value = false
 }
 
 /**
@@ -588,7 +589,7 @@ function handleActionCheck(privilegeId: number, item: string) {
 
   <!-- import -->
   <DialogView v-model="importVisible" :title="$t('import')" width="36%">
-    <p>{{ $t('masterPlates') + ' ' + $t('download') }}：
+    <p>{{ $t('master_plates') + ' ' + $t('download') }}：
       <a :href="`templates/groups.xlsx`" :download="$t('groups') + '.xlsx'">
         {{ $t('groups') }}.xlsx
       </a>

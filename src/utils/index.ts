@@ -1,7 +1,8 @@
 import { dayjs } from 'element-plus'
+import * as XLSX from 'xlsx'
 import { useUserStore } from 'stores/user-store'
 import type { PrivilegeTreeNode } from 'src/types'
-import type {RouteRecordNameGeneric} from 'vue-router'
+import type { RouteRecordNameGeneric } from 'vue-router'
 
 /**
  * Resolve a child path relative to a parent path
@@ -149,8 +150,52 @@ export function computeChallenge(codeVerifier: string): Promise<string> {
   })
 }
 
+export function hasAction(page: RouteRecordNameGeneric, action: string) {
+  if (page) {
+    const userStore = useUserStore()
+    const privileges = userStore.privileges
+    const actions = findNodeByPath(privileges, page as string)
+
+    return actions.includes(action)
+  }
+  return false
+}
+
+/**
+ * 导出excel
+ * @param data 数据
+ * @param fileName 
+ */
+export function exportToExcel(data: object[], fileName: string, sheetName?: string) {
+  const ws = XLSX.utils.json_to_sheet(data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, sheetName && sheetName.length ? sheetName : 'Sheet1')
+
+  // 导出 Excel 文件
+  XLSX.writeFile(wb, fileName.replace(/\.[^/.]+$/, '') + '.xlsx')
+}
+
+/**
+ * 导出csv
+ * @param data 数据
+ * @param fileName 
+ */
+export function exportToCSV(data: object[], fileName: string) {
+  const ws = XLSX.utils.json_to_sheet(data)
+  const csv = XLSX.utils.sheet_to_csv(ws) 
+
+  // 创建 Blob 对象并触发下载
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = fileName.replace(/\.[^/.]+$/, '') + '.csv'
+
+  link.click()
+}
+
+
 // 递归查找权限节点
-export function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): string[] {
+function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): string[] {
   for (const node of privileges) {
     if (node.name === name) {
       return node.meta.actions || [];
@@ -161,15 +206,4 @@ export function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): s
     }
   }
   return [];
-}
-
-export function hasAction(page: RouteRecordNameGeneric, action: string) {
-  if (page) {
-    const userStore = useUserStore()
-    const privileges = userStore.privileges
-    const actions = findNodeByPath(privileges, page as string)
-  
-    return actions.includes(action)
-  }
-  return false
 }

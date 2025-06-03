@@ -8,7 +8,7 @@ import {
   retrievePrivileges, retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege, importPrivileges
 } from 'src/api/privileges'
 import { retrieveDictionarySubset } from 'src/api/dictionaries'
-import { visibleArray, hasAction } from 'src/utils'
+import { visibleArray, hasAction, exportToCSV } from 'src/utils'
 import { actions } from 'src/constants'
 import type { Pagination, Privilege, Dictionary } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -139,9 +139,10 @@ function exportRows() {
   exportLoading.value = true
 
   const selectedRows = tableRef.value?.getSelectionRows()
-  if (selectedRows) {
-    console.log('selectedRows: ', selectedRows)
+  if (selectedRows && selectedRows.length) {
+    exportToCSV(selectedRows, 'privileges')
   }
+  exportLoading.value = false
 }
 
 /**
@@ -431,7 +432,7 @@ function handleCheckedChange(value: CheckboxValueType[]) {
 
   <!-- import -->
   <DialogView v-model="importVisible" :title="$t('import')" width="36%">
-    <p>{{ $t('masterPlates') + ' ' + $t('download') }}：
+    <p>{{ $t('master_plates') + ' ' + $t('download') }}：
       <a :href="`templates/privileges.xlsx`" :download="$t('privileges') + '.xlsx'">
         {{ $t('privileges') }}.xlsx
       </a>

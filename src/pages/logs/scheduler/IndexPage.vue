@@ -7,7 +7,7 @@ import DialogView from 'components/DialogView.vue'
 import { retrieveSchedulerLogs, fetchSchedulerLog } from 'src/api/scheduler-logs'
 import type { Pagination, SchedulerLog } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { formatDuration, hasAction } from 'src/utils'
+import { formatDuration, hasAction, exportToCSV } from 'src/utils'
 
 const loading = ref<boolean>(false)
 const datas = ref<Array<SchedulerLog>>([])
@@ -30,6 +30,7 @@ const filters = ref({
 })
 
 const detailLoading = ref<boolean>(false)
+const exportLoading = ref<boolean>(false)
 const initialValues: SchedulerLog = {
   id: undefined,
   name: ''
@@ -87,8 +88,13 @@ onMounted(() => {
  * 导出
  */
 async function exportRows() {
+  exportLoading.value = true
+
   const selectedRows = tableRef.value?.getSelectionRows()
-  console.log('selectedRows:', selectedRows)
+  if (selectedRows && selectedRows.length) {
+    exportToCSV(selectedRows, 'scheduler-logs')
+  }
+  exportLoading.value = false
 }
 
 /**
@@ -169,7 +175,8 @@ function handleCheckedChange(value: CheckboxValueType[]) {
           <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
             <Icon icon="material-symbols:clear-all-rounded" width="18" height="18" />{{ $t('clear') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows">
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
+            :loading="exportLoading">
             <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
           </ElButton>
         </ElCol>

@@ -13,7 +13,7 @@ import { i18n } from 'boot/i18n'
 
 
 async function prepareApp() {
-  if (import.meta.env.DEV) {
+  if (!import.meta.env.DEV) {
     const { worker } = await import('boot/msw-browser')
     
     router.addRoute({

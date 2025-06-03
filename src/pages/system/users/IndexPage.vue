@@ -11,7 +11,7 @@ import {
 } from 'src/api/users'
 import type { Pagination, User } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { calculate, hasAction } from 'src/utils'
+import { calculate, hasAction, exportToExcel } from 'src/utils'
 
 
 const { t, locale } = useI18n()
@@ -130,9 +130,10 @@ function exportRows() {
   exportLoading.value = true
 
   const selectedRows = tableRef.value?.getSelectionRows()
-  if (selectedRows) {
-    console.log('selectedRows: ', selectedRows)
+  if (selectedRows && selectedRows.length) {
+    exportToExcel(selectedRows, 'users')
   }
+  exportLoading.value = false
 }
 
 /**
@@ -460,13 +461,13 @@ function handleCheckedChange(value: CheckboxValueType[]) {
 
   <!-- import -->
   <DialogView v-model="importVisible" :title="$t('import')" width="36%">
-    <p>{{ $t('masterPlates') + ' ' + $t('download') }}：
+    <p>{{ $t('master_plates') + ' ' + $t('download') }}：
       <a :href="`templates/users.xlsx`" :download="$t('users') + '.xlsx'">
         {{ $t('users') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+      accept=".csv,.xls,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
       :headers="{ Authorization: `Bearer ${userStore.accessToken}` }">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />

@@ -118,6 +118,7 @@ export default {
   enable: '启用',
   unlock: '解锁',
 
+  // 权限key，小写，下划线
   home: '首页',
   system: '系统管理',
   groups: '分组',
@@ -127,15 +128,15 @@ export default {
   dictionaries: '字典',
   regions: '行政区划',
   logs: '日志记录',
-  operationLogs: '操作日志',
-  accessLogs: '访问日志',
-  auditLogs: '审计日志',
-  schedulerLogs: '调度日志',
+  operation_logs: '操作日志',
+  access_logs: '访问日志',
+  audit_logs: '审计日志',
+  scheduler_logs: '调度日志',
   files: '文件管理',
   exploiters: '开发工具',
   schemas: '计划',
   scripts: '脚本',
-  masterPlates: '母版',
+  master_plates: '母版',
 
   inputText: '请输入{field}',
   selectText: '请选择{field}',

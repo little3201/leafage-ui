@@ -7,7 +7,7 @@ import { retrieveAuditLogs, fetchAuditLog, removeAuditLog } from 'src/api/audit-
 import type { Pagination, AuditLog } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { actions } from 'src/constants'
-import { formatDuration, hasAction } from 'src/utils'
+import { formatDuration, hasAction, exportToCSV } from 'src/utils'
 
 
 const loading = ref<boolean>(false)
@@ -31,6 +31,7 @@ const filters = ref({
 })
 
 const detailLoading = ref<boolean>(false)
+const exportLoading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: undefined,
   operation: '',
@@ -94,8 +95,13 @@ onMounted(() => {
  * 导出
  */
 async function exportRows() {
+  exportLoading.value = true
+
   const selectedRows = tableRef.value?.getSelectionRows()
-  console.log('selectedRows:', selectedRows)
+  if (selectedRows && selectedRows.length) {
+    exportToCSV(selectedRows, 'audit-logs')
+  }
+  exportLoading.value = false
 }
 
 /**
@@ -170,7 +176,8 @@ function handleCheckedChange(value: CheckboxValueType[]) {
     <ElCard shadow="never">
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
-          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows">
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
+            :loading="exportLoading">
             <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
           </ElButton>
         </ElCol>
