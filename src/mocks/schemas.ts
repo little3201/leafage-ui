@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Schema, Field, TemplateTreeNode } from 'src/types'
+import type { Schema, Field, MasterPlateTreeNode } from 'src/types'
 
 const datas: Schema[] = [
 ]
@@ -38,7 +38,7 @@ for (let i = 1; i < 28; i++) {
   fields.push(field)
 }
 
-const templateTreeNodes: TemplateTreeNode[] = [
+const templateTreeNodes: MasterPlateTreeNode[] = [
   {
     id: 1,
     name: 'Server',

@@ -122,11 +122,11 @@ export interface PrivilegeTreeNode extends TreeNode {
   children?: PrivilegeTreeNode[]
 }
 
-export interface TemplateTreeNode extends TreeNode {
+export interface MasterPlateTreeNode extends TreeNode {
   content?: string
   type?: string
   suffix?: string
-  children?: TemplateTreeNode[]
+  children?: MasterPlateTreeNode[]
 }
 
 export interface OperationLog extends AudtiMetadata {
@@ -207,7 +207,7 @@ export interface Field extends AudtiMetadata {
   description: string
 }
 
-export interface Template extends AudtiMetadata {
+export interface MasterPlate extends AudtiMetadata {
   name: string
   suffix: string
   content: string
