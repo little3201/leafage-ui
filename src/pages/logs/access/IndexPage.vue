@@ -3,7 +3,7 @@ import { ref, onMounted, reactive } from 'vue'
 import type { TableInstance, CheckboxValueType } from 'element-plus'
 import draggable from 'vuedraggable'
 import DialogView from 'components/DialogView.vue'
-import { retrieveAccessLogs, fetchAccessLog, removeAccessLog } from 'src/api/access-logs'
+import { retrieveAccessLogs, fetchAccessLog, removeAccessLog, clearAccessLogs } from 'src/api/access-logs'
 import type { Pagination, AccessLog } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { formatDuration, hasAction, exportToCSV } from 'src/utils'
@@ -124,6 +124,7 @@ function removeRow(id: number) {
  * 清空
  */
 function clearRows() {
+  clearAccessLogs().then(() => load())
 }
 
 /**
@@ -237,13 +238,11 @@ function handleCheckedChange(value: CheckboxValueType[]) {
         <ElTableColumn prop="url" :label="$t('url')" sortable>
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
+              <ElTag :type="httpMethods[scope.row.httpMethod]" size="small" class="mr-2">
+                {{ scope.row.httpMethod }}
+              </ElTag>
               {{ scope.row.url }}
             </ElButton>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="httpMethod" :label="$t('httpMethod')" sortable>
-          <template #default="scope">
-            <ElBadge is-dot :type="httpMethods[scope.row.httpMethod]" class="mr-1" />{{ scope.row.httpMethod }}
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="params" :label="$t('params')" />
@@ -284,10 +283,11 @@ function handleCheckedChange(value: CheckboxValueType[]) {
 
   <DialogView v-model="visible" show-close :title="$t('details')">
     <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('url')">{{ row.url }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('httpMethod')">
-        <ElBadge is-dot :type="httpMethods[row.httpMethod as string]" />
-        {{ row.httpMethod }}
+      <ElDescriptionsItem :label="$t('url')" :span="2">
+        <ElTag :type="httpMethods[row.httpMethod]" size="small" class="mr-2">
+          {{ row.httpMethod }}
+        </ElTag>
+        {{ row.url }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('statusCode')">
         <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>

@@ -1,13 +1,13 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Database } from 'src/types'
+import type { Connection } from 'src/types'
 
 
-const databases: Database[] = [
+const databases: Connection[] = [
 ]
 
 for (let i = 1; i < 8; i++) {
-  const row: Database = {
+  const row: Connection = {
     id: i,
     name: 'db_name' + i,
     host: '127.0.0.1',
@@ -61,7 +61,7 @@ export const connectionsHandlers = [
   }),
   http.post(`/api${SERVER_URL.CONNECTIONS}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Database
+    const newData = await request.json() as Connection
 
     // Push the new Row to the map of all Row.
     databases.push(newData)
@@ -73,7 +73,7 @@ export const connectionsHandlers = [
   http.put(`/api${SERVER_URL.CONNECTIONS}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Database
+    const newData = await request.json() as Connection
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"

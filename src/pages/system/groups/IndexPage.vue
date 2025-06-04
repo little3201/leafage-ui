@@ -480,7 +480,7 @@ function handleActionCheck(privilegeId: number, item: string) {
           </ElCol>
         </ElRow>
 
-        <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+        <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
           <ElTableColumn type="selection" width="55" />
           <ElTableColumn type="index" :label="$t('no')" width="55" />
           <ElTableColumn prop="name" :label="$t('name')" sortable />

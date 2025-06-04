@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions, CheckboxValueType, TransferDirection, TransferKey } from 'element-plus'
-import type { Pagination, Role, RoleMembers, User, RolePrivileges } from 'src/types'
+import type { Pagination, Role, RoleMembers, User, RolePrivileges, TreeNode } from 'src/types'
 import draggable from 'vuedraggable'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import DialogView from 'components/DialogView.vue'
 import {
   retrieveRoles, fetchRole, createRole, modifyRole, removeRole, enableRole, checkRoleExists, importRoles,
-  retrieveRoleMembers, relationRoleMembers, removeRoleMembers, retrieveRolePrivileges, relationRolePrivileges
+  retrieveRoleMembers, relationRoleMembers, removeRoleMembers, retrieveRolePrivileges, relationRolePrivileges,
+  removeRolePrivileges
 } from 'src/api/roles'
 import { retrieveUsers } from 'src/api/users'
 import { Icon } from '@iconify/vue'
@@ -165,6 +166,7 @@ async function relationRow(id: number) {
 
 async function authorizeRow(id: number) {
   authorities.value = []
+  form.value.id = id
   retrieveRolePrivileges(id).then(res => {
     authorities.value = res.data.map((row: RolePrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
   })
@@ -228,7 +230,12 @@ function onSubmit(formEl: FormInstance | undefined) {
 async function onAuthorizeSubmit() {
   authorizeLoading.value = true
   if (form.value.id) {
-    relationRolePrivileges(form.value.id, authorities.value)
+    relationRolePrivileges(form.value.id, authorities.value).then(() => {
+      authorizeVisible.value = false
+    })
+      .finally(() => {
+        authorizeLoading.value = false
+      })
   }
 }
 
@@ -293,6 +300,23 @@ function handleTransferChange(value: TransferKey[], direction: TransferDirection
       relationRoleMembers(form.value.id, value as string[])
     } else {
       removeRoleMembers(form.value.id, value as string[])
+    }
+  }
+}
+
+function handleCheckChange(data: TreeNode, checked: boolean) {
+  if (!data.id || (data.children?.length ?? 0) > 0) return
+
+  const keyIndex = authorities.value.findIndex(a => a.privilegeId === data.id)
+
+  if (checked && keyIndex === -1) {
+    // 只在未找到时添加，避免重复 push
+    authorities.value.push({ privilegeId: data.id, actions: [] })
+  } else if (!checked && keyIndex !== -1) {
+    // 只在找到时删除
+    authorities.value.splice(keyIndex, 1)
+    if (form.value.id) {
+      removeRolePrivileges(form.value.id, data.id)
     }
   }
 }
@@ -483,7 +507,8 @@ function handleActionCheck(privilegeId: number, item: string) {
   <!-- authorize -->
   <DialogView v-model="authorizeVisible" :title="$t('authorize')" width="65%" :max-height="500">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
-      :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false">
+      :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
+      @check-change="handleCheckChange">
       <template #default="{ node, data }">
         <div class="flex flex-1 ">
           <Icon v-if="data.meta.icon" :icon="`material-symbols:${data.meta.icon}-rounded`" width="18" height="18"

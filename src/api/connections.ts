@@ -1,13 +1,13 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Database } from 'src/types'
+import type { Pagination, Connection } from 'src/types'
 
 
 /**
  * Retrieve rows
  * @returns Rows data
  */
-export const retrieveDatabases = (pagination: Pagination, filters?: object) => {
+export const retrieveConnections = (pagination: Pagination, filters?: object) => {
   return api.get(`${SERVER_URL.CONNECTIONS}`, { params: { ...pagination, page: pagination.page - 1, ...filters } })
 }
 
@@ -16,7 +16,7 @@ export const retrieveDatabases = (pagination: Pagination, filters?: object) => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchDatabase = (id: number) => {
+export const fetchConnection = (id: number) => {
   return api.get(`${SERVER_URL.CONNECTIONS}/${id}`)
 }
 
@@ -25,7 +25,7 @@ export const fetchDatabase = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createDatabase = (row: Database) => {
+export const createConnection = (row: Connection) => {
   return api.post(SERVER_URL.CONNECTIONS, row)
 }
 
@@ -35,7 +35,7 @@ export const createDatabase = (row: Database) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyDatabase = (id: number, row: Database) => {
+export const modifyConnection = (id: number, row: Connection) => {
   return api.put(`${SERVER_URL.CONNECTIONS}/${id}`, row)
 }
 
@@ -52,6 +52,15 @@ export const retrieveTables = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeDatabase = (id: number) => {
+export const removeConnection = (id: number) => {
   return api.delete(`${SERVER_URL.CONNECTIONS}/${id}`)
+}
+
+/**
+ * Exeucte a row
+ * @param id Row ID
+ * @returns Execute result
+ */
+export const executeConnection = (id: number) => {
+  return api.get(`${SERVER_URL.CONNECTIONS}/${id}/execute`)
 }

@@ -135,7 +135,7 @@ export default {
   exploiters: '開發工具',
   schemas: '計劃',
   scripts: '腳本',
-  master_plates: '母版',
+  master_plates: '母板',
 
   inputText: '請輸入{field}',
   selectText: '請選擇{field}',

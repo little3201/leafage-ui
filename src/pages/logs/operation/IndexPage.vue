@@ -3,7 +3,7 @@ import { ref, onMounted, reactive } from 'vue'
 import type { TableInstance, CheckboxValueType } from 'element-plus'
 import draggable from 'vuedraggable'
 import DialogView from 'components/DialogView.vue'
-import { retrieveOperationLogs, fetchOperationLog, removeOperationLog } from 'src/api/operation-logs'
+import { retrieveOperationLogs, fetchOperationLog, removeOperationLog, clearOperationLogs } from 'src/api/operation-logs'
 import type { Pagination, OperationLog } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { formatDuration, hasAction, exportToCSV } from 'src/utils'
@@ -122,6 +122,7 @@ function removeRow(id: number) {
  * 清空
  */
 function clearRows() {
+  clearOperationLogs().then(() => load())
 }
 
 /**

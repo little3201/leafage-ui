@@ -173,7 +173,7 @@ const subDatas: Dictionary[] = [
     lastModifiedDate: new Date()
   },
   {
-    name: 'Database',
+    name: 'Connection',
     superiorId: 68,
     description: '数据库',
     id: 57,

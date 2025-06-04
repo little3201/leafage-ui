@@ -8,7 +8,7 @@ const datas: Script[] = [
     name: 'MySQL',
     icon: '/svgs/mysql.svg',
     version: '8.0.34',
-    type: 'Database',
+    type: 'Connection',
     content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   }, {
@@ -34,7 +34,7 @@ const datas: Script[] = [
     name: 'PostgreSql',
     icon: '/svgs/postgresql.svg',
     version: '16.2.3',
-    type: 'Database',
+    type: 'Connection',
     content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   },

@@ -4,7 +4,7 @@ import { dayjs } from 'element-plus'
 import type { TableInstance, CheckboxValueType } from 'element-plus'
 import draggable from 'vuedraggable'
 import DialogView from 'components/DialogView.vue'
-import { retrieveSchedulerLogs, fetchSchedulerLog } from 'src/api/scheduler-logs'
+import { retrieveSchedulerLogs, fetchSchedulerLog, removeSchedulerLog, clearSchedulerLogs } from 'src/api/scheduler-logs'
 import type { Pagination, SchedulerLog } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { formatDuration, hasAction, exportToCSV } from 'src/utils'
@@ -113,13 +113,14 @@ function showRow(id: number) {
  * @param id 主键
  */
 function removeRow(id: number) {
-  datas.value = datas.value.filter(item => item.id !== id)
+  removeSchedulerLog(id).then(() => load())
 }
 
 /**
  * 清空
  */
 function clearRows() {
+  clearSchedulerLogs().then(() => load())
 }
 
 /**

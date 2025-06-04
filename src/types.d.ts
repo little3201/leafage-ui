@@ -222,7 +222,7 @@ export interface Script extends AudtiMetadata {
   content: string
 }
 
-export interface Database extends AudtiMetadata {
+export interface Connection extends AudtiMetadata {
   name: string
   host: string
   port: number | undefined

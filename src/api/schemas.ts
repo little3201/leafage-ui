@@ -62,7 +62,7 @@ export const syncSchema = (id: number) => {
  * @param id Row ID
  * @returns Created row
  */
-export const generateSchema = (id: number) => {
+export const executeSchema = (id: number) => {
   return api.get(`${SERVER_URL.SCHEMA}/${id}/execute`, { responseType: 'blob' })
 }
 
