@@ -27,8 +27,8 @@ export const fetchMasterPlate = (id: number) => {
  * @param id Row ID
  * @returns Row data
  */
-export const checkMasterPlateExists = (name: string, suffix: string, version: string, id?: number) => {
-  return api.get(`${SERVER_URL.MASTER_PLATE}/exists`, { params: { name, suffix, version, id } })
+export const checkMasterPlateExists = (name: string, suffix: string, type: string, version: string, id?: number) => {
+  return api.get(`${SERVER_URL.MASTER_PLATE}/exists`, { params: { name, suffix, type, version, id } })
 }
 
 /**

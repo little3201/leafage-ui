@@ -147,7 +147,6 @@ export interface OperationLog extends AudtiMetadata {
 export interface AccessLog extends AudtiMetadata {
   url: string
   httpMethod: string
-  operator?: string
   params?: string
   body?: string
   ip: string
@@ -158,7 +157,6 @@ export interface AccessLog extends AudtiMetadata {
 }
 
 export interface AuditLog extends AudtiMetadata {
-  operator: string
   operation: string
   resource: string
   oldValue?: string

@@ -8,6 +8,7 @@ import { retrieveSchedulerLogs, fetchSchedulerLog } from 'src/api/scheduler-logs
 import type { Pagination, SchedulerLog } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { formatDuration, hasAction, exportToCSV } from 'src/utils'
+import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
 
 const loading = ref<boolean>(false)
 const datas = ref<Array<SchedulerLog>>([])
@@ -240,14 +241,10 @@ function handleCheckedChange(value: CheckboxValueType[]) {
         </ElTableColumn>
         <ElTableColumn prop="status" :label="$t('status')" sortable>
           <template #default="scope">
-            <ElTag v-if="scope.row.status === 0" type="primary" round>
-              <Icon icon="material-symbols:progress-activity" class="spin mr-1" />{{ $t('processing') }}
-            </ElTag>
-            <ElTag v-else-if="scope.row.status === 1" type="success" round>
-              <Icon icon="material-symbols:check-rounded" class="mr-1" />{{ $t('done') }}
-            </ElTag>
-            <ElTag v-else type="danger" round>
-              <Icon icon="material-symbols:error-outline-rounded" class="mr-1" />{{ $t('failure') }}
+            <ElTag :type="shceduleStatus[scope.row.status]" round>
+              <Icon :icon="`material-symbols:${shceduleStatusIcon[scope.row.status]}`"
+                :class="[scope.row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="16" height="16" />
+              {{ scope.row.status }}
             </ElTag>
           </template>
         </ElTableColumn>

@@ -87,4 +87,20 @@ export const queryTypes: { [key: string]: string } = {
   notBetween: 'NOT BETWEEN',
   isNull: 'IS NULL',
   isNotNull: 'IS NOT NULL'
-};
+}
+
+export const shceduleStatus: {[key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger'} = {
+  PENDING: 'info', 
+  RUNNING: 'primary', 
+  SUCCESS: 'success',
+  FAILED: 'danger', 
+  CANCELED: 'warning'
+}
+
+export const shceduleStatusIcon: {[key: string]: string} = {
+  PENDING: 'pending-outline', 
+  RUNNING: 'progress-activity', 
+  SUCCESS: 'check-rounded',
+  FAILED: 'error-outline-rounded', 
+  CANCELED: 'cancel-outline-rounded'
+}

@@ -21,7 +21,6 @@ onMounted(() => {
         accessToken: res.data.access_token,
         idToken: res.data.id_token
       })
-      loading.value = false
       // 路由跳转
       replace(cookies.get('current_page') || '/')
     }

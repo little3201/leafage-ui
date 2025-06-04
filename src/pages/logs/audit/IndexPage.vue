@@ -35,7 +35,6 @@ const exportLoading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: undefined,
   operation: '',
-  operator: '',
   resource: '',
   ip: '',
   location: ''
@@ -280,11 +279,6 @@ function handleCheckedChange(value: CheckboxValueType[]) {
         <ElBadge is-dot :type="actions[row.operation.toLowerCase()]" class="mr-1" />{{ row.operation }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('resource')">{{ row.resource }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('operator')">{{ row.operator }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('oldValue')" :span="3">{{ row.oldValue }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('newValue')" :span="3">{{ row.newValue }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('ip')">{{ row.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('location')" :span="2">{{ row.location }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('statusCode')">
         <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>
           {{ row.statusCode }}
@@ -294,6 +288,10 @@ function handleCheckedChange(value: CheckboxValueType[]) {
         </ElTag>
         <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
       </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('oldValue')" :span="3">{{ row.oldValue }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('newValue')" :span="3">{{ row.newValue }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('ip')">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('location')">{{ row.location }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('operatedTimes')">{{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
       </ElDescriptionsItem>
     </ElDescriptions>

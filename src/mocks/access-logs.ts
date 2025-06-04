@@ -8,10 +8,9 @@ const datas: AccessLog[] = []
 for (let i = 1; i < 28; i++) {
   const row: AccessLog = {
     id: i,
-    operator: 'admin',
     url: '/users',
     httpMethod: 'POST',
-    body: '{"operator:"john", "role:"admin"}',
+    body: '{"role:"admin"}',
     ip: '192.168.0.1',
     location: 'New York',
     responseTimes: 120,

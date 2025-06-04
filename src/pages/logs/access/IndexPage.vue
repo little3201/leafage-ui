@@ -302,10 +302,9 @@ function handleCheckedChange(value: CheckboxValueType[]) {
       <ElDescriptionsItem v-if="row.body" :label="$t('body')" :span="3">{{ row.body }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('ip')">{{ row.ip }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('location')">{{ row.location }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('operator')">{{ row.operator }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('responseTimes')">{{ row.responseTimes ? formatDuration(row.responseTimes) : '-' }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('responseMessage')">{{ row.responseMessage }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('responseMessage')" :span=3>{{ row.responseMessage }}</ElDescriptionsItem>
     </ElDescriptions>
   </DialogView>
 </template>

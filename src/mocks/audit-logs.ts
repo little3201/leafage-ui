@@ -8,7 +8,6 @@ const datas: AuditLog[] = []
 for (let i = 1; i < 28; i++) {
   const row: AuditLog = {
     id: i,
-    operator: 'bob',
     operation: 'Modify',
     resource: 'Settings',
     oldValue: '{"theme:"light"}',
