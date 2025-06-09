@@ -43,6 +43,8 @@ const groupTree = ref<TreeNode[]>([])
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
+const view = ref<'table' | 'tree'>('table')
+
 const relationVisible = ref<boolean>(false)
 const relations = ref<Array<string>>([])
 const members = ref([])
@@ -184,6 +186,10 @@ watch(
 onMounted(() => {
   loadTree()
 })
+
+function onViewChange() {
+  view.value = view.value === 'table' ? 'tree' : 'table'
+}
 
 /**
  * 导入
@@ -440,8 +446,15 @@ function handleActionCheck(privilegeId: number, item: string) {
 
           <ElCol :span="8" class="text-right">
             <ElTooltip :content="$t('refresh')" placement="top">
-              <ElButton title="refresh" type="primary" plain circle @click="load">
+              <ElButton title="view" plain circle @click="load">
                 <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+              </ElButton>
+            </ElTooltip>
+            <ElTooltip :content="$t('view')" placement="top">
+              <ElButton title="view" type="primary" plain circle @click="onViewChange">
+                <Icon
+                  :icon="`material-symbols:${view === 'table' ? 'account-tree-outline-rounded' : 'view-list-outline'}`"
+                  width="18" height="18" />
               </ElButton>
             </ElTooltip>
 

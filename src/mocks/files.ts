@@ -11,6 +11,7 @@ for (let i = 1; i < 28; i++) {
     name: 'file_name_' + i + (i % 3 > 0 ? '.zip' : '.jpg'),
     mimeType: i % 3 > 0 ? 'application/zip' : 'text/jpg',
     size: Math.floor(Math.random() * 100000),
+    path: '/images',
     lastModifiedDate: new Date()
   }
   datas.push(data)

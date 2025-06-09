@@ -25,10 +25,12 @@ const initialValues: FileRecord = {
   id: undefined,
   name: '',
   mimeType: '',
-  size: 0
+  size: 0,
+  path: ''
 }
 const row = ref<FileRecord>({ ...initialValues })
 const visible = ref<boolean>(false)
+const view = ref<'table' | 'grid'>('table')
 const uploadVisible = ref<boolean>(false)
 
 const checkAll = ref<boolean>(true)
@@ -90,9 +92,15 @@ onMounted(() => {
   load()
 })
 
-function showRow(id: number) {
-  loadOne(id)
+function showRow(id: number | undefined) {
+  if (id) {
+    loadOne(id)
+  }
   visible.value = true
+}
+
+function onViewChange() {
+  view.value = view.value === 'table' ? 'grid' : 'table'
 }
 
 /**
@@ -185,18 +193,18 @@ function handleCheckedChange(value: CheckboxValueType[]) {
       <ElCard shadow="never">
         <p class="mt-0"><strong>Categories</strong></p>
         <ElMenu class="mt-4">
-          <ElMenuItem>
+          <ElMenuItem index="images">
             <ElButton title="images" circle type="success" size="large" class="mr-4">
               <Icon icon="material-symbols:imagesmode-outline-rounded" width="20" height="20" />
             </ElButton>Images
           </ElMenuItem>
-          <ElMenuItem>
+          <ElMenuItem index="videos">
             <ElButton title="videos" circle type="primary" size="large" class="mr-4">
               <Icon icon="material-symbols:videocam-outline-rounded" width="20" height="20" />
             </ElButton>
             Videos
           </ElMenuItem>
-          <ElMenuItem>
+          <ElMenuItem index="documents">
             <ElButton title="documents" circle type="warning" size="large" class="mr-4">
               <Icon icon="material-symbols:docs-outline-rounded" width="20" height="20" />
             </ElButton>Documents
@@ -232,8 +240,14 @@ function handleCheckedChange(value: CheckboxValueType[]) {
 
           <ElCol :span="8" class="text-right">
             <ElTooltip effect="dark" :content="$t('refresh')" placement="top">
-              <ElButton title="refresh" type="primary" plain circle @click="load">
+              <ElButton title="refresh" plain circle @click="load">
                 <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+              </ElButton>
+            </ElTooltip>
+            <ElTooltip :content="$t('view')" placement="top">
+              <ElButton title="view" type="primary" plain circle @click="onViewChange">
+                <Icon :icon="`material-symbols:${view === 'table' ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
+                  width="18" height="18" />
               </ElButton>
             </ElTooltip>
 
@@ -241,7 +255,7 @@ function handleCheckedChange(value: CheckboxValueType[]) {
               <div class="inline-flex items-center align-middle ml-3">
                 <ElPopover :width="200" trigger="click">
                   <template #reference>
-                    <ElButton title="settings" type="success" plain circle>
+                    <ElButton title="settings" type="success" plain circle :disabled="view === 'grid'">
                       <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
                     </ElButton>
                   </template>
@@ -272,52 +286,76 @@ function handleCheckedChange(value: CheckboxValueType[]) {
           </ElCol>
         </ElRow>
 
-        <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
-          @sort-change="handleSortChange">
-          <ElTableColumn type="index" :label="$t('no')" width="55" />
-          <ElTableColumn prop="name" :label="$t('name')" sortable>
-            <template #default="scope">
-              <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
-                {{ scope.row.name }}
-              </ElButton>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="size" :label="$t('size')" sortable>
-            <template #default="scope">
-              {{ formatFileSize(scope.row.size) }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="lastModifiedDate" :label="$t('lastModifiedDate')" sortable>
-            <template #default="scope">
-              {{ dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('actions')">
-            <template #default="scope">
-              <ElButton v-if="hasAction($route.name, 'download')" title="download" size="small" type="success" link
-                @click="downloadRow(scope.row.id, scope.row.name, scope.row.mimeType)">
-                <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('download') }}
-              </ElButton>
-              <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
-                <template #reference>
-                  <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
-                    <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
-                  </ElButton>
-                </template>
-              </ElPopconfirm>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-        <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+        <template v-if="view === 'table'">
+          <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
+            @sort-change="handleSortChange">
+            <ElTableColumn type="index" :label="$t('no')" width="55" />
+            <ElTableColumn prop="name" :label="$t('name')" sortable>
+              <template #default="scope">
+                <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
+                  {{ scope.row.name }}
+                </ElButton>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="size" :label="$t('size')" sortable>
+              <template #default="scope">
+                {{ formatFileSize(scope.row.size) }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="mimeType" :label="$t('type')" sortable />
+            <ElTableColumn prop="lastModifiedDate" :label="$t('lastModifiedDate')" sortable>
+              <template #default="scope">
+                {{ dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('actions')">
+              <template #default="scope">
+                <ElButton v-if="hasAction($route.name, 'download')" title="download" size="small" type="success" link
+                  @click="downloadRow(scope.row.id, scope.row.name, scope.row.mimeType)">
+                  <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('download') }}
+                </ElButton>
+                <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+                  <template #reference>
+                    <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
+                      <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
+                    </ElButton>
+                  </template>
+                </ElPopconfirm>
+              </template>
+            </ElTableColumn>
+          </ElTable>
+          <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+        </template>
+
+        <div v-else class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+          <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
+            body-class="hover:bg-[var(--el-bg-color-page)]">
+            <ElImage v-if="['text/jpg', 'jpeg', 'svg'].includes(data.mimeType)" :src="data.path" class="w-20 h-20" />
+            <Icon v-else icon="material-symbols:docs-outline-rounded" width="80" height="80" />
+            <div>
+              <p class="my-1 text-sm text-[var(--el-text-color-regular)]">
+                {{ data.name }}
+              </p>
+            </div>
+          </div>
+        </div>
       </ElCard>
     </ElSpace>
   </ElSpace>
 
-
+  <!-- details -->
   <DialogView v-model="visible" :title="$t('details')" show-close width="35%">
-
+    <ElDescriptions v-loading="loading" border>
+      <ElDescriptionsItem :label="$t('name')" :span="2">{{ row.name }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('lastModifiedDate')">
+        {{ dayjs(row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('type')" :span="2">{{ row.mimeType }}</ElDescriptionsItem>
+    </ElDescriptions>
   </DialogView>
 
+  <!-- upload -->
   <DialogView v-model="uploadVisible" :title="$t('upload')" width="35%">
     <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" :on-success="load">
       <div class="el-icon--upload inline-flex justify-center">

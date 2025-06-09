@@ -190,7 +190,7 @@ function handleCheckedChange(value: CheckboxValueType[]) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
-            <ElButton title="refresh" type="primary" plain circle @click="load">
+            <ElButton title="view" plain circle @click="load">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
           </ElTooltip>

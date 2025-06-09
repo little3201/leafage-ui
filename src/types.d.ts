@@ -180,6 +180,7 @@ export interface FileRecord extends AudtiMetadata {
   name: string
   mimeType: string
   size: number
+  path: string
 }
 
 export interface Schema extends AudtiMetadata {
