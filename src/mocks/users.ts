@@ -9,9 +9,9 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    givenName: '三' + i,
+    firstname: '三' + i,
     middleName: i % 3 > 0 ? '五' : '',
-    familyName: '张',
+    lastname: '张',
     avatar: '/svgs/logo.svg',
     email: 'use***' + '@**t.com',
     accountNonLocked: i % 2 > 0,
@@ -34,8 +34,8 @@ export const usersHandlers = [
       enabled: true,
       lastModifiedDate: null,
       username: 'admin',
-      givenName: '勒布朗',
-      familyName: '詹姆斯',
+      firstname: '勒布朗',
+      lastname: '詹姆斯',
       middleName: '雷蒙',
       avatar: '/svgs/logo.svg',
       email: 'test@test.com',
@@ -116,6 +116,14 @@ export const usersHandlers = [
     }
   }),
   http.patch(`/api${SERVER_URL.USER}/:id`, async({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json()
+    } else {
+      return HttpResponse.error()
+    }
+  }),
+  http.patch(`/api${SERVER_URL.USER}/:id/unlock`, async({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

@@ -18,8 +18,8 @@ export default {
   description: 'Description',
   lastModifiedDate: 'Last Modified Date',
   username: 'Username',
-  givenName: 'Given Name',
-  familyName: 'Family Name',
+  firstname: 'Given Name',
+  lastname: 'Family Name',
   middleName: 'Middle Name',
   password: 'Password',
   email: 'Email',
@@ -117,6 +117,7 @@ export default {
   more: 'More',
   enable: 'Enable',
   unlock: 'Unlock',
+  view: 'View',
 
   home: 'Home',
   system: 'System',

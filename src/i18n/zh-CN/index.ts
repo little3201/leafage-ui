@@ -18,8 +18,8 @@ export default {
   description: '描述',
   lastModifiedDate: '更新时间',
   username: '账号',
-  givenName: '名字',
-  familyName: '姓',
+  firstname: '名字',
+  lastname: '姓',
   middleName: '中间名',
   password: '密码',
   email: '邮箱',
@@ -117,6 +117,7 @@ export default {
   more: '更多',
   enable: '启用',
   unlock: '解锁',
+  view: '视图',
 
   // 权限key，小写，下划线
   home: '首页',

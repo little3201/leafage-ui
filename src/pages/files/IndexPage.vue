@@ -3,7 +3,6 @@ import { ref, onMounted, reactive } from 'vue'
 import type { UploadInstance, CheckboxValueType, UploadRequestOptions } from 'element-plus'
 import draggable from 'vuedraggable'
 import DialogView from 'components/DialogView.vue'
-import { dayjs } from 'element-plus'
 import { retrieveFiles, fetchFile, uploadFile, downloadFile } from 'src/api/files'
 import type { Pagination, FileRecord } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -286,7 +285,7 @@ function handleCheckedChange(value: CheckboxValueType[]) {
           </ElCol>
         </ElRow>
 
-        <template v-if="view === 'table'">
+        <div v-if="view === 'table'">
           <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
             @sort-change="handleSortChange">
             <ElTableColumn type="index" :label="$t('no')" width="55" />
@@ -303,11 +302,6 @@ function handleCheckedChange(value: CheckboxValueType[]) {
               </template>
             </ElTableColumn>
             <ElTableColumn prop="mimeType" :label="$t('type')" sortable />
-            <ElTableColumn prop="lastModifiedDate" :label="$t('lastModifiedDate')" sortable>
-              <template #default="scope">
-                {{ dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
-              </template>
-            </ElTableColumn>
             <ElTableColumn :label="$t('actions')">
               <template #default="scope">
                 <ElButton v-if="hasAction($route.name, 'download')" title="download" size="small" type="success" link
@@ -325,7 +319,7 @@ function handleCheckedChange(value: CheckboxValueType[]) {
             </ElTableColumn>
           </ElTable>
           <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
-        </template>
+        </div>
 
         <div v-else class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
           <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
@@ -348,10 +342,7 @@ function handleCheckedChange(value: CheckboxValueType[]) {
     <ElDescriptions v-loading="loading" border>
       <ElDescriptionsItem :label="$t('name')" :span="2">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('lastModifiedDate')">
-        {{ dayjs(row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
-      </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('type')" :span="2">{{ row.mimeType }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('type')" :span="3">{{ row.mimeType }}</ElDescriptionsItem>
     </ElDescriptions>
   </DialogView>
 

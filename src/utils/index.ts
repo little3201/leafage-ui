@@ -182,7 +182,7 @@ export function exportToExcel(data: object[], fileName: string, sheetName?: stri
  */
 export function exportToCSV(data: object[], fileName: string) {
   const ws = XLSX.utils.json_to_sheet(data)
-  const csv = XLSX.utils.sheet_to_csv(ws) 
+  const csv = XLSX.utils.sheet_to_csv(ws)
 
   // 创建 Blob 对象并触发下载
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
@@ -193,17 +193,16 @@ export function exportToCSV(data: object[], fileName: string) {
   link.click()
 }
 
-
 // 递归查找权限节点
 function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): string[] {
   for (const node of privileges) {
     if (node.name === name) {
-      return node.meta.actions || [];
+      return node.meta.actions || []
     }
     if (node.children) {
-      const result = findNodeByPath(node.children, name);
-      if (result.length > 0) return result;
+      const result = findNodeByPath(node.children, name)
+      if (result.length > 0) return result
     }
   }
-  return [];
+  return []
 }

@@ -12,8 +12,8 @@ const { locale } = useI18n()
 const me = ref<User>({
   id: undefined,
   username: '',
-  givenName: '',
-  familyName: '',
+  firstname: '',
+  lastname: '',
   email: ''
 })
 // 登录历史数据模拟
@@ -86,10 +86,10 @@ onMounted(() => {
         <ElAvatar :size="80" :src="me.avatar" />
         <div class="ml-4 flex-1">
           <span v-if="locale === 'en-US' || me.middleName" class="text-lg my-1">
-            {{ me.givenName }} {{ me.middleName }} {{ me.familyName }}
+            {{ me.firstname }} {{ me.middleName }} {{ me.lastname }}
           </span>
           <span v-else class="text-lg my-1">
-            {{ me.familyName }}{{ me.givenName }}
+            {{ me.lastname }}{{ me.firstname }}
           </span>
 
           <div class="text-sm text-[var(--el-text-color-secondary)]">

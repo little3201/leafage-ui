@@ -18,8 +18,8 @@ export default {
   description: '描述',
   lastModifiedDate: '更新時間',
   username: '賬號',
-  givenName: '名字',
-  familyName: '姓',
+  firstname: '名字',
+  lastname: '姓',
   middleName: '中間名',
   password: '密碼',
   email: '郵箱',
@@ -117,6 +117,7 @@ export default {
   more: '更多',
   enable: '啟用',
   unlock: '解鎖',
+  view: '視圖',
 
   home: '首頁',
   system: '系統管理',
