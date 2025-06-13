@@ -43,7 +43,6 @@ const members = ref([])
 const relations = ref<Array<string>>([])
 
 const authorizeVisible = ref<boolean>(false)
-const authorizeLoading = ref<boolean>(false)
 const authorities = ref<Array<{
   privilegeId: number,
   actions: string[]
@@ -227,18 +226,6 @@ function onSubmit(formEl: FormInstance | undefined) {
   })
 }
 
-async function onAuthorizeSubmit() {
-  authorizeLoading.value = true
-  if (form.value.id) {
-    relationRolePrivileges(form.value.id, authorities.value).then(() => {
-      authorizeVisible.value = false
-    })
-      .finally(() => {
-        authorizeLoading.value = false
-      })
-  }
-}
-
 /**
  * 导入提交
  */
@@ -304,24 +291,28 @@ function handleTransferChange(value: TransferKey[], direction: TransferDirection
   }
 }
 
+/**
+ * 权限树check事件
+ * @param data 树节点
+ * @param checked 是否checked
+ */
 function handleCheckChange(data: TreeNode, checked: boolean) {
-  if (!data.id || (data.children?.length ?? 0) > 0) return
+  if (!data.id || (data.children?.length ?? 0) > 0 || !form.value.id) return
 
+  // 检查是否已授权
   const keyIndex = authorities.value.findIndex(a => a.privilegeId === data.id)
 
   if (checked && keyIndex === -1) {
-    // 只在未找到时添加，避免重复 push
     authorities.value.push({ privilegeId: data.id, actions: [] })
+    relationRolePrivileges(form.value.id, data.id)
   } else if (!checked && keyIndex !== -1) {
-    // 只在找到时删除
     authorities.value.splice(keyIndex, 1)
-    if (form.value.id) {
-      removeRolePrivileges(form.value.id, data.id)
-    }
+    removeRolePrivileges(form.value.id, data.id)
   }
 }
 
 function handleActionCheck(privilegeId: number, item: string) {
+  if (!form.value.id) return
   // 查找对应 privilegeId 的对象
   const keyIndex = authorities.value.findIndex(a => a.privilegeId === privilegeId)
 
@@ -334,20 +325,16 @@ function handleActionCheck(privilegeId: number, item: string) {
       if (itemIndex >= 0) {
         // 如果 actions 中已有该 item，则移除
         existingAction.actions.splice(itemIndex, 1)
+        removeRolePrivileges(form.value.id, privilegeId, item)
 
-        // 如果 actions 为空数组，则删除整个对象
-        if (existingAction.actions.length === 0) {
-          authorities.value.splice(keyIndex, 1)
-        }
       } else {
         existingAction.actions.push(item)
+        relationRolePrivileges(form.value.id, privilegeId, item)
       }
     }
   } else {
-    authorities.value.push({
-      privilegeId,
-      actions: [item]
-    })
+    authorities.value.push({ privilegeId, actions: [item] })
+    relationRolePrivileges(form.value.id, privilegeId, item)
   }
 }
 </script>
@@ -505,7 +492,7 @@ function handleActionCheck(privilegeId: number, item: string) {
   </DialogView>
 
   <!-- authorize -->
-  <DialogView v-model="authorizeVisible" :title="$t('authorize')" width="65%" :max-height="500">
+  <DialogView v-model="authorizeVisible" show-close :title="$t('authorize')" width="65%" :max-height="500">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
       :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
       @check-change="handleCheckChange">
@@ -524,14 +511,6 @@ function handleActionCheck(privilegeId: number, item: string) {
         </div>
       </template>
     </ElTree>
-    <template #footer>
-      <ElButton title="cancel" @click="authorizeVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
-      </ElButton>
-      <ElButton title="submit" type="primary" :loading="authorizeLoading" @click="onAuthorizeSubmit">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
-      </ElButton>
-    </template>
   </DialogView>
 
   <!-- import -->
