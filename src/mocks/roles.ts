@@ -145,10 +145,9 @@ export const rolesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.ROLE}/:id/privileges`, async ({ params, request }) => {
-    const { id } = params
-    const data = await request.json()
-    if (id && data) {
+  http.patch(`/api${SERVER_URL.ROLE}/:id/privileges/:privilegeId`, async ({ params }) => {
+    const { id, privilegeId } = params
+    if (id && privilegeId) {
       return HttpResponse.json()
     } else {
       return HttpResponse.error()

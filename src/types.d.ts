@@ -45,6 +45,12 @@ export interface GroupMembers {
   username: string
 }
 
+export interface GroupRoles {
+  id: number
+  groupId: number
+  roleId: number
+}
+
 export interface GroupPrivileges {
   id: number
   groupId: number

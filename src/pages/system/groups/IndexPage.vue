@@ -7,10 +7,14 @@ import { useUserStore } from 'stores/user-store'
 import DialogView from 'components/DialogView.vue'
 import {
   retrieveGroups, createGroup, modifyGroup, removeGroup, enableGroup, checkGroupExists, fetchGroup, importGroups,
-  retrieveGroupMembers, retrieveGroupTree, relationGroupMembers, removeGroupMembers, retrieveGroupPrivileges, relationGroupPrivileges
+  retrieveGroupMembers, retrieveGroupRoles, retrieveGroupTree, relationGroupMembers, removeGroupMembers, retrieveGroupPrivileges,
+  relationGroupPrivileges, removeGroupPrivileges,
+  relationGroupRoles,
+  removeGroupRoles
 } from 'src/api/groups'
 import { retrieveUsers } from 'src/api/users'
-import type { Pagination, Group, TreeNode, GroupMembers, User, GroupPrivileges } from 'src/types'
+import { retrieveRoles } from 'src/api/roles'
+import type { Pagination, Group, TreeNode, GroupMembers, GroupRoles, User, Role, GroupPrivileges } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { hasAction, exportToCSV } from 'src/utils'
 import { actions } from 'src/constants'
@@ -45,12 +49,14 @@ const visible = ref<boolean>(false)
 
 const view = ref<'table' | 'tree'>('table')
 
+const activeTabName = ref<string>('user')
 const relationVisible = ref<boolean>(false)
-const relations = ref<Array<string>>([])
-const members = ref([])
+const relationUsers = ref<Array<string>>([])
+const relationRoles = ref<Array<string>>([])
+const members = ref<Array<User>>([])
+const roles = ref<Array<Role>>([])
 
 const authorizeVisible = ref<boolean>(false)
-const authorizeLoading = ref<boolean>(false)
 const authorities = ref<Array<{
   privilegeId: number,
   actions: string[]
@@ -121,8 +127,18 @@ async function loadUsers() {
   })
 }
 
+async function loadRoles() {
+  retrieveRoles({ page: 1, size: 99 }).then(res => {
+    roles.value = res.data.content
+  })
+}
+
 async function loadGroupUsers(id: number) {
-  retrieveGroupMembers(id).then(res => { relations.value = res.data.map((item: GroupMembers) => item.username) })
+  retrieveGroupMembers(id).then(res => { relationUsers.value = res.data.map((item: GroupMembers) => item.username) })
+}
+
+async function loadGrouRoles(id: number) {
+  retrieveGroupRoles(id).then(res => { relationRoles.value = res.data.map((item: GroupRoles) => item.roleId) })
 }
 
 /**
@@ -218,14 +234,17 @@ function exportRows() {
 function relationRow(id: number) {
   relationVisible.value = true
   loadUsers()
+  loadRoles()
   if (id) {
     form.value.id = id
     loadGroupUsers(id)
+    loadGrouRoles(id)
   }
 }
 
 async function authorizeRow(id: number) {
   authorities.value = []
+  form.value.id = id
   retrieveGroupPrivileges(id).then(res => {
     authorities.value = res.data.map((row: GroupPrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
   })
@@ -289,13 +308,6 @@ function onSubmit(formEl: FormInstance | undefined) {
   })
 }
 
-async function onAuthorizeSubmit() {
-  authorizeLoading.value = true
-  if (form.value.id) {
-    relationGroupPrivileges(form.value.id, authorities.value)
-  }
-}
-
 /**
  * 导入提交
  */
@@ -353,7 +365,12 @@ function handleCheckedChange(value: CheckboxValueType[]) {
   isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
 }
 
-function handleTransferChange(value: TransferKey[], direction: TransferDirection) {
+/**
+ * 关联用户
+ * @param value 用户
+ * @param direction 方向
+ */
+function handleTransferUserChange(value: TransferKey[], direction: TransferDirection) {
   if (form.value.id) {
     if (direction === 'right') {
       relationGroupMembers(form.value.id, value as string[])
@@ -363,7 +380,43 @@ function handleTransferChange(value: TransferKey[], direction: TransferDirection
   }
 }
 
+/**
+ * 关联角色
+ * @param value 角色
+ * @param direction 方向
+ */
+function handleTransferRoleChange(value: TransferKey[], direction: TransferDirection) {
+  if (form.value.id) {
+    if (direction === 'right') {
+      relationGroupRoles(form.value.id, value as number[])
+    } else {
+      removeGroupRoles(form.value.id, value as number[])
+    }
+  }
+}
+
+/**
+ * 权限树check事件
+ * @param data 树节点
+ * @param checked 是否checked
+ */
+function handleCheckChange(data: TreeNode, checked: boolean) {
+  if (!data.id || (data.children?.length ?? 0) > 0 || !form.value.id) return
+
+  // 检查是否已授权
+  const keyIndex = authorities.value.findIndex(a => a.privilegeId === data.id)
+
+  if (checked && keyIndex === -1) {
+    authorities.value.push({ privilegeId: data.id, actions: [] })
+    relationGroupPrivileges(form.value.id, data.id)
+  } else if (!checked && keyIndex !== -1) {
+    authorities.value.splice(keyIndex, 1)
+    removeGroupPrivileges(form.value.id, data.id)
+  }
+}
+
 function handleActionCheck(privilegeId: number, item: string) {
+  if (!form.value.id) return
   // 查找对应 privilegeId 的对象
   const keyIndex = authorities.value.findIndex(a => a.privilegeId === privilegeId)
 
@@ -376,20 +429,16 @@ function handleActionCheck(privilegeId: number, item: string) {
       if (itemIndex >= 0) {
         // 如果 actions 中已有该 item，则移除
         existingAction.actions.splice(itemIndex, 1)
+        removeGroupPrivileges(form.value.id, privilegeId, item)
 
-        // 如果 actions 为空数组，则删除整个对象
-        if (existingAction.actions.length === 0) {
-          authorities.value.splice(keyIndex, 1)
-        }
       } else {
         existingAction.actions.push(item)
+        relationGroupPrivileges(form.value.id, privilegeId, item)
       }
     }
   } else {
-    authorities.value.push({
-      privilegeId,
-      actions: [item]
-    })
+    authorities.value.push({ privilegeId, actions: [item] })
+    relationGroupPrivileges(form.value.id, privilegeId, item)
   }
 }
 </script>
@@ -565,16 +614,25 @@ function handleActionCheck(privilegeId: number, item: string) {
 
   <!-- relation -->
   <DialogView v-model="relationVisible" show-close :title="$t('relation')">
-    <div style="text-align: center">
-      <ElTransfer v-model="relations" :props="{ key: 'username', label: 'fullName' }"
-        :titles="[$t('unselected'), $t('selected')]" filterable :data="members" @change="handleTransferChange" />
-    </div>
+    <ElTabs stretch v-model="activeTabName">
+      <ElTabPane :label="$t('users')" name="user" style="text-align: center">
+        <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
+          :titles="[$t('unselected'), $t('selected')]" filterable :data="members" @change="handleTransferUserChange" />
+      </ElTabPane>
+
+      <ElTabPane :label="$t('roles')" name="role" style="text-align: center">
+        <ElTransfer v-model="relationRoles" :props="{ key: 'id', label: 'name' }"
+          :titles="[$t('unselected'), $t('selected')]" filterable :data="roles" @change="handleTransferRoleChange" />
+      </ElTabPane>
+    </ElTabs>
+
   </DialogView>
 
   <!-- authorize -->
-  <DialogView v-model="authorizeVisible" :title="$t('authorize')" width="65%" :max-height="500">
+  <DialogView v-model="authorizeVisible" show-close :title="$t('authorize')" width="65%" :max-height="500">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
-      :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false">
+      :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
+      @check-change="handleCheckChange">
       <template #default="{ node, data }">
         <div class="flex flex-1 ">
           <Icon v-if="data.meta.icon" :icon="`material-symbols:${data.meta.icon}-rounded`" width="18" height="18"
@@ -590,14 +648,6 @@ function handleActionCheck(privilegeId: number, item: string) {
         </div>
       </template>
     </ElTree>
-    <template #footer>
-      <ElButton title="cancel" @click="authorizeVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
-      </ElButton>
-      <ElButton title="submit" type="primary" :loading="authorizeLoading" @click="onAuthorizeSubmit">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
-      </ElButton>
-    </template>
   </DialogView>
 
   <!-- import -->

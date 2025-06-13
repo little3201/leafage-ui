@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Group, TreeNode, GroupMembers, GroupPrivileges } from 'src/types'
+import type { Group, TreeNode, GroupMembers, GroupRoles, GroupPrivileges } from 'src/types'
 
 const datas: Group[] = []
 
@@ -53,6 +53,18 @@ for (let i = 1; i < 14; i++) {
   members.push(row)
 }
 
+
+const roles: GroupRoles[] = []
+
+for (let i = 1; i < 14; i++) {
+  const row: GroupRoles = {
+    id: i,
+    roleId: i,
+    groupId: i
+  }
+  roles.push(row)
+}
+
 const privileges: GroupPrivileges[] = []
 
 for (let i = 1; i < 17; i++) {
@@ -73,6 +85,14 @@ export const groupsHandlers = [
     const { id } = params
     if (id) {
       return HttpResponse.json(members.filter(item => item.groupId === Number(id)))
+    } else {
+      return HttpResponse.json([])
+    }
+  }),
+  http.get(`/api${SERVER_URL.GROUP}/:id/roles`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json(roles.filter(item => item.groupId === Number(id)))
     } else {
       return HttpResponse.json([])
     }
@@ -184,10 +204,18 @@ export const groupsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges`, async ({ params, request }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/roles`, async ({ params, request }) => {
     const { id } = params
     const data = await request.json()
     if (id && data) {
+      return HttpResponse.json()
+    } else {
+      return HttpResponse.error()
+    }
+  }),
+  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`, async ({ params }) => {
+    const { id, privilegeId } = params
+    if (id && privilegeId) {
       return HttpResponse.json()
     } else {
       return HttpResponse.error()

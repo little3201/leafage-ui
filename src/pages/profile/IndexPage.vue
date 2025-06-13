@@ -38,7 +38,7 @@ const items = ref([
   { id: 3, name: 'sessions', icon: 'bigtop-updates', path: '' },
 ])
 
-const activeTab = ref('overview')
+const activeTabName = ref('overview')
 
 const formRef = ref<FormInstance>()
 const initialValues = {
@@ -120,7 +120,7 @@ onMounted(() => {
 
     <ElCol :span="19">
       <ElCard shadow="never">
-        <ElTabs stretch v-model="activeTab">
+        <ElTabs stretch v-model="activeTabName">
           <!-- Overview -->
           <ElTabPane :label="$t('overview')" name="overview">
             <h3>Login Information</h3>
