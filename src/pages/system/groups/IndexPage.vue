@@ -69,7 +69,7 @@ const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filters = ref({
-  superiorId: null as number | null,
+  superiorId: null as string | null,
   name: null
 })
 
@@ -174,7 +174,7 @@ function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  filters.value.superiorId = currentNodeKey.value ?? null
+  filters.value.superiorId = currentNodeKey.value ? 'eq:' + currentNodeKey.value : null
   retrieveGroups(pagination, filters.value).then(res => {
     datas.value = res.data.content
     total.value = res.data.page.totalElements

@@ -8,8 +8,13 @@ import type { Pagination, Group } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveGroups = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.GROUP, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveGroups = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = Object.entries(filters).map(([key, value]) => {
+      return `${key}:${value}`
+    }).join(',')
+  }
+  return api.get(SERVER_URL.GROUP, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
