@@ -89,6 +89,12 @@ export function visibleArray<T extends string | number>(array: T[], count: numbe
   return array.length > count ? array.slice(0, count) : array
 }
 
+/**
+ * 下载
+ * @param data 数据
+ * @param filename 文件名
+ * @param mimeType 文件类型
+ */
 export function download(data: Blob, filename: string, mimeType?: string): void {
   // 创建一个新的 Blob 对象，指定 MIME 类型
   const blob = new Blob([data], { type: mimeType || 'application/octet-stream' })
@@ -108,6 +114,12 @@ export function download(data: Blob, filename: string, mimeType?: string): void 
   window.URL.revokeObjectURL(url)
 }
 
+/**
+ * 数据分组
+ * @param array 分组数据
+ * @param typeKey 分组依据
+ * @returns 分组后的数据
+ */
 export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[] } {
   return array.reduce((acc: { [key: string]: T[] }, curr: T) => {
     const typeValue = curr[typeKey] as string | number // 允许 `string` 或 `number` 类型
@@ -123,37 +135,53 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
   }, {} as { [key: string]: T[] })
 }
 
-export function getRandomString(length: number): string {
-  const a = new Uint8Array(Math.ceil(length / 2))
-  crypto.getRandomValues(a)
-  const str = Array.from(a, (dec) => ('0' + dec.toString(16)).slice(-2)).join('')
+/**
+ * 生成随机字符串
+ * @param length 长度
+ * @returns 随机字符串
+ */
+export function createRandomString(length: number): string {
+  const str = Array.from(
+    window.crypto.getRandomValues(new Uint8Array(Math.ceil(length / 2))), (v) => ('0' + v.toString(16)).slice(-2)
+  ).join('')
   return str.slice(0, length)
 }
 
+/**
+ * 生成verifier_code
+ * @param prefix 前缀
+ * @returns verifier_code
+ */
 export function generateVerifier(prefix?: string): string {
   let verifier = prefix || ''
   if (verifier.length < 43) {
-    verifier = verifier + getRandomString(43 - verifier.length)
+    verifier = verifier + createRandomString(43 - verifier.length)
   }
-  return encodeURIComponent(verifier).slice(0, 128)
+  return window.encodeURIComponent(verifier).slice(0, 128)
 }
 
-export function computeChallenge(codeVerifier: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(codeVerifier)
-
-  return crypto.subtle.digest('SHA-256', data).then(digest => {
-    return btoa(String.fromCharCode(...new Uint8Array(digest)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '')
-  })
+/**
+ * 计算code_challenge
+ * @param codeVerifier verifier_code
+ * @returns code_challenge
+ */
+export async function computeChallenge(codeVerifier: string): Promise<string> {
+  const digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
+  return window.btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
 }
 
+/**
+ * 判断是否持有操作权限
+ * @param page 页面路由
+ * @param action 操作
+ * @returns 是否持有操作权限
+ */
 export function hasAction(page: RouteRecordNameGeneric, action: string) {
   if (page) {
-    const userStore = useUserStore()
-    const privileges = userStore.privileges
+    const privileges = useUserStore().privileges
     const actions = findNodeByPath(privileges, page as string)
 
     return actions.includes(action)

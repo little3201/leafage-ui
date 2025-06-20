@@ -1,12 +1,12 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
+import { createRandomString, generateVerifier, computeChallenge } from 'src/utils'
 
 
 const client_id = import.meta.env.VITE_CLIENT_ID
 
 export async function signIn() {
-  const state = getRandomString(16)
+  const state = createRandomString(16)
   const codeVerifier = generateVerifier()
   // 存储code_verifier
   localStorage.setItem('code_verifier', codeVerifier)

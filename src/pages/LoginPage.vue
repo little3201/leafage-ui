@@ -8,7 +8,7 @@ import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
-import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
+import { createRandomString, generateVerifier, computeChallenge } from 'src/utils'
 
 
 const { t } = useI18n()
@@ -44,7 +44,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
     if (valid) {
       loading.value = true
 
-      const state = getRandomString(16)
+      const state = createRandomString(16)
       const codeVerifier = generateVerifier()
       // 存储code_verifier
       localStorage.setItem('code_verifier', codeVerifier)
