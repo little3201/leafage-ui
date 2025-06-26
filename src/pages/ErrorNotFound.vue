@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import notFound from 'src/assets/404.svg'
 
 const { push } = useRouter()
 </script>
@@ -7,7 +8,7 @@ const { push } = useRouter()
 <template>
   <ElContainer class="h-screen">
     <ElMain class="flex-col tems-center justify-center">
-      <ElImage :alt="404" src="/svgs/404.svg" class="w-1/3 mx-auto" />
+      <ElImage :alt="404" :src="notFound" class="w-1/3 mx-auto" />
       <div class="text-center">
         <div class="text-2xl text-[var(--el-color-info)]">Oops. Nothing here...</div>
         <div class="mt-8">

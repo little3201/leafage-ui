@@ -6,6 +6,7 @@ import LanguageSelector from 'components/LanguageSelector.vue'
 import EssentialList from 'components/EssentialList.vue'
 import { signOut } from 'src/api/authentication'
 import { Icon } from '@iconify/vue'
+import logo from 'src/assets/logo.svg'
 
 
 const { push, currentRoute } = useRouter()
@@ -16,7 +17,7 @@ const userStore = useUserStore()
   <ElHeader class="fixed top-0 left-0 right-0 flex flex-nowrap bg-[var(--el-color-primary)] z-10" height="50px">
     <div class="inline-flex flex-grow justify-between">
       <div class="inline-flex items-center">
-        <ElImage src="/svgs/logo.svg" alt="avatar" class="w-8 h-8" />
+        <ElImage :src="logo" alt="avatar" class="w-8 h-8" />
         <span class="ml-3 text-20px font-bold text-white">Project Management</span>
       </div>
 
