@@ -2,7 +2,7 @@
   <q-layout>
     <q-page-container class="overflow-hidden">
       <q-page padding class="text-center flex-center vertical-middle">
-        <q-img src="/svgs/404.svg" style="width: 30%; " class="q-mx-auto" />
+        <q-img :src="img404" style="width: 30%; " class="q-mx-auto" />
 
         <div class="text-h2" style="opacity:.4">
           Oops. Nothing here...
@@ -16,5 +16,5 @@
 </template>
 
 <script setup lang="ts">
-
+import img404 from 'src/assets/404.svg'
 </script>

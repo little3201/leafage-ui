@@ -44,7 +44,7 @@
             <transition appear enter-active-class="animated slideInRight" leave-active-class="animated slideOutRight">
               <div class="column justify-center items-center full-width">
                 <div class="text-center">
-                  <q-img alt="logo" src="/svgs/logo.svg" width="8em" height="8em" />
+                  <q-img alt="logo" :src="logo" width="8em" height="8em" />
                 </div>
                 <div class="text-h6 text-center q-mb-xs">
                   {{ $t('signinTo') }}
@@ -95,6 +95,7 @@ import { SERVER_URL } from 'src/constants'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
+import logo from 'src/assets/logo.svg'
 
 
 const $q = useQuasar()
@@ -141,7 +142,7 @@ function load() {
       canvas: lottieRef.value,
       loop: true,
       autoplay: true,
-      src: '/1707289607880.lottie',
+      src: 'src/assets/1707289607880.lottie',
       renderConfig: {
         autoResize: true
       }

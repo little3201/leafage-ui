@@ -95,41 +95,6 @@ export function visibleArray<T extends string | number>(array: T[], count: numbe
   return array.length > count ? array.slice(0, count) : array
 }
 
-/**
-  将下划线格式转换为驼峰格式，并将每个单词的首字母大写
- * @param word 输入
- * @returns 结果
- */
-export function pluralToSingularAndCapitalize(word: string) {
-  const camelCase = word.split('_').map((part: string) => {
-    const singular = wordToSingular(part)
-    return singular.charAt(0).toUpperCase() + singular.slice(1).toLowerCase()
-  }).join('')
-
-  return camelCase
-}
-
-/**
-   * 复数到单数的转换规则
-   * @param word 复数
-   * @returns 单数
-   */
-export function wordToSingular(word: string) {
-  const pluralRules = [
-    { regex: /ies$/, replacement: 'y' },
-    { regex: /ves$/, replacement: 'f' },
-    { regex: /s$/, replacement: '' }
-  ]
-
-  // 将单词转换为单数
-  for (const rule of pluralRules) {
-    if (rule.regex.test(word)) {
-      return word.replace(rule.regex, rule.replacement)
-    }
-  }
-  return word
-}
-
 export function downloadFile(data: Blob, filename: string, mimeType?: string): void {
   // 创建一个新的 Blob 对象，指定 MIME 类型
   const blob = new Blob([data], { type: mimeType || 'application/octet-stream' })
@@ -162,7 +127,7 @@ export function groupByType<T>(array: T[], typeOptions: Dictionary[], typeKey: k
 
 export function getRandomString(length: number): string {
   const a = new Uint8Array(Math.ceil(length / 2));
-  crypto.getRandomValues(a);
+  window.crypto.getRandomValues(a);
   const str = Array.from(a, (dec) => ('0' + dec.toString(16)).slice(-2)).join('');
   return str.slice(0, length);
 }
@@ -172,15 +137,15 @@ export function generateVerifier(prefix?: string): string {
   if (verifier.length < 43) {
     verifier = verifier + getRandomString(43 - verifier.length)
   }
-  return encodeURIComponent(verifier).slice(0, 128)
+  return window.encodeURIComponent(verifier).slice(0, 128)
 }
 
 export function computeChallenge(codeVerifier: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(codeVerifier);
 
-  return crypto.subtle.digest('SHA-256', data).then(digest => {
-    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+  return window.crypto.subtle.digest('SHA-256', data).then(digest => {
+    return window.btoa(String.fromCharCode(...new Uint8Array(digest)))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=+$/, '');

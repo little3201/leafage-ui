@@ -59,7 +59,7 @@
       :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input dense debounce="300" v-model="filter.username" placeholder="Search">
           <template v-slot:append>
             <q-icon name="sym_r_search" />
           </template>
@@ -160,7 +160,9 @@ const importVisible = ref<boolean>(false)
 
 const tableRef = ref()
 const rows = ref<QTableProps['rows']>([])
-const filter = ref('')
+const filter = ref({
+  username: ''
+})
 const loading = ref<boolean>(false)
 
 const initialValues: User = {

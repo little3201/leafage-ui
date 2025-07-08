@@ -2,7 +2,7 @@
   <q-layout view="hHh LpR lff" :class="$q.dark.isActive ? '' : 'bg-grey-2'">
     <q-header>
       <q-toolbar>
-        <q-img alt="logo" src="/svgs/logo.svg" width="2em" height="2em" />
+        <q-img alt="logo" :src="logo" width="2em" height="2em" />
         <q-toolbar-title :shrink="true">
           Project Management
         </q-toolbar-title>
@@ -89,6 +89,7 @@ import EssentialList from 'components/EssentialList.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { signOut } from 'src/api/authentication'
+import logo from 'src/assets/logo.svg'
 
 
 const $q = useQuasar()
