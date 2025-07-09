@@ -28,7 +28,7 @@ export default defineConfig({
           importStyle: 'sass'
         })
       ],
-      dts: 'src/components.d.ts',
+      dts: true,
     }),
     // https://tailwindcss.com/docs/installation/using-vite
     tailwindcss(),
