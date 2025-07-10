@@ -12,11 +12,10 @@ export interface Pagination {
 
 export interface User extends AudtiMetadata {
   username: string
-  givenName: string
-  familyName: string
+  firstname: string
+  lastname: string
   middleName?: string
   email: string
-  phoneNumber?: string
   avatar?: string
   accountNonLocked?: boolean
   accountExpiresAt?: string
@@ -44,6 +43,12 @@ export interface GroupMembers {
   id: number
   groupId: number
   username: string
+}
+
+export interface GroupRoles {
+  id: number
+  groupId: number
+  roleId: number
 }
 
 export interface GroupPrivileges {
@@ -123,10 +128,16 @@ export interface PrivilegeTreeNode extends TreeNode {
   children?: PrivilegeTreeNode[]
 }
 
+export interface MasterPlateTreeNode extends TreeNode {
+  content?: string
+  type?: string
+  suffix?: string
+  children?: MasterPlateTreeNode[]
+}
+
 export interface OperationLog extends AudtiMetadata {
   operation: string
   content: string
-  operator?: string
   ip: string
   location: string
   referer?: string
@@ -142,7 +153,6 @@ export interface OperationLog extends AudtiMetadata {
 export interface AccessLog extends AudtiMetadata {
   url: string
   httpMethod: string
-  operator?: string
   params?: string
   body?: string
   ip: string
@@ -153,7 +163,6 @@ export interface AccessLog extends AudtiMetadata {
 }
 
 export interface AuditLog extends AudtiMetadata {
-  operator: string
   operation: string
   resource: string
   oldValue?: string
@@ -177,13 +186,14 @@ export interface FileRecord extends AudtiMetadata {
   name: string
   mimeType: string
   size: number
+  path: string
 }
 
 export interface Schema extends AudtiMetadata {
   name: string
-  comment: string
-  reference: string
-  domain: string
+  connectionId: number | undefined
+  prefix?: string
+  packagePath: string
   enabled?: boolean
   templates: number[]
 }
@@ -194,11 +204,11 @@ export interface Field extends AudtiMetadata {
   length: number
   fieldType: string
   formType: string
-  tsType: string
   nullable: boolean
   queryable: boolean
+  queryType: string | undefined
   editable: boolean
-  comment: string
+  sortable: boolean
   description: string
 }
 
@@ -206,21 +216,25 @@ export interface MasterPlate extends AudtiMetadata {
   name: string
   suffix: string
   content: string
-  type?: number
+  type: string | undefined
   version: string
   enabled?: boolean
 }
 
 export interface Script extends AudtiMetadata {
   name: string
-  type?: number
+  type: string | undefined
   icon: string
   version: string
   content: string
-  description: string
 }
 
-export interface TableInfo {
-  tableName: string
-  tableComment: string
+export interface Connection extends AudtiMetadata {
+  name: string
+  host: string
+  port: number | undefined
+  username: string
+  password?: string
+  enabled?: boolean
+  tables?: string[]
 }

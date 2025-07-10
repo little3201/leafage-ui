@@ -7,12 +7,10 @@
         </q-card-section>
 
         <q-card-section>
-          <q-input v-model="form.name" :label="$t('name')" lazy-rules
+          <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
             :rules="[val => val && val.length > 0 || $t('inputText')]" />
-
-          <q-input v-model="form.description" :label="$t('description')" type="textarea" />
+          <q-input outlined dense v-model="form.description" :label="$t('description')" type="textarea" />
         </q-card-section>
-
         <q-card-actions align="right">
           <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
           <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />

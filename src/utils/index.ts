@@ -95,7 +95,7 @@ export function visibleArray<T extends string | number>(array: T[], count: numbe
   return array.length > count ? array.slice(0, count) : array
 }
 
-export function downloadFile(data: Blob, filename: string, mimeType?: string): void {
+export function download(data: Blob, filename: string, mimeType?: string): void {
   // 创建一个新的 Blob 对象，指定 MIME 类型
   const blob = new Blob([data], { type: mimeType || 'application/octet-stream' })
 
@@ -140,7 +140,7 @@ export function generateVerifier(prefix?: string): string {
   return window.encodeURIComponent(verifier).slice(0, 128)
 }
 
-export function computeChallenge(codeVerifier: string): Promise<string> {
+export async function computeChallenge(codeVerifier: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(codeVerifier);
 

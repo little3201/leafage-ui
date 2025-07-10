@@ -11,8 +11,8 @@ import { schedulerLogsHandlers } from './scheduler-logs'
 import { filesHandlers } from './files'
 import { schemasHandlers } from './schemas'
 import { scriptsHandlers } from './scripts'
-import { templatesHandlers } from './templates'
-import { dbHandlers } from './db'
+import { templatesHandlers } from './master-plates'
+import { connectionsHandlers } from './connections'
 
 export const handlers = [
   ...authenticationHandlers,
@@ -29,5 +29,5 @@ export const handlers = [
   ...schemasHandlers,
   ...scriptsHandlers,
   ...templatesHandlers,
-  ...dbHandlers
+  ...connectionsHandlers
 ]

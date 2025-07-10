@@ -8,9 +8,9 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    givenName: '三' + i,
+    firstname: '三' + i,
     middleName: i % 3 > 0 ? '五' : '',
-    familyName: '张',
+    lastname: '张',
     avatar: '/svgs/logo.svg',
     email: 'usexxx' + '@test.com',
     enabled: i % 2 > 0,
@@ -34,8 +34,8 @@ export const usersHandlers = [
       enabled: true,
       lastModifiedDate: null,
       username: 'admin',
-      givenName: '勒布朗',
-      familyName: '詹姆斯',
+      firstname: '勒布朗',
+      lastname: '詹姆斯',
       middleName: '雷蒙',
       avatar: '/svgs/logo.svg',
       email: 'test@test.com',
@@ -77,11 +77,11 @@ export const usersHandlers = [
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
-    
+
     if (!file) {
       return new HttpResponse('Missing document', { status: 400 })
     }
-  
+
     if (!(file instanceof File)) {
       return new HttpResponse('Uploaded document is not a File', {
         status: 400,
@@ -108,12 +108,12 @@ export const usersHandlers = [
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
       // response and send back the newly created Row!
-      return HttpResponse.json({...newData, id: id}, { status: 202 })
+      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
     } else {
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.USER}/:id`, async({ params }) => {
+  http.patch(`/api${SERVER_URL.USER}/:id`, async ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -121,7 +121,7 @@ export const usersHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.USER}/privileges/:privilegeId`, async({ params, request }) => {
+  http.patch(`/api${SERVER_URL.USER}/privileges/:privilegeId`, async ({ params, request }) => {
     const data = await request.json()
     const { privilegeId } = params
     if (privilegeId && data) {
@@ -130,7 +130,7 @@ export const usersHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, async({ params }) => {
+  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, async ({ params }) => {
     const { username, privilegeId } = params
     if (username && privilegeId) {
       return HttpResponse.json()

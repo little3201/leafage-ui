@@ -26,9 +26,6 @@
           <p><strong>{{ $t('newValue') }}</strong>
             {{ row.newValue }}
           </p>
-          <p><strong>{{ $t('operator') }}</strong>
-            {{ row.operator }}
-          </p>
           <p>
             <strong>{{ $t('statusCode') }}</strong>
             <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
@@ -119,7 +116,6 @@ const loading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: undefined,
   operation: '',
-  operator: '',
   resource: '',
   ip: '',
   location: ''

@@ -9,7 +9,7 @@ import type { Pagination, MasterPlate } from 'src/types'
  * @returns Rows data
  */
 export const retrieveMasterPlates = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.TEMPLATE, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+  return api.get(SERVER_URL.MASTER_PLATE, { params: { ...pagination, page: pagination.page - 1, ...filters } })
 }
 
 /**
@@ -18,7 +18,7 @@ export const retrieveMasterPlates = (pagination: Pagination, filters?: object) =
  * @returns Row data
  */
 export const fetchMasterPlate = (id: number) => {
-  return api.get(`${SERVER_URL.TEMPLATE}/${id}`)
+  return api.get(`${SERVER_URL.MASTER_PLATE}/${id}`)
 }
 
 /**
@@ -28,7 +28,7 @@ export const fetchMasterPlate = (id: number) => {
  * @returns Row data
  */
 export const checkMasterPlateExists = (name: string, suffix: string, version: string, id?: number) => {
-  return api.get(`${SERVER_URL.TEMPLATE}/exists`, { params: { name, suffix, version, id } })
+  return api.get(`${SERVER_URL.MASTER_PLATE}/exists`, { params: { name, suffix, version, id } })
 }
 
 /**
@@ -37,7 +37,7 @@ export const checkMasterPlateExists = (name: string, suffix: string, version: st
  * @returns Created row
  */
 export const createMasterPlate = (row: MasterPlate) => {
-  return api.post(SERVER_URL.TEMPLATE, row)
+  return api.post(SERVER_URL.MASTER_PLATE, row)
 }
 
 /**
@@ -47,7 +47,7 @@ export const createMasterPlate = (row: MasterPlate) => {
  * @returns Modified row
  */
 export const modifyMasterPlate = (id: number, row: MasterPlate) => {
-  return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row)
+  return api.put(`${SERVER_URL.MASTER_PLATE}/${id}`, row)
 }
 
 /**
@@ -56,7 +56,7 @@ export const modifyMasterPlate = (id: number, row: MasterPlate) => {
  * @returns Enable or Disable result
  */
 export const enableMasterPlate = (id: number) => {
-  return api.patch(`${SERVER_URL.TEMPLATE}/${id}`)
+  return api.patch(`${SERVER_URL.MASTER_PLATE}/${id}`)
 }
 
 /**
@@ -65,7 +65,7 @@ export const enableMasterPlate = (id: number) => {
  * @returns Deletion status
  */
 export const removeMasterPlate = (id: number) => {
-  return api.delete(`${SERVER_URL.TEMPLATE}/${id}`)
+  return api.delete(`${SERVER_URL.MASTER_PLATE}/${id}`)
 }
 
 /**
@@ -76,5 +76,5 @@ export const removeMasterPlate = (id: number) => {
 export const importMasterPlates = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
-  return api.post(`${SERVER_URL.TEMPLATE}/import`, formData)
+  return api.post(`${SERVER_URL.MASTER_PLATE}/import`, formData)
 }

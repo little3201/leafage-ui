@@ -2,140 +2,24 @@ import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { OperationLog } from 'src/types'
 
-const datas: OperationLog[] = [
-  {
-    id: 1,
-    operator: 'admin',
+const datas: OperationLog[] = []
+
+for (let i = 1; i < 28; i++) {
+  const row: OperationLog = {
+    id: i,
     operation: 'Create User',
     content: 'Create User: username: test',
     ip: '192.168.0.1',
     location: 'New York',
     os: 'Windows 11',
     browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 2,
-    operator: 'john',
-    operation: 'Update Profile',
-    content: 'Change avatar to test.jpg',
-    ip: '192.168.0.2',
-    location: 'London',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 401,
-    operatedTimes: 12121
-  },
-  {
-    id: 3,
-    operator: 'alice',
-    operation: 'Delete Post',
-    content: 'Delete Post: test',
-    ip: '192.168.0.3',
-    location: 'San Francisco',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 4,
-    operator: 'bob',
-    operation: 'Upload File',
-    content: 'Upload file: test.txt',
-    ip: '192.168.0.4',
-    location: 'Berlin',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 400,
-    operatedTimes: 12121
-  },
-  {
-    id: 5,
-    operator: 'carol',
-    operation: 'Login',
-    content: 'test login',
-    ip: '192.168.0.5',
-    location: 'Paris',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 6,
-    operator: 'dave',
-    operation: 'Logout',
-    content: 'test logout',
-    ip: '192.168.0.6',
-    location: 'Tokyo',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 7,
-    operator: 'admin',
-    operation: 'Change Password',
-    content: 'Change password at 2min ago',
-    ip: '192.168.0.1',
-    location: 'New York',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 8,
-    operator: 'john',
-    operation: 'View Report',
-    content: 'View shceduler report',
-    ip: '192.168.0.2',
-    location: 'London',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 9,
-    operator: 'alice',
-    operation: 'Download File',
-    content: 'Download file: xxx.txt',
-    ip: '192.168.0.3',
-    location: 'San Francisco',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 10,
-    operator: 'bob',
-    operation: 'Update Settings',
-    content: 'Update dark mode',
-    ip: '192.168.0.4',
-    location: 'Berlin',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
-    statusCode: 200,
-    operatedTimes: 12121
-  },
-  {
-    id: 11,
-    operator: 'bob',
-    operation: 'Update Settings',
-    content: 'Create theme, set primary to green',
-    ip: '192.168.0.4',
-    location: 'Berlin',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
+    sessionId: 'sjfa2323jkljsladf',
     statusCode: 200,
     operatedTimes: 12121
   }
-]
+  datas.push(row)
+}
+
 
 export const operationLogsHandlers = [
   http.get(`/api${SERVER_URL.OPERATION_LOG}/:id`, ({ params }) => {

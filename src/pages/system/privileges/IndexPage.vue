@@ -16,10 +16,8 @@
             <q-input outlined dense v-model="form.component" :label="$t('component')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
             <q-select outlined dense v-model="form.redirect" :label="$t('redirect')" :options="subset" option-value="id"
-              option-label="name" />
-
+              option-label="name" class="q-mb-md" />
             <q-input outlined dense v-model="form.description" type="textarea" :label="$t('description')" />
-
           </q-card-section>
 
           <q-card-actions align="right">

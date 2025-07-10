@@ -3,95 +3,18 @@ import { SERVER_URL } from 'src/constants'
 import type { SchedulerLog } from 'src/types'
 
 const datas: SchedulerLog[] = [
-  {
-    id: 1,
+]
+
+for (let i = 1; i < 28; i++) {
+  const row: SchedulerLog = {
+    id: i,
     name: 'DailyBackup',
     startTime: new Date(),
     nextExecuteTime: new Date(),
     status: 0
-  },
-  {
-    id: 2,
-    name: 'GenerateReport',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 5,
-    status: 1
-  },
-  {
-    id: 3,
-    name: 'SyncData',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 6,
-    status: 1
-  },
-  {
-    id: 4,
-    name: 'ClearTempFiles',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 323,
-    status: 1
-  },
-  {
-    id: 5,
-    name: 'SendEmails',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 33,
-    status: 2,
-    record: '数据库执行错误：数据库表xx缺少字段'
-  },
-  {
-    id: 6,
-    name: 'UpdateStats',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 2,
-    status: 1
-  },
-  {
-    id: 7,
-    name: 'ReindexSearch',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 323,
-    status: 1
-  },
-  {
-    id: 8,
-    name: 'ArchiveLogs',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 23,
-    status: 1
-  },
-  {
-    id: 9,
-    name: 'RefreshCache',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 2345,
-    status: 1
-  },
-  {
-    id: 10,
-    name: 'GenerateInvoices',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 125,
-    status: 1
-  },
-  {
-    id: 11,
-    name: 'GenerateInvoices',
-    startTime: new Date(),
-    nextExecuteTime: new Date(),
-    executedTimes: 125,
-    status: 1
   }
-]
+  datas.push(row)
+}
 
 export const schedulerLogsHandlers = [
   http.get(`/api${SERVER_URL.SCHEDULER_LOG}/:id`, ({ params }) => {

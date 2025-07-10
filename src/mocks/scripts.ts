@@ -8,18 +8,16 @@ const datas: Script[] = [
     name: 'MySQL',
     icon: '/svgs/mysql.svg',
     version: '8.0.34',
-    type: 57,
+    type: 'Connection',
     content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
-    description: 'This is the description of row',
     lastModifiedDate: new Date()
   }, {
     id: 2,
     name: 'Nginx',
     icon: '/svgs/nginx.svg',
     version: '1.8.12',
-    type: 58,
+    type: 'Middleware',
     content: '#!/bin/bash\necho \\"Starting Nginx...\\"\nservice nginx start\necho \\"Nginx is now running.\\"\n',
-    description: 'This is the description of row',
     lastModifiedDate: new Date()
   },
   {
@@ -27,9 +25,8 @@ const datas: Script[] = [
     name: 'Nodejs',
     icon: '/svgs/nodejs.svg',
     version: '20.5.6',
-    type: 58,
+    type: 'Middleware',
     content: 'npm install',
-    description: 'This is the description of row',
     lastModifiedDate: new Date()
   },
   {
@@ -37,9 +34,8 @@ const datas: Script[] = [
     name: 'PostgreSql',
     icon: '/svgs/postgresql.svg',
     version: '16.2.3',
-    type: 57,
+    type: 'Connection',
     content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
-    description: 'This is the description of row',
     lastModifiedDate: new Date()
   },
   {
@@ -47,9 +43,8 @@ const datas: Script[] = [
     name: 'Redis',
     icon: '/svgs/redis.svg',
     version: '6.0.1',
-    type: 58,
+    type: 'Middleware',
     content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    description: 'This is the description of row',
     lastModifiedDate: new Date()
   },
   {
@@ -57,9 +52,8 @@ const datas: Script[] = [
     name: 'Redis',
     icon: '/svgs/redis.svg',
     version: '7.0.1',
-    type: 58,
+    type: 'Middleware',
     content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    description: 'This is the description of row',
     lastModifiedDate: new Date()
   },
   {
@@ -67,9 +61,8 @@ const datas: Script[] = [
     name: 'Redis',
     icon: '/svgs/redis.svg',
     version: '3.0.1',
-    type: 58,
+    type: 'Middleware',
     content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    description: 'This is the description of row',
     lastModifiedDate: new Date()
   }
 ]
@@ -101,11 +94,11 @@ export const scriptsHandlers = [
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
-    
+
     if (!file) {
       return new HttpResponse('Missing document', { status: 400 })
     }
-  
+
     if (!(file instanceof File)) {
       return new HttpResponse('Uploaded document is not a File', {
         status: 400,
@@ -138,7 +131,7 @@ export const scriptsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, async({ params }) => {
+  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, async ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

@@ -2,90 +2,22 @@ import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { AccessLog } from 'src/types'
 
-const datas: AccessLog[] = [
-  {
-    id: 1,
-    operator: 'admin',
+const datas: AccessLog[] = []
+
+for (let i = 1; i < 28; i++) {
+  const row: AccessLog = {
+    id: i,
     url: '/users',
     httpMethod: 'POST',
-    body: '{"operator:"john", "role:"admin"}',
+    body: '{"role:"admin"}',
     ip: '192.168.0.1',
     location: 'New York',
     responseTimes: 120,
     statusCode: 404,
     responseMessage: 'Non Content'
-  },
-  {
-    id: 2,
-    operator: 'john',
-    url: '/profile',
-    httpMethod: 'PUT',
-    body: '{"email:"john@example.com"}',
-    ip: '192.168.0.2',
-    location: 'London',
-    responseTimes: 100,
-    statusCode: 502,
-    responseMessage: 'Network Error'
-  },
-  {
-    id: 3,
-    operator: 'alice',
-    url: '/posts/123',
-    httpMethod: 'DELETE',
-    ip: '192.168.0.3',
-    location: 'San Francisco',
-    responseTimes: 150,
-    statusCode: 200,
-    responseMessage: 'Success'
-  },
-  {
-    id: 4,
-    operator: 'bob',
-    url: '/files',
-    httpMethod: 'POST',
-    body: '{"file_name:"report.pdf"}',
-    ip: '192.168.0.4',
-    location: 'Berlin',
-    responseTimes: 300,
-    statusCode: 400,
-    responseMessage: 'File too large'
-  },
-  {
-    id: 5,
-    operator: 'carol',
-    url: '/login',
-    httpMethod: 'POST',
-    params: 'username=admin&password=',
-    ip: '192.168.0.5',
-    location: 'Paris',
-    responseTimes: 80,
-    statusCode: 200,
-    responseMessage: 'Success'
-  },
-  {
-    id: 6,
-    operator: 'dave',
-    url: '/logout',
-    httpMethod: 'POST',
-    ip: '192.168.0.6',
-    location: 'Tokyo',
-    responseTimes: 90,
-    statusCode: 500,
-    responseMessage: 'Network Request Timeout'
-  },
-  {
-    id: 7,
-    operator: 'admin',
-    url: '/users/2/password',
-    httpMethod: 'PUT',
-    body: '{"new_password:"secret"}',
-    ip: '192.168.0.1',
-    location: 'New York',
-    responseTimes: 110,
-    statusCode: 200,
-    responseMessage: 'Success'
   }
-]
+  datas.push(row)
+}
 
 export const accessLogsHandlers = [
   http.get(`/api${SERVER_URL.ACCESS_LOG}/:id`, ({ params }) => {

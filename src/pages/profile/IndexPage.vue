@@ -10,10 +10,10 @@
 
             <div class="ml-2">
               <span v-if="locale === 'en-US' || me.middleName" class="text-subtitle2 q-my-1">
-                {{ me.givenName }} {{ me.middleName }} {{ me.familyName }}
+                {{ me.firstname }} {{ me.middleName }} {{ me.lastname }}
               </span>
               <span v-else class="text-subtitle2 q-my-1">
-                {{ me.familyName }}{{ me.givenName }}
+                {{ me.lastname }}{{ me.firstname }}
               </span>
 
               <div class="flex items-center text-caption">
@@ -118,8 +118,8 @@ const tab = ref('overview')
 const me = ref<User>({
   id: undefined,
   username: '',
-  givenName: '',
-  familyName: '',
+  firstname: '',
+  lastname: '',
   email: ''
 })
 

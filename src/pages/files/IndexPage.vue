@@ -114,7 +114,7 @@
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { date } from 'quasar'
-import { retrieveFiles, downloadFile } from 'src/api/files'
+import { retrieveFiles, download } from 'src/api/files'
 import { formatFileSize } from 'src/utils'
 
 
@@ -137,7 +137,6 @@ const columns: QTableProps['columns'] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'mimeType', label: 'type', align: 'left', field: 'mimeType', sortable: true },
   { name: 'size', label: 'size', align: 'left', field: 'size', sortable: true },
-  { name: 'lastModifiedDate', label: 'lastModifiedDate', align: 'center', field: 'lastModifiedDate' },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
@@ -181,7 +180,7 @@ async function downloadRow(id: number) {
   visible.value = true
   // You can populate the form with existing user data based on the id
   if (id) {
-    downloadFile(id)
+    download(id)
   }
 }
 

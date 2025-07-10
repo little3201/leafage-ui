@@ -26,9 +26,6 @@
           <p v-if="row.body"><strong>{{ $t('body') }}</strong>
             {{ row.body }}
           </p>
-          <p><strong>{{ $t('operator') }}</strong>
-            {{ row.operator }}
-          </p>
           <p>
             <strong>{{ $t('statusCode') }}</strong>
             <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
@@ -128,7 +125,6 @@ const loading = ref<boolean>(false)
 
 const initialValues: AccessLog = {
   id: undefined,
-  operator: '',
   url: '',
   httpMethod: '',
   ip: '',

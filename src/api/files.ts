@@ -37,7 +37,7 @@ export const uploadFile = (file: File) => {
  * @param id Row ID
  * @returns data stream
  */
-export const downloadFile = (id: number) => {
+export const download = (id: number) => {
   return api.get(`${SERVER_URL.FILE}/${id}/download`)
 }
 

@@ -8,22 +8,23 @@
           </q-card-section>
 
           <q-card-section>
-            <q-input v-model="form.username" :label="$t('username')" lazy-rules
+            <q-input outlined dense v-model="form.username" :label="$t('username')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
 
-            <q-input v-model="form.familyName" :label="$t('familyName')" lazy-rules
+            <q-input outlined dense v-model="form.firstname" :label="$t('firstname')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
 
-            <q-input v-model="form.middleName" :label="$t('middleName')" lazy-rules
+            <q-input outlined dense v-model="form.middleName" :label="$t('middleName')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
 
-            <q-input v-model="form.givenName" :label="$t('givenName')" lazy-rules
+            <q-input outlined dense v-model="form.lastname" :label="$t('lastname')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
 
-            <q-input v-model="form.email" :label="$t('email')" lazy-rules type="email"
+            <q-input outlined dense v-model="form.email" :label="$t('email')" lazy-rules type="email"
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
 
-            <q-input v-model="form.accountExpiresAt" :label="$t('accountExpiresAt')" mask="date" :rules="['date']">
+            <q-input outlined dense v-model="form.accountExpiresAt" :label="$t('accountExpiresAt')" mask="date"
+              :rules="['date']">
               <template v-slot:append>
                 <q-icon name="sym_r_event" class="cursor-pointer">
                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -34,7 +35,7 @@
               </template>
             </q-input>
 
-            <q-input v-model="form.credentialsExpiresAt" :label="$t('credentialsExpiresAt')" mask="date"
+            <q-input outlined dense v-model="form.credentialsExpiresAt" :label="$t('credentialsExpiresAt')" mask="date"
               :rules="['date']">
               <template v-slot:append>
                 <q-icon name="sym_r_event" class="cursor-pointer">
@@ -90,10 +91,10 @@
             </q-avatar>
             <div class="column q-ml-sm">
               <span v-if="locale === 'en-US' || props.row.middleName" class="text-subtitle">
-                {{ props.row.givenName }} {{ props.row.middleName }} {{ props.row.familyName }}
+                {{ props.row.firstname }} {{ props.row.middleName }} {{ props.row.lastname }}
               </span>
               <span v-else class="text-subtitle">
-                {{ props.row.familyName }}{{ props.row.givenName }}
+                {{ props.row.lastname }}{{ props.row.firstname }}
               </span>
               <span class="text-caption text-grey-7">{{ props.row.username }}</span>
             </div>
@@ -168,8 +169,8 @@ const loading = ref<boolean>(false)
 const initialValues: User = {
   id: undefined,
   username: '',
-  givenName: '',
-  familyName: '',
+  firstname: '',
+  lastname: '',
   email: ''
 }
 const form = ref<User>({ ...initialValues })
