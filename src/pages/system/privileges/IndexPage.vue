@@ -9,16 +9,15 @@
           </q-card-section>
 
           <q-card-section>
-            <q-input v-model="form.name" :label="$t('name')" lazy-rules
+            <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-input v-model="form.path" :label="$t('path')" lazy-rules
+            <q-input outlined dense v-model="form.path" :label="$t('path')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-input v-model="form.component" :label="$t('component')" lazy-rules
+            <q-input outlined dense v-model="form.component" :label="$t('component')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-select v-model="form.redirect" :label="$t('redirect')" :options="subset" />
-
-            <q-input v-model="form.description" :label="$t('description')" type="textarea" />
-
+            <q-select outlined dense v-model="form.redirect" :label="$t('redirect')" :options="subset" option-value="id"
+              option-label="name" class="q-mb-md" />
+            <q-input outlined dense v-model="form.description" type="textarea" :label="$t('description')" />
           </q-card-section>
 
           <q-card-actions align="right">
@@ -102,7 +101,7 @@
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { useQuasar, exportFile } from 'quasar'
-import { retrievePrivileges, fetchPrivilege, modifyPrivilege, enablePrivilege } from 'src/api/privileges'
+import { retrievePrivileges, retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege } from 'src/api/privileges'
 import SubPage from './SubPage.vue'
 import { visibleArray } from 'src/utils'
 import { actions } from 'src/constants'
@@ -195,6 +194,7 @@ async function saveRow(id: number) {
   // You can populate the form with existing user data based on the id
   if (id) {
     fetchPrivilege(id).then(res => { form.value = res.data })
+    retrievePrivilegeSubset(id).then(res => { subset.value = res.data })
   }
   visible.value = true
 }

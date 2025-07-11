@@ -2,7 +2,7 @@
   <q-layout view="hHh LpR lff" :class="$q.dark.isActive ? '' : 'bg-grey-2'">
     <q-header>
       <q-toolbar>
-        <q-img alt="logo" src="/svgs/logo.svg" width="2em" height="2em" />
+        <q-img alt="logo" :src="logo" width="2em" height="2em" />
         <q-toolbar-title :shrink="true">
           Project Management
         </q-toolbar-title>
@@ -10,21 +10,31 @@
           <q-btn title="drawer" type="button" dense flat round icon="sym_r_menu"
             @click="leftDrawerOpen = !leftDrawerOpen" class="cursor-pointer" />
         </q-toolbar-title>
-        <!-- language -->
-        <LanguageSelector />
-        <!-- theme -->
-        <ThemeToogle class="q-mx-sm" />
-
+        <div class="q-mx-md">
+          <!-- theme -->
+          <ThemeToogle />
+          <!-- language -->
+          <LanguageSelector class="q-mx-sm" />
+          <!-- faq -->
+          <q-btn flat round dense title="faq" icon="sym_r_help" to="/faq" />
+        </div>
         <div class="cursor-pointer">
-          <q-avatar size="md" color="green" icon="sym_r_person">
+          <q-avatar size="md">
+            <img :src="userStore.avatar" alt="avatar" />
           </q-avatar>
           <span class="q-ml-sm">{{ userStore.username }}</span>
           <q-menu>
-            <q-list dense separator>
-              <q-item clickable v-close-popup>
+            <q-list separator>
+              <q-item to="/profile">
+                <q-item-section avatar>
+                  <q-icon name="sym_r_manage_accounts" />
+                </q-item-section>
                 <q-item-section>{{ $t('profile') }}</q-item-section>
               </q-item>
               <q-item clickable v-close-popup @click="signOut(userStore.idToken)">
+                <q-item-section avatar>
+                  <q-icon name="sym_r_logout" />
+                </q-item-section>
                 <q-item-section>{{ $t('signout') }}</q-item-section>
               </q-item>
             </q-list>
@@ -79,6 +89,7 @@ import EssentialList from 'components/EssentialList.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { signOut } from 'src/api/authentication'
+import logo from 'src/assets/logo.svg'
 
 
 const $q = useQuasar()

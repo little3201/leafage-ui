@@ -90,18 +90,14 @@ export const groupsHandlers = [
 
     let data = {
       content: datas,
-      page: {
-        totalElements: datas.length
-      }
+      totalElements: datas.length
     }
 
     if (superiorId) {
       const filtered = datas.filter(item => item.superiorId === Number(superiorId))
       data = {
         content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-        page: {
-          totalElements: filtered.length
-        }
+        totalElements: filtered.length
       }
     }
     return HttpResponse.json(data)

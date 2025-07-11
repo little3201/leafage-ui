@@ -65,9 +65,7 @@ export const regionsHandlers = [
     }
     const data = {
       content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-      page: {
-        totalElements: datas.length
-      }
+      totalElements: datas.length
     }
 
     return HttpResponse.json(data)

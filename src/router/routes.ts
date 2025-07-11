@@ -12,6 +12,16 @@ const routes: RouteRecordRaw[] = [
         name: 'index',
         component: () => import('pages/IndexPage.vue'),
         meta: { icon: 'sym_r_home' }
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: () => import('pages/profile/IndexPage.vue')
+      },
+      {
+        path: '/faq',
+        name: 'faq',
+        component: () => import('pages/faq/IndexPage.vue')
       }
     ]
   },

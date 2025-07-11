@@ -8,8 +8,13 @@ import type { Pagination, User } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveUsers = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveUsers = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = Object.entries(filters).map(([key, value]) => {
+      return `${key}:${value}`
+    }).join(',')
+  }
+  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**

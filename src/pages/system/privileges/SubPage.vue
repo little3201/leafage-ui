@@ -8,17 +8,16 @@
         </q-card-section>
 
         <q-card-section>
-            <q-input v-model="form.name" :label="$t('name')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-input v-model="form.path" :label="$t('path')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-input v-model="form.component" :label="$t('component')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-select v-model="form.redirect" :label="$t('redirect')" :options="subset" />
-
-            <q-input v-model="form.description" :label="$t('description')" type="textarea" />
-
-          </q-card-section>
+          <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
+            :rules="[val => val && val.length > 0 || $t('inputText')]" />
+          <q-input outlined dense v-model="form.path" :label="$t('path')" lazy-rules
+            :rules="[val => val && val.length > 0 || $t('inputText')]" />
+          <q-input outlined dense v-model="form.component" :label="$t('component')" lazy-rules
+            :rules="[val => val && val.length > 0 || $t('inputText')]" />
+          <q-select outlined dense v-model="form.redirect" :label="$t('redirect')" :options="subset" option-value="id"
+            option-label="name" class="q-mb-md" />
+          <q-input outlined dense v-model="form.description" type="textarea" :label="$t('description')" />
+        </q-card-section>
 
         <q-card-actions align="right">
           <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />

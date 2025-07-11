@@ -9,10 +9,10 @@
           </q-card-section>
 
           <q-card-section>
-            <q-input v-model="form.name" :label="$t('name')" lazy-rules
+            <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
 
-            <q-input v-model="form.description" :label="$t('description')" type="textarea" />
+            <q-input outlined dense v-model="form.description" :label="$t('description')" type="textarea" />
           </q-card-section>
 
           <q-card-actions align="right">
@@ -26,7 +26,7 @@
 
     <q-table flat ref="tableRef" :title="$t('groups')" selection="multiple" v-model:selected="selected" :rows="rows"
       :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
+      binary-state-sort @request="onRequest" class="full-width col">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
@@ -88,7 +88,6 @@
         </q-td>
       </template>
     </q-table>
-
   </q-page>
 </template>
 

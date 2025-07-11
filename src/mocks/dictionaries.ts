@@ -34,7 +34,7 @@ const datas: Dictionary[] = [
     name: '操作按钮',
     id: 42,
     enabled: true
-  }
+  },
 ]
 
 const subDatas: Dictionary[] = [
@@ -195,6 +195,22 @@ const subDatas: Dictionary[] = [
     enabled: true,
     lastModifiedDate: new Date()
   },
+  {
+    name: 'DB',
+    superiorId: 68,
+    description: '数据库',
+    id: 57,
+    enabled: true,
+    lastModifiedDate: new Date()
+  },
+  {
+    name: 'middleware',
+    superiorId: 68,
+    description: '中间件',
+    id: 58,
+    enabled: true,
+    lastModifiedDate: new Date()
+  },
 ]
 
 export const dictionariesHandlers = [
@@ -232,9 +248,7 @@ export const dictionariesHandlers = [
     // as the response body.
     const data = {
       content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-      page: {
-        totalElements: datas.length
-      }
+      totalElements: datas.length
     }
 
     return HttpResponse.json(data)

@@ -4,7 +4,7 @@
     <q-dialog v-model="visible">
       <q-card>
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">{{ $t('accessLog') }}</div>
+          <div class="text-h6">{{ $t('access_logs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
@@ -26,9 +26,6 @@
           <p v-if="row.body"><strong>{{ $t('body') }}</strong>
             {{ row.body }}
           </p>
-          <p><strong>{{ $t('operator') }}</strong>
-            {{ row.operator }}
-          </p>
           <p>
             <strong>{{ $t('statusCode') }}</strong>
             <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
@@ -47,8 +44,8 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('accessLog')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
+    <q-table flat ref="tableRef" :title="$t('access_logs')" selection="multiple" v-model:selected="selected"
+      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
@@ -128,7 +125,6 @@ const loading = ref<boolean>(false)
 
 const initialValues: AccessLog = {
   id: undefined,
-  operator: '',
   url: '',
   httpMethod: '',
   ip: '',

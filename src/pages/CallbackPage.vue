@@ -2,14 +2,14 @@
   <q-layout>
     <q-page-container class="h-screen">
       <q-page class="flex flex-center">
-        <q-circular-progress indeterminate rounded size="xl" />
+        <q-spinner color="primary" size="xl" />
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from 'stores/user-store'
 import { Cookies } from 'quasar'
@@ -18,8 +18,6 @@ import { signIn, handleCallback } from 'src/api/authentication'
 
 const { replace } = useRouter()
 const userStore = useUserStore()
-
-const loading = ref(true)
 
 onMounted(() => {
   handleCallback().then(res => {
@@ -30,7 +28,6 @@ onMounted(() => {
         accessToken: res.data.access_token,
         idToken: res.data.id_token
       })
-      loading.value = false
       // 路由跳转
       replace(Cookies.get('current_page') || '/')
     }

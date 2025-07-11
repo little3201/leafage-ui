@@ -4,7 +4,7 @@
     <q-dialog v-model="visible" persistent>
       <q-card>
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">{{ $t('schedulerLog') }}</div>
+          <div class="text-h6">{{ $t('scheduler_logs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
@@ -34,7 +34,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('schedulerLog')" selection="multiple" v-model:selected="selected"
+    <q-table flat ref="tableRef" :title="$t('scheduler_logs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>

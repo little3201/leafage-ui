@@ -3,23 +3,23 @@
     <q-header :class="['transparent', $q.dark.isActive ? '' : 'text-black']">
       <q-toolbar>
         <q-space />
+        <!-- theme -->
+        <ThemeToogle class="q-mx-sm" />
         <!-- language -->
         <LanguageSelector />
-        <!-- theme -->
-        <ThemeToogle />
       </q-toolbar>
     </q-header>
     <q-page-container>
       <q-page padding class="row justify-center items-center">
 
-        <figure class="absolute bg-primary-gradient rounded-full"
-          style="height: 35em; width: 35em;  top: -19em; right: -14em; " />
-        <figure class="absolute bg-positive-gradient rounded-full"
-          style="height: 21em; width: 21em; bottom: 4em; right: -7em; " />
-        <figure class="absolute bg-warning-gradient rounded-full"
-          style="height: 42em; width: 42em; bottom: -19em; left: -14em; " />
-        <figure class="absolute bg-negative-gradient rounded-full"
-          style="height: 21em;  width: 21em; bottom: -16em; left: 14em; " />
+        <figure class="absolute bg-primary-gradient"
+          style="height: 35em; width: 35em;  top: -19em; right: -14em; border-radius: 50%;" />
+        <figure class="absolute bg-positive-gradient"
+          style="height: 21em; width: 21em; bottom: 4em; right: -7em; border-radius: 50%;" />
+        <figure class="absolute bg-warning-gradient"
+          style="height: 42em; width: 42em; bottom: -19em; left: -14em; border-radius: 50%;" />
+        <figure class="absolute bg-negative-gradient"
+          style="height: 21em;  width: 21em; bottom: -16em; left: 14em; border-radius: 50%;" />
 
         <q-card bordered class="column justify-center items-center shadow-12 overflow-hidden"
           style="height: 70vh; border-radius: 20px;" :style="{ width: $q.screen.lt.sm ? '100%' : '65vw' }">
@@ -44,7 +44,7 @@
             <transition appear enter-active-class="animated slideInRight" leave-active-class="animated slideOutRight">
               <div class="column justify-center items-center full-width">
                 <div class="text-center">
-                  <q-img alt="logo" src="/svgs/logo.svg" width="8em" height="8em" />
+                  <q-img alt="logo" :src="logo" width="8em" height="8em" />
                 </div>
                 <div class="text-h6 text-center q-mb-xs">
                   {{ $t('signinTo') }}
@@ -53,10 +53,16 @@
                   <q-input :disable="loading" dense no-error-icon v-model.trim="form.username"
                     :placeholder="$t('username')"
                     :rules="[(val) => (val && val.length >= 5 && val.length <= 12) || $t('username')]">
+                    <template #prepend>
+                      <q-icon name="sym_r_person" />
+                    </template>
                   </q-input>
                   <q-input :disable="loading" dense no-error-icon :type="showPwd ? 'password' : 'text'"
                     v-model.trim="form.password" :placeholder="$t('password')"
                     :rules="[(val) => (val && val.length >= 8 && val.length <= 32) || $t('password')]">
+                    <template #prepend>
+                      <q-icon name="sym_r_key_vertical" />
+                    </template>
                     <template v-slot:append>
                       <q-icon size="xs" :name="showPwd ? 'sym_r_visibility_off' : 'sym_r_visibility'"
                         class="cursor-pointer" @click="showPwd = !showPwd" />
@@ -89,6 +95,7 @@ import { SERVER_URL } from 'src/constants'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
+import logo from 'src/assets/logo.svg'
 
 
 const $q = useQuasar()
@@ -135,7 +142,7 @@ function load() {
       canvas: lottieRef.value,
       loop: true,
       autoplay: true,
-      src: '/1707289607880.lottie',
+      src: 'src/assets/1707289607880.lottie',
       renderConfig: {
         autoResize: true
       }

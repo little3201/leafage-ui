@@ -4,7 +4,7 @@
     <q-dialog v-model="visible" persistent>
       <q-card>
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">{{ $t('operationLog') }}</div>
+          <div class="text-h6">{{ $t('operation_logs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
@@ -32,9 +32,6 @@
           <p><strong>{{ $t('sessionId') }}</strong>
             {{ row.sessionId }}
           </p>
-          <p><strong>{{ $t('operator') }}</strong>
-            {{ row.operator }}
-          </p>
           <p>
             <strong>{{ $t('statusCode') }}</strong>
             <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
@@ -50,7 +47,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('operationLog')" selection="multiple" v-model:selected="selected"
+    <q-table flat ref="tableRef" :title="$t('operation_logs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -127,8 +124,7 @@ const initialValues: OperationLog = {
   operation: '',
   content: '',
   ip: '',
-  location: '',
-  operator: ''
+  location: ''
 }
 const row = ref<OperationLog>({ ...initialValues })
 

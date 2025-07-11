@@ -4,7 +4,7 @@
     <q-dialog v-model="visible" persistent>
       <q-card>
         <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">{{ $t('auditLog') }}</div>
+          <div class="text-h6">{{ $t('audit_logs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
@@ -26,9 +26,6 @@
           <p><strong>{{ $t('newValue') }}</strong>
             {{ row.newValue }}
           </p>
-          <p><strong>{{ $t('operator') }}</strong>
-            {{ row.operator }}
-          </p>
           <p>
             <strong>{{ $t('statusCode') }}</strong>
             <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
@@ -44,7 +41,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('auditLog')" selection="multiple" v-model:selected="selected" :rows="rows"
+    <q-table flat ref="tableRef" :title="$t('audit_logs')" selection="multiple" v-model:selected="selected" :rows="rows"
       :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -119,7 +116,6 @@ const loading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: undefined,
   operation: '',
-  operator: '',
   resource: '',
   ip: '',
   location: ''

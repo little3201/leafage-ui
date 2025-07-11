@@ -52,7 +52,7 @@ const datas: Privilege[] = [
     path: 'exploiters',
     component: '#',
     name: 'exploiters',
-    redirect: 'generators',
+    redirect: 'schemas',
     icon: 'build',
     count: 1,
     enabled: true,
@@ -114,7 +114,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'operation',
     component: 'logs/operation',
-    name: 'operationLog',
+    name: 'operation_logs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -126,7 +126,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'access',
     component: 'logs/access',
-    name: 'accessLog',
+    name: 'access_logs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -138,7 +138,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'audit',
     component: 'logs/audit',
-    name: 'auditLog',
+    name: 'audit_logs',
     actions: ['remove', 'export'],
     count: 0,
     enabled: true,
@@ -150,7 +150,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'scheduler',
     component: 'logs/scheduler',
-    name: 'schedulerLog',
+    name: 'scheduler_logs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -160,9 +160,9 @@ const subDatas: Privilege[] = [
   {
     id: 17,
     superiorId: 16,
-    path: 'generators',
-    name: 'generators',
-    component: 'exploiters/generators',
+    path: 'schemas',
+    name: 'schemas',
+    component: 'exploiters/schemas',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'preview', 'enable'],
     count: 0,
     enabled: true,
@@ -184,9 +184,9 @@ const subDatas: Privilege[] = [
   {
     id: 19,
     superiorId: 16,
-    path: 'templates',
-    name: 'templates',
-    component: 'exploiters/templates',
+    path: 'master-plates',
+    name: 'master_plates',
+    component: 'exploiters/master-plates',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
@@ -261,7 +261,7 @@ const treeNodes: PrivilegeTreeNode[] = [
     children: [
       {
         id: 8,
-        name: 'operationLog',
+        name: 'operation_logs',
         meta: {
           path: 'operation',
           component: 'logs/operation',
@@ -271,7 +271,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 9,
-        name: 'accessLog',
+        name: 'access_logs',
         meta: {
           path: 'access',
           component: 'logs/access',
@@ -281,7 +281,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 10,
-        name: 'auditLog',
+        name: 'audit_logs',
         meta: {
           path: 'audit',
           component: 'logs/audit',
@@ -291,7 +291,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 11,
-        name: 'schedulerLog',
+        name: 'scheduler_logs',
         meta: {
           path: 'scheduler',
           component: 'logs/scheduler',
@@ -327,16 +327,16 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'exploiters',
       component: '#',
-      redirect: 'generators',
+      redirect: 'schemas',
       icon: 'build'
     },
     children: [
       {
         id: 17,
-        name: 'generators',
+        name: 'schemas',
         meta: {
-          path: 'generators',
-          component: 'exploiters/generators',
+          path: 'schemas',
+          component: 'exploiters/schemas',
           icon: 'genetics',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'sync', 'config', 'execute', 'enable']
         }
@@ -353,10 +353,10 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 19,
-        name: 'templates',
+        name: 'master_plates',
         meta: {
-          path: 'templates',
-          component: 'exploiters/templates',
+          path: 'master-plates',
+          component: 'exploiters/master-plates',
           icon: 'code',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
@@ -476,9 +476,7 @@ export const privilegesHandlers = [
     // as the response body.
     const data = {
       content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-      page: {
-        totalElements: datas.length
-      }
+      totalElements: datas.length
     }
 
     return HttpResponse.json(data)

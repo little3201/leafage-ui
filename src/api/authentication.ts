@@ -3,7 +3,7 @@ import { SERVER_URL } from 'src/constants'
 import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
 
 
-const client_id = import.meta.env.VITE_CLIENT_ID
+const client_id = process.env.CLIENT_ID
 
 export async function signIn() {
   const state = getRandomString(16)

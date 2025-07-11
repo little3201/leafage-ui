@@ -1,8 +1,8 @@
 import { defineBoot } from '#q-app/wrappers'
 import { setupWorker } from 'msw/browser'
-import { handlers } from 'src/mocks' // 您的请求处理程序
+import { handlers } from 'src/mocks'
 
-export default defineBoot(async ({ router }) => {
+export default defineBoot(({ router }) => {
   // dev
   if (!process.env.DEV) {
 
