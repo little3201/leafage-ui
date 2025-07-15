@@ -43,8 +43,6 @@ export default defineConfigWithVueTs(
       globals: {
         ...globals.browser,
         process: 'readonly', // process.env.*
-        chrome: 'readonly', // BEX related
-        browser: 'readonly' // BEX related
       }
     },
 
@@ -75,10 +73,6 @@ export default defineConfigWithVueTs(
 
       // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
       '@typescript-eslint/no-var-requires': 'off',
-
-      // The core 'no-unused-vars' rules (in the eslint:recommended ruleset)
-      // does not work with type definitions
-      'no-unused-vars': 'off',
 
       // allow debugger during development only
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
