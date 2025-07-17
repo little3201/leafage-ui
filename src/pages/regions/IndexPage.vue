@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions, CheckboxValueType } from 'element-plus'
-import draggable from 'vuedraggable'
+import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import DialogView from 'components/DialogView.vue'
@@ -26,11 +25,6 @@ const pagination = reactive<Pagination>({
   page: 1,
   size: 10
 })
-
-const checkAll = ref<boolean>(true)
-const isIndeterminate = ref<boolean>(false)
-const checkedColumns = ref<Array<string>>(['name', 'enabled', 'description'])
-const columns = ref<Array<string>>(['name', 'enabled', 'description'])
 
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
@@ -202,24 +196,7 @@ function confirmEvent(id: number) {
   }
 }
 
-/**
- * 全选操作
- * @param val 是否全选
- */
-function handleCheckAllChange(val: CheckboxValueType) {
-  checkedColumns.value = val ? columns.value : []
-  isIndeterminate.value = false
-}
 
-/**
- * 选中操作
- * @param value 选中的值
- */
-function handleCheckedChange(value: CheckboxValueType[]) {
-  const checkedCount = value.length
-  checkAll.value = checkedCount === columns.value.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
-}
 </script>
 
 <template>
@@ -261,50 +238,18 @@ function handleCheckedChange(value: CheckboxValueType[]) {
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
           </ElTooltip>
-
-          <ElTooltip :content="$t('column') + $t('settings')" placement="top">
-            <div class="inline-flex items-center align-middle ml-3">
-              <ElPopover :width="200" trigger="click">
-                <template #reference>
-                  <ElButton title="settings" type="success" plain circle>
-                    <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
-                  </ElButton>
-                </template>
-                <div>
-                  <ElCheckbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-                    {{ $t('all') }}
-                  </ElCheckbox>
-                  <ElDivider />
-                  <ElCheckboxGroup v-model="checkedColumns" @change="handleCheckedChange">
-                    <draggable v-model="columns" item-key="simple">
-                      <template #item="{ element }">
-                        <div class="flex items-center space-x-2">
-                          <Icon icon="material-symbols:drag-indicator" width="18" height="18"
-                            class="hover:cursor-move" />
-                          <ElCheckbox :label="element" :value="element" :disabled="element === columns[0]">
-                            <div class="inline-flex items-center space-x-4">
-                              {{ $t(element) }}
-                            </div>
-                          </ElCheckbox>
-                        </div>
-                      </template>
-                    </draggable>
-                  </ElCheckboxGroup>
-                </div>
-              </ElPopover>
-            </div>
-          </ElTooltip>
         </ElCol>
       </ElRow>
 
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
         highlight-current-row>
-        <ElTableColumn type="selection" width="55" />
-        <ElTableColumn type="expand">
+        <ElTableColumn type="selection" />
+        <ElTableColumn type="expand" width="40">
           <template #default="props">
             <SubPage :superior-id="props.row.id" :title="props.row.name" />
           </template>
         </ElTableColumn>
+        <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="name" :label="$t('name')" sortable />
         <ElTableColumn prop="areaCode" :label="$t('areaCode')" sortable />
         <ElTableColumn prop="postalCode" :label="$t('postalCode')" sortable />

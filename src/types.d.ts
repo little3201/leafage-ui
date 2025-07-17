@@ -184,7 +184,8 @@ export interface SchedulerLog extends AudtiMetadata {
 
 export interface FileRecord extends AudtiMetadata {
   name: string
-  mimeType: string
+  type: 'file' | 'directory'
+  mimeType?: string
   size: number
   path: string
 }

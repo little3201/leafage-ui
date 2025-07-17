@@ -129,7 +129,7 @@ export const groupsHandlers = [
     const superiorId = searchParams.get('superiorId')
 
     let data = {
-      content: datas,
+      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
       page: {
         totalElements: datas.length
       }

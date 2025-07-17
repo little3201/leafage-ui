@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch } from 'vue'
-import type { TableInstance, FormInstance, FormRules, TreeInstance, UploadInstance, UploadRequestOptions, CheckboxValueType, TransferDirection, TransferKey } from 'element-plus'
-import draggable from 'vuedraggable'
+import type { TableInstance, FormInstance, FormRules, TreeInstance, UploadInstance, UploadRequestOptions, TransferDirection, TransferKey } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import DialogView from 'components/DialogView.vue'
@@ -33,11 +32,6 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const checkAll = ref<boolean>(true)
-const isIndeterminate = ref<boolean>(false)
-const checkedColumns = ref<Array<string>>(['name', 'enabled', 'description'])
-const columns = ref<Array<string>>(['name', 'enabled', 'description'])
-
 const treeEl = ref<TreeInstance>()
 const treeLoading = ref<boolean>(false)
 const currentNodeKey = ref<number>()
@@ -46,8 +40,6 @@ const currentNode = ref('')
 const groupTree = ref<TreeNode[]>([])
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
-
-const view = ref<'table' | 'tree'>('table')
 
 const activeTabName = ref<string>('user')
 const relationVisible = ref<boolean>(false)
@@ -203,10 +195,6 @@ onMounted(() => {
   loadTree()
 })
 
-function onViewChange() {
-  view.value = view.value === 'table' ? 'tree' : 'table'
-}
-
 /**
  * 导入
  */
@@ -347,25 +335,6 @@ function confirmEvent(id: number) {
 }
 
 /**
- * 全选操作
- * @param val 是否全选
- */
-function handleCheckAllChange(val: CheckboxValueType) {
-  checkedColumns.value = val ? columns.value : []
-  isIndeterminate.value = false
-}
-
-/**
- * 选中操作
- * @param value 选中的值
- */
-function handleCheckedChange(value: CheckboxValueType[]) {
-  const checkedCount = value.length
-  checkAll.value = checkedCount === columns.value.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
-}
-
-/**
  * 关联用户
  * @param value 用户
  * @param direction 方向
@@ -499,51 +468,11 @@ function handleActionCheck(privilegeId: number, item: string) {
                 <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
               </ElButton>
             </ElTooltip>
-            <ElTooltip :content="$t('view')" placement="top">
-              <ElButton title="view" type="primary" plain circle @click="onViewChange">
-                <Icon
-                  :icon="`material-symbols:${view === 'table' ? 'account-tree-outline-rounded' : 'view-list-outline'}`"
-                  width="18" height="18" />
-              </ElButton>
-            </ElTooltip>
-
-            <ElTooltip :content="$t('column') + $t('settings')" placement="top">
-              <div class="inline-flex items-center align-middle ml-3">
-                <ElPopover :width="200" trigger="click">
-                  <template #reference>
-                    <ElButton title="settings" type="success" plain circle>
-                      <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
-                    </ElButton>
-                  </template>
-                  <div>
-                    <ElCheckbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-                      {{ $t('all') }}
-                    </ElCheckbox>
-                    <ElDivider />
-                    <ElCheckboxGroup v-model="checkedColumns" @change="handleCheckedChange">
-                      <draggable v-model="columns" item-key="simple">
-                        <template #item="{ element }">
-                          <div class="flex items-center space-x-2">
-                            <Icon icon="material-symbols:drag-indicator" width="18" height="18"
-                              class="hover:cursor-move" />
-                            <ElCheckbox :label="element" :value="element" :disabled="element === columns[0]">
-                              <div class="inline-flex items-center space-x-4">
-                                {{ $t(element) }}
-                              </div>
-                            </ElCheckbox>
-                          </div>
-                        </template>
-                      </draggable>
-                    </ElCheckboxGroup>
-                  </div>
-                </ElPopover>
-              </div>
-            </ElTooltip>
           </ElCol>
         </ElRow>
 
         <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
-          <ElTableColumn type="selection" width="55" />
+          <ElTableColumn type="selection" />
           <ElTableColumn type="index" :label="$t('no')" width="55" />
           <ElTableColumn prop="name" :label="$t('name')" sortable />
           <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>
@@ -565,7 +494,8 @@ function handleActionCheck(privilegeId: number, item: string) {
               </ElButton>
               <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" size="small" type="success" link
                 @click="authorizeRow(scope.row.id)">
-                <Icon icon="material-symbols:privacy-tip-outline-rounded" width="16" height="16" />{{ $t('authorize') }}
+                <Icon icon="material-symbols:privacy-tip-outline-rounded" width="16" height="16" />{{ $t('authorize')
+                }}
               </ElButton>
               <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('removeConfirm')" :width="240"
                 @confirm="confirmEvent(scope.row.id)">

@@ -159,6 +159,7 @@ function confirmEvent(id: number) {
     </ElRow>
 
     <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('no')" width="55" />
       <ElTableColumn prop="name" :label="$t('name')" sortable />
       <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>

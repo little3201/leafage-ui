@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import type { UploadInstance, CheckboxValueType, UploadRequestOptions } from 'element-plus'
-import draggable from 'vuedraggable'
+import type { UploadInstance, UploadRequestOptions } from 'element-plus'
 import DialogView from 'components/DialogView.vue'
-import { retrieveFiles, fetchFile, uploadFile, downloadFile } from 'src/api/files'
+import { retrieveFiles, fetchFile, uploadFile, downloadFile } from 'src/api/file-records'
 import type { Pagination, FileRecord } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { formatFileSize, download, hasAction } from 'src/utils'
@@ -23,6 +22,7 @@ const pagination = reactive<Pagination>({
 const initialValues: FileRecord = {
   id: undefined,
   name: '',
+  type: 'file',
   mimeType: '',
   size: 0,
   path: ''
@@ -31,11 +31,6 @@ const row = ref<FileRecord>({ ...initialValues })
 const visible = ref<boolean>(false)
 const view = ref<'table' | 'grid'>('table')
 const uploadVisible = ref<boolean>(false)
-
-const checkAll = ref<boolean>(true)
-const isIndeterminate = ref<boolean>(false)
-const checkedColumns = ref<Array<string>>(['name', 'type', 'size'])
-const columns = ref<Array<string>>(['name', 'type', 'size'])
 
 const uploadRef = ref<UploadInstance>()
 
@@ -154,24 +149,7 @@ function confirmEvent(id: number) {
   }
 }
 
-/**
- * 全选操作
- * @param val 是否全选
- */
-function handleCheckAllChange(val: CheckboxValueType) {
-  checkedColumns.value = val ? columns.value : []
-  isIndeterminate.value = false
-}
 
-/**
- * 选中操作
- * @param value 选中的值
- */
-function handleCheckedChange(value: CheckboxValueType[]) {
-  const checkedCount = value.length
-  checkAll.value = checkedCount === columns.value.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
-}
 </script>
 
 <template>
@@ -249,39 +227,6 @@ function handleCheckedChange(value: CheckboxValueType[]) {
                   width="18" height="18" />
               </ElButton>
             </ElTooltip>
-
-            <ElTooltip :content="$t('column') + $t('settings')" placement="top">
-              <div class="inline-flex items-center align-middle ml-3">
-                <ElPopover :width="200" trigger="click">
-                  <template #reference>
-                    <ElButton title="settings" type="success" plain circle :disabled="view === 'grid'">
-                      <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
-                    </ElButton>
-                  </template>
-                  <div>
-                    <ElCheckbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-                      {{ $t('all') }}
-                    </ElCheckbox>
-                    <ElDivider />
-                    <ElCheckboxGroup v-model="checkedColumns" @change="handleCheckedChange">
-                      <draggable v-model="columns" item-key="simple">
-                        <template #item="{ element }">
-                          <div class="flex items-center space-x-2">
-                            <Icon icon="material-symbols:drag-indicator" width="18" height="18"
-                              class="hover:cursor-move" />
-                            <ElCheckbox :label="element" :value="element" :disabled="element === columns[0]">
-                              <div class="inline-flex items-center space-x-4">
-                                {{ $t(element) }}
-                              </div>
-                            </ElCheckbox>
-                          </div>
-                        </template>
-                      </draggable>
-                    </ElCheckboxGroup>
-                  </div>
-                </ElPopover>
-              </div>
-            </ElTooltip>
           </ElCol>
         </ElRow>
 
@@ -292,7 +237,8 @@ function handleCheckedChange(value: CheckboxValueType[]) {
             <ElTableColumn prop="name" :label="$t('name')" sortable>
               <template #default="scope">
                 <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
-                  {{ scope.row.name }}
+                  <Icon :icon="`flat-color-icons:${scope.row.type === 'file' ? 'file' : 'folder'}`" width="16"
+                    height="16" class="mr-2" />{{ scope.row.name }}
                 </ElButton>
               </template>
             </ElTableColumn>
@@ -324,8 +270,11 @@ function handleCheckedChange(value: CheckboxValueType[]) {
         <div v-else class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
           <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
             body-class="hover:bg-[var(--el-bg-color-page)]">
-            <ElImage v-if="['text/jpg', 'jpeg', 'svg'].includes(data.mimeType)" :src="data.path" class="w-20 h-20" />
-            <Icon v-else icon="material-symbols:docs-outline-rounded" width="80" height="80" />
+            <Icon v-if="data.type === 'directory'" icon="flat-color-icons:folder" width="80" height="80" />
+            <template v-else-if="data.mimeType">
+              <ElImage v-if="['text/jpg', 'jpeg', 'svg'].includes(data.mimeType)" :src="data.path" class="w-20 h-20" />
+              <Icon v-else icon="flat-color-icons:file" width="80" height="80" />
+            </template>
             <div>
               <p class="my-1 text-sm text-[var(--el-text-color-regular)]">
                 {{ data.name }}
@@ -338,11 +287,11 @@ function handleCheckedChange(value: CheckboxValueType[]) {
   </ElSpace>
 
   <!-- details -->
-  <DialogView v-model="visible" :title="$t('details')" show-close width="35%">
-    <ElDescriptions v-loading="loading" border>
-      <ElDescriptionsItem :label="$t('name')" :span="2">{{ row.name }}</ElDescriptionsItem>
+  <DialogView v-model="visible" :title="$t('details')" show-close width="25%">
+    <ElDescriptions v-loading="loading" :column="1">
+      <ElDescriptionsItem :label="$t('name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('type')" :span="3">{{ row.mimeType }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('type')">{{ row.mimeType }}</ElDescriptionsItem>
     </ElDescriptions>
   </DialogView>
 

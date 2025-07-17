@@ -21,54 +21,58 @@ const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 })
 })
 
-// Router guard for authentication and dynamic route registration
-router.beforeEach(async (to, from, next) => {
-  if (to.path === '/callback') {
-    next()
-  } else if (to.fullPath === '/login') {
-    next()
-  } else {
-    const userStore = useUserStore()
-    if (userStore.accessToken) {
-      // load user info
-      if (!userStore.username) {
-        const [subRes, userRes] = await Promise.all([getSub(), fetchMe()])
-        userStore.$patch({
-          username: subRes.data.sub,
-          avatar: userRes.data.avatar
-        })
-      }
-      // load privileges
-      if (!userStore.privileges.length) {
-        const privilegesResp = await retrievePrivilegeTree()
-        const privileges = privilegesResp.data
-        userStore.$patch({ privileges })
-      }
-      if (!to.name || !router.hasRoute(to.name)) {
-        const routes = generateRoutes(userStore.privileges)
-        routes.forEach((route) => {
-          router.addRoute('home', route as RouteRecordRaw)
-        })
-        router.addRoute({
-          path: '/:cacheAll(.*)*',
-          name: 'ErrorNotFound',
-          component: () => import('pages/ErrorNotFound.vue')
-        })
-        const redirectPath = from.query.redirect || to.path
-        const redirect = decodeURIComponent(redirectPath as string)
-        const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
-        cookies.set('current_page', nextData.path)
-        next(nextData)
-      } else {
-        cookies.set('current_page', decodeURIComponent(to.fullPath as string))
-        next()
-      }
-    } else {
-      await signIn()
-    }
+
+router.beforeEach(async (to, from) => {
+  if (['/callback', '/login'].includes(to.path)) return true
+
+  const userStore = useUserStore()
+  if (!userStore.accessToken) {
+    await signIn()
+    return false
   }
 
+  // 加载用户信息
+  if (!userStore.username) {
+    const [subRes, userRes] = await Promise.all([getSub(), fetchMe()])
+    userStore.$patch({
+      username: subRes.data.sub,
+      avatar: userRes.data.avatar,
+    })
+  }
+
+  // 加载权限信息
+  if (!userStore.privileges.length) {
+    const privilegesResp = await retrievePrivilegeTree()
+    userStore.$patch({ privileges: privilegesResp.data })
+  }
+
+  // 动态注册路由
+  if (!to.name || !router.hasRoute(to.name)) {
+    const routes = generateRoutes(userStore.privileges)
+    routes.forEach((route) => {
+      router.addRoute('home', route as RouteRecordRaw)
+    })
+
+    router.addRoute({
+      path: '/:cacheAll(.*)*',
+      name: 'ErrorNotFound',
+      component: () => import('pages/ErrorNotFound.vue'),
+    })
+
+    const redirectPath = from.query.redirect || to.path
+    const redirect = decodeURIComponent(redirectPath as string)
+    const nextData = to.path === redirect
+      ? { ...to, replace: true }
+      : { path: redirect }
+
+    cookies.set('current_page', nextData.path)
+    return nextData
+  }
+
+  cookies.set('current_page', decodeURIComponent(to.fullPath as string))
+  return true
 })
+
 
 /**
  * Generate routes dynamically based on user privileges

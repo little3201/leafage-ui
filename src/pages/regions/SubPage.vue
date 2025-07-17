@@ -173,12 +173,13 @@ function confirmEvent(id: number) {
     </ElRow>
 
     <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
-      <ElTableColumn type="selection" width="55" />
+      <ElTableColumn type="selection" />
       <ElTableColumn type="expand">
         <template #default="props">
           <SubPage :superior-id="props.row.id" :title="props.row.name" />
         </template>
       </ElTableColumn>
+      <ElTableColumn type="index" :label="$t('no')" width="55" />
       <ElTableColumn prop="name" :label="$t('name')" sortable />
       <ElTableColumn prop="areaCode" :label="$t('areaCode')" sortable />
       <ElTableColumn prop="postalCode" :label="$t('postalCode')" sortable />

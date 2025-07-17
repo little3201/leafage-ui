@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import type { TableInstance, CheckboxValueType } from 'element-plus'
-import draggable from 'vuedraggable'
+import type { TableInstance } from 'element-plus'
 import DialogView from 'components/DialogView.vue'
 import { retrieveAccessLogs, fetchAccessLog, removeAccessLog, clearAccessLogs } from 'src/api/access-logs'
 import type { Pagination, AccessLog } from 'src/types'
@@ -18,11 +17,6 @@ const pagination = reactive<Pagination>({
   page: 1,
   size: 10
 })
-
-const checkAll = ref<boolean>(true)
-const isIndeterminate = ref<boolean>(false)
-const checkedColumns = ref<Array<string>>(['url', 'httpMethod', 'params', 'body', 'ip', 'location', 'statusCode', 'responseTimes'])
-const columns = ref<Array<string>>(['url', 'httpMethod', 'params', 'body', 'ip', 'location', 'statusCode', 'responseTimes'])
 
 const filters = ref({
   url: null,
@@ -137,24 +131,7 @@ function confirmEvent(id: number) {
   }
 }
 
-/**
- * 全选操作
- * @param val 是否全选
- */
-function handleCheckAllChange(val: CheckboxValueType) {
-  checkedColumns.value = val ? columns.value : []
-  isIndeterminate.value = false
-}
 
-/**
- * 选中操作
- * @param value 选中的值
- */
-function handleCheckedChange(value: CheckboxValueType[]) {
-  const checkedCount = value.length
-  checkAll.value = checkedCount === columns.value.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < columns.value.length
-}
 </script>
 
 <template>
@@ -196,44 +173,11 @@ function handleCheckedChange(value: CheckboxValueType[]) {
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
           </ElTooltip>
-
-          <ElTooltip :content="$t('column') + $t('settings')" placement="top">
-            <div class="inline-flex items-center align-middle ml-3">
-              <ElPopover :width="200" trigger="click">
-                <template #reference>
-                  <ElButton title="settings" type="success" plain circle>
-                    <Icon icon="material-symbols:format-list-bulleted" width="18" height="18" />
-                  </ElButton>
-                </template>
-                <div>
-                  <ElCheckbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-                    {{ $t('all') }}
-                  </ElCheckbox>
-                  <ElDivider />
-                  <ElCheckboxGroup v-model="checkedColumns" @change="handleCheckedChange">
-                    <draggable v-model="columns" item-key="simple">
-                      <template #item="{ element }">
-                        <div class="flex items-center space-x-2">
-                          <Icon icon="material-symbols:drag-indicator" width="18" height="18"
-                            class="hover:cursor-move" />
-                          <ElCheckbox :label="element" :value="element" :disabled="element === columns[0]">
-                            <div class="inline-flex items-center space-x-4">
-                              {{ $t(element) }}
-                            </div>
-                          </ElCheckbox>
-                        </div>
-                      </template>
-                    </draggable>
-                  </ElCheckboxGroup>
-                </div>
-              </ElPopover>
-            </div>
-          </ElTooltip>
         </ElCol>
       </ElRow>
 
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
-        <ElTableColumn type="selection" width="55" />
+        <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="url" :label="$t('url')" sortable>
           <template #default="scope">

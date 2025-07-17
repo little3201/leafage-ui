@@ -27,8 +27,6 @@ const elRef = ref<HTMLElement | null>(null)
 
 let chartRef: ApexCharts | null = null
 
-const contentEl = ref<Element>()
-
 const styles = computed(() => {
   const width = isNumber(props.width) ? `${props.width}px` : props.width
   const height = isNumber(props.height) ? `${props.height}px` : props.height
@@ -44,9 +42,10 @@ const initChart = () => {
     // 销毁旧图表，防止重复渲染
     if (chartRef) {
       chartRef.destroy()
+    } else {
+      chartRef = new ApexCharts(elRef.value, options.value)
     }
-    chartRef = new ApexCharts(elRef.value, options.value)
-    chartRef?.render()
+    chartRef.render()
   }
 }
 
@@ -55,7 +54,7 @@ watch(
   (options) => {
     if (chartRef) {
       // 第二个参数 true 表示对图表强制更新
-      chartRef?.updateOptions(options, true, false)
+      chartRef.updateOptions(options, true, false)
     }
   },
   {
@@ -65,7 +64,7 @@ watch(
 
 const resizeHandler = () => {
   if (chartRef) {
-    chartRef?.destroy()
+    chartRef.destroy()
     initChart()
   }
 }
@@ -76,16 +75,9 @@ const contentResizeHandler = async (e: TransitionEvent) => {
   }
 }
 
-const handleContentResize = (e: TransitionEvent): void => {
-  if (e.propertyName === 'width') {
-    contentResizeHandler(e)
-  }
-}
-
 useEventListener(document, 'transitionend', (evt) => {
-  contentEl.value = document.getElementsByClassName('el-layout-content')[0]
-  if (contentEl.value) {
-    handleContentResize(evt)
+  if (elRef.value) {
+    contentResizeHandler(evt)
   }
 })
 
