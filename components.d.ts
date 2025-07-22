@@ -68,6 +68,7 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     EssentialList: typeof import('./src/components/EssentialList.vue')['default']
     LanguageSelector: typeof import('./src/components/LanguageSelector.vue')['default']
+    OrgTreeView: typeof import('./src/components/OrgTreeView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ThemeToogle: typeof import('./src/components/ThemeToogle.vue')['default']

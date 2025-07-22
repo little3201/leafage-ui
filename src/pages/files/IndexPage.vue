@@ -29,7 +29,10 @@ const initialValues: FileRecord = {
 }
 const row = ref<FileRecord>({ ...initialValues })
 const visible = ref<boolean>(false)
-const view = ref<'table' | 'grid'>('table')
+const view = reactive({
+  showTable: true,
+  showGrid: false
+})
 const uploadVisible = ref<boolean>(false)
 
 const uploadRef = ref<UploadInstance>()
@@ -93,8 +96,9 @@ function showRow(id: number | undefined) {
   visible.value = true
 }
 
-function onViewChange() {
-  view.value = view.value === 'table' ? 'grid' : 'table'
+function onViewChange(showGrid: boolean) {
+  view.showTable = !showGrid
+  view.showGrid = showGrid
 }
 
 /**
@@ -222,15 +226,15 @@ function confirmEvent(id: number) {
               </ElButton>
             </ElTooltip>
             <ElTooltip :content="$t('view')" placement="top">
-              <ElButton title="view" type="primary" plain circle @click="onViewChange">
-                <Icon :icon="`material-symbols:${view === 'table' ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
+              <ElButton title="view" type="primary" plain circle @click="onViewChange(!view.showGrid)">
+                <Icon :icon="`material-symbols:${view.showTable ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
                   width="18" height="18" />
               </ElButton>
             </ElTooltip>
           </ElCol>
         </ElRow>
 
-        <div v-if="view === 'table'">
+        <div v-show="view.showTable">
           <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
             @sort-change="handleSortChange">
             <ElTableColumn type="index" :label="$t('no')" width="55" />
@@ -267,7 +271,7 @@ function confirmEvent(id: number) {
           <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
         </div>
 
-        <div v-else class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+        <div v-show="view.showGrid" class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
           <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
             body-class="hover:bg-[var(--el-bg-color-page)]">
             <Icon v-if="data.type === 'directory'" icon="flat-color-icons:folder" width="80" height="80" />
