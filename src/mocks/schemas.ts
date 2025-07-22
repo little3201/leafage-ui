@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Schema, Field, MasterPlateTreeNode } from 'src/types'
+import type { Schema, Field, MasterPlateNode, MasterPlateTreeNode } from 'src/types'
 
 const datas: Schema[] = [
 ]
@@ -38,7 +38,7 @@ for (let i = 1; i < 28; i++) {
   fields.push(field)
 }
 
-const templateTreeNodes: MasterPlateTreeNode[] = [
+const backend: MasterPlateTreeNode[] = [
   {
     id: 1111,
     name: 'domain',
@@ -63,12 +63,10 @@ const templateTreeNodes: MasterPlateTreeNode[] = [
       }
     ]
   },
-  {
-    id: 221,
-    name: 'application',
-    suffix: '.yaml',
-    content: 'server.port: 8080'
-  },
+  
+]
+
+const frontend: MasterPlateTreeNode[] = [
   {
     id: 21,
     name: 'api',
@@ -113,11 +111,26 @@ const templateTreeNodes: MasterPlateTreeNode[] = [
   }
 ]
 
+const resources = [
+  {
+    id: 221,
+    name: 'application',
+    suffix: '.yaml',
+    content: 'server.port: 8080'
+  },
+]
+
+const masterPlateNodes: MasterPlateNode = {
+  frontend: frontend,
+  backend: backend,
+  resources: resources
+}
+
 export const schemasHandlers = [
   http.get(`/api${SERVER_URL.SCHEMA}/:id/preview`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(templateTreeNodes)
+      return HttpResponse.json(masterPlateNodes)
     } else {
       return HttpResponse.json()
     }

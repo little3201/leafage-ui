@@ -128,6 +128,12 @@ export interface PrivilegeTreeNode extends TreeNode {
   children?: PrivilegeTreeNode[]
 }
 
+export interface MasterPlateNode {
+  frontend: MasterPlateTreeNode[]
+  backend: MasterPlateTreeNode[]
+  resources: MasterPlateTreeNode[]
+}
+
 export interface MasterPlateTreeNode extends TreeNode {
   content?: string
   type?: string
