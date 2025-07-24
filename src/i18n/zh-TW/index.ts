@@ -36,7 +36,7 @@ export default {
   order: '順序',
   data: '數據',
   type: '類型',
-  version: '版本號',
+  category: '類別',
   path: '路徑',
   redirect: '跳轉',
   icon: '圖示',
@@ -150,7 +150,7 @@ export default {
   serverError: '系統內部錯誤。我們正在努力修復，請稍後再試！',
   error: '請求無效。請檢查您的輸入或聯繫技術支援。',
   goHome: '返回首頁',
-  tooltipRule: '應用時，將按照規則（具體查看系統說明）進行替換',
+  tooltipRule: '應用時，將按照字串替換規則（%s）進行替換',
   ruleTooltip: '若需在應用時按照規則進行替換，請以%s開始',
 
   noDataSelected: '未選擇數據。',

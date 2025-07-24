@@ -211,6 +211,7 @@ export interface Field extends AudtiMetadata {
   length: number
   fieldType: string
   formType: string
+  tsType: string
   nullable: boolean
   queryable: boolean
   queryType: string | undefined
@@ -223,8 +224,8 @@ export interface MasterPlate extends AudtiMetadata {
   name: string
   suffix: string
   content: string
+  category: string | undefined
   type: string | undefined
-  version: string
   enabled?: boolean
 }
 

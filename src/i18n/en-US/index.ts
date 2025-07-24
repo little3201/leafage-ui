@@ -36,7 +36,7 @@ export default {
   order: 'Order',
   data: 'Data ',
   type: 'Type',
-  version: 'Version',
+  category: 'Category',
   path: 'Path',
   redirect: 'Redirect',
   icon: 'Icon',
@@ -150,7 +150,7 @@ export default {
   serverError: 'Internal server error. We are working hard to fix it. Please try again later!',
   error: 'Invalid request. Please check your input or contact technical support.',
   goHome: 'Go Home',
-  tooltipRule: 'Applied according to the rules (see system guide for details)',
+  tooltipRule: 'Apply with string substitution rule (%s)',
   ruleTooltip: 'To apply according to the rule, please start with %s',
 
   noDataSelected: 'No data selected.',

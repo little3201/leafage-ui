@@ -4,189 +4,278 @@ import type { Dictionary } from 'src/types'
 
 const datas: Dictionary[] = [
   {
-    name: '文件后缀',
-    id: 29,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': '操作按钮',
+    'enabled': true,
+    'id': 100
   },
   {
-    name: '属性类型',
-    description: 'Java属性类型',
-    id: 1,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': '属性类型',
+    'enabled': true,
+    'id': 200
   },
   {
-    name: '表单组件',
-    description: 'Form表单组件',
-    id: 13,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': '表单类型',
+    'enabled': true,
+    'id': 300
   },
   {
-    name: '模板类型',
-    description: '代码生成模板类型',
-    id: 25,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'ts类型',
+    'enabled': true,
+    'id': 400
   },
   {
-    name: '操作按钮',
-    id: 42,
-    enabled: true
+    'name': '文件类型',
+    'enabled': true,
+    'id': 500
+  },
+  {
+    'name': '脚本类型',
+    'enabled': true,
+    'id': 600
+  },
+  {
+    'name': '模板类别',
+    'enabled': true,
+    'id': 700
   }
 ]
 
 const subDatas: Dictionary[] = [
   {
-    name: 'Service',
-    superiorId: 25,
-    description: '包括Service和Service Implementation，用于业务逻辑处理。',
-    id: 27,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'create',
+    'superiorId': 100,
+    'description': '新增',
+    'enabled': true,
+    'id': 101
   },
   {
-    name: 'Controller',
-    superiorId: 25,
-    description: '定义API接口。',
-    id: 59,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'modify',
+    'superiorId': 100,
+    'description': '修改',
+    'enabled': true,
+    'id': 102
   },
   {
-    name: 'Model',
-    superiorId: 25,
-    description: '包括Entity、DTO、BO和VO，用于定义数据模型。',
-    id: 58,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'remove',
+    'superiorId': 100,
+    'description': '删除',
+    'enabled': true,
+    'id': 103
   },
   {
-    name: 'Repository',
-    superiorId: 25,
-    description: '包括Repository和Mapper，用于操作ORM和数据访问。',
-    id: 26,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'import',
+    'superiorId': 100,
+    'description': '导入',
+    'enabled': true,
+    'id': 104
   },
   {
-    name: 'UI',
-    superiorId: 25,
-    description: '用户界面。',
-    id: 56,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'export',
+    'superiorId': 100,
+    'description': '导出',
+    'enabled': true,
+    'id': 105
   },
   {
-    name: 'TS',
-    superiorId: 25,
-    description: 'TypeScript文件。',
-    id: 57,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'upload',
+    'superiorId': 100,
+    'description': '上传',
+    'enabled': true,
+    'id': 106
   },
   {
-    name: 'create',
-    superiorId: 42,
-    id: 43,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'download',
+    'superiorId': 100,
+    'description': '下载',
+    'enabled': true,
+    'id': 107
   },
   {
-    name: 'modify',
-    superiorId: 42,
-    id: 44,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'relation',
+    'superiorId': 100,
+    'description': '关联',
+    'enabled': true,
+    'id': 108
   },
   {
-    name: 'remove',
-    superiorId: 42,
-    id: 45,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'enable',
+    'superiorId': 100,
+    'description': '启用',
+    'enabled': true,
+    'id': 109
   },
   {
-    name: 'import',
-    superiorId: 42,
-    id: 50,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'config',
+    'superiorId': 100,
+    'description': '配置',
+    'enabled': true,
+    'id': 110
   },
   {
-    name: 'export',
-    superiorId: 42,
-    id: 51,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'execute',
+    'superiorId': 100,
+    'description': '执行',
+    'enabled': true,
+    'id': 111
   },
   {
-    name: 'upload',
-    superiorId: 42,
-    id: 46,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'clear',
+    'superiorId': 100,
+    'description': '清空',
+    'enabled': true,
+    'id': 112
   },
   {
-    name: 'download',
-    superiorId: 42,
-    id: 47,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'unlock',
+    'superiorId': 100,
+    'description': '解锁',
+    'enabled': true,
+    'id': 113
   },
   {
-    name: 'config',
-    superiorId: 42,
-    id: 52,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'authorize',
+    'superiorId': 100,
+    'description': '授权',
+    'enabled': true,
+    'id': 114
   },
   {
-    name: 'execute',
-    superiorId: 42,
-    id: 53,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'sync',
+    'superiorId': 100,
+    'description': '同步',
+    'enabled': true,
+    'id': 115
   },
   {
-    name: 'clear',
-    superiorId: 42,
-    id: 54,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'String',
+    'superiorId': 200,
+    'enabled': true,
+    'id': 201
   },
   {
-    name: 'relation',
-    superiorId: 42,
-    description: '数据关联',
-    id: 55,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'Long',
+    'superiorId': 200,
+    'enabled': true,
+    'id': 202
   },
   {
-    name: 'authorize',
-    superiorId: 42,
-    description: '授权',
-    id: 56,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'Instant',
+    'superiorId': 200,
+    'enabled': true,
+    'id': 203
   },
   {
-    name: 'Connection',
-    superiorId: 68,
-    description: '数据库',
-    id: 57,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'Integer',
+    'superiorId': 200,
+    'enabled': true,
+    'id': 204
   },
   {
-    name: 'Mmiddleware',
-    superiorId: 68,
-    description: '中间件',
-    id: 58,
-    enabled: true,
-    lastModifiedDate: new Date()
+    'name': 'boolean',
+    'superiorId': 200,
+    'enabled': true,
+    'id': 205
+  },
+  {
+    'name': 'BigDecimal',
+    'superiorId': 200,
+    'enabled': true,
+    'id': 206
+  },
+  {
+    'name': 'input',
+    'superiorId': 300,
+    'enabled': true,
+    'id': 301
+  },
+  {
+    'name': 'select',
+    'superiorId': 300,
+    'enabled': true,
+    'id': 302
+  },
+  {
+    'name': 'input-number',
+    'superiorId': 300,
+    'enabled': true,
+    'id': 303
+  },
+  {
+    'name': 'date-picker',
+    'superiorId': 300,
+    'enabled': true,
+    'id': 304
+  },
+  {
+    'name': 'number',
+    'superiorId': 400,
+    'enabled': true,
+    'id': 401
+  },
+  {
+    'name': 'string',
+    'superiorId': 400,
+    'enabled': true,
+    'id': 402
+  },
+  {
+    'name': 'boolean',
+    'superiorId': 400,
+    'enabled': true,
+    'id': 403
+  },
+  {
+    'name': '.java',
+    'superiorId': 500,
+    'description': '数据库',
+    'enabled': true,
+    'id': 501
+  },
+  {
+    'name': '.ts',
+    'superiorId': 500,
+    'description': '中间件',
+    'enabled': true,
+    'id': 502
+  },
+  {
+    'name': '.vue',
+    'superiorId': 500,
+    'description': '中间件',
+    'enabled': true,
+    'id': 503
+  },
+  {
+    'name': 'Database',
+    'superiorId': 600,
+    'description': '数据库',
+    'enabled': true,
+    'id': 601
+  },
+  {
+    'name': 'Middleware',
+    'superiorId': 600,
+    'description': '中间件',
+    'enabled': true,
+    'id': 602
+  },
+  {
+    'name': 'frontend',
+    'superiorId': 700,
+    'enabled': false,
+    'id': 710
+  },
+  {
+    'name': 'backend',
+    'superiorId': 700,
+    'enabled': false,
+    'id': 720
+  },
+  {
+    'name': 'resources',
+    'superiorId': 700,
+    'enabled': false,
+    'id': 730
   }
 ]
 

@@ -36,7 +36,7 @@ export default {
   order: '顺序',
   data: '数据',
   type: '类型',
-  version: '版本号',
+  category: '类别',
   path: '路径',
   redirect: '跳转',
   icon: '图标',
@@ -151,7 +151,7 @@ export default {
   serverError: '系统内部错误。我们正在努力修复，请稍后再试！',
   error: '请求无效。请检查您的输入或联系技术支持。',
   goHome: '返回首页',
-  tooltipRule: '应用时，将按照规则（具体查看系统说明）进行替换',
+  tooltipRule: '应用时，将按照字符串替换规则(%s）进行替换',
   ruleTooltip: '若需在应用时按照规则进行替换，请以%s开始',
 
   noDataSelected: '未选择数据。',
