@@ -40,7 +40,7 @@ export default {
   path: '路徑',
   redirect: '跳轉',
   icon: '圖示',
-  packagePath: '包名',
+  packageName: '包名',
   prefix: '前綴',
   host: '主機',
   port: '埠',
@@ -136,7 +136,7 @@ export default {
   exploiters: '開發工具',
   schemas: '計劃',
   scripts: '腳本',
-  master_plates: '母板',
+  samples: '樣板',
 
   inputText: '請輸入{field}',
   selectText: '請選擇{field}',

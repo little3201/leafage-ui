@@ -37,7 +37,7 @@ export const SERVER_URL = {
   // exploiters
   SCRIPT: SERVER_PREFIX.EXPLOITER.concat('/scripts'), // 脚本
   SCHEMA: SERVER_PREFIX.EXPLOITER.concat('/schemas'), // 表配置
-  MASTER_PLATE: SERVER_PREFIX.EXPLOITER.concat('/master-plates'), // 母板
+  MASTER_PLATE: SERVER_PREFIX.EXPLOITER.concat('/samples'), // 母板
   CONNECTIONS: SERVER_PREFIX.EXPLOITER.concat('/connections') // 库连接
 }
 

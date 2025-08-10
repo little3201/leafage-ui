@@ -280,7 +280,7 @@ function onUpload(options: UploadRequestOptions) {
 
   <!-- import -->
   <DialogView v-model="importVisible" :title="$t('import')" width="36%">
-    <p>{{ $t('master_plates') + ' ' + $t('download') }}：
+    <p>{{ $t('samples') + ' ' + $t('download') }}：
       <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx
       </a>

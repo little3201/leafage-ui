@@ -12,7 +12,7 @@ import { schedulerLogsHandlers } from './scheduler-logs'
 import { fileRecordsHandlers } from './file-records'
 import { schemasHandlers } from './schemas'
 import { scriptsHandlers } from './scripts'
-import { masterPlatesHandlers } from './master-plates'
+import { samplesHandlers } from './samples'
 import { connectionsHandlers } from './connections'
 
 export const handlers = [
@@ -30,6 +30,6 @@ export const handlers = [
   ...fileRecordsHandlers,
   ...schemasHandlers,
   ...scriptsHandlers,
-  ...masterPlatesHandlers,
+  ...samplesHandlers,
   ...connectionsHandlers
 ]
