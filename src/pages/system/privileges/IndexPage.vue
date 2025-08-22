@@ -9,14 +9,19 @@
           </q-card-section>
 
           <q-card-section>
-            <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-input outlined dense v-model="form.path" :label="$t('path')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-input outlined dense v-model="form.component" :label="$t('component')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-select outlined dense v-model="form.redirect" :label="$t('redirect')" :options="subset" option-value="id"
-              option-label="name" class="q-mb-md" />
+            <div class="row q-gutter-md">
+              <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+              <q-input outlined dense v-model="form.path" :label="$t('path')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+            </div>
+
+            <div class="row q-gutter-md">
+              <q-input outlined dense v-model="form.component" :label="$t('component')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+              <q-select outlined dense v-model="form.redirect" :label="$t('redirect')" :options="subset"
+                option-value="id" option-label="name" />
+            </div>
             <q-input outlined dense v-model="form.description" type="textarea" :label="$t('description')" />
           </q-card-section>
 
