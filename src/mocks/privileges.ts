@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Privilege, PrivilegeTreeNode, RolePrivileges, GroupPrivileges, UserPrivileges } from 'src/types'
+import type { Privilege, PrivilegeTreeNode, GroupPrivileges, UserPrivileges } from 'src/types'
 
 const datas: Privilege[] = [
   {
@@ -366,19 +366,6 @@ const treeNodes: PrivilegeTreeNode[] = [
 ]
 
 
-const roles: RolePrivileges[] = []
-
-for (let i = 1; i < 28; i++) {
-  const row: RolePrivileges = {
-    id: i,
-    privilegeId: i < 15 ? i : i - 14,
-    roleId: i,
-    actions: ['create', 'modify', 'remove', 'import', 'export']
-  }
-  roles.push(row)
-}
-
-
 const groups: GroupPrivileges[] = []
 
 for (let i = 1; i < 28; i++) {
@@ -405,14 +392,6 @@ for (let i = 1; i < 28; i++) {
 }
 
 export const privilegesHandlers = [
-  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/roles`, ({ params }) => {
-    const { id } = params
-    if (id) {
-      return HttpResponse.json(roles.filter(item => item.privilegeId === Number(id)))
-    } else {
-      return HttpResponse.json([])
-    }
-  }),
   http.get(`/api${SERVER_URL.PRIVILEGE}/:id/groups`, ({ params }) => {
     const { id } = params
     if (id) {
