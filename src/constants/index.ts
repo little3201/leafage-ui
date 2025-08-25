@@ -19,7 +19,7 @@ export const SERVER_URL = {
   GROUP: SERVER_PREFIX.HYPERVISOR.concat('/groups'), // 分组
   DICTIONARY: SERVER_PREFIX.HYPERVISOR.concat('/dictionaries'), // 字典
 
-  REGION: SERVER_PREFIX.HYPERVISOR.concat('/regions'), // 行政区划
+  REGION: SERVER_PREFIX.ASSETS.concat('/regions'), // 行政区划
   FILE: SERVER_PREFIX.ASSETS.concat('/files'), // 文件
 
   ACCESS_LOG: SERVER_PREFIX.HYPERVISOR.concat('/access-logs'), // 访问日志

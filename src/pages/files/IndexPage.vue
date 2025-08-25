@@ -9,7 +9,7 @@
           </q-card-section>
 
           <q-card-section>
-            <q-uploader url="/upload" label="Upload files" />
+            <q-uploader flat bordered url="/upload" label="Upload files" />
           </q-card-section>
 
           <q-card-actions align="right">
@@ -44,12 +44,14 @@
                 </q-item-section>
                 <q-item-section>Images</q-item-section>
               </q-item>
+
               <q-item clickable v-ripple>
                 <q-item-section avatar top>
                   <q-avatar icon="sym_r_videocam" color="primary" text-color="white" />
                 </q-item-section>
                 <q-item-section>Videos</q-item-section>
               </q-item>
+
               <q-item clickable v-ripple>
                 <q-item-section avatar top>
                   <q-avatar icon="sym_r_docs" color="warning" text-color="white" />

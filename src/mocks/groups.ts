@@ -7,7 +7,6 @@ const datas: Group[] = []
 for (let i = 1; i < 28; i++) {
   const row: Group = {
     id: i,
-    superiorId: 3,
     name: 'group_' + i,
     enabled: true,
     description: 'This is region description about xxx'
@@ -86,19 +85,10 @@ export const groupsHandlers = [
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
-    const superiorId = url.searchParams.get('superiorId')
 
-    let data = {
-      content: datas,
+    const data = {
+      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
       totalElements: datas.length
-    }
-
-    if (superiorId) {
-      const filtered = datas.filter(item => item.superiorId === Number(superiorId))
-      data = {
-        content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-        totalElements: filtered.length
-      }
     }
     return HttpResponse.json(data)
   }),

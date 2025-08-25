@@ -10,33 +10,42 @@
         </q-card-section>
 
         <q-card-section>
-          <p><strong>{{ $t('resource') }}</strong>
-            {{ row.resource }}
-          </p>
-          <p><strong>{{ $t('operation') }}</strong>{{ row.operation }}</p>
-          <p><strong>{{ $t('ip') }}</strong>
-            {{ row.ip }}
-          </p>
-          <p><strong>{{ $t('location') }}</strong>
-            {{ row.location }}
-          </p>
-          <p><strong>{{ $t('oldValue') }}</strong>
-            {{ row.oldValue }}
-          </p>
-          <p><strong>{{ $t('newValue') }}</strong>
-            {{ row.newValue }}
-          </p>
-          <p>
-            <strong>{{ $t('statusCode') }}</strong>
-            <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
-              text-color="white">{{ row.statusCode }}</q-chip>
-            <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning" text-color="white">{{
-              row.statusCode }}</q-chip>
-            <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
-          </p>
-          <p><strong>{{ $t('operatedTimes') }}</strong>
-            {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
-          </p>
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('resource') }}</strong>
+              {{ row.resource }}
+            </p>
+            <p><strong>{{ $t('operation') }}</strong>{{ row.operation }}</p>
+            <p><strong>{{ $t('ip') }}</strong>
+              {{ row.ip }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('oldValue') }}</strong>
+              {{ row.oldValue }}
+            </p>
+            <p><strong>{{ $t('newValue') }}</strong>
+              {{ row.newValue }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('location') }}</strong>
+              {{ row.location }}
+            </p>
+            <p>
+              <strong>{{ $t('statusCode') }}</strong>
+              <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
+                text-color="white">{{ row.statusCode }}</q-chip>
+              <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning"
+                text-color="white">{{
+                  row.statusCode }}</q-chip>
+              <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
+            </p>
+            <p><strong>{{ $t('operatedTimes') }}</strong>
+              {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
+            </p>
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>
