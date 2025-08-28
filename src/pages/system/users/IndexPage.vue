@@ -8,17 +8,19 @@
           </q-card-section>
 
           <q-card-section>
-            <q-input outlined dense v-model="form.username" :label="$t('username')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
+            <div class="row q-gutter-md">
+              <q-input outlined dense v-model="form.username" :label="$t('username')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+              <q-input outlined dense v-model="form.firstname" :label="$t('firstname')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+            </div>
 
-            <q-input outlined dense v-model="form.firstname" :label="$t('firstname')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-
-            <q-input outlined dense v-model="form.middleName" :label="$t('middleName')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-
-            <q-input outlined dense v-model="form.lastname" :label="$t('lastname')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
+            <div class="row q-gutter-md">
+              <q-input outlined dense v-model="form.middleName" :label="$t('middleName')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+              <q-input outlined dense v-model="form.lastname" :label="$t('lastname')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+            </div>
 
             <q-input outlined dense v-model="form.email" :label="$t('email')" lazy-rules type="email"
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
@@ -34,7 +36,6 @@
                 </q-icon>
               </template>
             </q-input>
-
             <q-input outlined dense v-model="form.credentialsExpiresAt" :label="$t('credentialsExpiresAt')" mask="date"
               :rules="['date']">
               <template v-slot:append>

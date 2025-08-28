@@ -113,6 +113,7 @@ function enableRow(id: number) {
 }
 
 async function saveRow(id?: number) {
+  form.value = { ...initialValues }
   visible.value = true
   // You can populate the form with existing user data based on the id
   if (id) {

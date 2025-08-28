@@ -10,38 +10,48 @@
         </q-card-section>
 
         <q-card-section>
-          <p><strong>{{ $t('operation') }}</strong>{{ row.operation }}</p>
-          <p><strong>{{ $t('ip') }}</strong>
-            {{ row.ip }}
-          </p>
-          <p><strong>{{ $t('location') }}</strong>
-            {{ row.location }}
-          </p>
-          <p><strong>{{ $t('os') }}</strong>
-            {{ row.os }}
-          </p>
-          <p><strong>{{ $t('userAgent') }}</strong>
-            {{ row.userAgent }}
-          </p>
-          <p><strong>{{ $t('browser') }}</strong>
-            {{ row.browser }}
-          </p>
-          <p><strong>{{ $t('referer') }}</strong>
-            {{ row.referer }}
-          </p>
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('operation') }}</strong>{{ row.operation }}</p>
+            <p><strong>{{ $t('ip') }}</strong>
+              {{ row.ip }}
+            </p>
+            <p><strong>{{ $t('location') }}</strong>
+              {{ row.location }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('os') }}</strong>
+              {{ row.os }}
+            </p>
+            <p><strong>{{ $t('userAgent') }}</strong>
+              {{ row.userAgent }}
+            </p>
+            <p><strong>{{ $t('browser') }}</strong>
+              {{ row.browser }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('referer') }}</strong>
+              {{ row.referer }}
+            </p>
+            <p><strong>{{ $t('operatedTimes') }}</strong>
+              {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
+            </p>
+            <p>
+              <strong>{{ $t('statusCode') }}</strong>
+              <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
+                text-color="white">{{ row.statusCode }}</q-chip>
+              <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning"
+                text-color="white">{{
+                  row.statusCode }}</q-chip>
+              <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
+            </p>
+          </div>
+
           <p><strong>{{ $t('sessionId') }}</strong>
             {{ row.sessionId }}
-          </p>
-          <p>
-            <strong>{{ $t('statusCode') }}</strong>
-            <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
-              text-color="white">{{ row.statusCode }}</q-chip>
-            <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning" text-color="white">{{
-              row.statusCode }}</q-chip>
-            <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
-          </p>
-          <p><strong>{{ $t('operatedTimes') }}</strong>
-            {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
           </p>
         </q-card-section>
       </q-card>

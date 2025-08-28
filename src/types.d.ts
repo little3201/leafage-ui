@@ -32,7 +32,6 @@ export interface UserPrivileges {
 
 export interface Group extends AudtiMetadata {
   name: string
-  superiorId?: number
   principal?: string
   members?: string[]
   enabled?: boolean

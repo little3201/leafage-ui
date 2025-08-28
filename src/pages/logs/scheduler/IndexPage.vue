@@ -10,26 +10,33 @@
         </q-card-section>
 
         <q-card-section>
-          <p><strong>{{ $t('name') }}</strong>{{ row.name }}</p>
-          <p><strong>{{ $t('startTime') }}</strong>
-            {{ row.startTime ? date.formatDate(row.startTime, 'YYYY-MM-DD HH:mm') : '-' }}
-          </p>
-          <p><strong>{{ $t('executedTimes') }}</strong>
-            {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
-          </p>
-          <p>
-            <strong>{{ $t('status') }}</strong>
-            <q-chip v-if="row.status === 0" size="sm" icon="sym_r_progress_activity" color="primary" text-color="white">
-              {{ $t('processing') }}
-            </q-chip>
-            <q-chip v-else-if="row.status === 1" size="sm" icon="sym_r_check" color="positive" text-color="white">
-              {{ $t('done') }}
-            </q-chip>
-            <q-chip v-else size="sm" icon="sym_r_error" color="negative" text-color="white">{{ $t('failure') }}</q-chip>
-          </p>
-          <p><strong>{{ $t('nextExecuteTime') }}</strong>
-            {{ row.nextExecuteTime ? date.formatDate(row.nextExecuteTime, 'YYYY-MM-DD HH:mm') : '-' }}
-          </p>
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('name') }}</strong>{{ row.name }}</p>
+            <p><strong>{{ $t('startTime') }}</strong>
+              {{ row.startTime ? date.formatDate(row.startTime, 'YYYY-MM-DD HH:mm') : '-' }}
+            </p>
+            <p><strong>{{ $t('executedTimes') }}</strong>
+              {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p>
+              <strong>{{ $t('status') }}</strong>
+              <q-chip v-if="row.status === 0" size="sm" icon="sym_r_progress_activity" color="primary"
+                text-color="white">
+                {{ $t('processing') }}
+              </q-chip>
+              <q-chip v-else-if="row.status === 1" size="sm" icon="sym_r_check" color="positive" text-color="white">
+                {{ $t('done') }}
+              </q-chip>
+              <q-chip v-else size="sm" icon="sym_r_error" color="negative" text-color="white">{{ $t('failure')
+                }}</q-chip>
+            </p>
+            <p><strong>{{ $t('nextExecuteTime') }}</strong>
+              {{ row.nextExecuteTime ? date.formatDate(row.nextExecuteTime, 'YYYY-MM-DD HH:mm') : '-' }}
+            </p>
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>

@@ -5,6 +5,10 @@ import { handlers } from 'src/mocks'
 export default defineBoot(({ router }) => {
   // dev
   if (!process.env.DEV) {
+    const worker = setupWorker(...handlers)
+    worker.start({
+      onUnhandledRequest: 'bypass'
+    })
 
     router.addRoute({
       path: '/login',
@@ -12,9 +16,5 @@ export default defineBoot(({ router }) => {
       component: () => import('pages/LoginPage.vue')
     })
 
-    const worker = setupWorker(...handlers)
-    worker.start({
-      onUnhandledRequest: 'bypass'
-    })
   }
 })
