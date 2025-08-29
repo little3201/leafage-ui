@@ -1,35 +1,22 @@
-# Leafage MS
+# Leafage UI
 
-Integrated with [mswjs](https://mswjs.io) for mock request.
+<p align="center">
+  免费且美观的管理模板，使用 Vue 3、Vite、Pinia 和 Tailwind CSS构建。设计用于构建高效、响应式和快速加载的管理界面。
+  
+  后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
 
-## Install the dependencies
-```bash
-yarn
-# or
-npm install
-```
+  基于 <a href="https://element-plus.org">Element plus</a> 库（branch: develop-2）。</br>
+  基于 <a href="https://quasar.dev">Quasar framework</a> 库（branch: main, develop）。</br>
+  基于 <a href="https://primereact.org">PrimeReact</a> 库（branch: react）。
+</p>
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
-```bash
-yarn dev
-# or
-quasar dev
-```
+### 特性
 
+- **Vue 3、Vite、Pinia 和 Tailwind CSS -** 快速高效的开发
+- **深色主题 -** 现代且引人注目
+- **可访问性 -** 包容且用户友好
+- **i18n集成 -** 便于全球本地化
+- **响应式设计 -** 无缝适应所有设备
+- **专业支持 -** 专家提供可靠帮助
+- **高度可定制 -** 可根据项目风格定制
 
-### Lint the files
-```bash
-yarn lint
-# or
-npm run lint
-```
-
-
-
-### Build the app for production
-```bash
-quasar build
-```
-
-### Customize the configuration
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
