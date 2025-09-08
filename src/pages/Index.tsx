@@ -1,6 +1,6 @@
 import { Card } from 'primereact/card'
 
-export default function Home() {
+export default function Index() {
   return (
     <Card title="Simple Card">
       <p className="m-0">

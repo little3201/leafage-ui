@@ -21,7 +21,22 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "paths": {
+      "src": ["./src"],
+      "src/*": ["./src/*"],
+      "components": ["./src/components"],
+      "components/*": ["./src/components/*"],
+      "layouts": ["./src/layouts"],
+      "layouts/*": ["./src/layouts/*"],
+      "pages": ["./src/pages"],
+      "pages/*": ["./src/pages/*"],
+      "assets": ["./src/assets"],
+      "assets/*": ["./src/assets/*"],
+      "boot": ["./src/boot" ],
+      "boot/*": ["./src/boot/*" ]
+    }
   },
   "include": ["src"]
 }

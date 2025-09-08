@@ -1,41 +1,33 @@
-import { createBrowserRouter, redirect } from "react-router"
-import App from "../App"
-import Home from '../pages/Home'
+import { lazy } from 'react'
+import { createBrowserRouter } from "react-router"
+import MainLayout from "../layouts/MainLayout"
 import Login from "../pages/Login"
 
-// 示例 action（登录）
-const loginAction = async ({ request }: { request: Request }) => {
-  const formData = await request.formData();
-  const username = formData.get("username");
-  const password = formData.get("password");
-
-  const res = await fetch("/api/login", {
-    method: "POST",
-    body: JSON.stringify({ username, password }),
-    headers: { "Content-Type": "application/json" },
-  });
-
-  if (res.ok) {
-    return redirect("/");
-  } else {
-    throw new Response("Login failed", { status: 401 });
-  }
-}
+const Index = lazy(() => import('../pages/Index'))
+const Users = lazy(() => import('../pages/system/users/Index'))
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: App,
+    Component: MainLayout,
     children: [
       {
         index: true,
-        Component: Home
+        Component: Index
+      },
+      {
+        path: "system",
+        children: [
+          {
+            path: "users",
+            element: <Users />
+          }
+        ]
       }
     ]
   },
   {
-    path: "/",
-    element: <Login />,
-    action: loginAction,
+    path: "/login",
+    Component: Login
   }
 ])

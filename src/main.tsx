@@ -7,6 +7,13 @@ import { router } from './router'
 // primreact css
 import "primeicons/primeicons.css"
 
+// mock
+import { worker } from 'boot/msw-browser'
+if (import.meta.env.DEV) {
+  worker.start({
+    onUnhandledRequest: 'bypass'
+  })
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
