@@ -3,7 +3,7 @@
 @import 'primereact/resources/themes/tailwind-light/theme.css';
 
 @import "tailwindcss/theme.css" layer(theme);
-/* @import "tailwindcss/preflight.css" layer(base); */
+@import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
 
 html body {
@@ -22,4 +22,16 @@ body {
 :root {
   position: relative;
   width: 100%;
+}
+
+.p-panelmenu .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-link .p-submenu-icon {
+  order: 2 !important; /* 确保图标在右侧 */
+  margin-left: auto !important; /* 推动图标到最右 */
+  margin-right: 0 !important; /* 清除右边距 */
+}
+
+.p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-content .p-menuitem-link .p-submenu-icon {
+  order: 2 !important; /* 确保图标在右侧 */
+  margin-left: auto !important; /* 推动图标到最右 */
+  margin-right: 0 !important; /* 清除右边距 */
 }

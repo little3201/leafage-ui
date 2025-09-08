@@ -7,14 +7,14 @@ import type { Pagination } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveUsers = async (pagination: Pagination, filters?: object) => {
+export const retrieveGroups = async (pagination: Pagination, filters?: object) => {
   try {
     const params = new URLSearchParams({
       page: pagination.page.toString(),
       size: pagination.size.toString(),
       ...filters
     })
-    const response = await fetch(`/api/users?${params.toString()}`)
+    const response = await fetch(`/api/groups?${params.toString()}`)
     if (!response.ok) {
       throw new Error('Failed to retrieve data')
     }

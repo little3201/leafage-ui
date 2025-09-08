@@ -4,7 +4,8 @@ import MainLayout from "../layouts/MainLayout"
 import Login from "../pages/Login"
 
 const Index = lazy(() => import('../pages/Index'))
-const Users = lazy(() => import('../pages/system/users/Index'))
+const User = lazy(() => import('../pages/system/users/Index'))
+const Group = lazy(() => import('../pages/system/groups/Index'))
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +21,11 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "users",
-            element: <Users />
+            element: <User />
+          },
+          {
+            path: "groups",
+            element: <Group />
           }
         ]
       }

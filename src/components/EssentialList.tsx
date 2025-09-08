@@ -1,16 +1,17 @@
-import EssentialItem from './EssentialItem'
-import type { AppMenuItem } from 'src/types'
+import { useNavigate } from "react-router"
+import { PanelMenu } from 'primereact/panelmenu'
+import { useEssential } from 'src/components/context/EssentialContext'
+import { recursion } from 'src/utils'
 
 
-function EssentialList(props: { items: AppMenuItem[] }) {
+function EssentialList() {
+  const navigate = useNavigate()
+  const { privileges } = useEssential()
+
+  const items = recursion(privileges, navigate)
 
   return (
-    <ul className="list-none m-0 p-0">
-      {props.items.map((item, i) => {
-        return !item?.seperator ? <EssentialItem item={item} root={true} index={i} key={item.label} /> :
-          null
-      })}
-    </ul>
+    <PanelMenu model={items} />
   )
 }
 
