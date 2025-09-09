@@ -10,7 +10,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
       path: 'system',
       component: '#',
       redirect: 'users',
-      icon: 'settings'
+      icon: 'cog'
     },
     children: [
       {
@@ -19,7 +19,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'groups',
           component: 'system/groups',
-          icon: 'group',
+          icon: 'users',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'enable']
         }
       },
@@ -29,7 +29,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'users',
           component: 'system/users',
-          icon: 'person',
+          icon: 'user',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
       },
@@ -39,7 +39,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'privileges',
           component: 'system/privileges',
-          icon: 'admin_panel_settings',
+          icon: 'link',
           actions: ['modify', 'authorize', 'import', 'export', 'enable']
         }
       },
@@ -49,7 +49,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'dictionaries',
           component: 'system/dictionaries',
-          icon: 'book_3',
+          icon: 'book',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
       },
@@ -62,7 +62,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
       path: 'logs',
       component: '#',
       redirect: 'operation',
-      icon: 'library_books',
+      icon: 'folder-open',
       actions: ['clear', 'remove', 'export']
     },
     children: [
@@ -72,7 +72,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'operation',
           component: 'logs/operation',
-          icon: 'article',
+          icon: 'file',
           actions: ['clear', 'remove', 'export']
         }
       },
@@ -82,7 +82,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'access',
           component: 'logs/access',
-          icon: 'sticky_note_2',
+          icon: 'file-check',
           actions: ['clear', 'remove', 'export']
         }
       },
@@ -92,7 +92,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'audit',
           component: 'logs/audit',
-          icon: 'note_alt',
+          icon: 'file-pdf',
           actions: ['remove', 'export']
         }
       },
@@ -102,7 +102,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'scheduler',
           component: 'logs/scheduler',
-          icon: 'event_note',
+          icon: 'calendar-clock',
           actions: ['clear', 'remove', 'export']
         }
       }
@@ -114,7 +114,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'regions',
       component: 'regions',
-      icon: 'location_on',
+      icon: 'map-marker',
       actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
     }
   },
@@ -124,7 +124,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'files',
       component: 'files',
-      icon: 'folder_open',
+      icon: 'folder',
       actions: ['download', 'upload', 'remove']
     }
   },
@@ -135,7 +135,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
       path: 'exploiters',
       component: '#',
       redirect: 'schemas',
-      icon: 'build'
+      icon: 'wrench'
     },
     children: [
       {
@@ -144,7 +144,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'schemas',
           component: 'exploiters/schemas',
-          icon: 'genetics',
+          icon: 'hourglass',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'sync', 'config', 'execute', 'enable']
         }
       },
@@ -154,7 +154,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'scripts',
           component: 'exploiters/scripts',
-          icon: 'terminal',
+          icon: 'box',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
       },

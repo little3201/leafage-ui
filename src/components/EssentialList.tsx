@@ -1,41 +1,45 @@
-import { useState } from 'react'
-import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import Collapse from '@mui/material/Collapse'
-import Icon from '@mui/material/Icon'
-import ExpandLessOutlined from '@mui/icons-material/ExpandLess'
-import ExpandMoreOutlined from '@mui/icons-material/ExpandMore'
-import EssentialItem from 'src/components/EssentialItem'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router'
+import { PanelMenu } from 'primereact/panelmenu'
+import { retrievePrivilegeTree } from 'src/api/privileges'
+import { pathResolve } from 'src/utils'
 import type { PrivilegeTreeNode } from 'src/types'
+import type { MenuItem } from 'primereact/menuitem'
 
 
-function EssentialList({ node }: { node: PrivilegeTreeNode }) {
-  const { id, name, meta, children } = node
 
-  const [open, setOpen] = useState(false)
+const recursion = (nodes: PrivilegeTreeNode[], navigate: Function, parentPath: string = "/"): MenuItem[] => {
+  return nodes.map(node => {
+    const menuItem: MenuItem = {
+      label: node.name,
+      icon: `pi pi-${node.meta.icon}`,
+      items: node.children ? recursion(node.children, navigate, pathResolve(parentPath, node.meta.path)) : undefined,
+      // template: itemRenderer
+    }
+    if (!node.children || node.children.length === 0) {
+      menuItem.command = () => { navigate(pathResolve(parentPath, node.meta.path)); };
+    }
+
+    return menuItem
+  })
+}
+
+function EssentialList() {
+  const navigate = useNavigate()
+  const [privileges, setPrivileges] = useState<PrivilegeTreeNode[]>([])
+
+  useEffect(() => {
+    retrievePrivilegeTree().then(res => {
+      if (res) {
+        setPrivileges(res);
+      }
+    })
+  }, [])
+
+  const items = recursion(privileges, navigate)
 
   return (
-    <div key={id}>
-      <ListItemButton onClick={() => children?.length && setOpen(!open)}>
-        <ListItemIcon>
-          <Icon baseClassName='material-icons-outlined'>{meta.icon}</Icon>
-        </ListItemIcon>
-        <ListItemText primary={name} />
-        {children?.length ? (open ? <ExpandLessOutlined /> : <ExpandMoreOutlined />) : null}
-      </ListItemButton>
-
-      {children?.length && (
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {children.map((child) => (
-              <EssentialItem key={child.id} node={child} />
-            ))}
-          </List>
-        </Collapse>
-      )}
-    </div>
+    <PanelMenu model={items} />
   )
 }
 
