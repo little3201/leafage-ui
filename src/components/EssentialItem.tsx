@@ -7,36 +7,32 @@ import Collapse from '@mui/material/Collapse'
 import Icon from '@mui/material/Icon'
 import ExpandLessOutlined from '@mui/icons-material/ExpandLess'
 import ExpandMoreOutlined from '@mui/icons-material/ExpandMore'
-import EssentialItem from 'src/components/EssentialItem'
 import type { PrivilegeTreeNode } from 'src/types'
 
 
-function EssentialList({ node }: { node: PrivilegeTreeNode }) {
-  const { id, name, meta, children } = node
+function EssentialItem({ node }: { node: PrivilegeTreeNode }) {
+  const { name, meta, children } = node
 
   const [open, setOpen] = useState(false)
 
   return (
-    <div key={id}>
-      <ListItemButton onClick={() => children?.length && setOpen(!open)}>
+    <>
+      <ListItemButton onClick={() => children && setOpen(!open)} sx={{ pl: 4 }}>
         <ListItemIcon>
           <Icon baseClassName='material-icons-outlined'>{meta.icon}</Icon>
         </ListItemIcon>
         <ListItemText primary={name} />
         {children?.length ? (open ? <ExpandLessOutlined /> : <ExpandMoreOutlined />) : null}
       </ListItemButton>
-
-      {children?.length && (
+      {children && (
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {children.map((child) => (
-              <EssentialItem key={child.id} node={child} />
-            ))}
+            {children.map((child) => (<EssentialItem key={child.id} node={child} />))}
           </List>
         </Collapse>
       )}
-    </div>
+    </>
   )
 }
 
-export default EssentialList
+export default EssentialItem
