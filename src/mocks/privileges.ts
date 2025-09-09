@@ -10,7 +10,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
       path: 'system',
       component: '#',
       redirect: 'users',
-      icon: 'cog'
+      icon: 'settings'
     },
     children: [
       {
@@ -19,8 +19,8 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'groups',
           component: 'system/groups',
-          icon: 'users',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'authorize', 'enable']
+          icon: 'group',
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'enable']
         }
       },
       {
@@ -29,40 +29,30 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'users',
           component: 'system/users',
-          icon: 'user',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable', 'unlock']
-        }
-      },
-      {
-        id: 4,
-        name: 'roles',
-        meta: {
-          path: 'roles',
-          component: 'system/roles',
-          icon: 'shield-user',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'relation', 'authorize', 'enable']
-        }
-      },
-      {
-        id: 5,
-        name: 'dictionaries',
-        meta: {
-          path: 'dictionaries',
-          component: 'system/dictionaries',
-          icon: 'book-3-outline',
+          icon: 'person',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
       },
       {
-        id: 6,
+        id: 4,
         name: 'privileges',
         meta: {
           path: 'privileges',
           component: 'system/privileges',
-          icon: 'admin-panel-settings-outline',
-          actions: ['modify', 'import', 'export', 'enable']
+          icon: 'admin_panel_settings',
+          actions: ['modify', 'authorize', 'import', 'export', 'enable']
         }
-      }
+      },
+      {
+        id: 6,
+        name: 'dictionaries',
+        meta: {
+          path: 'dictionaries',
+          component: 'system/dictionaries',
+          icon: 'book_3',
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+        }
+      },
     ]
   },
   {
@@ -72,7 +62,8 @@ export const treeNodes: PrivilegeTreeNode[] = [
       path: 'logs',
       component: '#',
       redirect: 'operation',
-      icon: 'lab-profile-outline'
+      icon: 'library_books',
+      actions: ['clear', 'remove', 'export']
     },
     children: [
       {
@@ -81,7 +72,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'operation',
           component: 'logs/operation',
-          icon: 'clinical-notes-outline',
+          icon: 'article',
           actions: ['clear', 'remove', 'export']
         }
       },
@@ -91,7 +82,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'access',
           component: 'logs/access',
-          icon: 'sticky-note-2-outline',
+          icon: 'sticky_note_2',
           actions: ['clear', 'remove', 'export']
         }
       },
@@ -101,7 +92,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'audit',
           component: 'logs/audit',
-          icon: 'note-alt-outline',
+          icon: 'note_alt',
           actions: ['remove', 'export']
         }
       },
@@ -111,7 +102,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'scheduler',
           component: 'logs/scheduler',
-          icon: 'event-note-outline',
+          icon: 'event_note',
           actions: ['clear', 'remove', 'export']
         }
       }
@@ -123,32 +114,32 @@ export const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'regions',
       component: 'regions',
-      icon: 'location-on-outline',
+      icon: 'location_on',
       actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
     }
   },
   {
-    id: 13,
+    id: 14,
     name: 'files',
     meta: {
       path: 'files',
       component: 'files',
-      icon: 'folder-open-outline',
+      icon: 'folder_open',
       actions: ['download', 'upload', 'remove']
     }
   },
   {
-    id: 14,
+    id: 16,
     name: 'exploiters',
     meta: {
       path: 'exploiters',
       component: '#',
       redirect: 'schemas',
-      icon: 'build-outline'
+      icon: 'build'
     },
     children: [
       {
-        id: 15,
+        id: 17,
         name: 'schemas',
         meta: {
           path: 'schemas',
@@ -158,7 +149,7 @@ export const treeNodes: PrivilegeTreeNode[] = [
         }
       },
       {
-        id: 16,
+        id: 18,
         name: 'scripts',
         meta: {
           path: 'scripts',
@@ -168,11 +159,11 @@ export const treeNodes: PrivilegeTreeNode[] = [
         }
       },
       {
-        id: 17,
-        name: 'samples',
+        id: 19,
+        name: 'master_plates',
         meta: {
-          path: 'samples',
-          component: 'exploiters/samples',
+          path: 'master-plates',
+          component: 'exploiters/master-plates',
           icon: 'code',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
