@@ -7,7 +7,7 @@
 
   基于 <a href="https://element-plus.org">Element plus</a> 库（branch: develop-2）。</br>
   基于 <a href="https://quasar.dev">Quasar framework</a> 库（branch: main, develop）。</br>
-  基于 <a href="https://primereact.org">PrimeReact</a> 库（branch: react）。
+  基于 <a href="https://mui.com">Material UI</a> 库（branch: react）。
 </p>
 
 ### 特性
