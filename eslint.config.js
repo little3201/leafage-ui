@@ -18,7 +18,12 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-
+      "no-restricted-imports": [
+        "error",
+        {
+          "patterns": [{ "regex": "^@mui/[^/]+$" }]
+        }
+      ],
       quotes: ['warn', 'single', { avoidEscape: true }],
       // allow debugger during development only
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'

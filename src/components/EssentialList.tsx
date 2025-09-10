@@ -1,28 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import { PanelMenu } from 'primereact/panelmenu'
+import MenuList from '@mui/material/MenuList'
+import MenuItem from '@mui/material/MenuItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ContentCut from '@mui/icons-material/ContentCut'
 import { retrievePrivilegeTree } from 'src/api/privileges'
-import { pathResolve } from 'src/utils'
 import type { PrivilegeTreeNode } from 'src/types'
-import type { MenuItem } from 'primereact/menuitem'
 
 
-
-const recursion = (nodes: PrivilegeTreeNode[], navigate: Function, parentPath: string = "/"): MenuItem[] => {
-  return nodes.map(node => {
-    const menuItem: MenuItem = {
-      label: node.name,
-      icon: `pi pi-${node.meta.icon}`,
-      items: node.children ? recursion(node.children, navigate, pathResolve(parentPath, node.meta.path)) : undefined,
-      // template: itemRenderer
-    }
-    if (!node.children || node.children.length === 0) {
-      menuItem.command = () => { navigate(pathResolve(parentPath, node.meta.path)); };
-    }
-
-    return menuItem
-  })
-}
 
 function EssentialList() {
   const navigate = useNavigate()
@@ -36,10 +22,30 @@ function EssentialList() {
     })
   }, [])
 
-  const items = recursion(privileges, navigate)
-
   return (
-    <PanelMenu model={items} />
+    <MenuList>
+      <MenuItem>
+        <ListItemIcon>
+          <ContentCut fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Cut</ListItemText>
+
+      </MenuItem>
+      <MenuItem>
+        <ListItemIcon>
+          <ContentCut fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Copy</ListItemText>
+
+      </MenuItem>
+      <MenuItem>
+        <ListItemIcon>
+          <ContentCut fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Paste</ListItemText>
+
+      </MenuItem>
+    </MenuList>
   )
 }
 

@@ -1,4 +1,4 @@
-import { Card } from 'primereact/card'
+import Card from '@mui/material/Card'
 
 export default function Index() {
   return (

@@ -3,9 +3,7 @@ import { createBrowserRouter } from "react-router"
 import MainLayout from "../layouts/MainLayout"
 import Login from "../pages/Login"
 
-const Index = lazy(() => import('../pages/Index'))
-const User = lazy(() => import('../pages/system/users/Index'))
-const Group = lazy(() => import('../pages/system/groups/Index'))
+
 
 export const router = createBrowserRouter([
   {
@@ -14,18 +12,18 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: Index
+        Component: lazy(() => import('../pages/Index'))
       },
       {
         path: "system",
         children: [
           {
             path: "users",
-            element: <User />
+            Component: lazy(() => import('../pages/system/users/Index'))
           },
           {
             path: "groups",
-            element: <Group />
+            Component: lazy(() => import('../pages/system/groups/Index'))
           }
         ]
       }

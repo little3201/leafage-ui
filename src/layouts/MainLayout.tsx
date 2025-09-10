@@ -1,7 +1,9 @@
 import { Outlet } from "react-router"
-import { Button } from 'primereact/button'
-import { Avatar } from 'primereact/avatar'
+import IconButton from '@mui/material/IconButton'
+import AlarmIcon from '@mui/icons-material/Alarm'
+import Avatar from '@mui/material/Avatar'
 import EssentialList from "components/EssentialList"
+import { deepPurple } from '@mui/material/colors'
 
 
 function MainLayout() {
@@ -10,11 +12,11 @@ function MainLayout() {
       <header className="fixed top-0 left-0 right-0 h-[50px] px-5 flex items-center gap-2">
         <h1 className="text-xl mr-auto">Leafage UI</h1>
         <div className="inline-flex items-center gap-2">
-          <Button icon="pi pi-moon" rounded text aria-label="Filter" />
-          <Button icon="pi pi-language" rounded text severity="secondary" aria-label="Bookmark" />
-          <Button icon="pi pi-question-circle" rounded text severity="success" aria-label="Search" />
+          <IconButton aria-label="delete">
+            <AlarmIcon />
+          </IconButton>
           <div className="flex items-center gap-2">
-            <Avatar label="AE" style={{ backgroundColor: '#9c27b0', color: '#ffffff' }} shape="circle" />
+            <Avatar sx={{ bgcolor: deepPurple[500] }}>AE</Avatar>
             <span className="font-bold text-bluegray-50">Amy Elsner</span>
           </div>
         </div>
