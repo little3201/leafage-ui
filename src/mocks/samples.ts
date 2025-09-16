@@ -65,8 +65,8 @@ const datas: MasterPlate[] = [
   }
 ]
 
-export const templatesHandlers = [
-  http.get(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
+export const samplesHandlers = [
+  http.get(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
@@ -74,7 +74,7 @@ export const templatesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.MASTER_PLATE}/:id/exists`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SAMPLE}/:id/exists`, ({ params }) => {
     const { id, name } = params
     let filtered = datas.filter(item => item.name === name)
     if (id) {
@@ -82,7 +82,7 @@ export const templatesHandlers = [
     }
     return HttpResponse.json(filtered.length > 0)
   }),
-  http.get(`/api${SERVER_URL.MASTER_PLATE}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.SAMPLE}`, ({ request }) => {
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
@@ -95,7 +95,7 @@ export const templatesHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.MASTER_PLATE}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SAMPLE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -111,7 +111,7 @@ export const templatesHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.MASTER_PLATE}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SAMPLE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const newData = await request.json() as MasterPlate
 
@@ -122,7 +122,7 @@ export const templatesHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.put(`/api${SERVER_URL.MASTER_PLATE}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.SAMPLE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
     const newData = await request.json() as MasterPlate
@@ -136,7 +136,7 @@ export const templatesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.MASTER_PLATE}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.SAMPLE}/:id`, async ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -144,7 +144,7 @@ export const templatesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params
