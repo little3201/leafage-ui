@@ -80,7 +80,7 @@
       </q-page>
     </q-page-container>
     <q-footer class="bg-transparent text-center" :class="$q.dark.isActive ? 'text-white' : 'text-black'">
-      <p :class="{ 'text-white': $q.dark.isActive }">&copy; {{ new Date().getFullYear() }}
+      <p :class="{ 'text-white': $q.dark.isActive }">Copyright &copy; {{ new Date().getFullYear() }}
         All Rights Reserved.</p>
     </q-footer>
   </q-layout>

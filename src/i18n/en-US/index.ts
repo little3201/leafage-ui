@@ -40,7 +40,7 @@ export default {
   path: 'Path',
   redirect: 'Redirect',
   icon: 'Icon',
-  packagePath: 'Package Path',
+  packageName: 'Package Path',
   prefix: 'Prefix',
   host: 'Host',
   port: 'Port',
@@ -135,7 +135,7 @@ export default {
   exploiters: 'Exploiters',
   schemas: 'Schemas',
   scripts: 'Scripts',
-  master_plates: 'Master Plates',
+  samples: 'Samples',
 
   inputText: 'Please input {field}',
   selectText: 'Please select {field}',

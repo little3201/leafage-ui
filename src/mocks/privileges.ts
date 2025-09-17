@@ -353,7 +353,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 19,
-        name: 'master_plates',
+        name: 'samples',
         meta: {
           path: 'samples',
           component: 'exploiters/samples',

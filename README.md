@@ -5,9 +5,9 @@
   
   后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
 
-  基于 <a href="https://element-plus.org">Element plus</a> 库（branch: develop-2）。</br>
+  基于 <a href="https://element-plus.org">Element plus</a> 库（branch: element）。</br>
   基于 <a href="https://quasar.dev">Quasar framework</a> 库（branch: main, develop）。</br>
-  基于 <a href="https://primereact.org">PrimeReact</a> 库（branch: react）。
+  基于 <a href="https://mui.com">Material UI</a> 库（branch: react）。
 </p>
 
 ### 特性
@@ -20,3 +20,24 @@
 - **专业支持 -** 专家提供可靠帮助
 - **高度可定制 -** 可根据项目风格定制
 
+### 目录结构
+
+```
+├── src/
+│   ├── api/            # http request api
+│   ├── boot/           # Vue composables
+│   ├── components/     # Vue components
+│   ├── constants/      # Constants
+│   ├── i18n/           # i18n
+│   ├── layouts/        # Layout components
+│   ├── mocks/          # Mocks
+│   ├── pages/          # Pages
+│   ├── router/         # vue router
+│   ├── stores/         # Pinia
+│   ├── utils/          # Utils
+│   └── App.vue         # Root component
+├── public/             # Public static assets
+├── index.html          # Entry HTML file
+└── eslint.config.js    # Eslint configuration
+└── vite.config.js      # Vite configuration
+```

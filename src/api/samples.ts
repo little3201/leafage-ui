@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, MasterPlate } from 'src/types'
+import type { Pagination, Sample } from 'src/types'
 
 /**
  * Retrieve rows
@@ -8,7 +8,7 @@ import type { Pagination, MasterPlate } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveMasterPlates = (pagination: Pagination, filters?: object) => {
+export const retrieveSamples = (pagination: Pagination, filters?: object) => {
   return api.get(SERVER_URL.SAMPLE, { params: { ...pagination, page: pagination.page - 1, ...filters } })
 }
 
@@ -17,7 +17,7 @@ export const retrieveMasterPlates = (pagination: Pagination, filters?: object) =
  * @param id Row ID
  * @returns Row data
  */
-export const fetchMasterPlate = (id: number) => {
+export const fetchSample = (id: number) => {
   return api.get(`${SERVER_URL.SAMPLE}/${id}`)
 }
 
@@ -27,7 +27,7 @@ export const fetchMasterPlate = (id: number) => {
  * @param id Row ID
  * @returns Row data
  */
-export const checkMasterPlateExists = (name: string, suffix: string, version: string, id?: number) => {
+export const checkSampleExists = (name: string, suffix: string, version: string, id?: number) => {
   return api.get(`${SERVER_URL.SAMPLE}/exists`, { params: { name, suffix, version, id } })
 }
 
@@ -36,7 +36,7 @@ export const checkMasterPlateExists = (name: string, suffix: string, version: st
  * @param row Row data
  * @returns Created row
  */
-export const createMasterPlate = (row: MasterPlate) => {
+export const createSample = (row: Sample) => {
   return api.post(SERVER_URL.SAMPLE, row)
 }
 
@@ -46,7 +46,7 @@ export const createMasterPlate = (row: MasterPlate) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyMasterPlate = (id: number, row: MasterPlate) => {
+export const modifySample = (id: number, row: Sample) => {
   return api.put(`${SERVER_URL.SAMPLE}/${id}`, row)
 }
 
@@ -55,7 +55,7 @@ export const modifyMasterPlate = (id: number, row: MasterPlate) => {
  * @param id Row ID
  * @returns Enable or Disable result
  */
-export const enableMasterPlate = (id: number) => {
+export const enableSample = (id: number) => {
   return api.patch(`${SERVER_URL.SAMPLE}/${id}`)
 }
 
@@ -64,7 +64,7 @@ export const enableMasterPlate = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeMasterPlate = (id: number) => {
+export const removeSample = (id: number) => {
   return api.delete(`${SERVER_URL.SAMPLE}/${id}`)
 }
 
@@ -73,7 +73,7 @@ export const removeMasterPlate = (id: number) => {
  * @param file file
  * @returns
  */
-export const importMasterPlates = (file: File) => {
+export const importSamples = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
   return api.post(`${SERVER_URL.SAMPLE}/import`, formData)

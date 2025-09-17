@@ -5,13 +5,17 @@ import type { HighlightResult } from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
 
 const props = defineProps<{
-  content: string
+  content: string | undefined,
+  language?: string | undefined
 }>()
 
 const highlightResult = ref<HighlightResult | null>(null)
 
 watchEffect(() => {
-  highlightResult.value = hljs.highlightAuto(props.content)
+  highlightResult.value = props.content ? props.language && hljs.getLanguage(props.language)
+    ? hljs.highlight(props.content, { language: props.language })
+    : hljs.highlightAuto(props.content)
+    : null
 })
 
 onUnmounted(() => { highlightResult.value = null })

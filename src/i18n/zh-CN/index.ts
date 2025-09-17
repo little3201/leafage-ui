@@ -40,7 +40,7 @@ export default {
   path: '路径',
   redirect: '跳转',
   icon: '图标',
-  packagePath: '包名',
+  packageName: '包名',
   prefix: '前缀',
   host: '主机',
   port: '端口',
@@ -136,7 +136,7 @@ export default {
   exploiters: '开发工具',
   schemas: '计划',
   scripts: '脚本',
-  master_plates: '母版',
+  samples: '样板',
 
   inputText: '请输入{field}',
   selectText: '请选择{field}',
