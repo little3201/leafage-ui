@@ -98,8 +98,8 @@ async function exportRows() {
  */
 function showRow(id: number) {
   row.value = { ...initialValues }
-  visible.value = true
   loadOne(id)
+  visible.value = true
 }
 
 /**
@@ -225,13 +225,13 @@ function confirmEvent(id: number) {
       <ElDescriptionsItem :label="$t('startTime')">
         {{ dayjs(row.startTime).format('YYYY-MM-DD HH:mm') }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('executedTimes')">
-        {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
-      </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('status')">
         <ElTag v-if="row.status === 0" type="primary" round>{{ $t('processing') }}</ElTag>
         <ElTag v-else-if="row.status === 1" type="success" round>{{ $t('done') }}</ElTag>
         <ElTag v-else type="danger" round>{{ $t('failure') }}</ElTag>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('executedTimes')">
+        {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('nextExecuteTime')" :span="2">
         {{ dayjs(row.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}

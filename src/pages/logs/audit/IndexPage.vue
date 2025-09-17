@@ -103,8 +103,8 @@ async function exportRows() {
  */
 function showRow(id: number) {
   row.value = { ...initialValues }
-  visible.value = true
   loadOne(id)
+  visible.value = true
 }
 
 /**
