@@ -43,21 +43,21 @@ See `src/css/element/index.scss`.
 ### Project Structure
 
 ```
-server-starter-ui/
+leafage-ui/
 ├── src/
-│   ├── api/         # http request api
-│   ├── boot/        # Vue composables
-│   ├── components/         # Vue components
-│   ├── constants/         # Vue components
-│   ├── i18n/            # i18n
-│   ├── layouts/            # Layout components
-│   ├── mocks/            # Mocks
-│   ├── pages/            # Pages
-│   ├── router/            # vue router
-│   ├── stores/            # Pinia
-│   ├── utils/            # Utils
-│   └── App.vue            # Root component
-├── public/                # Public static assets
-├── index.html            # Entry HTML file
-└── vite.config.js        # Vite configuration
+│   ├── api/            # http request api
+│   ├── boot/           # Vue composables
+│   ├── components/     # Vue components
+│   ├── constants/      # Constants
+│   ├── i18n/           # i18n
+│   ├── layouts/        # Layout components
+│   ├── mocks/          # Mocks
+│   ├── pages/          # Pages
+│   ├── router/         # vue router
+│   ├── stores/         # Pinia
+│   ├── utils/          # Utils
+│   └── App.vue         # Root component
+├── public/             # Public static assets
+├── index.html          # Entry HTML file
+└── vite.config.js      # Vite configuration
 ```
