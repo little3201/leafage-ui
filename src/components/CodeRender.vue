@@ -22,10 +22,16 @@ onUnmounted(() => { highlightResult.value = null })
 </script>
 
 <template>
-  <pre class="relative-position m-0">
+  <pre v-if="content" class="relative-position q-my-none scroll" style="height: 600px;">
     <code class="hljs" v-html="highlightResult?.value"></code>
     <small class="absolute absolute-top-right text-white q-pr-sm q-pt-sm">
       {{ highlightResult?.language }}
     </small>
   </pre>
+  <div v-else class="flex column flex-center q-px-lg">
+    <q-img src="https://picsum.photos/500/300" style="width: 160px;"></q-img>
+    <div>
+      No Data
+    </div>
+  </div>
 </template>
