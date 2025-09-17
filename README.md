@@ -1,49 +1,28 @@
-# element-plus-vite-starter
+# Leafage UI
 
-> A starter kit for Element Plus with Vite
+<p align="center">
+  免费且美观的管理模板，使用 Vue 3、Vite、Pinia 和 Tailwind CSS构建。设计用于构建高效、响应式和快速加载的管理界面。
+  
+  后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
 
-- Preview: <https://preview.leafage.top>
+  基于 <a href="https://element-plus.org">Element plus</a> 库（branch: element）。</br>
+  基于 <a href="https://quasar.dev">Quasar framework</a> 库（branch: main, develop）。</br>
+  基于 <a href="https://mui.com">Material UI</a> 库（branch: react）。
+</p>
 
-This is an example of on-demand element-plus with [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components).
+### 特性
 
-> If you want to import all, it may be so simple that no examples are needed. Just follow [quickstart | Docs](https://element-plus.org/zh-CN/guide/quickstart.html) and import them.
+- **Vue 3、Vite、Pinia 和 Tailwind CSS -** 快速高效的开发
+- **深色主题 -** 现代且引人注目
+- **可访问性 -** 包容且用户友好
+- **i18n集成 -** 便于全球本地化
+- **响应式设计 -** 无缝适应所有设备
+- **专业支持 -** 专家提供可靠帮助
+- **高度可定制 -** 可根据项目风格定制
 
-If you just want an on-demand import example `manually`, you can check [unplugin-element-plus/examples/vite](https://github.com/element-plus/unplugin-element-plus/tree/main/examples/vite).
-
-## Project setup
-```bash
-pnpm install
-```
-
-### Compiles and hot-reloads for development
-
-```bash
-pnpm run dev
-```
-
-### Compiles and minifies for production
-
-```bash
-pnpm run build
-```
-
-## Usage
-
-```bash
-git clone https://github.com/little3201/server-starter-ui
-cd element-plus-vite-starter
-pnpm i
-pnpm run dev
-```
-
-### Custom theme
-
-See `src/css/element/index.scss`.
-
-### Project Structure
+### 目录结构
 
 ```
-leafage-ui/
 ├── src/
 │   ├── api/            # http request api
 │   ├── boot/           # Vue composables
@@ -59,5 +38,6 @@ leafage-ui/
 │   └── App.vue         # Root component
 ├── public/             # Public static assets
 ├── index.html          # Entry HTML file
+└── eslint.config.js    # Eslint configuration
 └── vite.config.js      # Vite configuration
 ```
