@@ -36,6 +36,7 @@ export default {
   order: 'Order',
   data: 'Data ',
   type: 'Type',
+  category: 'Category',
   version: 'Version',
   path: 'Path',
   redirect: 'Redirect',

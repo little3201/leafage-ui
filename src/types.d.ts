@@ -201,8 +201,9 @@ export interface Sample extends AudtiMetadata {
   name: string
   suffix: string
   content: string
+  category: string | undefined
   type: string | undefined
-  version: string
+  version?: number
   enabled?: boolean
 }
 
@@ -210,7 +211,7 @@ export interface Script extends AudtiMetadata {
   name: string
   type: string | undefined
   icon: string
-  version: string
+  version: string | undefined
   content: string
 }
 

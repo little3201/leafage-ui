@@ -36,6 +36,7 @@ export default {
   order: '顺序',
   data: '数据',
   type: '类型',
+  category: '类别',
   version: '版本号',
   path: '路径',
   redirect: '跳转',

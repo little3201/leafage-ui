@@ -3,7 +3,7 @@
     <div class="row q-mb-md">
       <div class="col">
         <q-card flat>
-          <q-card-section class="row items-center">
+          <q-card-section class="flex items-center">
             <q-avatar size="80px">
               <img :src="me.avatar as string" alt="avatar" />
             </q-avatar>

@@ -9,19 +9,27 @@
           </q-card-section>
 
           <q-card-section>
-            <div class="row q-gutter-md">
+            <div class="row q-col-gutter-x-md">
               <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
-                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+                :rules="[val => val && val.length > 0 || $t('inputText')]" class="col-6" />
               <q-input outlined dense v-model="form.path" :label="$t('path')" lazy-rules
-                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+                :rules="[val => val && val.length > 0 || $t('inputText')]" class="col-6" />
             </div>
 
-            <div class="row q-gutter-md">
+            <div class="row q-col-gutter-x-md">
               <q-input outlined dense v-model="form.component" :label="$t('component')" lazy-rules
-                :rules="[val => val && val.length > 0 || $t('inputText')]" />
-              <q-select outlined dense v-model="form.redirect" :label="$t('redirect')" :options="subset"
-                option-value="id" option-label="name" />
+                :rules="[val => val && val.length > 0 || $t('inputText')]" class="col-6" />
+              <q-select outlined dense v-model="form.redirect" :label="$t('redirect')" :options="subset" emit-value
+                option-value="id" option-label="name" style="width: 50%;" class="col-6" />
             </div>
+
+            <div v-if="!form.redirect" class="row q-gutter-xs">
+              <q-chip v-for="(item, idx) in buttonOptions" :key="idx" :selected="form.actions?.includes(item.name)"
+                :color="actions[item.name]">
+                {{ $t(item.name) }}
+              </q-chip>
+            </div>
+
             <q-input outlined dense v-model="form.description" type="textarea" :label="$t('description')" />
           </q-card-section>
 
@@ -94,7 +102,8 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%" class="q-pr-none">
-            <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id" />
+            <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id"
+              :options="buttonOptions" />
           </q-td>
         </q-tr>
       </template>
@@ -107,10 +116,11 @@ import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { useQuasar, exportFile } from 'quasar'
 import { retrievePrivileges, retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege } from 'src/api/privileges'
+import { retrieveDictionarySubset } from 'src/api/dictionaries'
 import SubPage from './SubPage.vue'
 import { visibleArray } from 'src/utils'
 import { actions } from 'src/constants'
-import type { Privilege } from 'src/types'
+import type { Privilege, Dictionary } from 'src/types'
 
 const $q = useQuasar()
 
@@ -121,6 +131,7 @@ const tableRef = ref()
 const rows = ref<QTableProps['rows']>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
+const buttonOptions = ref<Array<Dictionary>>([])
 
 const initialValues: Privilege = {
   id: undefined,
@@ -156,6 +167,9 @@ const subset = ref<Array<Privilege>>()
 
 onMounted(() => {
   tableRef.value.requestServerInteraction()
+  retrieveDictionarySubset(100).then(res => {
+    buttonOptions.value = res.data
+  })
 })
 
 /**
