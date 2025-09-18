@@ -16,8 +16,7 @@
 - **深色主题 -** 现代且引人注目
 - **可访问性 -** 包容且用户友好
 - **i18n集成 -** 便于全球本地化
-- **响应式设计 -** 无缝适应所有设备
-- **专业支持 -** 专家提供可靠帮助
+- **响应式设计 -** 自适应各种大小的设备
 - **高度可定制 -** 可根据项目风格定制
 
 ### 目录结构
@@ -28,6 +27,7 @@
 │   ├── boot/           # Vue composables
 │   ├── components/     # Vue components
 │   ├── constants/      # Constants
+│   ├── css/            # css
 │   ├── i18n/           # i18n
 │   ├── layouts/        # Layout components
 │   ├── mocks/          # Mocks
