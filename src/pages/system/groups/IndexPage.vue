@@ -3,7 +3,6 @@ import { ref, reactive, onMounted, watch } from 'vue'
 import type { TableInstance, FormInstance, FormRules, TreeInstance, UploadInstance, UploadRequestOptions, TransferDirection, TransferKey } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
-import DialogView from 'components/DialogView.vue'
 import {
   retrieveGroups, createGroup, modifyGroup, removeGroup, enableGroup, checkGroupExists, fetchGroup, importGroups,
   retrieveGroupMembers, retrieveGroupRoles, retrieveGroupTree, relationGroupMembers, removeGroupMembers, retrieveGroupPrivileges,
@@ -19,7 +18,7 @@ import { hasAction, exportToCSV } from 'src/utils'
 import { actions } from 'src/constants'
 
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
@@ -112,10 +111,7 @@ function currentChange(data: TreeNode) {
 
 async function loadUsers() {
   retrieveUsers({ page: 1, size: 99 }).then(res => {
-    members.value = res.data.content.map((item: User) => ({
-      ...item,
-      fullName: (locale.value === 'en-US' || item.middleName) ? `${item.firstname} ${item.middleName} ${item.lastname}` : `${item.lastname}${item.firstname}`
-    }))
+    members.value = res.data.content
   })
 }
 
@@ -471,7 +467,7 @@ function handleActionCheck(privilegeId: number, item: string) {
           </ElCol>
         </ElRow>
 
-        <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+        <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
           <ElTableColumn type="selection" />
           <ElTableColumn type="index" :label="$t('no')" width="55" />
           <ElTableColumn prop="name" :label="$t('name')" sortable />
@@ -514,16 +510,16 @@ function handleActionCheck(privilegeId: number, item: string) {
   </ElSpace>
 
   <!-- form -->
-  <DialogView v-model="visible" :title="$t('groups')" width="25%">
+  <ElDialog v-model="visible" align-center :title="$t('groups')" width="25%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('description')" prop="description">
             <ElInput v-model="form.description" type="textarea"
@@ -540,10 +536,10 @@ function handleActionCheck(privilegeId: number, item: string) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 
   <!-- relation -->
-  <DialogView v-model="relationVisible" show-close :title="$t('relation')">
+  <ElDialog v-model="relationVisible" show-close :title="$t('relation')">
     <ElTabs stretch v-model="activeTabName">
       <ElTabPane :label="$t('users')" name="user" style="text-align: center">
         <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
@@ -556,10 +552,10 @@ function handleActionCheck(privilegeId: number, item: string) {
       </ElTabPane>
     </ElTabs>
 
-  </DialogView>
+  </ElDialog>
 
   <!-- authorize -->
-  <DialogView v-model="authorizeVisible" show-close :title="$t('authorize')" width="65%" :max-height="500">
+  <ElDialog v-model="authorizeVisible" show-close :title="$t('authorize')" width="65%" :max-height="500">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
       :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
       @check-change="handleCheckChange">
@@ -578,10 +574,10 @@ function handleActionCheck(privilegeId: number, item: string) {
         </div>
       </template>
     </ElTree>
-  </DialogView>
+  </ElDialog>
 
   <!-- import -->
-  <DialogView v-model="importVisible" :title="$t('import')" width="36%">
+  <ElDialog v-model="importVisible" :title="$t('import')" width="36%">
     <p>{{ $t('samples') + ' ' + $t('download') }}：
       <a :href="`templates/groups.xlsx`" :download="$t('groups') + '.xlsx'">
         {{ $t('groups') }}.xlsx
@@ -611,7 +607,7 @@ function handleActionCheck(privilegeId: number, item: string) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>
 
 <style lang="scss" scoped>

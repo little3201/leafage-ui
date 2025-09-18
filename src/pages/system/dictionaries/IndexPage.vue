@@ -3,7 +3,6 @@ import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
-import DialogView from 'components/DialogView.vue'
 import SubPage from './SubPage.vue'
 import {
   retrieveDictionaries, fetchDictionary, modifyDictionary, enableDictionary, importDictionaries
@@ -221,7 +220,7 @@ function onUpload(options: UploadRequestOptions) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="expand">
           <template #default="props">
@@ -250,16 +249,16 @@ function onUpload(options: UploadRequestOptions) {
     </ElCard>
   </ElSpace>
 
-  <DialogView v-model="visible" :title="$t('dictionaries')" width="25%">
+  <ElDialog v-model="visible" align-center :title="$t('dictionaries')" width="25%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <ElFormItem :label="$t('name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <ElFormItem :label="$t('description')" prop="description">
             <ElInput v-model="form.description" type="textarea"
@@ -276,10 +275,10 @@ function onUpload(options: UploadRequestOptions) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 
   <!-- import -->
-  <DialogView v-model="importVisible" :title="$t('import')" width="36%">
+  <ElDialog v-model="importVisible" :title="$t('import')" width="36%">
     <p>{{ $t('samples') + ' ' + $t('download') }}：
       <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx
@@ -309,5 +308,5 @@ function onUpload(options: UploadRequestOptions) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>

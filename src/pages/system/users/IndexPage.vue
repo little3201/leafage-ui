@@ -4,7 +4,6 @@ import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequ
 import { dayjs } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
-import DialogView from 'components/DialogView.vue'
 import {
   retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, checkUserExists, importUsers
 } from 'src/api/users'
@@ -13,7 +12,7 @@ import { Icon } from '@iconify/vue'
 import { calculate, hasAction, exportToExcel } from 'src/utils'
 
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
@@ -42,8 +41,7 @@ const formRef = ref<FormInstance>()
 const initialValues: User = {
   id: undefined,
   username: '',
-  firstname: '',
-  lastname: '',
+  fullname: '',
   email: ''
 }
 const form = ref<User>({ ...initialValues })
@@ -53,11 +51,8 @@ const rules = reactive<FormRules<typeof form>>({
     { required: true, message: t('inputText', { field: t('username') }), trigger: 'blur' },
     { validator: checkNameExistsence, trigger: 'blur' }
   ],
-  firstname: [
-    { required: true, message: t('inputText', { field: t('firstname') }), trigger: 'blur' }
-  ],
-  lastname: [
-    { required: true, message: t('inputText', { field: t('lastname') }), trigger: 'blur' }
+  fullname: [
+    { required: true, message: t('inputText', { field: t('fullname') }), trigger: 'blur' }
   ],
   email: [
     { required: true, message: t('inputText', { field: t('email') }), trigger: 'blur' }
@@ -272,7 +267,7 @@ function lockRow(id: number) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="username" :label="$t('username')" sortable>
@@ -280,11 +275,8 @@ function lockRow(id: number) {
             <div class="flex items-center">
               <ElAvatar alt="avatar" :size="30" :src="scope.row.avatar" />
               <div class="ml-2 inline-flex flex-col">
-                <span v-if="locale === 'en-US' || scope.row.middleName" class="text-sm">
-                  {{ scope.row.firstname }} {{ scope.row.middleName }} {{ scope.row.lastname }}
-                </span>
-                <span v-else class="text-sm">
-                  {{ scope.row.lastname }}{{ scope.row.firstname }}
+                <span class="text-sm">
+                  {{ scope.row.fullname }}
                 </span>
                 <span class="text-xs text-[var(--el-text-color-secondary)]">{{ scope.row.username }}</span>
               </div>
@@ -344,9 +336,9 @@ function lockRow(id: number) {
     </ElCard>
   </ElSpace>
 
-  <DialogView v-model="visible" :title="$t('users')" width="36%">
+  <ElDialog v-model="visible" align-center :title="$t('users')" width="36%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem :label="$t('username')" prop="username">
             <ElInput v-model="form.username" :placeholder="$t('inputText', { field: $t('username') })" :maxLength="50"
@@ -354,41 +346,32 @@ function lockRow(id: number) {
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
+          <ElFormItem :label="$t('fullname')" prop="fullname">
+            <ElInput v-model="form.fullname" :placeholder="$t('inputText', { field: $t('fullname') })"
+              :maxLength="50" />
+          </ElFormItem>
+        </ElCol>
+
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol>
           <ElFormItem :label="$t('email')" prop="email">
             <ElInput type="email" v-model="form.email" :placeholder="$t('inputText', { field: $t('email') })"
               :maxLength="50" :disabled="!!form.id" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
-        <ElCol :span="8">
-          <ElFormItem :label="$t('firstname')" prop="firstname">
-            <ElInput type="email" v-model="form.firstname" :placeholder="$t('inputText', { field: $t('firstname') })"
-              :maxLength="50" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="8">
-          <ElFormItem :label="$t('lastname')" prop="lastname">
-            <ElInput v-model="form.lastname" :placeholder="$t('inputText', { field: $t('lastname') })"
-              :maxLength="50" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="8">
-          <ElFormItem :label="$t('middleName')" prop="middleName">
-            <ElInput type="email" v-model="form.middleName" :placeholder="$t('inputText', { field: $t('middleName') })"
-              :maxLength="50" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem :label="$t('accountExpiresAt')" prop="accountExpiresAt">
-            <ElDatePicker v-model="form.accountExpiresAt" type="datetime" :placeholder="$t('selectText')" />
+            <ElDatePicker v-model="form.accountExpiresAt" type="datetime" :placeholder="$t('selectText')"
+              style="width: 100%;" />
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
           <ElFormItem :label="$t('credentialsExpiresAt')" prop="credentialsExpiresAt">
-            <ElDatePicker v-model="form.credentialsExpiresAt" type="datetime" :placeholder="$t('selectText')" />
+            <ElDatePicker v-model="form.credentialsExpiresAt" type="datetime" :placeholder="$t('selectText')"
+              style="width: 100%;" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -401,10 +384,10 @@ function lockRow(id: number) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 
   <!-- import -->
-  <DialogView v-model="importVisible" :title="$t('import')" width="36%">
+  <ElDialog v-model="importVisible" :title="$t('import')" width="36%">
     <p>{{ $t('samples') + ' ' + $t('download') }}：
       <a :href="`templates/users.xlsx`" :download="$t('users') + '.xlsx'">
         {{ $t('users') }}.xlsx
@@ -434,7 +417,7 @@ function lockRow(id: number) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>
 
 <style lang="scss" scoped>

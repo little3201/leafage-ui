@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import type { UploadInstance, UploadRequestOptions } from 'element-plus'
-import DialogView from 'components/DialogView.vue'
 import { retrieveFiles, fetchFile, uploadFile, downloadFile } from 'src/api/file-records'
 import type { Pagination, FileRecord } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -235,8 +234,7 @@ function confirmEvent(id: number) {
         </ElRow>
 
         <div v-show="view.showTable">
-          <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
-            @sort-change="handleSortChange">
+          <ElTable v-loading="loading" :data="datas" row-key="id" table-layout="auto" @sort-change="handleSortChange">
             <ElTableColumn type="index" :label="$t('no')" width="55" />
             <ElTableColumn prop="name" :label="$t('name')" sortable>
               <template #default="scope">
@@ -291,16 +289,16 @@ function confirmEvent(id: number) {
   </ElSpace>
 
   <!-- details -->
-  <DialogView v-model="visible" :title="$t('details')" show-close width="25%">
+  <ElDialog v-model="visible" align-center :title="$t('details')" show-close width="25%">
     <ElDescriptions v-loading="loading" :column="1">
       <ElDescriptionsItem :label="$t('name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('type')">{{ row.mimeType }}</ElDescriptionsItem>
     </ElDescriptions>
-  </DialogView>
+  </ElDialog>
 
   <!-- upload -->
-  <DialogView v-model="uploadVisible" :title="$t('upload')" width="35%">
+  <ElDialog v-model="uploadVisible" :title="$t('upload')" width="35%">
     <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" :on-success="load">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
@@ -322,5 +320,5 @@ function confirmEvent(id: number) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>

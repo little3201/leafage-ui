@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import type { TableInstance } from 'element-plus'
-import DialogView from 'components/DialogView.vue'
 import { retrieveAuditLogs, fetchAuditLog, removeAuditLog } from 'src/api/audit-logs'
 import type { Pagination, AuditLog } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -167,7 +166,7 @@ function confirmEvent(id: number) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="resource" :label="$t('resource')" sortable>
           <template #default="scope">
@@ -218,7 +217,7 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <DialogView v-model="visible" show-close :title="$t('details')">
+  <ElDialog v-model="visible" show-close :title="$t('details')">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('operation')">
         <ElBadge is-dot :type="actions[row.operation.toLowerCase()]" class="mr-1" />{{ row.operation }}
@@ -240,7 +239,7 @@ function confirmEvent(id: number) {
       <ElDescriptionsItem :label="$t('operatedTimes')">{{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
       </ElDescriptionsItem>
     </ElDescriptions>
-  </DialogView>
+  </ElDialog>
 </template>
 
 <style lang="scss" scoped>

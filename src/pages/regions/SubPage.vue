@@ -2,7 +2,6 @@
 import { ref, reactive, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import DialogView from 'components/DialogView.vue'
 import { retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, checkRegionExists } from 'src/api/regions'
 import type { Pagination, Region } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -172,7 +171,7 @@ function confirmEvent(id: number) {
       </ElCol>
     </ElRow>
 
-    <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+    <ElTable v-loading="loading" :data="datas" row-key="id" table-layout="auto">
       <ElTableColumn type="selection" />
       <ElTableColumn type="expand">
         <template #default="props">
@@ -209,30 +208,30 @@ function confirmEvent(id: number) {
     <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
   </ElCard>
 
-  <DialogView v-model="visible" :title="$t('regions')" width="25%">
+  <ElDialog v-model="visible" align-center :title="$t('regions')" append-to-body width="25%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('areaCode')" prop="areaCode">
             <ElInput v-model="form.areaCode" :placeholder="$t('inputText', { field: $t('areaCode') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('postalCode')" prop="postalCode">
             <ElInput v-model="form.postalCode" :placeholder="$t('inputText', { field: $t('postalCode') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('description')" prop="description">
             <ElInput v-model="form.description" type="textarea"
@@ -249,7 +248,7 @@ function confirmEvent(id: number) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>
 
 <style lang="scss" scoped>

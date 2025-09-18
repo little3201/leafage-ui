@@ -124,7 +124,7 @@ onMounted(() => {
           <!-- Overview -->
           <ElTabPane :label="$t('overview')" name="overview">
             <h3>Login Information</h3>
-            <ElTable :data="loginHistory" :show-header=false stripe table-layout="auto">
+            <ElTable :data="loginHistory" :show-header=false table-layout="auto">
               <ElTableColumn prop="device">
                 <template #default="scope">
                   <div class="flex items-center">

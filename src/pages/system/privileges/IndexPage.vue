@@ -2,7 +2,6 @@
 import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { useUserStore } from 'stores/user-store'
-import DialogView from 'components/DialogView.vue'
 import {
   retrievePrivileges, retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege, importPrivileges
 } from 'src/api/privileges'
@@ -98,12 +97,6 @@ async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privil
   }
 }
 
-async function loadDictionaries() {
-  retrieveDictionarySubset(2).then(res => {
-    buttonOptions.value = res.data
-  })
-}
-
 /**
  * reset
  */
@@ -149,7 +142,9 @@ function saveRow(id?: number) {
     loadOne(id)
     retrievePrivilegeSubset(id).then(res => { subset.value = res.data })
   }
-  loadDictionaries()
+  retrieveDictionarySubset(100).then(res => {
+    buttonOptions.value = res.data
+  })
   visible.value = true
 }
 
@@ -315,9 +310,9 @@ function onCheckChange(item: string) {
     </ElCard>
   </ElSpace>
 
-  <DialogView v-model="visible" :title="$t('privileges')" width="36%">
+  <ElDialog v-model="visible" align-center :title="$t('privileges')" width="36%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem :label="$t('name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" disabled>
@@ -333,7 +328,7 @@ function onCheckChange(item: string) {
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem :label="$t('component')" prop="component">
             <ElInput v-model="form.component" :placeholder="$t('inputText', { field: $t('component') })" disabled />
@@ -347,7 +342,7 @@ function onCheckChange(item: string) {
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" v-if="!form.redirect" class="w-full !mx-0">
+      <ElRow :gutter="20" v-if="!form.redirect">
         <ElCol>
           <ElFormItem :label="$t('actions')" prop="meta.actions">
             <ElCheckTag v-for="item in buttonOptions" :key="item.id" :checked="form.actions?.includes(item.name)"
@@ -357,7 +352,7 @@ function onCheckChange(item: string) {
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('description')" prop="description">
             <ElInput v-model="form.description" type="textarea" :placeholder="$t('description')" />
@@ -373,10 +368,10 @@ function onCheckChange(item: string) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 
   <!-- import -->
-  <DialogView v-model="importVisible" :title="$t('import')" width="36%">
+  <ElDialog v-model="importVisible" :title="$t('import')" width="36%">
     <p>{{ $t('samples') + ' ' + $t('download') }}：
       <a :href="`templates/privileges.xlsx`" :download="$t('privileges') + '.xlsx'">
         {{ $t('privileges') }}.xlsx
@@ -406,7 +401,7 @@ function onCheckChange(item: string) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>
 
 <style lang="scss">

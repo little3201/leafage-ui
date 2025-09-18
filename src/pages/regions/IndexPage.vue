@@ -3,7 +3,6 @@ import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
-import DialogView from 'components/DialogView.vue'
 import SubPage from './SubPage.vue'
 import {
   retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, importRegions
@@ -241,8 +240,7 @@ function confirmEvent(id: number) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto"
-        highlight-current-row>
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto" highlight-current-row>
         <ElTableColumn type="selection" />
         <ElTableColumn type="expand" width="40">
           <template #default="props">
@@ -280,30 +278,30 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <DialogView v-model="visible" :title="$t('regions')" width="25%">
+  <ElDialog v-model="visible" align-center :title="$t('regions')" width="25%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('areaCode')" prop="areaCode">
             <ElInput v-model="form.areaCode" :placeholder="$t('inputText', { field: $t('areaCode') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('postalCode')" prop="postalCode">
             <ElInput v-model="form.postalCode" :placeholder="$t('inputText', { field: $t('postalCode') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('description')" prop="description">
             <ElInput v-model="form.description" type="textarea"
@@ -320,10 +318,10 @@ function confirmEvent(id: number) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 
   <!-- import -->
-  <DialogView v-model="importVisible" :title="$t('import')" width="36%">
+  <ElDialog v-model="importVisible" :title="$t('import')" width="36%">
     <p>{{ $t('samples') + ' ' + $t('download') }}：
       <a :href="`templates/regions.xlsx`" :download="$t('regions') + '.xlsx'">
         {{ $t('regions') }}.xlsx
@@ -353,5 +351,5 @@ function confirmEvent(id: number) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>

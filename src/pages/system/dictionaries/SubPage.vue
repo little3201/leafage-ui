@@ -2,7 +2,6 @@
 import { ref, reactive, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import DialogView from 'components/DialogView.vue'
 import {
   retrieveDictionarySubset, fetchDictionary, createDictionary,
   modifyDictionary, removeDictionary, enableDictionary, checkDictionaryExists
@@ -158,7 +157,7 @@ function confirmEvent(id: number) {
       </ElCol>
     </ElRow>
 
-    <ElTable v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+    <ElTable v-loading="loading" :data="datas" row-key="id" table-layout="auto">
       <ElTableColumn type="selection" />
       <ElTableColumn type="expand">
         <template #default="props">
@@ -192,16 +191,16 @@ function confirmEvent(id: number) {
     </ElTable>
   </ElCard>
 
-  <DialogView v-model="visible" :title="$t('dictionaries')" width="25%">
+  <ElDialog v-model="visible" align-center :title="$t('dictionaries')" append-to-body width="25%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <ElFormItem :label="$t('name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" class="w-full !mx-0">
+      <ElRow :gutter="20">
         <ElCol :span="24">
           <ElFormItem :label="$t('description')" prop="description">
             <ElInput v-model="form.description" type="textarea"
@@ -218,7 +217,7 @@ function confirmEvent(id: number) {
         <Icon icon="material-symbols:check-circle-outline-rounded" width="16" height="16" /> {{ $t('submit') }}
       </ElButton>
     </template>
-  </DialogView>
+  </ElDialog>
 </template>
 
 <style lang="scss" scoped>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import type { TableInstance } from 'element-plus'
-import DialogView from 'components/DialogView.vue'
 import { retrieveOperationLogs, fetchOperationLog, removeOperationLog, clearOperationLogs } from 'src/api/operation-logs'
 import type { Pagination, OperationLog } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -174,7 +173,7 @@ function confirmEvent(id: number) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="operation" :label="$t('operation')" sortable>
@@ -220,7 +219,7 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <DialogView v-model="visible" show-close :title="$t('details')">
+  <ElDialog v-model="visible" show-close :title="$t('details')">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('operation')">{{ row.operation }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('ip')">{{ row.ip }}</ElDescriptionsItem>
@@ -244,5 +243,5 @@ function confirmEvent(id: number) {
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('content')" :span="3">{{ row.content }}</ElDescriptionsItem>
     </ElDescriptions>
-  </DialogView>
+  </ElDialog>
 </template>

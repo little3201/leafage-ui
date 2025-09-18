@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import type { TableInstance } from 'element-plus'
-import DialogView from 'components/DialogView.vue'
 import { retrieveAccessLogs, fetchAccessLog, removeAccessLog, clearAccessLogs } from 'src/api/access-logs'
 import type { Pagination, AccessLog } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -176,7 +175,7 @@ function confirmEvent(id: number) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" stripe table-layout="auto">
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="url" :label="$t('url')" sortable>
@@ -225,7 +224,7 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <DialogView v-model="visible" show-close :title="$t('details')">
+  <ElDialog v-model="visible" show-close :title="$t('details')">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('url')" :span="2">
         <ElTag :type="httpMethods[row.httpMethod]" size="small" class="mr-2">
@@ -250,7 +249,7 @@ function confirmEvent(id: number) {
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('responseMessage')" :span=3>{{ row.responseMessage }}</ElDescriptionsItem>
     </ElDescriptions>
-  </DialogView>
+  </ElDialog>
 </template>
 
 <style lang="scss" scoped>

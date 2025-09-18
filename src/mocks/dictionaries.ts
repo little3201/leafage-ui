@@ -276,6 +276,42 @@ const subDatas: Dictionary[] = [
     'superiorId': 700,
     'enabled': false,
     'id': 730
+  },
+  {
+    'name': 'api',
+    'superiorId': 710,
+    'enabled': true,
+    'id': 711
+  },
+  {
+    'name': 'types',
+    'superiorId': 710,
+    'enabled': true,
+    'id': 712
+  },
+  {
+    'name': 'service',
+    'superiorId': 720,
+    'enabled': true,
+    'id': 721
+  },
+  {
+    'name': 'repository',
+    'superiorId': 720,
+    'enabled': true,
+    'id': 723
+  },
+  {
+    'name': 'controller',
+    'superiorId': 720,
+    'enabled': true,
+    'id': 723
+  },
+  {
+    'name': 'model',
+    'superiorId': 720,
+    'enabled': true,
+    'id': 724
   }
 ]
 
