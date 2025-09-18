@@ -4,7 +4,7 @@ import { handlers } from 'src/mocks'
 
 export default defineBoot(({ router }) => {
   // dev
-  if (process.env.DEV) {
+  if (!process.env.DEV) {
     const worker = setupWorker(...handlers)
     worker.start({
       onUnhandledRequest: 'bypass'
