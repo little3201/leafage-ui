@@ -178,7 +178,8 @@ function confirmEvent(id: number) {
         </ElTableColumn>
         <ElTableColumn prop="operation" :label="$t('operation')" sortable>
           <template #default="scope">
-            <ElBadge is-dot :type="actions[scope.row.operation.toLowerCase()]" class="mr-1" />{{ scope.row.operation }}
+            <ElBadge is-dot :type="actions[scope.row.operation.toLowerCase()]" class="mr-1" />
+            {{ scope.row.operation }}
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="oldValue" :label="$t('oldValue')" />

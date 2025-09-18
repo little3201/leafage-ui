@@ -226,6 +226,7 @@ export interface Sample extends AudtiMetadata {
   content: string
   category: string | undefined
   type: string | undefined
+  version?: number
   enabled?: boolean
 }
 

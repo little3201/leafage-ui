@@ -175,7 +175,7 @@ const subDatas: Privilege[] = [
     path: 'schemas',
     name: 'schemas',
     component: 'exploiters/schemas',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'preview', 'enable'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'sync', 'config', 'execute', 'enable'],
     count: 0,
     enabled: true,
     icon: 'genetics',

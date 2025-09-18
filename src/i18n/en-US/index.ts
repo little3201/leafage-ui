@@ -37,6 +37,7 @@ export default {
   data: 'Data ',
   type: 'Type',
   category: 'Category',
+  version: 'Version',
   path: 'Path',
   redirect: 'Redirect',
   icon: 'Icon',

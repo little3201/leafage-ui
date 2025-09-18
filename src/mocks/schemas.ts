@@ -106,6 +106,30 @@ const frontend: SampleTreeNode[] = [
             suffix: '.vue',
           }
         ]
+      },
+      {
+        id: 2223,
+        name: 'roles',
+        children: [
+          {
+            id: 2222,
+            name: 'IndexPage',
+            content: '',
+            suffix: '.vue',
+          }
+        ]
+      },
+      {
+        id: 2224,
+        name: 'privileges',
+        children: [
+          {
+            id: 2222,
+            name: 'IndexPage',
+            content: '',
+            suffix: '.vue',
+          }
+        ]
       }
     ]
   }
