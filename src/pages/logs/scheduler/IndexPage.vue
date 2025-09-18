@@ -3,7 +3,7 @@
 
     <q-dialog v-model="visible" persistent>
       <q-card>
-        <q-card-section class="row items-center q-pb-none">
+        <q-card-section class="flex items-center q-pb-none">
           <div class="text-h6">{{ $t('scheduler_logs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
@@ -31,7 +31,7 @@
                 {{ $t('done') }}
               </q-chip>
               <q-chip v-else size="sm" icon="sym_r_error" color="negative" text-color="white">{{ $t('failure')
-                }}</q-chip>
+              }}</q-chip>
             </p>
             <p><strong>{{ $t('nextExecuteTime') }}</strong>
               {{ row.nextExecuteTime ? date.formatDate(row.nextExecuteTime, 'YYYY-MM-DD HH:mm') : '-' }}

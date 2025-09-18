@@ -20,3 +20,24 @@
 - **专业支持 -** 专家提供可靠帮助
 - **高度可定制 -** 可根据项目风格定制
 
+### 目录结构
+
+```
+├── src/
+│   ├── api/            # http request api
+│   ├── boot/           # Vue composables
+│   ├── components/     # Vue components
+│   ├── constants/      # Constants
+│   ├── i18n/           # i18n
+│   ├── layouts/        # Layout components
+│   ├── mocks/          # Mocks
+│   ├── pages/          # Pages
+│   ├── router/         # vue router
+│   ├── stores/         # Pinia
+│   ├── utils/          # Utils
+│   └── App.vue         # Root component
+├── public/             # Public static assets
+├── index.html          # Entry HTML file
+└── eslint.config.js    # Eslint configuration
+└── vite.config.js      # Vite configuration
+```

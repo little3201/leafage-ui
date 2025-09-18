@@ -184,9 +184,9 @@ const subDatas: Privilege[] = [
   {
     id: 19,
     superiorId: 16,
-    path: 'master-plates',
-    name: 'master_plates',
-    component: 'exploiters/master-plates',
+    path: 'samples',
+    name: 'samples',
+    component: 'exploiters/samples',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
@@ -353,10 +353,10 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 19,
-        name: 'master_plates',
+        name: 'samples',
         meta: {
-          path: 'master-plates',
-          component: 'exploiters/master-plates',
+          path: 'samples',
+          component: 'exploiters/samples',
           icon: 'code',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }

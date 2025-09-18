@@ -72,16 +72,16 @@
     <q-footer class="bg-transparent">
       <q-toolbar>
         <q-toolbar-title class="text-center text-body2" :class="$q.dark.isActive ? '' : 'text-black'">
-          &copy; {{ new Date().getFullYear() }} All Rights Reserved.
+          Copyright &copy; {{ new Date().getFullYear() }} All Rights Reserved.
         </q-toolbar-title>
       </q-toolbar>
     </q-footer>
   </q-layout>
 </template>
 
+
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useQuasar } from 'quasar'
 import { useUserStore } from 'stores/user-store'
 
 import EssentialLink from 'components/EssentialLink.vue'
@@ -92,7 +92,6 @@ import { signOut } from 'src/api/authentication'
 import logo from 'src/assets/logo.svg'
 
 
-const $q = useQuasar()
 const userStore = useUserStore()
 
 const leftDrawerOpen = ref<boolean>(false)

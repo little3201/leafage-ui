@@ -1,8 +1,8 @@
 {
-  "name": "leafage-ms",
+  "name": "leafage",
   "version": "0.0.1",
   "description": "A system based on RBAC.",
-  "productName": "leafage-ms",
+  "productName": "leafage",
   "author": "wq.li <little3201@163.com>",
   "private": true,
   "type": "module",
@@ -14,29 +14,29 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.17.0",
-    "apexcharts": "^5.3.3",
-    "axios": "^1.11.0",
+    "apexcharts": "^5.3.5",
+    "axios": "^1.12.2",
     "highlight.js": "^11.11.1",
     "pinia": "^3.0.3",
-    "quasar": "^2.18.2",
-    "vue": "^3.5.19",
-    "vue-i18n": "^11.1.11",
+    "quasar": "^2.18.3",
+    "vue": "^3.5.21",
+    "vue-i18n": "^11.1.12",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
+    "@eslint/js": "^9.35.0",
     "@lottiefiles/dotlottie-web": "^0.47.0",
-    "@quasar/app-vite": "^2.3.0",
-    "@types/node": "^22.17.2",
+    "@quasar/app-vite": "^2.4.0",
+    "@types/node": "^22.18.5",
     "@vue/eslint-config-typescript": "^14.6.0",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9.33.0",
+    "eslint": "^9.35.0",
     "eslint-plugin-vue": "^10.4.0",
-    "globals": "^16.3.0",
-    "msw": "^2.10.5",
+    "globals": "^16.4.0",
+    "msw": "^2.11.2",
     "typescript": "~5.8.3",
-    "vite-plugin-checker": "^0.10.2",
-    "vue-tsc": "^3.0.6"
+    "vite-plugin-checker": "^0.10.3",
+    "vue-tsc": "^3.0.7"
   },
   "msw": {
     "workerDirectory": [

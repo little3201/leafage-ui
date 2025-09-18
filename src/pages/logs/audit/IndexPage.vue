@@ -3,7 +3,7 @@
 
     <q-dialog v-model="visible" persistent>
       <q-card>
-        <q-card-section class="row items-center q-pb-none">
+        <q-card-section class="flex items-center q-pb-none">
           <div class="text-h6">{{ $t('audit_logs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />

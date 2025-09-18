@@ -1,14 +1,15 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { MasterPlate } from 'src/types'
+import type { Sample } from 'src/types'
 
-const datas: MasterPlate[] = [
+const datas: Sample[] = [
   {
     id: 1,
     name: 'IndexPage',
+    category: 'frontend',
     suffix: '.vue',
-    version: '1.0.0',
     type: 'UI',
+    version: 1,
     enabled: true,
     content: '<template>\n  <div class="app-container">\n </div>\n</template>',
     lastModifiedDate: new Date()
@@ -16,57 +17,62 @@ const datas: MasterPlate[] = [
   {
     id: 2,
     name: 'users',
+    category: 'frontend',
     suffix: '.ts',
-    version: '1.0.0',
     type: 'TS',
+    version: 1,
     enabled: true,
     content: 'import { api } from \'boot/axios\'\nimport { SERVER_URL } from \'src/constants\'\nimport type { Pagination, User } from \'src/types\'\n\n/**\n * Retrieve rows\n * @param pagination Pagination and sort parameters\n * @param filters Optional filter or sort parameters\n * @returns Rows data\n */\nexport const retrieveUsers = (pagination: Pagination, filters?: object) => {\n  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, ...filters } })\n}\n\n',
     lastModifiedDate: new Date()
   },
   {
     id: 3,
-    name: 'Entity',
+    name: 'entity',
+    category: 'backend',
     suffix: '.java',
-    version: '1.0.0',
     type: 'Model',
+    version: 1,
     enabled: true,
     content: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String suffix;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String content;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
     lastModifiedDate: new Date()
   },
   {
     id: 4,
-    name: 'Repository',
+    name: 'repository',
+    category: 'backend',
     suffix: '.java',
-    version: '1.0.0',
     type: 'Repository',
+    version: 1,
     enabled: true,
     content: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String suffix;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String content;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
     lastModifiedDate: new Date()
   },
   {
     id: 5,
-    name: 'Mapper',
+    name: 'mapper',
+    category: 'backend',
     suffix: '.java',
-    version: '1.0.0',
     type: 'Repository',
+    version: 1,
     enabled: true,
     content: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String suffix;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String content;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
     lastModifiedDate: new Date()
   },
   {
     id: 6,
-    name: 'Controller',
+    name: 'controller',
+    category: 'backend',
     suffix: '.java',
-    version: '1.0.0',
     type: 'controller',
+    version: 1,
     enabled: true,
     content: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String suffix;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String content;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
     lastModifiedDate: new Date()
   }
 ]
 
-export const templatesHandlers = [
-  http.get(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
+export const samplesHandlers = [
+  http.get(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
@@ -74,7 +80,7 @@ export const templatesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.MASTER_PLATE}/:id/exists`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SAMPLE}/:id/exists`, ({ params }) => {
     const { id, name } = params
     let filtered = datas.filter(item => item.name === name)
     if (id) {
@@ -82,7 +88,7 @@ export const templatesHandlers = [
     }
     return HttpResponse.json(filtered.length > 0)
   }),
-  http.get(`/api${SERVER_URL.MASTER_PLATE}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.SAMPLE}`, ({ request }) => {
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
@@ -95,7 +101,7 @@ export const templatesHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.MASTER_PLATE}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SAMPLE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -111,9 +117,9 @@ export const templatesHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.MASTER_PLATE}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SAMPLE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as MasterPlate
+    const newData = await request.json() as Sample
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -122,10 +128,10 @@ export const templatesHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.put(`/api${SERVER_URL.MASTER_PLATE}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.SAMPLE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as MasterPlate
+    const newData = await request.json() as Sample
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
@@ -136,7 +142,7 @@ export const templatesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.MASTER_PLATE}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.SAMPLE}/:id`, async ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -144,7 +150,7 @@ export const templatesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

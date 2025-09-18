@@ -3,7 +3,7 @@
     <div class="row q-mb-md">
       <div class="col">
         <q-card flat>
-          <q-card-section class="row items-center">
+          <q-card-section class="flex items-center">
             <q-avatar size="80px">
               <img :src="me.avatar as string" alt="avatar" />
             </q-avatar>
@@ -90,10 +90,28 @@
 
               <q-tab-panel name="changePassword">
                 <div class="text-h6">Change Password</div>
-                <q-form>
-                  <q-input v-model.trim="form.oldPassword" label="Old Password" no-error-icon type="password" />
-                  <q-input v-model.trim="form.newPassword" label="New Password" no-error-icon type="password" />
-                  <q-input v-model.trim="form.confirmPassword" label="Confirm Password" no-error-icon type="password" />
+                <q-form class="q-my-md q-gutter-md">
+                  <div class="row">
+                    <q-input outlined dense v-model.trim="form.oldPassword" label="Old Password" no-error-icon
+                      type="password" class="col-6" />
+                    <span class="q-ml-md text-caption">
+                      This is a hint for old password
+                    </span>
+                  </div>
+                  <div class="row">
+                    <q-input outlined dense v-model.trim="form.newPassword" label="New Password" no-error-icon
+                      type="password" class="col-6" />
+                    <span class="q-ml-md text-caption">
+                      This is a hint for new password
+                    </span>
+                  </div>
+                  <div class="row">
+                    <q-input outlined dense v-model.trim="form.confirmPassword" label="Confirm Password" no-error-icon
+                      type="password" class="col-6" />
+                    <span class="q-ml-md text-caption">
+                      This is a hint for confirm password
+                    </span>
+                  </div>
                 </q-form>
               </q-tab-panel>
             </q-tab-panels>
