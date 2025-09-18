@@ -28,10 +28,9 @@ onUnmounted(() => { highlightResult.value = null })
       {{ highlightResult?.language }}
     </small>
   </pre>
-  <div v-else class="flex column flex-center q-px-lg">
-    <q-img src="https://picsum.photos/500/300" style="width: 160px;"></q-img>
-    <div>
+  <div v-else class="flex flex-center q-px-lg">
+    <p class="text-h3">
       No Data
-    </div>
+    </p>
   </div>
 </template>
