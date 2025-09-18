@@ -13,5 +13,8 @@
     "vue"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "eslint.format.enable": true
+  "eslint.format.enable": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
