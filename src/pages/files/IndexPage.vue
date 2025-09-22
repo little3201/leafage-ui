@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
+import { dayjs } from 'element-plus'
 import type { UploadInstance, UploadRequestOptions } from 'element-plus'
 import { retrieveFiles, fetchFile, uploadFile, downloadFile } from 'src/api/file-records'
 import type { Pagination, FileRecord } from 'src/types'
@@ -33,7 +34,6 @@ const view = reactive({
   showGrid: false
 })
 const uploadVisible = ref<boolean>(false)
-
 const uploadRef = ref<UploadInstance>()
 
 const filters = ref({
@@ -157,39 +157,62 @@ function confirmEvent(id: number) {
 
 <template>
   <ElSpace size="large" alignment="flex-start">
-    <ElSpace class="w-64" size="large" direction="vertical" fill>
+    <ElSpace size="large" direction="vertical" fill>
       <ElCard shadow="never">
         <p class="mt-0"><strong>Space Usage</strong></p>
-        <div class="text-center mt-6">
-          <ElProgress type="circle" :percentage="46" :stroke-width="12" :width="180">
+        <div class="text-center my-6">
+          <ElProgress type="dashboard" :percentage="46" :stroke-width="16" :width="200">
             <template #default>
               <span class="block text-sm">Free Space</span>
               <span class="block mt-2">23G/50G</span>
             </template>
           </ElProgress>
         </div>
+        <ul class="flex-col space-y-4 list-none px-0">
+          <li index="images" class="flex items-center space-x-4">
+            <ElButton title="images" circle type="success" size="large">
+              <Icon icon="material-symbols:imagesmode-outline-rounded" width="20" height="20" />
+            </ElButton>
+            <div class="inline-flex flex-1 flex-col">
+              <span>Images</span>
+              <span class="text-xs text-[var(--el-text-color-secondary)]">234 files</span>
+            </div>
+            <span class="text-[var(--el-text-color-regular)]">14GB</span>
+          </li>
+          <li index="media" class="flex items-center space-x-4">
+            <ElButton title="media" circle type="primary" size="large">
+              <Icon icon="material-symbols:videocam-outline-rounded" width="20" height="20" />
+            </ElButton>
+            <div class="inline-flex flex-1 flex-col">
+              <span>Media</span>
+              <span class="text-xs text-[var(--el-text-color-secondary)]">234 files</span>
+            </div>
+            <span class="text-[var(--el-text-color-regular)]">5GB</span>
+          </li>
+          <li index="documents" class="flex items-center space-x-4">
+            <ElButton title="documents" circle type="warning" size="large">
+              <Icon icon="material-symbols:docs-outline-rounded" width="20" height="20" />
+            </ElButton>
+            <div class="inline-flex flex-1 flex-col">
+              <span>Documents</span>
+              <span class="text-xs text-[var(--el-text-color-secondary)]">234 files</span>
+            </div>
+            <span class="text-[var(--el-text-color-regular)]">4GB</span>
+          </li>
+        </ul>
       </ElCard>
 
       <ElCard shadow="never">
-        <p class="mt-0"><strong>Categories</strong></p>
-        <ElMenu class="mt-4">
-          <ElMenuItem index="images">
-            <ElButton title="images" circle type="success" size="large" class="mr-4">
-              <Icon icon="material-symbols:imagesmode-outline-rounded" width="20" height="20" />
-            </ElButton>Images
-          </ElMenuItem>
-          <ElMenuItem index="videos">
-            <ElButton title="videos" circle type="primary" size="large" class="mr-4">
-              <Icon icon="material-symbols:videocam-outline-rounded" width="20" height="20" />
-            </ElButton>
-            Videos
-          </ElMenuItem>
-          <ElMenuItem index="documents">
-            <ElButton title="documents" circle type="warning" size="large" class="mr-4">
-              <Icon icon="material-symbols:docs-outline-rounded" width="20" height="20" />
-            </ElButton>Documents
-          </ElMenuItem>
-        </ElMenu>
+        <p class="mt-0"><strong>Recent Files</strong></p>
+        <ul class="flex-col list-none px-0">
+          <li v-for="i in 5" :key="i" index="images"
+            class="flex items-center space-x-2 py-2 rounded-md group hover:bg-neutral-100">
+            <Icon icon="material-symbols:imagesmode-outline-rounded" width="20" height="20" />
+            <span class="flex-1">name_{{ i }}.jpg</span>
+            <Icon icon="material-symbols:close-small-outline-rounded" width="20" height="20"
+              class="hidden group-hover:block" />
+          </li>
+        </ul>
       </ElCard>
     </ElSpace>
 
@@ -239,8 +262,13 @@ function confirmEvent(id: number) {
             <ElTableColumn prop="name" :label="$t('name')" sortable>
               <template #default="scope">
                 <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
-                  <Icon :icon="`flat-color-icons:${scope.row.type === 'file' ? 'file' : 'folder'}`" width="16"
-                    height="16" class="mr-2" />{{ scope.row.name }}
+                  <Icon v-if="scope.row.type === 'directory'" icon="flat-color-icons:folder" width="20" height="20" />
+                  <template v-else-if="scope.row.mimeType">
+                    <Icon v-if="['text/jpg', 'jpeg', 'svg'].includes(scope.row.mimeType)"
+                      icon="flat-color-icons:image-file" width="20" height="20" />
+                    <Icon v-else icon="flat-color-icons:document" width="20" height="20" />
+                  </template>
+                  <span class="ml-2">{{ scope.row.name }}</span>
                 </ElButton>
               </template>
             </ElTableColumn>
@@ -250,16 +278,23 @@ function confirmEvent(id: number) {
               </template>
             </ElTableColumn>
             <ElTableColumn prop="mimeType" :label="$t('type')" sortable />
+            <ElTableColumn prop="lastModifiedDate" :label="$t('lastModifiedDate')" sortable>
+              <template #default="scope">
+                {{ dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
+              </template>
+            </ElTableColumn>
             <ElTableColumn :label="$t('actions')">
               <template #default="scope">
-                <ElButton v-if="hasAction($route.name, 'download')" title="download" size="small" type="success" link
+                <ElButton v-if="scope.row.type === 'file' && hasAction($route.name, 'download')" title="download"
+                  size="small" type="success" link
                   @click="downloadRow(scope.row.id, scope.row.name, scope.row.mimeType)">
                   <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('download') }}
                 </ElButton>
                 <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
                   <template #reference>
                     <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
-                      <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
+                      <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove')
+                      }}
                     </ElButton>
                   </template>
                 </ElPopconfirm>
@@ -272,10 +307,11 @@ function confirmEvent(id: number) {
         <div v-show="view.showGrid" class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
           <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
             body-class="hover:bg-[var(--el-bg-color-page)]">
-            <Icon v-if="data.type === 'directory'" icon="flat-color-icons:folder" width="80" height="80" />
+            <Icon v-if="data.type === 'directory'" icon="flat-color-icons:folder" width="64" height="64" />
             <template v-else-if="data.mimeType">
-              <ElImage v-if="['text/jpg', 'jpeg', 'svg'].includes(data.mimeType)" :src="data.path" class="w-20 h-20" />
-              <Icon v-else icon="flat-color-icons:file" width="80" height="80" />
+              <Icon v-if="['text/jpg', 'jpeg', 'svg'].includes(data.mimeType)" icon="flat-color-icons:image-file"
+                width="64" height="64" />
+              <Icon v-else icon="flat-color-icons:document" width="64" height="64" />
             </template>
             <div>
               <p class="my-1 text-sm text-[var(--el-text-color-regular)]">
@@ -290,10 +326,19 @@ function confirmEvent(id: number) {
 
   <!-- details -->
   <ElDialog v-model="visible" align-center :title="$t('details')" show-close width="25%">
-    <ElDescriptions v-loading="loading" :column="1">
+    <Icon v-if="row.type === 'directory'" icon="flat-color-icons:folder" width="80" height="80" />
+    <template v-else-if="row.mimeType">
+      <ElImage v-if="['text/jpg', 'jpeg', 'svg'].includes(row.mimeType)" :src="row.path"
+        class="w-full h-52 overflow-hidden" />
+      <Icon v-else icon="flat-color-icons:document" width="80" height="80" />
+    </template>
+    <ElDescriptions v-loading="loading" :column="1" class="mt-4">
       <ElDescriptionsItem :label="$t('name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('type')">{{ row.mimeType }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('type')">{{ row.type }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('lastModifiedDate')">
+        {{ dayjs(row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
+      </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
 

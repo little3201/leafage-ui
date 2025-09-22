@@ -272,9 +272,9 @@ function lockRow(id: number) {
         <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="username" :label="$t('username')" sortable>
           <template #default="scope">
-            <div class="flex items-center">
+            <div class="flex items-center space-x-2">
               <ElAvatar alt="avatar" :size="30" :src="scope.row.avatar" />
-              <div class="ml-2 inline-flex flex-col">
+              <div class="inline-flex flex-col">
                 <span class="text-sm">
                   {{ scope.row.fullname }}
                 </span>

@@ -10,9 +10,9 @@ for (let i = 1; i < 28; i++) {
     id: i,
     name: 'name_' + i + (i % 3 > 0 ? '' : (i % 2 > 0 ? '.jpg':'.zip')),
     type: i % 3 > 0 ? 'directory' : 'file',
-    mimeType:  i % 3 > 0 ? '' : (i % 2 > 0 ? 'text/jpg' : 'application/zip'),
+    mimeType:  i % 3 > 0 ? 'folder' : (i % 2 > 0 ? 'jpg' : 'zip'),
     size: Math.floor(Math.random() * 100000),
-    path: '/images',
+    path: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
     lastModifiedDate: new Date()
   }
   datas.push(data)

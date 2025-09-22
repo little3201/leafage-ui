@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ref, onUnmounted, watchEffect } from 'vue'
 import hljs from 'boot/hljs'
 import type { HighlightResult } from 'highlight.js'
