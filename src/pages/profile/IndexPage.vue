@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { fetchMe } from 'src/api/users'
 import type { User } from 'src/types'
 import { Icon } from '@iconify/vue'
 
+
+const { currentRoute } = useRouter()
 
 const me = ref<User>({
   id: undefined,
@@ -44,9 +47,13 @@ onMounted(() => {
   <ElRow :gutter="16">
     <ElCol :span="5" class="hidden-sm-and-down">
       <ElCard shadow="never">
-        <ElMenu router>
+        <ElMenu router :default-active="currentRoute.fullPath">
+          <ElMenuItem index="/profile">
+            <Icon icon="material-symbols:overview-outline-rounded" width="20" height="20" class="mr-2" />
+            {{ $t('overview') }}
+          </ElMenuItem>
           <ElMenuItem index="/profile/notifications">
-            <Icon icon="material-symbols:notifications-outline-rounded" width="20" height="20" class="mr-2" />
+            <Icon icon="material-symbols:notification-settings-outline-rounded" width="20" height="20" class="mr-2" />
             {{ $t('notifications') }}
           </ElMenuItem>
           <ElMenuItem index="/profile/sessions">
@@ -58,7 +65,7 @@ onMounted(() => {
             {{ $t('changePassword') }}
           </ElMenuItem>
           <ElMenuItem index="/profile/activities">
-            <Icon icon="material-symbols:key-outline-rounded" width="20" height="20" class="mr-2" />
+            <Icon icon="material-symbols:browse-activity-outline-rounded" width="20" height="20" class="mr-2" />
             {{ $t('activities') }}
           </ElMenuItem>
         </ElMenu>

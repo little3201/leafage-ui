@@ -20,8 +20,8 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
         children: [
           {
             path: '',
-            name: 'appearance',
-            component: () => import('pages/profile/AppearancePage.vue')
+            name: 'overview',
+            component: () => import('pages/profile/OverviewPage.vue')
           },
           {
             path: 'activities',

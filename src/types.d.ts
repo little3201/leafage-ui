@@ -19,6 +19,7 @@ export interface User extends AudtiMetadata {
   accountExpiresAt?: Date
   credentialsExpiresAt?: Date
   enabled?: boolean
+  birthday?: Date
 }
 
 export interface UserPrivileges {

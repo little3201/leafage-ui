@@ -90,7 +90,12 @@ export default {
   unselected: 'Not Selected',
   overview: 'Overview',
   activities: 'Activities',
+  sessions: 'Sessions',
+  notifications: 'Notifications',
   changePassword: 'Change Password',
+  oldPassword: 'Old Password',
+  newPassword: 'New Password',
+  confirmPassword: 'Confirm Password',
 
   actions: 'Actions ',
   import: 'Import',

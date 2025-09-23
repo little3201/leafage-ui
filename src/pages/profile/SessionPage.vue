@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-// 登录历史数据模拟
-const loginHistory = ref([
+const sessions = ref([
   { id: 1, device: 'Chrome on Windows', location: 'New York, USA', ip: '192.168.0.112', status: 'online' },
   { id: 2, device: 'Safari on iPhone', location: 'Los Angeles, USA', ip: '172.168.0.112', status: 'offline' },
   { id: 3, device: 'Edge on Windows', location: 'Chicago, USA', ip: '127.0.0.112', status: 'offline' }
@@ -15,7 +14,7 @@ function more(id: number) {
 
 <template>
   <h3>Login Information</h3>
-  <ElTable :data="loginHistory" :show-header=false table-layout="auto">
+  <ElTable :data="sessions" :show-header=false table-layout="auto">
     <ElTableColumn prop="device">
       <template #default="scope">
         <div class="flex items-center">

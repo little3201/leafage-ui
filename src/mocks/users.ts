@@ -33,7 +33,7 @@ export const usersHandlers = [
       lastModifiedDate: null,
       username: 'admin',
       fullname: '勒布朗 詹姆斯 雷蒙',
-      avatar: '',
+      avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
       email: 'test@test.com',
       accountExpiresAt: null,
       accountNonLocked: true,
