@@ -122,6 +122,7 @@ export default {
   enable: 'Enable',
   unlock: 'Unlock',
   view: 'View',
+  save: 'Save',
 
   home: 'Home',
   system: 'System',
@@ -141,6 +142,11 @@ export default {
   schemas: 'Schemas',
   scripts: 'Scripts',
   samples: 'Samples',
+  github: 'Github',
+  gitee: 'Gitee',
+  youtube: 'Youtube',
+  x: 'X',
+  rednote: 'Rednote',
 
   inputText: 'Please input {field}',
   selectText: 'Please select {field}',

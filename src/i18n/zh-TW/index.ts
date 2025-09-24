@@ -122,6 +122,7 @@ export default {
   enable: '啟用',
   unlock: '解鎖',
   view: '視圖',
+  save: '保存',
 
   home: '首頁',
   system: '系統管理',
@@ -141,6 +142,11 @@ export default {
   schemas: '計劃',
   scripts: '腳本',
   samples: '樣板',
+  github: 'Github',
+  gitee: 'Gitee',
+  youtube: 'Youtube',
+  x: 'X',
+  rednote: '小紅書',
 
   inputText: '請輸入{field}',
   selectText: '請選擇{field}',

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Icon } from '@iconify/vue'
 
 const sessions = ref([
-  { id: 1, device: 'Chrome on Windows', location: 'New York, USA', ip: '192.168.0.112', status: 'online' },
-  { id: 2, device: 'Safari on iPhone', location: 'Los Angeles, USA', ip: '172.168.0.112', status: 'offline' },
-  { id: 3, device: 'Edge on Windows', location: 'Chicago, USA', ip: '127.0.0.112', status: 'offline' }
+  { id: 1, device: 'Chrome on Windows', location: 'New York', country: 'US', ip: '192.168.0.112', status: 'online' },
+  { id: 2, device: 'Safari on iPhone', location: 'Los Angeles', country: 'US', ip: '172.168.0.112', status: 'offline' },
+  { id: 3, device: 'Edge on Windows', location: 'Chicago', country: 'US', ip: '127.0.0.112', status: 'offline' }
 ])
 
 function more(id: number) {
@@ -14,27 +15,35 @@ function more(id: number) {
 
 <template>
   <h3>Login Information</h3>
-  <ElTable :data="sessions" :show-header=false table-layout="auto">
-    <ElTableColumn prop="device">
-      <template #default="scope">
-        <div class="flex items-center">
-          <ElBadge :type="scope.row.status === 'online' ? 'success' : 'info'" is-dot />
-          <Icon icon="material-symbols:desktop-windows-outline-rounded" width="32" height="32" class="ml-3 mr-2" />
-          <div class="ml-2 inline-flex flex-col">
-            <span class="text-sm">{{ scope.row.location }}&emsp;●&emsp;{{ scope.row.ip }}</span>
-            <span class="text-xs text-[var(--el-text-color-secondary)]">{{ scope.row.device }}</span>
+  <ElCollapse accordion>
+    <ElCollapseItem v-for="item in sessions" :key="item.id" :name="item.id">
+      <template #icon="{ isActive }">
+        <ElButton link type="primary" class="icon-ele" @click="more(item.id)">
+          {{ isActive ? 'Less' : 'More' }}
+        </ElButton>
+      </template>
+      <template #title>
+        <div class="inline-flex items-center py-2">
+          <ElBadge :type="item.status === 'online' ? 'success' : 'info'" is-dot />
+          <Icon icon="material-symbols:desktop-windows-outline-rounded" width="32" height="32"
+            class="mx-3 text-[var(--el-text-color-regular)]" />
+          <div class="inline-flex flex-col">
+            <span class="text-sm text-[var(--el-text-color-regular)]">{{ item.location }}&emsp;●&emsp;{{ item.ip
+            }}
+            </span>
+            <span class="text-xs text-[var(--el-text-color-secondary)]">Your current session</span>
+            <span class="text-xs text-[var(--el-text-color-secondary)]">Seen in {{ item.country }}</span>
           </div>
         </div>
       </template>
-    </ElTableColumn>
-    <ElTableColumn width="80">
-      <template #default="scope">
-        <ElButton title="more" size="small" type="primary" link @click="more(scope.row.id)">
-          {{ $t('more') }}
-        </ElButton>
-      </template>
-    </ElTableColumn>
-  </ElTable>
+      <div class="px-4">
+        <p class="text-sm text-[var(--el-text-color-secondary)]">Device: {{ item.device }}</p>
+        <p class="text-sm text-[var(--el-text-color-secondary)]">Last location: {{ item.country }}</p>
+        <p class="text-sm text-[var(--el-text-color-secondary)]">Signed in: {{ item.country }}</p>
+        <ElImage src="https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg" />
+      </div>
+    </ElCollapseItem>
+  </ElCollapse>
 </template>
 
 <style lang="scss" scoped>

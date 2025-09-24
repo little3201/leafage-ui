@@ -31,9 +31,7 @@ onMounted(() => {
           </span>
 
           <div class="text-sm text-[var(--el-text-color-secondary)]">
-            <span>Project Manager</span>
-            &emsp;●&emsp;
-            <span>New York, USA</span>
+            <span>{{ me.username }}</span>
           </div>
         </div>
 

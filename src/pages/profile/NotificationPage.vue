@@ -12,8 +12,8 @@
       <div class="flex gap-3">
         <ElSwitch />
         <div class="text-sm/6">
-          <label for="comments" class="font-medium text-gray-900">Account Activity</label>
-          <p id="comments-description" class="mt-0 text-gray-500">Get important notifications about you or activity
+          <label for="account-activity" class="font-medium text-gray-900">Account Activity</label>
+          <p id="account-activity" class="mt-0 text-gray-500">Get important notifications about you or activity
             you've
             missed.
           </p>
@@ -22,8 +22,8 @@
       <div class="flex gap-3">
         <ElSwitch />
         <div class="text-sm/6">
-          <label for="candidates" class="font-medium text-gray-900">Mobile push notifications</label>
-          <p id="candidates-description" class="mt-0 text-gray-500">Receive push notifications whenever your company
+          <label for="mobile-push" class="font-medium text-gray-900">Mobile push notifications</label>
+          <p id="mobile-push-notifications" class="mt-0 text-gray-500">Receive push notifications whenever your company
             requires
             your attention.</p>
         </div>
@@ -31,8 +31,8 @@
       <div class="flex gap-3">
         <ElSwitch />
         <div class="text-sm/6">
-          <label for="offers" class="font-medium text-gray-900">Email notification</label>
-          <p id="offers-description" class="mt-0 text-gray-500">Receive email notifications whenever your company
+          <label for="email" class="font-medium text-gray-900">Email notification</label>
+          <p id="email" class="mt-0 text-gray-500">Receive email notifications whenever your company
             requires
             your attention.
           </p>
@@ -41,8 +41,8 @@
       <div class="flex gap-3">
         <ElSwitch />
         <div class="text-sm/6">
-          <label for="offers" class="font-medium text-gray-900">Meetups near me</label>
-          <p id="offers-description" class="mt-0 text-gray-500">Get an email when a Flowbite Meetup is posted close to
+          <label for="meetups-near-me" class="font-medium text-gray-900">Meetups near me</label>
+          <p id="meetups-near-me" class="mt-0 text-gray-500">Get an email when a Flowbite Meetup is posted close to
             my
             location.
           </p>

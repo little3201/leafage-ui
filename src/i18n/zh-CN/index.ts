@@ -122,6 +122,7 @@ export default {
   enable: '启用',
   unlock: '解锁',
   view: '视图',
+  save: '保存',
 
   // 权限key，小写，下划线
   home: '首页',
@@ -142,6 +143,11 @@ export default {
   schemas: '计划',
   scripts: '脚本',
   samples: '样板',
+  github: 'Github',
+  gitee: 'Gitee',
+  youtube: 'Youtube',
+  x: 'X',
+  rednote: '小红书',
 
   inputText: '请输入{field}',
   selectText: '请选择{field}',
