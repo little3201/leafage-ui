@@ -278,7 +278,7 @@ function lockRow(id: number) {
                 <span class="text-sm">
                   {{ scope.row.fullname }}
                 </span>
-                <span class="text-xs text-[var(--el-text-color-secondary)]">{{ scope.row.username }}</span>
+                <span class="text-xs text-(--el-text-color-secondary)">{{ scope.row.username }}</span>
               </div>
             </div>
           </template>

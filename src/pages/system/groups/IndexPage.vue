@@ -218,11 +218,9 @@ function exportRows() {
 function relationRow(id: number) {
   relationVisible.value = true
   loadUsers()
-  loadRoles()
   if (id) {
     form.value.id = id
     loadGroupUsers(id)
-    loadGrouRoles(id)
   }
 }
 
@@ -406,6 +404,17 @@ function handleActionCheck(privilegeId: number, item: string) {
     relationGroupPrivileges(form.value.id, privilegeId, item)
   }
 }
+
+function tabChange(tab: string) {
+  activeTabName.value = tab
+
+  if (tab === 'role') {
+    loadRoles()
+    if (form.value.id) {
+      loadGrouRoles(form.value.id)
+    }
+  }
+}
 </script>
 
 <template>
@@ -540,7 +549,7 @@ function handleActionCheck(privilegeId: number, item: string) {
 
   <!-- relation -->
   <ElDialog v-model="relationVisible" show-close :title="$t('relation')">
-    <ElTabs stretch v-model="activeTabName">
+    <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
       <ElTabPane :label="$t('users')" name="user" style="text-align: center">
         <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
           :titles="[$t('unselected'), $t('selected')]" filterable :data="members" @change="handleTransferUserChange" />

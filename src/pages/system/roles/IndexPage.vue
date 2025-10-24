@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions, TransferDirection, TransferKey } from 'element-plus'
-import type { Pagination, Role, RoleMembers, User, RolePrivileges, TreeNode } from 'src/types'
+import type { Pagination, Role, RoleMembers, RolePrivileges, TreeNode } from 'src/types'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import {
@@ -15,7 +15,7 @@ import { hasAction, exportToCSV } from 'src/utils'
 import { actions } from 'src/constants'
 
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
@@ -76,10 +76,7 @@ function checkNameExistsence(rule: unknown, value: string, callback: (error?: st
 
 async function loadUsers() {
   retrieveUsers({ page: 1, size: 99 }).then(res => {
-    members.value = res.data.content.map((item: User) => ({
-      ...item,
-      fullName: (locale.value === 'en-US' || item.middleName) ? `${item.firstname} ${item.middleName} ${item.lastname}` : `${item.lastname}${item.firstname}`
-    }))
+    members.value = res.data.content
   })
 }
 
