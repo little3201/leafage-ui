@@ -234,3 +234,15 @@ function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): string[]
   }
   return []
 }
+
+export function dealFilters(filters?: object | string) {
+  if (filters && typeof filters === 'object') {
+    filters = Object.entries(filters)
+      .filter(([, value]) => value != null && value !== '') 
+      .map(([key, value]) => {
+        return `${key}:${value}`
+      })
+      .join(',')
+  }
+  return filters?.length ? filters : undefined
+}

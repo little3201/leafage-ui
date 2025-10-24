@@ -5,42 +5,23 @@ import type { Group, TreeNode, GroupMembers, GroupRoles, GroupPrivileges } from 
 const datas: Group[] = []
 
 for (let i = 1; i < 28; i++) {
+  let superiorId: number | undefined
+   if (i === 1) {
+    superiorId = undefined // 根节点
+  } else if (i <= 3) {
+    superiorId = 1 // 第二层
+  } else {
+    superiorId = (i % 2 === 0) ? 2 : 3 // 第三层，交替归属到2或3
+  }
   const row: Group = {
     id: i,
-    superiorId: 3,
+    superiorId: superiorId,
     name: 'group_' + i,
     enabled: true,
     description: 'This is region description about xxx'
   }
   datas.push(row)
 }
-
-const treeNodes: TreeNode[] = [
-  {
-    id: 1,
-    name: 'group_1',
-    children: [
-      {
-        id: 2,
-        name: 'group_2',
-        children: [
-        ]
-      },
-      {
-        id: 3,
-        name: 'group_3',
-        children: [
-          {
-            id: 4,
-            name: 'group_4',
-            children: [
-            ]
-          }
-        ]
-      }
-    ]
-  }
-]
 
 const members: GroupMembers[] = []
 
@@ -77,9 +58,53 @@ for (let i = 1; i < 17; i++) {
   privileges.push(row)
 }
 
+// 将扁平数据转换为树形结构
+function buildTree(groups: Group[]): TreeNode[] {
+  const map = new Map<number, TreeNode>()
+  const tree: TreeNode[] = []
+  
+  // 第一步：创建映射，只处理有 id 的节点
+  groups.forEach(group => {
+    if (group.id !== undefined) {
+      map.set(group.id, {
+        ...group,
+        children: []
+      })
+    }
+  })
+  
+  // 第二步：构建层级关系
+  groups.forEach(group => {
+    // 跳过没有 id 的节点
+    if (group.id === undefined) return
+    
+    const currentNode = map.get(group.id)
+    // 确保当前节点存在
+    if (!currentNode) return
+    
+    // 处理上级关系
+    if (group.superiorId === undefined || group.superiorId === null) {
+      // 没有上级，作为根节点
+      tree.push(currentNode)
+    } else {
+      // 有上级，尝试找到父节点
+      const parentNode = map.get(group.superiorId)
+      if (parentNode) {
+        // 父节点存在，添加到父节点的 children
+        parentNode.children!.push(currentNode)
+      } else {
+        // 父节点不存在，作为根节点
+        tree.push(currentNode)
+      }
+    }
+  })
+  
+  return tree
+}
+
 export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/tree`, () => {
-    return HttpResponse.json(treeNodes)
+    return HttpResponse.json(buildTree(datas))
   }),
   http.get(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
     const { id } = params
@@ -126,17 +151,19 @@ export const groupsHandlers = [
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
     const size = searchParams.get('size')
-    const superiorId = searchParams.get('superiorId')
+    const filters = searchParams.get('filters')
+    const superiorId = filters?.split(':')[2]
 
+    console.log('filters', filters)
+    const filtered = datas.filter(item => { return item.superiorId === Number(superiorId) })
     let data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
 
     if (superiorId) {
-      const filtered = datas.filter(item => item.superiorId === Number(superiorId))
       data = {
         content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
         page: {

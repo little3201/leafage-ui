@@ -26,7 +26,7 @@ export async function signIn() {
     window.location.replace(res.request.responseURL)
   }).catch(error => {
     if (error) {
-      window.location.replace('/login')
+      // window.location.replace('/login')
     }
   })
 }

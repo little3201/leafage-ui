@@ -1,6 +1,7 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 import type { Pagination, User } from 'src/types'
+import { dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
@@ -8,8 +9,11 @@ import type { Pagination, User } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveUsers = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveUsers = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**

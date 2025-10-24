@@ -1,6 +1,7 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 import type { Pagination, Group } from 'src/types'
+import { dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
@@ -10,9 +11,7 @@ import type { Pagination, Group } from 'src/types'
  */
 export const retrieveGroups = (pagination: Pagination, filters?: object | string) => {
   if (filters) {
-    filters = Object.entries(filters).map(([key, value]) => {
-      return `${key}:${value}`
-    }).join(',')
+    filters = dealFilters(filters)
   }
   return api.get(SERVER_URL.GROUP, { params: { ...pagination, page: pagination.page - 1, filters } })
 }

@@ -14,7 +14,7 @@ const abortControllerMap: Map<string, AbortController> = new Map()
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API || '/api',
-  timeout: 10000,
+  timeout: 15000,
   withCredentials: true
 })
 

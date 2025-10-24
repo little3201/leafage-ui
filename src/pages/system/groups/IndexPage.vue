@@ -551,7 +551,6 @@ function handleActionCheck(privilegeId: number, item: string) {
           :titles="[$t('unselected'), $t('selected')]" filterable :data="roles" @change="handleTransferRoleChange" />
       </ElTabPane>
     </ElTabs>
-
   </ElDialog>
 
   <!-- authorize -->

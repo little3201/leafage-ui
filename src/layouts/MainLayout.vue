@@ -77,6 +77,6 @@ const userStore = useUserStore()
   </ElMain>
 
   <ElFooter height="50px" class="bg-[var(--el-bg-color-page)] ml-[200px] text-center !pt-4">
-    <span class="text-sm">Copyright &copy; {{ new Date().getFullYear() }} All Rights Reserved.</span>
+    <span class="text-sm">Copyright &copy; {{ new Date().getFullYear() }} Leafage. All Rights Reserved.</span>
   </ElFooter>
 </template>

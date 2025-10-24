@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "lint": "eslint -c ./eslint.config.js \"./src/**/*.{js,mjs,cjs,ts,vue}\""
+    "lint": "eslint -c ./eslint.config.js \"./src/**/*.{js,mjs,cjs,ts,vue}\"",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
@@ -42,6 +44,7 @@
     "unplugin-vue-components": "^29.0.0",
     "vite": "^7.1.5",
     "vite-plugin-checker": "^0.10.3",
+    "vitest": "^3.2.4",
     "vue-tsc": "^3.0.7"
   },
   "license": "MIT",
