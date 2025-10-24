@@ -59,7 +59,7 @@
                 @click="saveRow(col.value)" class="q-mt-none" />
             </div>
             <div v-else-if="col.name === 'enabled'" class="text-center">
-              <q-toggle v-model="props.row.enabled" @toogle="enableRow(props.row.id)" size="sm" color="positive" />
+              <q-toggle v-model="props.row.enabled" @toggle="enableRow(props.row.id)" size="sm" color="positive" />
             </div>
             <span v-else>{{ col.value }}</span>
           </q-td>
@@ -71,6 +71,23 @@
         </q-tr>
       </template>
     </q-table>
+
+    <!-- import -->
+    <q-dialog v-model="importVisible" persistent>
+      <q-card>
+        <q-card-section class="flex items-center q-pb-none">
+          <div class="text-h6">{{ $t('import') }}</div>
+          <q-space />
+          <q-btn icon="sym_r_close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section>
+          <q-uploader flat bordered :headers="[{ name: 'Authorization', value: `Bearer ${userStore.accessToken}` }]"
+            :factory="onUpload"
+            accept=".csv,.xls,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -78,11 +95,14 @@
 import { ref, onMounted } from 'vue'
 import { useQuasar, exportFile } from 'quasar'
 import type { QTableProps } from 'quasar'
-import { retrieveDictionaries, fetchDictionary, modifyDictionary, enableDictionary } from 'src/api/dictionaries'
+import { useUserStore } from 'stores/user-store'
+import { retrieveDictionaries, fetchDictionary, modifyDictionary, enableDictionary, importDictionaries } from 'src/api/dictionaries'
 import SubPage from './SubPage.vue'
 import type { Dictionary } from 'src/types'
 
+
 const $q = useQuasar()
+const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
@@ -168,6 +188,17 @@ function onSubmit() {
 
   // Close the dialog after submitting
   visible.value = false
+}
+
+async function onUpload(files: readonly File[]) {
+  if (!files || files.length === 0 || !files[0]) {
+    return Promise.reject(new Error('No file provided'))
+  }
+  const res = await importDictionaries(files[0])
+
+  importVisible.value = false
+  refresh()
+  return res.data
 }
 
 function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {

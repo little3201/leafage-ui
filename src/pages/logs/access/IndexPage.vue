@@ -80,14 +80,11 @@
       <template v-slot:body-cell-url="props">
         <q-td :props="props">
           <q-btn :title="props.row.url" flat rounded no-caps color="primary" @click="showRow(props.row.id)">
+            <q-badge :color="httpMethods[props.row.httpMethod]" rounded class="q-mr-sm">
+              {{ props.row.httpMethod }}
+            </q-badge>
             {{ props.row.url }}
           </q-btn>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-httpMethod="props">
-        <q-td :props="props">
-          <q-badge :color="httpMethods[props.row.httpMethod]" rounded class="q-mr-xs" />
-          {{ props.row.httpMethod }}
         </q-td>
       </template>
       <template v-slot:body-cell-statusCode="props">
@@ -154,7 +151,6 @@ const selected = ref([])
 
 const columns: QTableProps['columns'] = [
   { name: 'url', label: 'url', align: 'left', field: 'url' },
-  { name: 'httpMethod', label: 'httpMethod', align: 'left', field: 'httpMethod' },
   { name: 'params', label: 'params', align: 'left', field: 'params' },
   { name: 'body', label: 'body', align: 'left', field: 'body' },
   { name: 'ip', label: 'ip', align: 'center', field: 'ip' },

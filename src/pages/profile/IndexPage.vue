@@ -9,11 +9,8 @@
             </q-avatar>
 
             <div class="ml-2">
-              <span v-if="locale === 'en-US' || me.middleName" class="text-subtitle2 q-my-1">
-                {{ me.firstname }} {{ me.middleName }} {{ me.lastname }}
-              </span>
-              <span v-else class="text-subtitle2 q-my-1">
-                {{ me.lastname }}{{ me.firstname }}
+              <span class="text-subtitle2 q-my-1">
+                {{ me.fullname }}
               </span>
 
               <div class="flex items-center text-caption">
@@ -124,20 +121,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { fetchMe } from 'src/api/users'
 import { actions } from 'src/constants'
 import type { User } from 'src/types'
 
 
-const { locale } = useI18n()
 const tab = ref('overview')
 
 const me = ref<User>({
   id: undefined,
   username: '',
-  firstname: '',
-  lastname: '',
+  fullname: '',
   email: ''
 })
 

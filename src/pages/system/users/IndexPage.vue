@@ -11,14 +11,7 @@
             <div class="row q-gutter-md">
               <q-input outlined dense v-model="form.username" :label="$t('username')" lazy-rules
                 :rules="[val => val && val.length > 0 || $t('inputText')]" />
-              <q-input outlined dense v-model="form.firstname" :label="$t('firstname')" lazy-rules
-                :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            </div>
-
-            <div class="row q-gutter-md">
-              <q-input outlined dense v-model="form.middleName" :label="$t('middleName')" lazy-rules
-                :rules="[val => val && val.length > 0 || $t('inputText')]" />
-              <q-input outlined dense v-model="form.lastname" :label="$t('lastname')" lazy-rules
+              <q-input outlined dense v-model="form.fullname" :label="$t('fullname')" lazy-rules
                 :rules="[val => val && val.length > 0 || $t('inputText')]" />
             </div>
 
@@ -91,11 +84,8 @@
               <q-img alt="avatar" :src="props.row.avatar" width="2rem" height="2rem" />
             </q-avatar>
             <div class="column q-ml-sm">
-              <span v-if="locale === 'en-US' || props.row.middleName" class="text-subtitle">
-                {{ props.row.firstname }} {{ props.row.middleName }} {{ props.row.lastname }}
-              </span>
-              <span v-else class="text-subtitle">
-                {{ props.row.lastname }}{{ props.row.firstname }}
+              <span class="text-subtitle">
+                {{ props.row.fullname }}{{ props.row.firstname }}
               </span>
               <span class="text-caption text-grey-7">{{ props.row.username }}</span>
             </div>
@@ -104,7 +94,8 @@
       </template>
       <template v-slot:body-cell-enabled="props">
         <q-td :props="props">
-          <q-toggle v-model="props.row.enabled" @toogle="enableRow(props.row.id)" size="sm" color="positive" />
+          <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+            color="positive" />
         </q-td>
       </template>
       <template v-slot:body-cell-accountExpiresAt="props">
@@ -140,6 +131,22 @@
       </template>
     </q-table>
 
+    <!-- import -->
+    <q-dialog v-model="importVisible" persistent>
+      <q-card>
+        <q-card-section class="flex items-center q-pb-none">
+          <div class="text-h6">{{ $t('import') }}</div>
+          <q-space />
+          <q-btn icon="sym_r_close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section>
+          <q-uploader flat bordered :headers="[{ name: 'Authorization', value: `Bearer ${userStore.accessToken}` }]"
+            :factory="onUpload"
+            accept=".csv,.xls,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -147,15 +154,14 @@
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { useQuasar, exportFile, date } from 'quasar'
-import { useI18n } from 'vue-i18n'
-import { retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser } from 'src/api/users'
+import { useUserStore } from 'stores/user-store'
+import { retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, importUsers } from 'src/api/users'
 import { calculate } from 'src/utils'
-
 import type { User } from 'src/types'
 
 
-const { locale } = useI18n()
 const $q = useQuasar()
+const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
@@ -170,8 +176,7 @@ const loading = ref<boolean>(false)
 const initialValues: User = {
   id: undefined,
   username: '',
-  firstname: '',
-  lastname: '',
+  fullname: '',
   email: ''
 }
 const form = ref<User>({ ...initialValues })
@@ -230,11 +235,11 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  enableUser(id)
+  enableUser(id).then(() => refresh())
 }
 
 async function unlockRow(id: number) {
-  unlockUser(id)
+  unlockUser(id).then(() => refresh())
 }
 
 async function saveRow(id?: number) {
@@ -249,7 +254,7 @@ async function saveRow(id?: number) {
 function removeRow(id: number) {
   loading.value = true
   // You can send a request to delete the user with the specified id
-  removeUser(id).finally(() => { loading.value = false })
+  removeUser(id).then(() => tableRef.value.requestServerInteraction()).finally(() => { loading.value = false })
 }
 
 async function onSubmit() {
@@ -261,6 +266,17 @@ async function onSubmit() {
 
   // Close the dialog after submitting
   visible.value = false
+}
+
+async function onUpload(files: readonly File[]) {
+  if (!files || files.length === 0 || !files[0]) {
+    return Promise.reject(new Error('No file provided'))
+  }
+  const res = await importUsers(files[0])
+
+  importVisible.value = false
+  refresh()
+  return res.data
 }
 
 function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {

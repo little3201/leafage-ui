@@ -104,7 +104,8 @@ export default defineConfig((ctx) => {
       config: {
         dark: 'auto',
         notify: {
-          progress: true
+          position: 'top',
+          timeout: 3000
         }
       },
 

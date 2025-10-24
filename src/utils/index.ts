@@ -161,3 +161,15 @@ export async function computeChallenge(codeVerifier: string): Promise<string> {
       .replace(/=+$/, '');
   });
 }
+
+export function dealFilters(filters?: object | string) {
+  if (filters && typeof filters === 'object') {
+    filters = Object.entries(filters)
+      .filter(([, value]) => value != null && value !== '')
+      .map(([key, value]) => {
+        return `${key}:${value}`
+      })
+      .join(',')
+  }
+  return filters?.length ? filters : undefined
+}

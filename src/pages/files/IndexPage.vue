@@ -9,7 +9,8 @@
           </q-card-section>
 
           <q-card-section>
-            <q-uploader flat bordered url="/upload" label="Upload files" />
+            <q-uploader flat bordered :headers="[{ name: 'Authorization', value: `Bearer ${userStore.accessToken}` }]"
+              :factory="onUpload" />
           </q-card-section>
 
           <q-card-actions align="right">
@@ -116,10 +117,12 @@
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { date } from 'quasar'
-import { retrieveFiles, download } from 'src/api/files'
+import { useUserStore } from 'stores/user-store'
+import { retrieveFiles, uploadFile, download } from 'src/api/files'
 import { formatFileSize } from 'src/utils'
 
 
+const userStore = useUserStore()
 const visible = ref<boolean>(false)
 
 const tableRef = ref()
@@ -176,6 +179,17 @@ function refresh() {
 
 function uploadRow() {
   visible.value = true
+}
+
+async function onUpload(files: readonly File[]) {
+  if (!files || files.length === 0 || !files[0]) {
+    return Promise.reject(new Error('No file provided'))
+  }
+  const res = await uploadFile(files[0])
+
+  visible.value = false
+  refresh()
+  return res.data
 }
 
 async function downloadRow(id: number) {
