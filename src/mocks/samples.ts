@@ -80,14 +80,6 @@ export const samplesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.MASTER_PLATE}/:id/exists`, ({ params }) => {
-    const { id, name } = params
-    let filtered = datas.filter(item => item.name === name)
-    if (id) {
-      filtered = datas.filter(item => item.name === name && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
-  }),
   http.get(`/api${SERVER_URL.MASTER_PLATE}`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')

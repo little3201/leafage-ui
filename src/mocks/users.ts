@@ -48,14 +48,6 @@ export const usersHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.USER}/:id/exists`, ({ params }) => {
-    const { id, username } = params
-    let filtered = datas.filter(item => item.username === username)
-    if (id) {
-      filtered = datas.filter(item => item.username === username && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
-  }),
   http.get(`/api${SERVER_URL.USER}`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
