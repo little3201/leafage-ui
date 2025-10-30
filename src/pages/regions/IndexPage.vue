@@ -65,7 +65,8 @@
                 @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
             </div>
             <div v-else-if="col.name === 'enabled'" class="text-center">
-              <q-toggle v-model="props.row.enabled" @toggle="enableRow(props.row.id)" size="sm" color="positive" />
+              <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+                color="positive" />
             </div>
             <span v-else>{{ col.value }}</span>
           </q-td>
@@ -129,7 +130,7 @@ const form = ref<Region>({ ...initialValues })
 
 const pagination = ref({
   sortBy: 'id',
-  descending: true,
+  descending: false,
   page: 1,
   rowsPerPage: 7,
   rowsNumber: 0

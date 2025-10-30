@@ -91,7 +91,8 @@
             </template>
           </div>
           <div v-else-if="col.name === 'enabled'" class="text-center">
-            <q-toggle v-model="props.row.enabled" @toggle="enableRow(props.row.id)" size="sm" color="positive" />
+            <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+              color="positive" />
           </div>
           <span v-else>{{ col.value }}</span>
         </q-td>

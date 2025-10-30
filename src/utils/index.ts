@@ -92,7 +92,10 @@ export function formatDictionary(value: number, rows: Dictionary[]): string {
 }
 
 export function visibleArray<T extends string | number>(array: T[], count: number): T[] {
-  return array.length > count ? array.slice(0, count) : array
+  if (array && array.length) {
+    return array.length > count ? array.slice(0, count) : array
+  }
+  return []
 }
 
 export function download(data: Blob, filename: string, mimeType?: string): void {

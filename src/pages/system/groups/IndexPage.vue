@@ -74,7 +74,8 @@
       </template>
       <template v-slot:body-cell-enabled="props">
         <q-td :props="props">
-          <q-toggle v-model="props.row.enabled" @toggle="enableRow(props.row.id)" size="sm" color="positive" />
+          <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+            color="positive" />
         </q-td>
       </template>
       <template v-slot:body-cell-id="props">

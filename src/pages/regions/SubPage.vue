@@ -23,8 +23,8 @@
   </q-dialog>
 
   <q-table flat ref="subtableRef" :title="title" selection="multiple" v-model:selected="selected" :rows="rows"
-    :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-    binary-state-sort @request="onRequest" class="full-width" table-class="bg-transparent">
+    :columns="columns" row-key="id" :loading="loading" :filter="filter" binary-state-sort @request="onRequest"
+    class="full-width" table-class="bg-transparent" :pagination="pagination" hide-pagination>
     <template v-slot:top-right>
       <q-input dense debounce="300" v-model="filter" placeholder="Search">
         <template v-slot:append>
@@ -61,7 +61,8 @@
               @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
           </div>
           <div v-else-if="col.name === 'enabled'" class="text-center">
-            <q-toggle v-model="props.row.enabled" @toggle="enableRow(props.row.id)" size="sm" color="positive" />
+            <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+              color="positive" />
           </div>
           <span v-else>{{ col.value }}</span>
         </q-td>
@@ -109,11 +110,7 @@ const initialValues: Region = {
 const form = ref<Region>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
-  descending: true,
-  page: 1,
-  rowsPerPage: 7,
-  rowsNumber: 0
+  rowsPerPage: 0
 })
 
 const selected = ref([])
