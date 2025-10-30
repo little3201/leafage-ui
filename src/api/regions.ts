@@ -26,17 +26,6 @@ export const fetchRegion = (id: number) => {
 }
 
 /**
- * Check if a specific row exists by name
- * @param superiorId Superior ID
- * @param name Row name
- * @param id Row ID
- * @returns Row data
- */
-export const checkRegionExists = (superiorId: number, name: string, id?: number) => {
-  return api.get(`${SERVER_URL.REGION}/${superiorId}/exists`, { params: { name, id } })
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row

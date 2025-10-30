@@ -5,7 +5,7 @@ import { dayjs } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import {
-  retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, checkUserExists, importUsers
+  retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, importUsers
 } from 'src/api/users'
 import type { Pagination, User } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -48,8 +48,7 @@ const form = ref<User>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   username: [
-    { required: true, message: t('inputText', { field: t('username') }), trigger: 'blur' },
-    { validator: checkNameExistsence, trigger: 'blur' }
+    { required: true, message: t('inputText', { field: t('username') }), trigger: 'blur' }
   ],
   fullname: [
     { required: true, message: t('inputText', { field: t('fullname') }), trigger: 'blur' }
@@ -58,16 +57,6 @@ const rules = reactive<FormRules<typeof form>>({
     { required: true, message: t('inputText', { field: t('email') }), trigger: 'blur' }
   ]
 })
-
-function checkNameExistsence(rule: unknown, value: string, callback: (error?: string | Error) => void) {
-  checkUserExists(value, form.value.id).then(res => {
-    if (res.data) {
-      callback(new Error(t('alreadyExists', { field: t('username') })))
-    } else {
-      callback()
-    }
-  })
-}
 
 /**
  * 分页变化

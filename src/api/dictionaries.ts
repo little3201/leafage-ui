@@ -43,16 +43,6 @@ export const fetchDictionary = (id: number) => {
 }
 
 /**
- * Check if a specific row exists by name
- * @param superiorId Row ID
- * @param name Row name
- * @returns Row data
- */
-export const checkDictionaryExists = (superiorId: number, name: string, id?: number) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/${superiorId}/exists`, { params: { name, id } })
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row

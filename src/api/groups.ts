@@ -58,16 +58,6 @@ export const fetchGroup = (id: number) => {
 }
 
 /**
- * Check if a specific row exists by name
- * @param name Row name
- * @param id Row ID
- * @returns Row data
- */
-export const checkGroupExists = (name: string, id?: number) => {
-  return api.get(`${SERVER_URL.GROUP}/exists`, { params: { name, id } })
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row

@@ -5,7 +5,7 @@ import type { Pagination, Role, RoleMembers, RolePrivileges, TreeNode } from 'sr
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import {
-  retrieveRoles, fetchRole, createRole, modifyRole, removeRole, enableRole, checkRoleExists, importRoles,
+  retrieveRoles, fetchRole, createRole, modifyRole, removeRole, enableRole, importRoles,
   retrieveRoleMembers, relationRoleMembers, removeRoleMembers, retrieveRolePrivileges, relationRolePrivileges,
   removeRolePrivileges
 } from 'src/api/roles'
@@ -59,20 +59,9 @@ const form = ref<Role>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' },
-    { validator: checkNameExistsence, trigger: 'blur' }
+    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' }
   ]
 })
-
-function checkNameExistsence(rule: unknown, value: string, callback: (error?: string | Error) => void) {
-  checkRoleExists(value, form.value.id).then(res => {
-    if (res.data) {
-      callback(new Error(t('alreadyExists', { field: t('name') })))
-    } else {
-      callback()
-    }
-  })
-}
 
 async function loadUsers() {
   retrieveUsers({ page: 1, size: 99 }).then(res => {

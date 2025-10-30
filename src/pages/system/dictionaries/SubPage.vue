@@ -4,7 +4,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import {
   retrieveDictionarySubset, fetchDictionary, createDictionary,
-  modifyDictionary, removeDictionary, enableDictionary, checkDictionaryExists
+  modifyDictionary, removeDictionary, enableDictionary
 } from 'src/api/dictionaries'
 import type { Dictionary } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -34,21 +34,8 @@ const form = ref<Dictionary>({ ...initialValues })
 const rules = reactive<FormRules<typeof form>>({
   name: [
     { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' },
-    { validator: checkNameExistsence, trigger: 'blur' }
   ]
 })
-
-function checkNameExistsence(rule: unknown, value: string, callback: (error?: string | Error) => void) {
-  if (form.value.superiorId) {
-    checkDictionaryExists(form.value.superiorId, value, form.value.id).then(res => {
-      if (res.data) {
-        callback(new Error(t('alreadyExists', { field: t('name') })))
-      } else {
-        callback()
-      }
-    })
-  }
-}
 
 /**
  * 加载列表

@@ -4,7 +4,7 @@ import type { TableInstance, FormInstance, FormRules, TreeInstance, UploadInstan
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import {
-  retrieveGroups, createGroup, modifyGroup, removeGroup, enableGroup, checkGroupExists, fetchGroup, importGroups,
+  retrieveGroups, createGroup, modifyGroup, removeGroup, enableGroup, fetchGroup, importGroups,
   retrieveGroupMembers, retrieveGroupRoles, retrieveGroupTree, relationGroupMembers, removeGroupMembers, retrieveGroupPrivileges,
   relationGroupPrivileges, removeGroupPrivileges,
   relationGroupRoles,
@@ -73,20 +73,9 @@ const form = ref<Group>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' },
-    { validator: checkNameExistsence, trigger: 'blur' }
+    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' }
   ]
 })
-
-function checkNameExistsence(rule: unknown, value: string, callback: (error?: string | Error) => void) {
-  checkGroupExists(value, form.value.id).then(res => {
-    if (res.data) {
-      callback(new Error(t('alreadyExists', { field: t('name') })))
-    } else {
-      callback()
-    }
-  })
-}
 
 /**
  * tree过滤

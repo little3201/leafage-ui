@@ -26,16 +26,6 @@ export const fetchSample = (id: number) => {
 }
 
 /**
- * Check if a specific row exists by name
- * @param name Row name
- * @param id Row ID
- * @returns Row data
- */
-export const checkSampleExists = (name: string, suffix: string, type: string, id?: number) => {
-  return api.get(`${SERVER_URL.MASTER_PLATE}/exists`, { params: { name, suffix, type, id } })
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row

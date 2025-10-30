@@ -86,7 +86,10 @@ export function formatFileSize(size: number): string {
  * @returns 截取后的数组、集合
  */
 export function visibleArray<T extends string | number>(array: T[], count: number): T[] {
-  return array.length > count ? array.slice(0, count) : array
+  if (array && array.length) {
+    return array.length > count ? array.slice(0, count) : array
+  }
+  return []
 }
 
 /**
@@ -238,7 +241,7 @@ function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): string[]
 export function dealFilters(filters?: object | string) {
   if (filters && typeof filters === 'object') {
     filters = Object.entries(filters)
-      .filter(([, value]) => value != null && value !== '') 
+      .filter(([, value]) => value != null && value !== '')
       .map(([key, value]) => {
         return `${key}:${value}`
       })

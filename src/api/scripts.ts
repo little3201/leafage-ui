@@ -30,16 +30,6 @@ export const createScript = (row: Script) => {
 }
 
 /**
- * Check if a specific row exists by name
- * @param name Row name
- * @param id Row ID
- * @returns Row data
- */
-export const checkScriptExists = (name: string, id?: number) => {
-  return api.get(`${SERVER_URL.SCRIPT}/exists`, { params: { name, id } })
-}
-
-/**
  * Modify an existing row
  * @param id Row ID
  * @param row Updated row data
