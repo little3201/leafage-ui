@@ -423,14 +423,6 @@ export const privilegesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/exists`, ({ params }) => {
-    const { id, name } = params
-    let filtered = datas.filter(item => item.name === name)
-    if (id) {
-      filtered = datas.filter(item => item.name === name && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
-  }),
   http.get(`/api${SERVER_URL.PRIVILEGE}/:id/subset`, ({ params }) => {
     const { id } = params
     return HttpResponse.json(subDatas.filter(item => item.superiorId === Number(id)))

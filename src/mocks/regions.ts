@@ -42,14 +42,6 @@ export const regionsHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.REGION}/:id/exists`, ({ params }) => {
-    const { id, name } = params
-    let filtered = datas.filter(item => item.name === name)
-    if (id) {
-      filtered = datas.filter(item => item.name === name && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
-  }),
   http.get(`/api${SERVER_URL.REGION}`, ({ request }) => {
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
