@@ -18,7 +18,7 @@ export default {
   description: 'Description',
   lastModifiedDate: 'Last Modified Date',
   username: 'Username',
-  fullname: 'Full Name',
+  name_: 'Full Name',
   password: 'Password',
   email: 'Email',
   phoneNumber: 'Phone Number',

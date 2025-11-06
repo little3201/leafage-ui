@@ -49,7 +49,7 @@ const rules = reactive<FormRules<typeof form>>({
     { required: true, message: t('inputText', { field: t('username') }), trigger: 'blur' }
   ],
   name: [
-    { required: true, message: t('inputText', { field: t('fullname') }), trigger: 'blur' }
+    { required: true, message: t('inputText', { field: t('name_') }), trigger: 'blur' }
   ],
   email: [
     { required: true, message: t('inputText', { field: t('email') }), trigger: 'blur' }
@@ -263,7 +263,7 @@ function lockRow(id: number) {
               <ElAvatar alt="avatar" :size="30" :src="scope.row.avatar" />
               <div class="inline-flex flex-col">
                 <span class="text-sm">
-                  {{ scope.row.fullname }}
+                  {{ scope.row.name_ }}
                 </span>
                 <span class="text-xs text-(--el-text-color-secondary)">{{ scope.row.username }}</span>
               </div>
@@ -333,8 +333,8 @@ function lockRow(id: number) {
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem :label="$t('fullname')" prop="fullname">
-            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('fullname') })" :maxLength="50" />
+          <ElFormItem :label="$t('name_')" prop="name_">
+            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name_') })" :maxLength="50" />
           </ElFormItem>
         </ElCol>
 

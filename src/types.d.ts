@@ -14,7 +14,6 @@ export interface User extends AudtiMetadata {
   username: string
   name: string
   email: string
-  avatar?: string
   accountNonLocked?: boolean
   accountExpiresAt?: Date
   credentialsExpiresAt?: Date

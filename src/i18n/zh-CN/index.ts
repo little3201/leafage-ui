@@ -18,7 +18,7 @@ export default {
   description: '描述',
   lastModifiedDate: '更新时间',
   username: '账号',
-  fullname: '姓名',
+  name_: '姓名',
   password: '密码',
   email: '邮箱',
   phoneNumber: '电话号码',

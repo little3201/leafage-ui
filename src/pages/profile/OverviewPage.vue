@@ -9,17 +9,16 @@ import type { User } from 'src/types'
 const { t } = useI18n()
 const userStore = useUserStore()
 
+const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const initialValues: User = {
   id: undefined,
   username: userStore.username,
   name: userStore.name,
-  email: userStore.email,
-  avatar: import.meta.env.VITE_APP_CDN_URL + '/' + userStore.username
+  email: userStore.email
 }
 const form = ref<User>({ ...initialValues })
 
 const state = reactive({
-  username: false,
   email: false,
   name: false
 })
@@ -32,9 +31,9 @@ onMounted(() => {
 
 <template>
   <h3>{{ t('overview') }}</h3>
-  <div class="flex">
+  <div class="flex flex-row">
     <div class="px-6 relative group">
-      <ElAvatar :size="192" :src="form.avatar" />
+      <ElAvatar :size="192" :src="`${cdn_url}/${form.username}`" />
       <div
         class="absolute inset-0 w-48 h-48 ml-6 hidden group-hover:flex items-center justify-center rounded-full bg-(--el-overlay-color-lighter) group-hover:opacity-100 transition">
         <ElButton title="upload" type="primary" circle>
@@ -46,22 +45,33 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="inline-fle flex-col ml-8">
+    <div class="inline-flex flex-col ml-8 w-full">
       <ElForm label-width="auto">
         <ElRow>
           <ElCol :span="20">
             <ElFormItem :label="$t('username')" prop="username">
               <ElInput v-model="form.username" :placeholder="$t('inputText', { field: $t('username') })" :maxLength="50"
-                :disabled="!state.username" />
+                disabled />
               <p class="my-0 text-xs text-gray-500">Your name may appear around GitHub where you contribute or are
                 mentioned.
               </p>
             </ElFormItem>
           </ElCol>
+        </ElRow>
+        <ElRow>
+          <ElCol :span="20">
+            <ElFormItem :label="$t('name_')" prop="name_">
+              <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name_') })" :maxLength="50"
+                :disabled="!state.name" />
+              <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
+                you've
+                missed.
+              </p>
+            </ElFormItem>
+          </ElCol>
           <ElCol :span="4">
-            <ElButton link type="primary" class="mt-2 ml-4" @click="state.username = !state.username">
-              {{ state.username ? $t('save') : $t('modify') }}
-            </ElButton>
+            <ElButton link type="primary" class="mt-2 ml-4" @click="state.name = !state.name">
+              {{ state.name ? $t('save') : $t('modify') }}</ElButton>
           </ElCol>
         </ElRow>
         <ElRow>
@@ -81,25 +91,6 @@ onMounted(() => {
             </ElButton>
           </ElCol>
         </ElRow>
-
-        <ElRow>
-          <ElCol :span="20">
-            <ElFormItem :label="$t('fullname')" prop="fullname">
-              <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('fullname') })" :maxLength="50"
-                :disabled="!state.name" />
-              <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
-                you've
-                missed.
-              </p>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="4">
-            <ElButton link type="primary" class="mt-2 ml-4" @click="state.name = !state.name">
-              {{ state.name ? $t('save') : $t('modify') }}</ElButton>
-          </ElCol>
-        </ElRow>
-
-
       </ElForm>
     </div>
   </div>
@@ -107,7 +98,7 @@ onMounted(() => {
   <div class="mt-8">
     <h3>Third accouts authorize</h3>
     <ul class="mt-4 px-4">
-      <li class="flex justify-between">
+      <li class="flex justify-between py-2">
         <div>
           <div class="inline-flex items-center">
             <Icon icon="simple-icons:github" width="24" height="24" class="mr-2" />
@@ -118,7 +109,7 @@ onMounted(() => {
         </div>
         <ElButton link type="primary">绑定</ElButton>
       </li>
-      <li class="flex justify-between">
+      <li class="flex justify-between py-2">
         <div>
           <div class="inline-flex items-center">
             <Icon icon="simple-icons:gitee" width="24" height="24" class="mr-2" />
@@ -132,7 +123,7 @@ onMounted(() => {
         </div>
         <ElButton link type="danger">解绑</ElButton>
       </li>
-      <li class="flex justify-between">
+      <li class="flex justify-between py-2">
         <div>
           <div class="inline-flex items-center">
             <Icon icon="simple-icons:youtube" width="24" height="24" class="mr-2" />
@@ -145,7 +136,7 @@ onMounted(() => {
         </div>
         <ElButton link type="danger">解绑</ElButton>
       </li>
-      <li class="flex justify-between">
+      <li class="flex justify-between py-2">
         <div>
           <div class="inline-flex items-center">
             <Icon icon="simple-icons:x" width="24" height="24" class="mr-2" />
@@ -159,7 +150,7 @@ onMounted(() => {
         </div>
         <ElButton link type="danger">解绑</ElButton>
       </li>
-      <li class="flex justify-between">
+      <li class="flex justify-between py-2">
         <div>
           <div class="inline-flex items-center">
             <Icon icon="simple-icons:xiaohongshu" width="24" height="24" class="mr-2" />

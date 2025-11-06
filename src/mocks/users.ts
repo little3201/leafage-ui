@@ -9,8 +9,7 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    fullname: '张三' + i,
-    avatar: '',
+    name: '张三' + i,
     email: 'use***' + '@**t.com',
     accountNonLocked: i % 2 > 0,
     enabled: i % 2 > 0,
@@ -32,7 +31,7 @@ export const usersHandlers = [
       enabled: true,
       lastModifiedDate: null,
       username: 'admin',
-      fullname: '勒布朗 詹姆斯 雷蒙',
+      name_: '勒布朗 詹姆斯 雷蒙',
       avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
       email: 'test@test.com',
       accountExpiresAt: null,
