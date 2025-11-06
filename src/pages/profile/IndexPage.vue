@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchMe } from 'src/api/users'
-import type { User } from 'src/types'
+import { useUserStore } from 'stores/user-store'
 import { Icon } from '@iconify/vue'
 
 
 const { currentRoute } = useRouter()
+const userStore = useUserStore()
 
-const me = ref<User>({
-  id: undefined,
-  username: '',
-  fullname: '',
-  email: ''
-})
+const cdn_url = import.meta.env.VITE_APP_CDN_URL
+const me = {
+  username: userStore.username,
+  name: userStore.name
+}
 
 onMounted(() => {
-  fetchMe().then(res => { me.value = res.data })
+
 })
 </script>
 
@@ -24,19 +23,15 @@ onMounted(() => {
   <ElRow class="mb-4">
     <ElCol :span="24">
       <ElCard shadow="never" body-class="flex items-center">
-        <ElAvatar :size="80" :src="me.avatar" />
+        <ElAvatar :size="80" :src="`${cdn_url}/${me.username}`" />
         <div class="ml-4 flex-1">
           <span class="text-lg my-1">
-            {{ me.fullname }}
+            {{ me.name }}
           </span>
 
-          <div class="text-sm text-[var(--el-text-color-secondary)]">
+          <div class="text-sm text-(--el-text-color-secondary)">
             <span>{{ me.username }}</span>
           </div>
-        </div>
-
-        <div>
-          周三
         </div>
       </ElCard>
     </ElCol>

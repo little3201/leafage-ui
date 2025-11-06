@@ -23,23 +23,22 @@ function more(id: number) {
         </ElButton>
       </template>
       <template #title>
-        <div class="inline-flex items-center py-2">
+        <div class="inline-flex items-center py-2 text-(--el-text-color-secondary)">
           <ElBadge :type="item.status === 'online' ? 'success' : 'info'" is-dot />
-          <Icon icon="material-symbols:desktop-windows-outline-rounded" width="32" height="32"
-            class="mx-3 text-[var(--el-text-color-regular)]" />
+          <Icon icon="material-symbols:desktop-windows-outline-rounded" width="32" height="32" class="mx-3" />
           <div class="inline-flex flex-col">
-            <span class="text-sm text-[var(--el-text-color-regular)]">{{ item.location }}&emsp;●&emsp;{{ item.ip
+            <span class="text-sm ">{{ item.location }}&emsp;●&emsp;{{ item.ip
             }}
             </span>
-            <span class="text-xs text-[var(--el-text-color-secondary)]">Your current session</span>
-            <span class="text-xs text-[var(--el-text-color-secondary)]">Seen in {{ item.country }}</span>
+            <span class="text-xs ">Your current session</span>
+            <span class="text-xs ">Seen in {{ item.country }}</span>
           </div>
         </div>
       </template>
-      <div class="px-4">
-        <p class="text-sm text-[var(--el-text-color-secondary)]">Device: {{ item.device }}</p>
-        <p class="text-sm text-[var(--el-text-color-secondary)]">Last location: {{ item.country }}</p>
-        <p class="text-sm text-[var(--el-text-color-secondary)]">Signed in: {{ item.country }}</p>
+      <div class="px-4 text-sm text-(--el-text-color-secondary)">
+        <p>Device: {{ item.device }}</p>
+        <p>Last location: {{ item.country }}</p>
+        <p>Signed in: {{ item.country }}</p>
         <ElImage src="https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg" />
       </div>
     </ElCollapseItem>

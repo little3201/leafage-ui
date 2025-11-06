@@ -51,10 +51,5 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
         component: () => import('pages/faq/IndexPage.vue')
       }
     ]
-  },
-  {
-    path: '/callback',
-    name: 'callback',
-    component: () => import('pages/CallbackPage.vue')
   }
 ]

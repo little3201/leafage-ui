@@ -45,7 +45,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
         </ElFormItem>
       </ElCol>
       <ElCol :span="10">
-        <span class="ml-4 text-xs text-[var(--el-text-color-secondary)]">
+        <span class="ml-4 text-xs text-(--el-text-color-secondary)">
           This is a hint for old password
         </span>
       </ElCol>
@@ -57,7 +57,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
         </ElFormItem>
       </ElCol>
       <ElCol :span="10">
-        <span class="ml-4 text-xs text-[var(--el-text-color-secondary)]">
+        <span class="ml-4 text-xs text-(--el-text-color-secondary)">
           This is a hint for new password
         </span>
       </ElCol>
@@ -70,7 +70,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
         </ElFormItem>
       </ElCol>
       <ElCol :span="10">
-        <span class="ml-4 text-xs text-[var(--el-text-color-secondary)]">
+        <span class="ml-4 text-xs text-(--el-text-color-secondary)">
           This is a hint for confirm password
         </span>
       </ElCol>

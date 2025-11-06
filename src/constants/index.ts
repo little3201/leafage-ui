@@ -3,15 +3,13 @@ const SERVER_PREFIX = {
   HYPERVISOR: '/hypervisor', // 系统
   ASSETS: '/assets', // 资源
   EXPLOITER: '/exploiter', // 开发者
-  OAUTH2: '/oauth2' // oauth2认证
 }
 
 // 接口请求路径
 export const SERVER_URL = {
   USERINFO: '/userinfo', // 用户信息
-  TOKEN: SERVER_PREFIX.OAUTH2.concat('/token'), // token
-  AUTHORIZE: SERVER_PREFIX.OAUTH2.concat('/authorize'), // 认证
-  LOGOUT: '/connect/logout', // 登出
+  LOGIN: '/login', // login
+  LOGOUT: '/logout', // 登出
 
   // hypervisor
   USER: SERVER_PREFIX.HYPERVISOR.concat('/users'), // 用户

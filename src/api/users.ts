@@ -26,14 +26,6 @@ export const fetchUser = (id: number) => {
 }
 
 /**
- * Fetch me
- * @returns Row data
- */
-export const fetchMe = () => {
-  return api.get(`${SERVER_URL.USER}/me`)
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row

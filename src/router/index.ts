@@ -2,16 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { constantRouterMap } from './routes'
 import { useUserStore } from 'stores/user-store'
-import Cookies from 'universal-cookie'
 import { retrievePrivilegeTree } from 'src/api/privileges'
-import { signIn, getSub } from 'src/api/authentication'
-import { fetchMe } from 'src/api/users'
+import { getUserInfo } from 'src/api/authentication'
 import type { PrivilegeTreeNode } from 'src/types'
 // Lazy load layout
 const BlankLayout = () => import('layouts/BlankLayout.vue')
 
 
-const cookies = new Cookies(null, { path: '/' })
 const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
 
 // Create router instance
@@ -23,27 +20,29 @@ const router = createRouter({
 
 
 router.beforeEach(async (to, from) => {
-  if (['/callback', '/login'].includes(to.path)) return true
+  if (['/login'].includes(to.path)) return true
 
   const userStore = useUserStore()
-  if (!userStore.accessToken) {
-    await signIn()
-    return false
-  }
 
   // 加载用户信息
   if (!userStore.username) {
-    const [subRes, userRes] = await Promise.all([getSub(), fetchMe()])
-    userStore.$patch({
-      username: subRes.data.sub,
-      avatar: userRes.data.avatar,
-    })
+    const res = await getUserInfo()
+    if (res && res.data) {
+      userStore.$patch({
+        username: res.data.sub,
+        name: res.data.name,
+        email: res.data.email
+      })
+    }
+
   }
 
   // 加载权限信息
   if (!userStore.privileges.length) {
-    const privilegesResp = await retrievePrivilegeTree()
-    userStore.$patch({ privileges: privilegesResp.data })
+    const res = await retrievePrivilegeTree()
+    if (res && res.data) {
+      userStore.$patch({ privileges: res.data })
+    }
   }
 
   // 动态注册路由
@@ -65,11 +64,9 @@ router.beforeEach(async (to, from) => {
       ? { ...to, replace: true }
       : { path: redirect }
 
-    cookies.set('current_page', nextData.path)
     return nextData
   }
 
-  cookies.set('current_page', decodeURIComponent(to.fullPath as string))
   return true
 })
 

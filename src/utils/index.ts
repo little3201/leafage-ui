@@ -139,44 +139,6 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
 }
 
 /**
- * 生成随机字符串
- * @param length 长度
- * @returns 随机字符串
- */
-export function createRandomString(length: number): string {
-  const str = Array.from(
-    window.crypto.getRandomValues(new Uint8Array(Math.ceil(length / 2))), (v) => ('0' + v.toString(16)).slice(-2)
-  ).join('')
-  return str.slice(0, length)
-}
-
-/**
- * 生成verifier_code
- * @param prefix 前缀
- * @returns verifier_code
- */
-export function generateVerifier(prefix?: string): string {
-  let verifier = prefix || ''
-  if (verifier.length < 43) {
-    verifier = verifier + createRandomString(43 - verifier.length)
-  }
-  return window.encodeURIComponent(verifier).slice(0, 128)
-}
-
-/**
- * 计算code_challenge
- * @param codeVerifier verifier_code
- * @returns code_challenge
- */
-export async function computeChallenge(codeVerifier: string): Promise<string> {
-  const digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
-  return window.btoa(String.fromCharCode(...new Uint8Array(digest)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '')
-}
-
-/**
  * 判断是否持有操作权限
  * @param page 页面路由
  * @param action 操作

@@ -140,7 +140,7 @@ const resources = [
     id: 221,
     name: 'application',
     suffix: '.yaml',
-    content: 'server.port: 8080'
+    content: 'server.port: 8760'
   },
 ]
 

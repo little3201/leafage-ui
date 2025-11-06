@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, checkRegionExists } from 'src/api/regions'
+import { retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion } from 'src/api/regions'
 import type { Pagination, Region } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { hasAction } from 'src/utils'
@@ -36,22 +36,9 @@ const form = ref<Region>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' },
-    { validator: checkNameExistsence, trigger: 'blur' }
+    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' }
   ]
 })
-
-function checkNameExistsence(rule: unknown, value: string, callback: (error?: string | Error) => void) {
-  if (form.value.superiorId) {
-    checkRegionExists(form.value.superiorId, value, form.value.id).then(res => {
-      if (res.data) {
-        callback(new Error(t('alreadyExists', { field: t('name') })))
-      } else {
-        callback()
-      }
-    })
-  }
-}
 
 /**
  * 分页变化

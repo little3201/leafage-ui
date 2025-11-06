@@ -1,11 +1,9 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from 'stores/user-store'
 import { i18n } from 'boot/i18n'
 import type { ComposerTranslation } from 'vue-i18n'
 import { signIn } from 'src/api/authentication'
-import { SERVER_URL } from 'src/constants'
 
 
 const { t } = i18n.global as { t: ComposerTranslation }
@@ -21,13 +19,6 @@ const api: AxiosInstance = axios.create({
 // 请求拦截器
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const userStore = useUserStore()
-    if (userStore.accessToken) {
-      config.headers.Authorization = `Bearer ${userStore.accessToken}`
-    } else {
-      delete config.headers.Authorization
-    }
-
     // 创建 AbortController 实例
     const controller = new AbortController()
     const uniqueKey = generateUniqueKey(config)
@@ -49,7 +40,8 @@ api.interceptors.response.use(
     abortControllerMap.delete(uniqueKey)
 
     const { config, status } = response
-    if (status >= 200 && status < 300 && config.method !== 'get' && config.url !== SERVER_URL.TOKEN) {
+    // get 请求不提示成功信息
+    if (config.method !== 'get' && status >= 200 && status < 300) {
       ElMessage.success({ message: t('successful'), grouping: true })
     }
     return response

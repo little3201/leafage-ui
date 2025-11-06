@@ -8,7 +8,6 @@ import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
-import { createRandomString, generateVerifier, computeChallenge } from 'src/utils'
 import logo from 'src/assets/logo.svg'
 
 
@@ -45,19 +44,8 @@ async function onSubmit(formEl: FormInstance | undefined) {
     if (valid) {
       loading.value = true
 
-      const state = createRandomString(16)
-      const codeVerifier = generateVerifier()
-      // 存储code_verifier
-      localStorage.setItem('code_verifier', codeVerifier)
-      computeChallenge(codeVerifier).then(codeChallenge => {
-        const params = new URLSearchParams({
-          state: state,
-          code_challenge: codeChallenge
-        })
-        api.get(`${SERVER_URL.AUTHORIZE}?${params}`).then(res => {
-          loading.value = false
-          window.location.replace(res.request.responseURL)
-        })
+      api.get(SERVER_URL.LOGIN).finally(() => {
+        loading.value = false
       })
     }
   })
@@ -79,8 +67,7 @@ function load() {
 </script>
 
 <template>
-  <ElContainer
-    class="h-screen relative overflow-hidden bg-[var(--el-color-primary-light-9)] dark:bg-[var(--el-bg-color-page)]">
+  <ElContainer class="h-screen relative overflow-hidden bg---el-color-primary-light-9) dark:bg-(--el-bg-color-page)">
     <figure class="absolute bg-primary-gradient rounded-full"
       style="height: 31em; width: 31em;  top: -14em; right: -12em; ">
     </figure>
@@ -107,7 +94,7 @@ function load() {
         <ElCard class="w-full lg:w-1/2 xl:w-2/3" style="height: 70vh;border-radius: 1.5rem;"
           body-class="flex items-center !p-0 h-full">
           <div class="hidden-lg-and-down flex flex-col items-center h-full w-1/2  ">
-            <div class="inline-flex flex-grow items-center justify-center h-full">
+            <div class="inline-flex grow items-center justify-center h-full">
               <div class="inline-flex flex-col justify-center items-center" style="margin-top: -40px">
                 <canvas ref="lottieRef" style="height: 450px; width: 450px" />
                 <div class="-mt-8">
@@ -122,7 +109,7 @@ function load() {
             </div>
           </div>
           <div
-            class="flex flex-row items-center w-full xl:w-1/2 h-full  bg-[var(--el-color-primary-light-9)] dark:bg-transparent">
+            class="flex flex-row items-center w-full xl:w-1/2 h-full  bg-(--el-color-primary-light-9) dark:bg-transparent">
             <div class="flex flex-col w-full h-full space-y-2xl justify-center items-center">
               <div class="text-center">
                 <ElImage :src="logo" alt="logo" class="w-24 h-24" />

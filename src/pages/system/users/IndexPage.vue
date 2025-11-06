@@ -3,7 +3,6 @@ import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { dayjs } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { useUserStore } from 'stores/user-store'
 import {
   retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, importUsers
 } from 'src/api/users'
@@ -13,7 +12,6 @@ import { calculate, hasAction, exportToExcel } from 'src/utils'
 
 
 const { t } = useI18n()
-const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
 const datas = ref<Array<User>>([])
@@ -41,7 +39,7 @@ const formRef = ref<FormInstance>()
 const initialValues: User = {
   id: undefined,
   username: '',
-  fullname: '',
+  name: '',
   email: ''
 }
 const form = ref<User>({ ...initialValues })
@@ -50,7 +48,7 @@ const rules = reactive<FormRules<typeof form>>({
   username: [
     { required: true, message: t('inputText', { field: t('username') }), trigger: 'blur' }
   ],
-  fullname: [
+  name: [
     { required: true, message: t('inputText', { field: t('fullname') }), trigger: 'blur' }
   ],
   email: [
@@ -336,8 +334,7 @@ function lockRow(id: number) {
         </ElCol>
         <ElCol :span="12">
           <ElFormItem :label="$t('fullname')" prop="fullname">
-            <ElInput v-model="form.fullname" :placeholder="$t('inputText', { field: $t('fullname') })"
-              :maxLength="50" />
+            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('fullname') })" :maxLength="50" />
           </ElFormItem>
         </ElCol>
 
@@ -383,8 +380,7 @@ function lockRow(id: number) {
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".csv,.xls,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-      :headers="{ Authorization: `Bearer ${userStore.accessToken}` }">
+      accept=".csv,.xls,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
