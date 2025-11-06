@@ -15,8 +15,6 @@ const userStore = useUserStore()
 const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const user = {
   username: userStore.username,
-  name: userStore.name,
-  email: userStore.email,
   privileges: userStore.privileges
 }
 
@@ -52,12 +50,8 @@ async function logout() {
           </div>
           <template #dropdown>
             <ElDropdownMenu>
-              <ElDropdownItem>
-                <span>{{ user.name }}</span>
-                <span>{{ user.email }}</span>
-              </ElDropdownItem>
               <RouterLink to="/profile" class="no-underline">
-                <ElDropdownItem divided>
+                <ElDropdownItem>
                   <Icon icon="material-symbols:manage-accounts-rounded" width="18" height="18" class="mr-2" />
                   {{ $t('profile') }}
                 </ElDropdownItem>
