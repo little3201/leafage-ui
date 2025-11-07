@@ -13,6 +13,7 @@ import { calculate, hasAction, exportToExcel } from 'src/utils'
 
 const { t } = useI18n()
 
+const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const loading = ref<boolean>(false)
 const datas = ref<Array<User>>([])
 const total = ref<number>(0)
@@ -260,10 +261,10 @@ function lockRow(id: number) {
         <ElTableColumn prop="username" :label="$t('username')" sortable>
           <template #default="scope">
             <div class="flex items-center space-x-2">
-              <ElAvatar alt="avatar" :size="30" :src="scope.row.avatar" />
+              <ElAvatar alt="avatar" :size="30" :src="`${cdn_url}/${scope.row.username}`" />
               <div class="inline-flex flex-col">
                 <span class="text-sm">
-                  {{ scope.row.name_ }}
+                  {{ scope.row.name }}
                 </span>
                 <span class="text-xs text-(--el-text-color-secondary)">{{ scope.row.username }}</span>
               </div>

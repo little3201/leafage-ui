@@ -175,9 +175,9 @@ function confirmEvent(id: number) {
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Images</span>
-              <span class="text-xs text-[var(--el-text-color-secondary)]">234 files</span>
+              <span class="text-xs text-(--el-text-color-secondary)">234 files</span>
             </div>
-            <span class="text-[var(--el-text-color-regular)]">14GB</span>
+            <span class="text-(--el-text-color-regular)">14GB</span>
           </li>
           <li index="media" class="flex items-center space-x-4">
             <ElButton title="media" circle type="primary" size="large">
@@ -185,9 +185,9 @@ function confirmEvent(id: number) {
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Media</span>
-              <span class="text-xs text-[var(--el-text-color-secondary)]">234 files</span>
+              <span class="text-xs text-(--el-text-color-secondary)">234 files</span>
             </div>
-            <span class="text-[var(--el-text-color-regular)]">5GB</span>
+            <span class="text-(--el-text-color-regular)">5GB</span>
           </li>
           <li index="documents" class="flex items-center space-x-4">
             <ElButton title="documents" circle type="warning" size="large">
@@ -195,9 +195,9 @@ function confirmEvent(id: number) {
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Documents</span>
-              <span class="text-xs text-[var(--el-text-color-secondary)]">234 files</span>
+              <span class="text-xs text-(--el-text-color-secondary)">234 files</span>
             </div>
-            <span class="text-[var(--el-text-color-regular)]">4GB</span>
+            <span class="text-(--el-text-color-regular)">4GB</span>
           </li>
         </ul>
       </ElCard>
@@ -306,7 +306,7 @@ function confirmEvent(id: number) {
 
         <div v-show="view.showGrid" class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
           <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
-            body-class="hover:bg-[var(--el-bg-color-page)]">
+            body-class="hover:bg-(--el-bg-color-page)">
             <Icon v-if="data.type === 'directory'" icon="flat-color-icons:folder" width="64" height="64" />
             <template v-else-if="data.mimeType">
               <Icon v-if="['text/jpg', 'jpeg', 'svg'].includes(data.mimeType)" icon="flat-color-icons:image-file"
@@ -314,7 +314,7 @@ function confirmEvent(id: number) {
               <Icon v-else icon="flat-color-icons:document" width="64" height="64" />
             </template>
             <div>
-              <p class="my-1 text-sm text-[var(--el-text-color-regular)]">
+              <p class="my-1 text-sm text-(--el-text-color-regular)">
                 {{ data.name }}
               </p>
             </div>
