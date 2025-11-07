@@ -61,7 +61,8 @@ export default defineConfig((ctx) => {
       // analyze: true,
       env: {
         API: ctx.dev ? '/api' : '/api',
-        CLIENT_ID: 'pkce-client'
+        CLIENT_ID: 'pkce-client',
+        CND_URL: 'http://cdn.leafage.top'
       },
       // rawDefine: {},
       // ignorePublicFolder: true,

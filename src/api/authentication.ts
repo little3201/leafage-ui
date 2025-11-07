@@ -61,7 +61,7 @@ export function handleCallback() {
   return api.post(SERVER_URL.TOKEN, params)
 }
 
-export function getSub() {
+export function getUserInfo() {
   return api.get(SERVER_URL.USERINFO)
 }
 

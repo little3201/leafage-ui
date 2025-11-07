@@ -11,7 +11,7 @@
             <div class="row q-gutter-md">
               <q-input outlined dense v-model="form.username" :label="$t('username')" lazy-rules
                 :rules="[val => val && val.length > 0 || $t('inputText')]" />
-              <q-input outlined dense v-model="form.fullname" :label="$t('fullname')" lazy-rules
+              <q-input outlined dense v-model="form.name" :label="$t('fullname')" lazy-rules
                 :rules="[val => val && val.length > 0 || $t('inputText')]" />
             </div>
 
@@ -81,11 +81,11 @@
         <q-td :props="props">
           <div class="row items-center">
             <q-avatar size="2rem">
-              <q-img alt="avatar" :src="props.row.avatar" width="2rem" height="2rem" />
+              <q-img alt="avatar" :src="`${cdn_url}/${props.row.username}`" width="2rem" height="2rem" />
             </q-avatar>
             <div class="column q-ml-sm">
               <span class="text-subtitle">
-                {{ props.row.fullname }}{{ props.row.firstname }}
+                {{ props.row.name }}
               </span>
               <span class="text-caption text-grey-7">{{ props.row.username }}</span>
             </div>
@@ -163,6 +163,7 @@ import type { User } from 'src/types'
 const $q = useQuasar()
 const userStore = useUserStore()
 
+const cdn_url = process.env.CDN_URL
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
@@ -176,7 +177,7 @@ const loading = ref<boolean>(false)
 const initialValues: User = {
   id: undefined,
   username: '',
-  fullname: '',
+  name: '',
   email: ''
 }
 const form = ref<User>({ ...initialValues })

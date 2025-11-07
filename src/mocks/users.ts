@@ -8,8 +8,7 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    fullname: 'fullname_' + i,
-    avatar: '/svgs/logo.svg',
+    name: 'name_' + i,
     email: 'usexxx' + '@test.com',
     enabled: i % 2 > 0,
     accountNonLocked: i % 3 > 0,

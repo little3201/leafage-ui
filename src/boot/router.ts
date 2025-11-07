@@ -2,8 +2,7 @@ import { defineBoot } from '#q-app/wrappers'
 import { Cookies } from 'quasar'
 import { useUserStore } from 'stores/user-store'
 import { retrievePrivilegeTree } from 'src/api/privileges'
-import { signIn, getSub } from 'src/api/authentication'
-import { fetchMe } from 'src/api/users'
+import { signIn, getUserInfo } from 'src/api/authentication'
 import type { RouteRecordRaw } from 'vue-router'
 import type { PrivilegeTreeNode } from 'src/types'
 
@@ -24,10 +23,10 @@ export default defineBoot(async ({ router, store }) => {
 
     // 加载用户信息
     if (!userStore.username) {
-      const [subRes, userRes] = await Promise.all([getSub(), fetchMe()])
+      const res = await getUserInfo()
       userStore.$patch({
-        username: subRes.data.sub,
-        avatar: userRes.data.avatar,
+        username: res.data.sub,
+        name: res.data.name,
       })
     }
 

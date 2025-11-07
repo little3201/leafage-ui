@@ -20,9 +20,9 @@
         </div>
         <div class="cursor-pointer">
           <q-avatar size="md">
-            <img :src="userStore.avatar" alt="avatar" />
+            <img :src="`${cdn_url}/${user.username}`" alt="avatar" />
           </q-avatar>
-          <span class="q-ml-sm">{{ userStore.username }}</span>
+          <span class="q-ml-sm">{{ user.username }}</span>
           <q-menu>
             <q-list separator>
               <q-item to="/profile">
@@ -95,4 +95,9 @@ import logo from 'src/assets/logo.svg'
 const userStore = useUserStore()
 
 const leftDrawerOpen = ref<boolean>(false)
+const cdn_url = process.env.CDN_URL
+const user = {
+  username: userStore.username,
+  privileges: userStore.privileges
+}
 </script>
