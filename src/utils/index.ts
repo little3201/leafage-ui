@@ -1,4 +1,5 @@
-import { date } from 'quasar'
+import { Notify, date, exportFile } from 'quasar'
+import type { QTableProps } from 'quasar'
 import type { Dictionary } from 'src/types'
 
 /**
@@ -175,4 +176,57 @@ export function dealFilters(filters?: object | string) {
       .join(',')
   }
   return filters?.length ? filters : undefined
+}
+
+/**
+ * wrap csv value
+ * @param val value
+ * @param formatFn format function
+ * @param row data row
+ * @returns result
+ */
+function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
+  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
+
+  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
+
+  formatted = formatted.split('"').join('""')
+
+  return `"${formatted}"`
+}
+
+/**
+ * export table data to csv file
+ * @param columns columns
+ * @param rows rows
+ * @returns result
+ */
+export function exportTable(columns: QTableProps['columns'], rows: QTableProps['rows']) {
+  if (!columns || !rows || columns.length === 0 || rows.length === 0) {
+    // Handle the case where columns or rows are undefined or empty
+    console.error('Columns or rows are undefined or empty.')
+    return
+  }
+  // naive encoding to csv format
+  const content = [columns.map(col => wrapCsvValue(col.label))]
+    .concat(rows.map(row => columns.map(col =>
+      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
+        col.format,
+        row
+      )).join(','))
+    ).join('\r\n')
+
+  const status = exportFile(
+    'table-export.csv',
+    content,
+    'text/csv'
+  )
+
+  if (status !== true) {
+    Notify.create({
+      message: 'Browser denied file download...',
+      color: 'negative',
+      icon: 'warning'
+    })
+  }
 }

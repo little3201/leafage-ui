@@ -24,7 +24,7 @@
 
   <q-table flat ref="subtableRef" :title="title" selection="multiple" v-model:selected="selected" :rows="rows"
     :columns="columns" row-key="id" :loading="loading" :filter="filter" binary-state-sort @request="onRequest"
-    class="full-width" table-class="bg-transparent" :pagination="pagination" hide-pagination>
+    class="full-width" table-class="bg-transparent" v-model:pagination="pagination" hide-pagination>
     <template v-slot:top-right>
       <q-input dense debounce="300" v-model="filter" placeholder="Search">
         <template v-slot:append>
@@ -35,7 +35,8 @@
         @click="saveRow()" />
       <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
         icon="sym_r_refresh" @click="refresh" />
-      <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
+      <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
+        @click="exportTable(columns, rows)" />
     </template>
 
     <template v-slot:header="props">
@@ -79,12 +80,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile } from 'quasar'
 import { retrieveRegionSubset, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion } from 'src/api/regions'
+import { exportTable } from 'src/utils'
 import type { Region } from 'src/types'
 
-
-const $q = useQuasar()
 
 const props = withDefaults(defineProps<{
   title: string
@@ -174,44 +173,5 @@ function onSubmit() {
 
   // Close the dialog after submitting
   visible.value = false
-}
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
-}
-
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
-  }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
-
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
-
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
 }
 </script>

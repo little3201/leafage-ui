@@ -1,5 +1,4 @@
 import { defineBoot } from '#q-app/wrappers'
-import { Cookies } from 'quasar'
 import { useUserStore } from 'stores/user-store'
 import { retrievePrivilegeTree } from 'src/api/privileges'
 import { signIn, getUserInfo } from 'src/api/authentication'
@@ -55,11 +54,8 @@ export default defineBoot(async ({ router, store }) => {
         ? { ...to, replace: true }
         : { path: redirect }
 
-      Cookies.set('current_page', nextData.path)
       return nextData
     }
-
-    Cookies.set('current_page', decodeURIComponent(to.fullPath as string))
     return true
   })
 })

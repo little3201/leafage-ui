@@ -24,12 +24,13 @@ onMounted(() => {
     if (res) {
       // 回调成功，删除code_verifier
       localStorage.removeItem('code_verifier')
+      Cookies.set('access_token', res.data.access_token, { secure: true, sameSite: 'Lax', path: '/' })
       userStore.$patch({
         accessToken: res.data.access_token,
         idToken: res.data.id_token
       })
       // 路由跳转
-      replace(Cookies.get('current_page') || '/')
+      replace('/')
     }
   }).catch(() => {
     // 回调失败，登录

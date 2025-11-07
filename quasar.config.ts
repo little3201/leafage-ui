@@ -62,7 +62,7 @@ export default defineConfig((ctx) => {
       env: {
         API: ctx.dev ? '/api' : '/api',
         CLIENT_ID: 'pkce-client',
-        CND_URL: 'http://cdn.leafage.top'
+        CDN_URL: ctx.dev ? 'https://cdn.quasar.dev/img/avatar' : 'http://cdn.leafage.top'
       },
       // rawDefine: {},
       // ignorePublicFolder: true,

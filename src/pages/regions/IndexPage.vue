@@ -39,7 +39,8 @@
           icon="sym_r_refresh" @click="refresh" />
         <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
           icon="sym_r_database_upload" @click="importRow" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
+        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
+          @click="exportTable(columns, rows)" />
       </template>
 
       <template v-slot:header="props">
@@ -101,14 +102,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile } from 'quasar'
 import { useUserStore } from 'stores/user-store'
 import { retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, importRegions } from 'src/api/regions'
 import SubPage from './SubPage.vue'
+import { exportTable } from 'src/utils'
 import type { Region } from 'src/types'
 
 
-const $q = useQuasar()
 const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
@@ -221,45 +221,5 @@ async function onUpload(files: readonly File[]) {
   importVisible.value = false
   refresh()
   return res.data
-}
-
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
-}
-
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
-  }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
-
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
-
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
 }
 </script>

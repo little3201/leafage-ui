@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Group, TreeNode, GroupMembers } from 'src/types'
+import type { Group, GroupMembers } from 'src/types'
 
 const datas: Group[] = []
 
@@ -14,33 +14,6 @@ for (let i = 1; i < 28; i++) {
   datas.push(row)
 }
 
-const treeNodes: TreeNode[] = [
-  {
-    id: 1,
-    name: 'group_1',
-    children: [
-      {
-        id: 2,
-        name: 'group_2',
-        children: [
-        ]
-      },
-      {
-        id: 3,
-        name: 'group_3',
-        children: [
-          {
-            id: 4,
-            name: 'group_4',
-            children: [
-            ]
-          }
-        ]
-      }
-    ]
-  }
-]
-
 const members: GroupMembers[] = []
 
 for (let i = 1; i < 14; i++) {
@@ -53,9 +26,6 @@ for (let i = 1; i < 14; i++) {
 }
 
 export const groupsHandlers = [
-  http.get(`/api${SERVER_URL.GROUP}/tree`, () => {
-    return HttpResponse.json(treeNodes)
-  }),
   http.get(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
     const { id } = params
     if (id) {

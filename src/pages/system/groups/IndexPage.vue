@@ -1,6 +1,5 @@
 <template>
   <q-page padding>
-
     <q-dialog v-model="visible" persistent>
       <q-card style="min-width: 25em">
         <q-form @submit="onSubmit">
@@ -25,8 +24,8 @@
     </q-dialog>
 
     <q-table flat ref="tableRef" :title="$t('groups')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width col">
+      :columns="columns" row-key="id" :pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+      @request="onRequest" class="full-width col">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
@@ -39,7 +38,8 @@
           icon="sym_r_refresh" @click="refresh" />
         <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
           icon="sym_r_database_upload" @click="importRow" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
+        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
+          @click="exportTable(columns, rows)" />
       </template>
 
       <template v-slot:header="props">
@@ -54,21 +54,19 @@
       <template v-slot:body-cell-members="props">
         <q-td :props="props">
           <template v-if="props.row.members && props.row.members.length > 0">
-            <q-avatar v-for="(item, index) in visibleArray(props.row.members, 5)" :key="index" size="2em"
+            <q-avatar v-for="(item, index) in visibleArray(props.row.members, 5)" :key="index" size="3em"
               :style="{ left: `${index * -2}px`, border: '2px solid white' }">
-              <q-img :src="item as string" :alt="`avater${index}`" width="2em" height="2em" />
+              <q-img :src="`${cdn_url}/${item}`" :alt="`avater_${index}`" />
             </q-avatar>
-            <template v-if="props.row.members.length > 5">
-              <q-chip color="primary" text-color="white" class="q-mr-xs" size="sm">
-                + {{ props.row.members.length - 5 }}
-                <q-tooltip>
-                  <q-avatar v-for="(item, index) in props.row.members.slice(5)" :key="index" size="2em"
-                    :style="{ left: `${index * -2}px`, border: '2px solid white' }">
-                    <q-img :src="item" :alt="`avater${index}`" width="2em" height="2em" />
-                  </q-avatar>
-                </q-tooltip>
-              </q-chip>
-            </template>
+            <q-chip color="primary" text-color="white" class="q-mr-xs" size="sm" v-if="props.row.members.length > 5">
+              + {{ props.row.members.length - 5 }}
+              <q-tooltip>
+                <q-avatar v-for="(item, index) in props.row.members.slice(5)" :key="index" size="3em"
+                  :style="{ left: `${index * -2}px`, border: '2px solid white' }">
+                  <q-img :src="`${cdn_url}/${item}`" :alt="`avater_${index}`" width="3em" height="3em" />
+                </q-avatar>
+              </q-tooltip>
+            </q-chip>
           </template>
         </q-td>
       </template>
@@ -112,16 +110,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile } from 'quasar'
 import { useUserStore } from 'stores/user-store'
 import { retrieveGroups, fetchGroup, createGroup, modifyGroup, removeGroup, enableGroup, importGroups } from 'src/api/groups'
-import { visibleArray } from 'src/utils'
+import { visibleArray, exportTable } from 'src/utils'
 import type { Group } from 'src/types'
 
 
-const $q = useQuasar()
 const userStore = useUserStore()
-
+const cdn_url = process.env.CDN_URL
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
@@ -139,7 +135,7 @@ const form = ref<Group>({ ...initialValues })
 
 const pagination = ref({
   sortBy: 'id',
-  descending: true,
+  descending: false,
   page: 1,
   rowsPerPage: 7,
   rowsNumber: 0
@@ -234,45 +230,5 @@ async function onUpload(files: readonly File[]) {
   importVisible.value = false
   refresh()
   return res.data
-}
-
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
-}
-
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
-  }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
-
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
-
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
 }
 </script>
