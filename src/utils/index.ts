@@ -139,31 +139,20 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
   }, {} as { [key: string]: T[] })
 }
 
-export function getRandomString(length: number): string {
-  const a = new Uint8Array(Math.ceil(length / 2));
-  window.crypto.getRandomValues(a);
-  const str = Array.from(a, (dec) => ('0' + dec.toString(16)).slice(-2)).join('');
-  return str.slice(0, length);
+function base64UrlEncode(array: Uint8Array) {
+  return btoa(String.fromCharCode(...array))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
 
-export function generateVerifier(prefix?: string): string {
-  let verifier = prefix || ''
-  if (verifier.length < 43) {
-    verifier = verifier + getRandomString(43 - verifier.length)
-  }
-  return window.encodeURIComponent(verifier).slice(0, 128)
+export function generateVerifier(): string {
+  const array = new Uint8Array(32);
+  window.crypto.getRandomValues(array);
+  return base64UrlEncode(array);
 }
 
-export async function computeChallenge(codeVerifier: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(codeVerifier);
-
-  return window.crypto.subtle.digest('SHA-256', data).then(digest => {
-    return window.btoa(String.fromCharCode(...new Uint8Array(digest)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-  });
+export function generateCodeChallenge(codeVerifier: string) {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
+    .then(buffer => base64UrlEncode(new Uint8Array(buffer)))
 }
 
 export function dealFilters(filters?: object | string) {

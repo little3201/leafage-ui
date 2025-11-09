@@ -12,7 +12,6 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from 'stores/user-store'
-import { Cookies } from 'quasar'
 import { signIn, handleCallback } from 'src/api/authentication'
 
 
@@ -22,9 +21,6 @@ const userStore = useUserStore()
 onMounted(() => {
   handleCallback().then(res => {
     if (res) {
-      // 回调成功，删除code_verifier
-      localStorage.removeItem('code_verifier')
-      Cookies.set('access_token', res.data.access_token, { secure: true, sameSite: 'Lax', path: '/' })
       userStore.$patch({
         accessToken: res.data.access_token,
         idToken: res.data.id_token

@@ -90,11 +90,9 @@
 import { ref, onMounted } from 'vue'
 import { DotLottie } from '@lottiefiles/dotlottie-web'
 import { useQuasar } from 'quasar'
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
-import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
+import { signIn } from 'src/api/authentication'
 import logo from 'src/assets/logo.svg'
 
 
@@ -120,20 +118,7 @@ function changeRememberMe(value: boolean) {
 
 async function onSubmit() {
   loading.value = true
-  const state = getRandomString(16)
-  const codeVerifier = generateVerifier()
-  // 存储code_verifier
-  localStorage.setItem('code_verifier', codeVerifier)
-  computeChallenge(codeVerifier).then(codeChallenge => {
-    const params = new URLSearchParams({
-      state: state,
-      code_challenge: codeChallenge
-    })
-    api.get(`${SERVER_URL.AUTHORIZE}?${params}`).then(res => {
-      loading.value = false
-      window.location.replace(res.request.responseURL)
-    })
-  })
+  signIn()
 }
 
 function load() {

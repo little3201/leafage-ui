@@ -20,7 +20,7 @@
         </div>
         <div class="cursor-pointer">
           <q-avatar size="md">
-            <img :src="`${cdn_url}/${user.username}`" alt="avatar" />
+            <img :src="`${cdn_url}/${user.username}.jpg`" alt="avatar" />
           </q-avatar>
           <span class="q-ml-sm">{{ user.username }}</span>
           <q-menu>

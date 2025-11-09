@@ -54,16 +54,16 @@
       <template v-slot:body-cell-members="props">
         <q-td :props="props">
           <template v-if="props.row.members && props.row.members.length > 0">
-            <q-avatar v-for="(item, index) in visibleArray(props.row.members, 5)" :key="index" size="3em"
+            <q-avatar v-for="(item, index) in visibleArray(props.row.members, 5)" :key="index" size="32px"
               :style="{ left: `${index * -2}px`, border: '2px solid white' }">
-              <q-img :src="`${cdn_url}/${item}`" :alt="`avater_${index}`" />
+              <img :src="`${cdn_url}/${item}.jpg`" :alt="`avater_${index}`" />
             </q-avatar>
             <q-chip color="primary" text-color="white" class="q-mr-xs" size="sm" v-if="props.row.members.length > 5">
               + {{ props.row.members.length - 5 }}
               <q-tooltip>
                 <q-avatar v-for="(item, index) in props.row.members.slice(5)" :key="index" size="3em"
                   :style="{ left: `${index * -2}px`, border: '2px solid white' }">
-                  <q-img :src="`${cdn_url}/${item}`" :alt="`avater_${index}`" width="3em" height="3em" />
+                  <img :src="`${cdn_url}/${item}`" :alt="`avater_${index}`" />
                 </q-avatar>
               </q-tooltip>
             </q-chip>

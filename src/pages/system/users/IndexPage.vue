@@ -11,15 +11,14 @@
             <div class="row q-gutter-md">
               <q-input outlined dense v-model="form.username" :label="$t('username')" lazy-rules
                 :rules="[val => val && val.length > 0 || $t('inputText')]" />
-              <q-input outlined dense v-model="form.name" :label="$t('fullname')" lazy-rules
+              <q-input outlined dense v-model="form.name" :label="$t('name_')" lazy-rules
                 :rules="[val => val && val.length > 0 || $t('inputText')]" />
             </div>
 
             <q-input outlined dense v-model="form.email" :label="$t('email')" lazy-rules type="email"
               :rules="[val => val && val.length > 0 || $t('inputText')]" />
 
-            <q-input outlined dense v-model="form.accountExpiresAt" :label="$t('accountExpiresAt')" mask="date"
-              :rules="['date']">
+            <q-input outlined dense v-model="form.accountExpiresAt" :label="$t('accountExpiresAt')" mask="date">
               <template v-slot:append>
                 <q-icon name="sym_r_event" class="cursor-pointer">
                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -29,8 +28,7 @@
                 </q-icon>
               </template>
             </q-input>
-            <q-input outlined dense v-model="form.credentialsExpiresAt" :label="$t('credentialsExpiresAt')" mask="date"
-              :rules="['date']">
+            <q-input outlined dense v-model="form.credentialsExpiresAt" :label="$t('credentialsExpiresAt')" mask="date">
               <template v-slot:append>
                 <q-icon name="sym_r_event" class="cursor-pointer">
                   <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -81,8 +79,8 @@
       <template v-slot:body-cell-username="props">
         <q-td :props="props">
           <div class="row items-center">
-            <q-avatar size="2rem">
-              <q-img alt="avatar" :src="`${cdn_url}/${props.row.username}`" width="2rem" height="2rem" />
+            <q-avatar size="32px">
+              <img alt="avatar" :src="`${cdn_url}/${props.row.username}.jpg`" />
             </q-avatar>
             <div class="column q-ml-sm">
               <span class="text-subtitle">
