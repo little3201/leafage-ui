@@ -14,7 +14,7 @@ export default defineConfigWithVueTs(
      *
      * ESLint requires "ignores" key to be the only one in this object
      */
-    files: ['**/*.{js,mjs,cjs,ts,vue}'],
+    files: ['**/*.{js,mjs,cjs,ts,mts,vue}'],
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
 
@@ -42,6 +42,7 @@ export default defineConfigWithVueTs(
 
       globals: {
         ...globals.browser,
+        ...globals.node,
         process: 'readonly', // process.env.*
       }
     },

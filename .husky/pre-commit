@@ -1,0 +1,2 @@
+pnpm test
+pnpm run lint:lint-staged
