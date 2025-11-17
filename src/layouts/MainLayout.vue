@@ -19,9 +19,10 @@ const user = {
 }
 
 async function logout() {
-  signOut().then(() => {
-    userStore.$reset()
-    push('/login')
+  signOut().then(res => {
+    if (res && res.status === 200) {
+      userStore.$reset()
+    }
   })
 }
 </script>
@@ -56,7 +57,7 @@ async function logout() {
                   {{ $t('profile') }}
                 </ElDropdownItem>
               </RouterLink>
-              <ElDropdownItem divided @click="logout()">
+              <ElDropdownItem divided @click="logout">
                 <Icon icon="material-symbols:logout-rounded" width="18" height="18" class="mr-2" />
                 {{ $t('signout') }}
               </ElDropdownItem>

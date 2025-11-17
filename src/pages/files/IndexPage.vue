@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import { dayjs } from 'element-plus'
-import type { UploadInstance, UploadRequestOptions } from 'element-plus'
+import type { TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { retrieveFiles, fetchFile, uploadFile, downloadFile } from 'src/api/file-records'
 import type { Pagination, FileRecord } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -10,10 +10,10 @@ import { formatFileSize, download, hasAction } from 'src/utils'
 
 const loading = ref<boolean>(false)
 const uploadLoading = ref<boolean>(false)
-
 const datas = ref<Array<FileRecord>>([])
 const total = ref<number>(0)
 
+const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
   page: 1,
   size: 10
@@ -47,13 +47,6 @@ const filters = ref({
 function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
-}
-
-// 排序变化处理
-function handleSortChange(data: { prop: string, order: string }) {
-  pagination.sortBy = data.prop
-  pagination.descending = data.order === 'descending'
   load()
 }
 
@@ -257,7 +250,7 @@ function confirmEvent(id: number) {
         </ElRow>
 
         <div v-show="view.showTable">
-          <ElTable v-loading="loading" :data="datas" row-key="id" table-layout="auto" @sort-change="handleSortChange">
+          <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
             <ElTableColumn type="index" :label="$t('no')" width="55" />
             <ElTableColumn prop="name" :label="$t('name')" sortable>
               <template #default="scope">
@@ -285,8 +278,7 @@ function confirmEvent(id: number) {
             </ElTableColumn>
             <ElTableColumn :label="$t('actions')">
               <template #default="scope">
-                <ElButton v-if="scope.row.type === 'file' && hasAction($route.name, 'download')" title="download"
-                  size="small" type="success" link
+                <ElButton v-if="hasAction($route.name, 'download')" title="download" size="small" type="success" link
                   @click="downloadRow(scope.row.id, scope.row.name, scope.row.mimeType)">
                   <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('download') }}
                 </ElButton>
@@ -301,7 +293,7 @@ function confirmEvent(id: number) {
               </template>
             </ElTableColumn>
           </ElTable>
-          <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+          <ElPagination layout="->, total, prev, pager, next, sizes" @change="pageChange" :total="total" />
         </div>
 
         <div v-show="view.showGrid" class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">

@@ -2,7 +2,6 @@
 import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { useUserStore } from 'stores/user-store'
 import SubPage from './SubPage.vue'
 import {
   retrieveDictionaries, fetchDictionary, modifyDictionary, enableDictionary, importDictionaries
@@ -13,7 +12,6 @@ import { hasAction, exportToCSV } from 'src/utils'
 
 
 const { t } = useI18n()
-const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
 const datas = ref<Array<Dictionary>>([])
@@ -245,7 +243,11 @@ function onUpload(options: UploadRequestOptions) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+      <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+        <template #default>
+          {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+        </template>
+      </ElPagination>
     </ElCard>
   </ElSpace>
 
@@ -285,8 +287,7 @@ function onUpload(options: UploadRequestOptions) {
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-      :headers="{ Authorization: `Bearer ${userStore.accessToken}` }">
+      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>

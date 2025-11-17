@@ -91,7 +91,5 @@ export const configSchemaFields = (id: number, rows: Array<Field>) => {
  * @returns
  */
 export const importSchemas = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.SCHEMA}/import`, formData)
+  return api.postForm(`${SERVER_URL.SCHEMA}/import`, {file: file})
 }

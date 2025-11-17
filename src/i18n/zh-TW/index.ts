@@ -151,10 +151,11 @@ export default {
   inputText: '請輸入{field}',
   selectText: '請選擇{field}',
   lengthRange: '長度在 {min} 到 {max} 個字元',
+  selectedTotal: '已選擇 {total} 條',
   removeConfirm: '是否確定要刪除這條數據？',
 
   successful: '請求成功。',
-  alreadyExists: '{field}已存在',
+  alreadyExists: '數據已存在',
   forbidden: '您沒有訪問此資源的權限，請聯繫管理員。',
   notFound: '未找到您請求的資源。請檢查URL是否正確，或返回首頁。',
   serverError: '系統內部錯誤。我們正在努力修復，請稍後再試！',

@@ -238,7 +238,7 @@ function confirmEvent(id: number) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto" highlight-current-row>
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="expand" width="40">
           <template #default="props">
@@ -272,7 +272,11 @@ function confirmEvent(id: number) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+      <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+        <template #default>
+          {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+        </template>
+      </ElPagination>
     </ElCard>
   </ElSpace>
 

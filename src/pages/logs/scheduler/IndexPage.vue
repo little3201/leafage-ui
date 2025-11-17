@@ -8,6 +8,7 @@ import { Icon } from '@iconify/vue'
 import { formatDuration, hasAction, exportToCSV } from 'src/utils'
 import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
 
+
 const loading = ref<boolean>(false)
 const datas = ref<Array<SchedulerLog>>([])
 const total = ref<number>(0)
@@ -214,7 +215,11 @@ function confirmEvent(id: number) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+      <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+        <template #default>
+          {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+        </template>
+      </ElPagination>
     </ElCard>
   </ElSpace>
 

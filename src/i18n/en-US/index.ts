@@ -151,10 +151,11 @@ export default {
   inputText: 'Please input {field}',
   selectText: 'Please select {field}',
   lengthRange: 'The length must between {min} and {max}',
+  selectedTotal: '{total} items selected',
   removeConfirm: 'Are you sure to delete this?',
 
   successful: 'The request was successful.',
-  alreadyExists: '{field} already exists',
+  alreadyExists: 'The data already exists',
   forbidden: 'You don\'t have permission to access this resource, please contact the administrator.',
   notFound: 'The resource not be found. Please check if the URL is correct or return to the homepage.',
   serverError: 'Internal server error. We are working hard to fix it. Please try again later!',

@@ -320,7 +320,11 @@ function lockRow(id: number) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+      <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+        <template #default>
+          {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+        </template>
+      </ElPagination>
     </ElCard>
   </ElSpace>
 

@@ -213,7 +213,7 @@ function confirmEvent(id: number) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+      <ElPagination layout="->, total, prev, pager, next, sizes" @change="pageChange" :total="total" />
     </ElCard>
   </ElSpace>
 

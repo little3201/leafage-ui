@@ -67,7 +67,5 @@ export const enablePrivilege = (id: number) => {
  * @returns
  */
 export const importPrivileges = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.PRIVILEGE}/import`, formData)
+  return api.postForm(`${SERVER_URL.PRIVILEGE}/import`, {file: file})
 }

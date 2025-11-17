@@ -39,11 +39,6 @@ api.interceptors.response.use(
     const uniqueKey = generateUniqueKey(response.config)
     abortControllerMap.delete(uniqueKey)
 
-    const { config, status } = response
-    // get 请求不提示成功信息
-    if (config.method !== 'get' && status >= 200 && status < 300) {
-      ElMessage.success({ message: t('successful'), grouping: true })
-    }
     return response
   },
   (error: AxiosError) => {
@@ -59,6 +54,9 @@ api.interceptors.response.use(
           break
         case 404:
           ElMessage.error({ message: t('notFound'), grouping: true })
+          break
+        case 409:
+          ElMessage.error({ message: t('alreadyExists'), grouping: true })
           break
         case 500:
           ElMessage.error({ message: t('serverError'), grouping: true })

@@ -158,7 +158,5 @@ export const removeGroupPrivileges = (id: number, privilegeId: number, action?: 
  * @returns
  */
 export const importGroups = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.GROUP}/import`, formData)
+  return api.postForm(`${SERVER_URL.GROUP}/import`, {file: file})
 }

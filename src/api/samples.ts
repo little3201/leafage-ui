@@ -68,7 +68,5 @@ export const removeSample = (id: number) => {
  * @returns
  */
 export const importSamples = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.MASTER_PLATE}/import`, formData)
+  return api.postForm(`${SERVER_URL.MASTER_PLATE}/import`, {file: file})
 }

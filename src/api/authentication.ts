@@ -2,15 +2,14 @@ import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || ''
+
 export function signIn() {
-  window.location.href = import.meta.env.VITE_BACKEND_URL
+  window.location.href = BACKEND_URL
 }
 
 export function authorize() {
-  if (window.location.pathname === '/oauth2/authorization/messaging-client-authorization-code') {
-    return
-  }
-  window.location.href = import.meta.env.VITE_BACKEND_URL + '/oauth2/authorization/messaging-client-authorization-code'
+  window.location.href = BACKEND_URL + '/oauth2/authorization/web-client-authorization-code'
 }
 
 export async function getUserInfo() {
@@ -18,7 +17,5 @@ export async function getUserInfo() {
 }
 
 export async function signOut() {
-  api.post(SERVER_URL.LOGOUT).then(res => {
-    window.location.replace(res.request.responseURL)
-  })
+  return api.post(SERVER_URL.LOGOUT, null)
 }

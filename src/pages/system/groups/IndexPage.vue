@@ -502,7 +502,11 @@ function tabChange(tab: string) {
             </template>
           </ElTableColumn>
         </ElTable>
-        <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+        <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+          <template #default>
+            {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+          </template>
+        </ElPagination>
       </ElCard>
     </ElSpace>
   </ElSpace>
@@ -581,8 +585,7 @@ function tabChange(tab: string) {
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-      :headers="{ Authorization: `Bearer ${userStore.accessToken}` }">
+      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>

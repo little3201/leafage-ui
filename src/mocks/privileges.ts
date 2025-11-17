@@ -473,7 +473,6 @@ export const privilegesHandlers = [
     return HttpResponse.json(data)
   }),
   http.post(`/api${SERVER_URL.PRIVILEGE}/import`, async ({ request }) => {
-    // Read the intercepted request body as FormData.
     const data = await request.formData()
     const file = data.get('file')
 

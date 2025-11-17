@@ -85,7 +85,5 @@ export const removeDictionary = (id: number) => {
  * @returns
  */
 export const importDictionaries = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.DICTIONARY}/import`, formData)
+  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, {file: file})
 }

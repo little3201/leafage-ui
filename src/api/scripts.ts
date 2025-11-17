@@ -45,7 +45,5 @@ export const modifyScript = (id: number, row: Script) => {
  * @returns
  */
 export const importScripts = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.SCRIPT}/import`, formData)
+  return api.postForm(`${SERVER_URL.SCRIPT}/import`, {file: file})
 }

@@ -152,10 +152,11 @@ export default {
   inputText: '请输入{field}',
   selectText: '请选择{field}',
   lengthRange: '长度在 {min} 到 {max} 个字符',
+  selectedTotal: '已选择 {total} 条',
   removeConfirm: '是否确定要删除这条数据？',
 
   successful: '请求成功。',
-  alreadyExists: '{field}已存在',
+  alreadyExists: '数据已存在',
   forbidden: '您没有访问此资源的权限，请联系管理员。',
   notFound: '未找到您请求的资源。请检查URL是否正确，或返回首页。',
   serverError: '系统内部错误。我们正在努力修复，请稍后再试！',

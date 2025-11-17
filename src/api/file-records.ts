@@ -31,9 +31,7 @@ export const fetchFile = (id: number) => {
  * @returns Uploaded row
  */
 export const uploadFile = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.FILE}`, formData)
+  return api.postForm(`${SERVER_URL.FILE}`, {file: file})
 }
 
 /**

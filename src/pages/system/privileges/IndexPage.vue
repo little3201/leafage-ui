@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
-import { useUserStore } from 'stores/user-store'
 import {
   retrievePrivileges, retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege, importPrivileges
 } from 'src/api/privileges'
@@ -11,8 +10,6 @@ import { actions } from 'src/constants'
 import type { Pagination, Privilege, Dictionary } from 'src/types'
 import { Icon } from '@iconify/vue'
 
-
-const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
 const datas = ref<Array<Privilege>>([])
@@ -257,8 +254,7 @@ function onCheckChange(item: string) {
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" lazy :load="load" row-key="id" stripe
-        table-layout="auto">
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" lazy :load="load" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('no')" width="55" />
         <ElTableColumn prop="name" :label="$t('name')" class-name="name-cell" sortable>
@@ -306,7 +302,11 @@ function onCheckChange(item: string) {
           </template>
         </ElTableColumn>
       </ElTable>
-      <ElPagination layout="prev, pager, next, sizes, jumper, ->, total" @change="pageChange" :total="total" />
+      <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+        <template #default>
+          {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+        </template>
+      </ElPagination>
     </ElCard>
   </ElSpace>
 
@@ -378,8 +378,7 @@ function onCheckChange(item: string) {
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload"
-      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-      :headers="{ Authorization: `Bearer ${userStore.accessToken}` }">
+      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
