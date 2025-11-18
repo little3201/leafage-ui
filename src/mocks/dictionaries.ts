@@ -415,6 +415,6 @@ export const dictionariesHandlers = [
     datas.pop()
 
     // Respond with a "200 OK" response and the deleted Dictionary.
-    return HttpResponse.json(deletedData)
+    return HttpResponse.json()
   })
 ]

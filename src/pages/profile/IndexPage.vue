@@ -38,7 +38,7 @@ onMounted(() => {
   </ElRow>
 
   <ElRow :gutter="16">
-    <ElCol :span="5" class="hidden-sm-and-down">
+    <ElCol :span="5">
       <ElCard shadow="never">
         <ElMenu router :default-active="currentRoute.fullPath">
           <ElMenuItem index="/profile">

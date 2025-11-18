@@ -527,6 +527,6 @@ export const privilegesHandlers = [
     treeNodes.pop()
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData)
+    return HttpResponse.json()
   })
 ]

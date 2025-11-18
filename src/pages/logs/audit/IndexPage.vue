@@ -217,7 +217,7 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" show-close :title="$t('details')">
+  <ElDialog v-model="visible" align-center show-close :title="$t('details')">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('operation')">
         <ElBadge is-dot :type="actions[row.operation.toLowerCase()]" class="mr-1" />{{ row.operation }}

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from 'stores/user-store'
 import ThemeToogle from 'components/ThemeToogle.vue'
@@ -15,8 +16,11 @@ const userStore = useUserStore()
 const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const user = {
   username: userStore.username,
+  name: userStore.name,
   privileges: userStore.privileges
 }
+
+const isCollapse = ref(false)
 
 async function logout() {
   signOut().then(res => {
@@ -33,23 +37,31 @@ async function logout() {
       <div class="inline-flex items-center">
         <ElImage :src="logo" alt="avatar" class="w-8 h-8" />
         <span class="ml-3 text-20px font-bold text-white">Project Management</span>
+        <ElButton link class="ml-8" @click="isCollapse = !isCollapse">
+          <Icon icon="material-symbols:menu" class="text-white" width="22" height="22" />
+        </ElButton>
       </div>
 
-      <div class="inline-flex justify-end items-center space-x-2">
-        <!-- theme -->
+
+      <div class="inline-flex justify-end items-center space-x-4">
         <ThemeToogle />
-        <!-- language -->
         <LanguageSelector />
-        <!-- faq -->
         <ElButton title="faq" type="default" link @click="push('/faq')">
           <Icon icon="material-symbols:help-outline-rounded" class="text-white" width="22" height="22" />
         </ElButton>
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
-            <ElAvatar alt="avatar" :size="28" :src="`${cdn_url}/${user.username}`" />
+            <ElAvatar alt="avatar" :size="32" :src="`${cdn_url}/${user.username}`" />
             <span class="ml-2 text-white">{{ user.username }}</span>
           </div>
           <template #dropdown>
+            <div class="flex items-center space-x-2 p-4">
+              <ElAvatar alt="avatar" :size="32" :src="`${cdn_url}/${user.username}`" />
+              <div class="inline-flex flex-col">
+                <span>{{ user.username }}</span>
+                <span class="text-xs text-(--el-text-color-secondary)">{{ user.name }}</span>
+              </div>
+            </div>
             <ElDropdownMenu>
               <RouterLink to="/profile" class="no-underline">
                 <ElDropdownItem>
@@ -70,7 +82,7 @@ async function logout() {
 
   <ElAside class="fixed top-[50px] left-0" width="200px">
     <ElScrollbar>
-      <ElMenu router unique-opened :default-active="currentRoute.fullPath">
+      <ElMenu router unique-opened class="el-menu-collapse" :default-active="currentRoute.fullPath">
         <ElMenuItem :index="'/'">
           <Icon icon="material-symbols:home-outline-rounded" width="18" height="18" class="mr-2" />{{ $t('home') }}
         </ElMenuItem>

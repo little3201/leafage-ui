@@ -11,8 +11,10 @@ for (let i = 1; i < 28; i++) {
     id: i,
     name: 'DailyBackup',
     startTime: new Date(),
+    executedTimes: i % 3 > 0 ? undefined : Math.floor(Math.random() * 1000),
     nextExecuteTime: new Date(),
-    status: 0
+    status: i % 2 > 0 ? 'PENDING' : (i % 3 > 0 ? 'RUNNING' : i % 3 > 1 ? 'SUCCESS' : (i % 3 > 2 ? 'FAILED' : 'CANCELED')),
+    record: i % 3 > 0 ? '' : '执行完成，无错误',
   }
   datas.push(row)
 }
@@ -60,6 +62,6 @@ export const schedulerLogsHandlers = [
     datas.pop()
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData)
+    return HttpResponse.json()
   })
 ]

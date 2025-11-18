@@ -223,16 +223,18 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" show-close :title="$t('details')">
+  <ElDialog v-model="visible" align-center show-close :title="$t('details')">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('startTime')">
         {{ dayjs(row.startTime).format('YYYY-MM-DD HH:mm') }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('status')">
-        <ElTag v-if="row.status === 0" type="primary" round>{{ $t('processing') }}</ElTag>
-        <ElTag v-else-if="row.status === 1" type="success" round>{{ $t('done') }}</ElTag>
-        <ElTag v-else type="danger" round>{{ $t('failure') }}</ElTag>
+        <ElTag :type="shceduleStatus[row.status || '']" round>
+          <Icon :icon="`material-symbols:${shceduleStatusIcon[row.status || '']}`"
+            :class="[row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="16" height="16" />
+          {{ row.status }}
+        </ElTag>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('executedTimes')">
         {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}

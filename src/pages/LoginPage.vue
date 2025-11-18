@@ -3,6 +3,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElFormItem, type FormInstance, type FormRules } from 'element-plus'
 import { Icon } from '@iconify/vue'
+import { useRouter } from 'vue-router'
 import { DotLottie } from '@lottiefiles/dotlottie-web'
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
@@ -12,6 +13,7 @@ import logo from 'src/assets/logo.svg'
 
 
 const { t } = useI18n()
+const { replace } = useRouter()
 const lottieRef = ref<HTMLCanvasElement | null>(null)
 
 const loading = ref<boolean>(false)
@@ -45,6 +47,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
       loading.value = true
 
       api.get(SERVER_URL.LOGIN).finally(() => {
+        replace('/')
         loading.value = false
       })
     }
@@ -93,24 +96,22 @@ function load() {
       <Transition appear name="el-zoom-in-center">
         <ElCard class="w-full lg:w-1/2 xl:w-2/3" style="height: 70vh;border-radius: 1.5rem;"
           body-class="flex items-center !p-0 h-full">
-          <div class="hidden-lg-and-down flex flex-col items-center h-full w-1/2  ">
-            <div class="inline-flex grow items-center justify-center h-full">
-              <div class="inline-flex flex-col justify-center items-center" style="margin-top: -40px">
-                <canvas ref="lottieRef" style="height: 450px; width: 450px" />
-                <div class="-mt-8">
-                  <p class="font-bold text-xl text-left">
-                    {{ $t('welcome') }}
-                  </p>
-                  <p class="text-subtitle1">
-                    {{ $t('subtitle') }}
-                  </p>
-                </div>
+          <div class="hidden xl:flex flex-col items-center h-full w-1/2  ">
+            <div class="inline-flex grow flex-col items-center justify-center w-full">
+              <canvas ref="lottieRef" style="height: 450px; width: 450px" />
+              <div>
+                <p class="font-bold text-xl text-left">
+                  {{ $t('welcome') }}
+                </p>
+                <p class="text-subtitle1">
+                  {{ $t('subtitle') }}
+                </p>
               </div>
             </div>
           </div>
           <div
             class="flex flex-row items-center w-full xl:w-1/2 h-full  bg-(--el-color-primary-light-9) dark:bg-transparent">
-            <div class="flex flex-col w-full h-full space-y-2xl justify-center items-center">
+            <div class="inline-flex flex-col w-full h-full space-y-2xl justify-center items-center">
               <div class="text-center">
                 <ElImage :src="logo" alt="logo" class="w-24 h-24" />
               </div>
@@ -118,7 +119,7 @@ function load() {
                 {{ $t('signinTo') }}
               </div>
               <ElForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit(formRef)"
-                class="bg-transparent w-full">
+                class="bg-transparent max-w-xl w-full my-6">
                 <ElRow class="px-12 my-3">
                   <ElCol>
                     <ElFormItem prop="username">

@@ -182,7 +182,7 @@ export interface SchedulerLog extends AudtiMetadata {
   startTime?: Date
   executedTimes?: number
   nextExecuteTime?: Date
-  status?: number
+  status?: string
   record?: string
 }
 
@@ -244,4 +244,12 @@ export interface Connection extends AudtiMetadata {
   password?: string
   enabled?: boolean
   tables?: string[]
+}
+
+export interface Schedule extends AudtiMetadata {
+  title: string
+  location?: string
+  startDate: string
+  endDate: string
+  type?: string
 }

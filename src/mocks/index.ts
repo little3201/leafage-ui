@@ -14,6 +14,7 @@ import { schemasHandlers } from './schemas'
 import { scriptsHandlers } from './scripts'
 import { samplesHandlers } from './samples'
 import { connectionsHandlers } from './connections'
+import { calendarEventHandlers} from './calendar-events'
 
 export const handlers = [
   ...authenticationHandlers,
@@ -31,5 +32,6 @@ export const handlers = [
   ...schemasHandlers,
   ...scriptsHandlers,
   ...samplesHandlers,
-  ...connectionsHandlers
+  ...connectionsHandlers,
+  ...calendarEventHandlers
 ]
