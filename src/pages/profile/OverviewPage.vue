@@ -50,8 +50,8 @@ onMounted(() => {
         <ElRow>
           <ElCol :span="20">
             <ElFormItem :label="$t('username')" prop="username">
-              <ElInput v-model="form.username" :placeholder="$t('inputText', { field: $t('username') })" :maxLength="50"
-                disabled />
+              <ElInput v-model="form.username" :placeholder="$t('placeholder.inputText', { field: $t('username') })"
+                :maxLength="50" disabled />
               <p class="my-0 text-xs text-gray-500">Your name may appear around GitHub where you contribute or are
                 mentioned.
               </p>
@@ -61,8 +61,8 @@ onMounted(() => {
         <ElRow>
           <ElCol :span="20">
             <ElFormItem :label="$t('name_')" prop="name_">
-              <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name_') })" :maxLength="50"
-                :disabled="!state.name" />
+              <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('name_') })"
+                :maxLength="50" :disabled="!state.name" />
               <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
                 you've
                 missed.
@@ -71,14 +71,15 @@ onMounted(() => {
           </ElCol>
           <ElCol :span="4">
             <ElButton link type="primary" class="mt-2 ml-4" @click="state.name = !state.name">
-              {{ state.name ? $t('save') : $t('modify') }}</ElButton>
+              {{ state.name ? $t('save') : $t('action.modify') }}</ElButton>
           </ElCol>
         </ElRow>
         <ElRow>
           <ElCol :span="20">
             <ElFormItem :label="$t('email')" prop="email">
-              <ElInput type="email" v-model="form.email" :placeholder="$t('inputText', { field: $t('email') })"
-                :maxLength="50" :disabled="!state.email" />
+              <ElInput type="email" v-model="form.email"
+                :placeholder="$t('placeholder.inputText', { field: $t('email') })" :maxLength="50"
+                :disabled="!state.email" />
               <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
                 you've
                 missed.
@@ -87,7 +88,7 @@ onMounted(() => {
           </ElCol>
           <ElCol :span="4">
             <ElButton link type="primary" class="mt-2 ml-4" @click="state.email = !state.email">
-              {{ state.email ? $t('save') : $t('modify') }}
+              {{ state.email ? $t('save') : $t('action.modify') }}
             </ElButton>
           </ElCol>
         </ElRow>

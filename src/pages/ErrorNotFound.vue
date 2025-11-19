@@ -12,7 +12,7 @@ const { push } = useRouter()
       <div class="text-center">
         <div class="text-2xl text-(--el-color-info)">Oops. Nothing here...</div>
         <div class="mt-8">
-          <ElButton size="large" type="primary" @click="push('/')">{{ $t('goHome') }}</ElButton>
+          <ElButton size="large" type="primary" @click="push('/')">{{ $t('action.goHome') }}</ElButton>
         </div>
       </div>
     </ElMain>

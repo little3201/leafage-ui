@@ -212,15 +212,15 @@ function confirmEvent(id: number) {
     <ElSpace size="large" fill>
       <ElCard shadow="never">
         <ElForm inline :model="filters">
-          <ElFormItem :label="$t('name')" prop="name">
-            <ElInput v-model="filters.name" :placeholder="$t('inputText', { field: $t('name') })" />
+          <ElFormItem :label="$t('label.name')" prop="name">
+            <ElInput v-model="filters.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
           </ElFormItem>
           <ElFormItem>
             <ElButton title="search" type="primary" @click="load">
-              <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('search') }}
+              <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
             </ElButton>
             <ElButton title="reset" @click="reset">
-              <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('reset') }}
+              <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
             </ElButton>
           </ElFormItem>
         </ElForm>
@@ -235,7 +235,7 @@ function confirmEvent(id: number) {
           </ElCol>
 
           <ElCol :span="8" class="text-right">
-            <ElTooltip effect="dark" :content="$t('refresh')" placement="top">
+            <ElTooltip effect="dark" :content="$t('action.refresh')" placement="top">
               <ElButton title="refresh" plain circle @click="load">
                 <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
               </ElButton>
@@ -251,8 +251,8 @@ function confirmEvent(id: number) {
 
         <div v-show="view.showTable">
           <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
-            <ElTableColumn type="index" :label="$t('no')" width="55" />
-            <ElTableColumn prop="name" :label="$t('name')" sortable>
+            <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+            <ElTableColumn prop="name" :label="$t('label.name')" sortable>
               <template #default="scope">
                 <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
                   <Icon v-if="scope.row.type === 'directory'" icon="flat-color-icons:folder" width="20" height="20" />
@@ -276,16 +276,17 @@ function confirmEvent(id: number) {
                 {{ dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('actions')">
+            <ElTableColumn :label="$t('label.actions')">
               <template #default="scope">
                 <ElButton v-if="hasAction($route.name, 'download')" title="download" size="small" type="success" link
                   @click="downloadRow(scope.row.id, scope.row.name, scope.row.mimeType)">
                   <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('download') }}
                 </ElButton>
-                <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+                <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
                   <template #reference>
                     <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
-                      <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove')
+                      <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{
+                        $t('action.remove')
                       }}
                     </ElButton>
                   </template>
@@ -317,7 +318,7 @@ function confirmEvent(id: number) {
   </ElSpace>
 
   <!-- details -->
-  <ElDialog v-model="visible" align-center :title="$t('details')" show-close width="25%">
+  <ElDialog v-model="visible" align-center show-close width="25%">
     <Icon v-if="row.type === 'directory'" icon="flat-color-icons:folder" width="80" height="80" />
     <template v-else-if="row.mimeType">
       <ElImage v-if="['text/jpg', 'jpeg', 'svg'].includes(row.mimeType)" :src="row.path"
@@ -325,7 +326,7 @@ function confirmEvent(id: number) {
       <Icon v-else icon="flat-color-icons:document" width="80" height="80" />
     </template>
     <ElDescriptions v-loading="loading" :column="1" class="mt-4">
-      <ElDescriptionsItem :label="$t('name')">{{ row.name }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('type')">{{ row.type }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('lastModifiedDate')">
@@ -335,26 +336,26 @@ function confirmEvent(id: number) {
   </ElDialog>
 
   <!-- upload -->
-  <ElDialog v-model="uploadVisible" :title="$t('upload')" width="35%">
+  <ElDialog v-model="uploadVisible" width="35%">
     <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" :on-success="load">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
       <div class="el-upload__text">
-        {{ $t('drop2Here') }}<em>{{ $t('click2Upload') }}</em>
+        {{ $t('tips.drop2Here') }}<em>{{ $t('tips.click2Upload') }}</em>
       </div>
       <template #tip>
         <div class="el-upload__tip">
-          {{ $t('fileSizeLimit', { size: '50MB' }) }}
+          {{ $t('tips.fileSizeLimit', { size: '50MB' }) }}
         </div>
       </template>
     </ElUpload>
     <template #footer>
       <ElButton title="cancel" @click="uploadVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="uploadLoading" @click="onSubmit(uploadRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>

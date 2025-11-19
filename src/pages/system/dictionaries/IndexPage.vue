@@ -44,7 +44,7 @@ const form = ref<Dictionary>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('name') }), trigger: 'blur' }
   ]
 })
 
@@ -183,15 +183,15 @@ function onUpload(options: UploadRequestOptions) {
   <ElSpace size="large" fill>
     <ElCard shadow="never">
       <ElForm inline :model="filters" @submit.prevent>
-        <ElFormItem :label="$t('name')" prop="name">
-          <ElInput v-model="filters.name" :placeholder="$t('inputText', { field: $t('name') })" />
+        <ElFormItem :label="$t('label.name')" prop="name">
+          <ElInput v-model="filters.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load">
-            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('search') }}
+            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset">
-            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('reset') }}
+            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -201,16 +201,17 @@ function onUpload(options: UploadRequestOptions) {
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
           <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
-            <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{ $t('import') }}
+            <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{
+              $t('action.import') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
+            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('action.export') }}
           </ElButton>
         </ElCol>
 
         <ElCol :span="8" class="text-right">
-          <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+          <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="view" plain circle @click="load">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
@@ -225,63 +226,64 @@ function onUpload(options: UploadRequestOptions) {
             <SubPage :superior-id="props.row.id" :title="props.row.name" />
           </template>
         </ElTableColumn>
-        <ElTableColumn type="index" :label="$t('no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('name')" sortable />
-        <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>
+        <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+        <ElTableColumn prop="name" :label="$t('label.name')" sortable />
+        <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
           <template #default="scope">
             <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
               style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip prop="description" :label="$t('description')" />
-        <ElTableColumn :label="$t('actions')">
+        <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
+        <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
             <ElButton v-if="hasAction($route.name, 'modify')" title="modify" size="small" type="primary" link
               @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('modify') }}
+              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
           </template>
         </ElTableColumn>
       </ElTable>
       <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
         <template #default>
-          {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+          {{ $t('message.selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
         </template>
       </ElPagination>
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center :title="$t('dictionaries')" width="25%">
+  <!-- form -->
+  <ElDialog v-model="visible" align-center width="25%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="24">
-          <ElFormItem :label="$t('name')" prop="name">
-            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
+          <ElFormItem :label="$t('label.name')" prop="name">
+            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol :span="24">
-          <ElFormItem :label="$t('description')" prop="description">
+          <ElFormItem :label="$t('label.description')" prop="description">
             <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('inputText', { field: $t('description') })" />
+              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('import')" width="36%">
-    <p>{{ $t('samples') + ' ' + $t('download') }}：
+  <ElDialog v-model="importVisible" align-center width="36%">
+    <p>{{ $t('action.download') }}：
       <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx
       </a>
@@ -292,21 +294,21 @@ function onUpload(options: UploadRequestOptions) {
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
       <div class="el-upload__text">
-        {{ $t('drop2Here') }}<em>{{ $t('click2Upload') }}</em>
+        {{ $t('tips.drop2Here') }}<em>{{ $t('tips.click2Upload') }}</em>
       </div>
       <template #tip>
         <div class="el-upload__tip">
-          {{ $t('fileSizeLimit', { size: '50MB' }) }}
+          {{ $t('tips.fileSizeLimit', { size: '50MB' }) }}
         </div>
       </template>
     </ElUpload>
     <p class="text-red">xxxx</p>
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>

@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import Cookies from 'universal-cookie'
-import { localeOptions } from 'src/i18n'
 import { Icon } from '@iconify/vue'
+import { langOptions } from 'boot/i18n'
 
 
 const { locale } = useI18n({ useScope: 'global' })
 const cookies = new Cookies(null, { path: '/' })
 locale.value = cookies.get('lang') || 'zh-CN'
 
-function changeLocale(lang: string) {
+
+function changeLang(lang: string) {
   locale.value = lang
   // 设置lang
   cookies.set('lang', lang, { secure: true, sameSite: 'lax' })
@@ -23,13 +24,13 @@ function changeLocale(lang: string) {
 </script>
 
 <template>
-  <ElDropdown trigger="click" @command="changeLocale">
+  <ElDropdown trigger="click" @command="changeLang">
     <ElButton title="language" type="default" link>
       <Icon icon="material-symbols:translate" class="text-white" width="22" height="22" />
     </ElButton>
     <template #dropdown>
       <ElDropdownMenu>
-        <ElDropdownItem v-for="item in localeOptions" :key="item.value" :command="item.value">
+        <ElDropdownItem v-for="item in langOptions" :key="item.value" :command="item.value">
           {{ item.label }}
         </ElDropdownItem>
       </ElDropdownMenu>

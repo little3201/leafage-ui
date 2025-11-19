@@ -33,7 +33,7 @@ const form = ref<Dictionary>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('inputText', { field: t('name') }), trigger: 'blur' },
+    { required: true, message: t('placeholder.inputText', { field: t('name') }), trigger: 'blur' },
   ]
 })
 
@@ -134,9 +134,9 @@ function confirmEvent(id: number) {
       </ElCol>
       <ElCol :span="12" class="text-right">
         <ElButton v-if="hasAction($route.name, 'create')" type="primary" @click="saveRow()">
-          <Icon icon="material-symbols:add-rounded" width="18" height="18" />{{ $t('create') }}
+          <Icon icon="material-symbols:add-rounded" width="18" height="18" />{{ $t('action.create') }}
         </ElButton>
-        <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+        <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
           <ElButton type="primary" plain circle @click="load">
             <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
           </ElButton>
@@ -151,25 +151,25 @@ function confirmEvent(id: number) {
           <SubPage :superior-id="props.row.id" :title="props.row.name" />
         </template>
       </ElTableColumn>
-      <ElTableColumn type="index" :label="$t('no')" width="55" />
-      <ElTableColumn prop="name" :label="$t('name')" sortable />
-      <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>
+      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn prop="name" :label="$t('label.name')" sortable />
+      <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
         <template #default="scope">
           <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
             style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="description" :label="$t('description')" />
-      <ElTableColumn :label="$t('actions')">
+      <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
+      <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" size="small" type="primary" link
             @click="saveRow(scope.row.id)">
-            <Icon icon="material-symbols:edit-outline-rounded" width="18" height="18" />{{ $t('modify') }}
+            <Icon icon="material-symbols:edit-outline-rounded" width="18" height="18" />{{ $t('action.modify') }}
           </ElButton>
-          <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+          <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
             <template #reference>
               <ElButton v-if="hasAction($route.name, 'remove')" size="small" type="danger" link>
-                <Icon icon="material-symbols:delete-outline-rounded" width="18" height="18" />{{ $t('remove') }}
+                <Icon icon="material-symbols:delete-outline-rounded" width="18" height="18" />{{ $t('action.remove') }}
               </ElButton>
             </template>
           </ElPopconfirm>
@@ -178,30 +178,30 @@ function confirmEvent(id: number) {
     </ElTable>
   </ElCard>
 
-  <ElDialog v-model="visible" align-center :title="$t('dictionaries')" append-to-body width="25%">
+  <ElDialog v-model="visible" align-center append-to-body width="25%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="24">
-          <ElFormItem :label="$t('name')" prop="name">
-            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" />
+          <ElFormItem :label="$t('label.name')" prop="name">
+            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol :span="24">
-          <ElFormItem :label="$t('description')" prop="description">
+          <ElFormItem :label="$t('label.description')" prop="description">
             <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('inputText', { field: $t('description') })" />
+              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
     </ElForm>
     <template #footer>
       <ElButton @click="visible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="16" height="16" /> {{ $t('submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="16" height="16" /> {{ $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>

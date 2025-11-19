@@ -217,18 +217,18 @@ function onCheckChange(item: string) {
   <ElSpace size="large" fill>
     <ElCard shadow="never">
       <ElForm inline :model="filters">
-        <ElFormItem :label="$t('name')" prop="name">
-          <ElInput v-model="filters.name" :placeholder="$t('inputText', { field: $t('name') })" />
+        <ElFormItem :label="$t('label.name')" prop="name">
+          <ElInput v-model="filters.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('path')" prop="path">
-          <ElInput v-model="filters.path" :placeholder="$t('inputText', { field: $t('path') })" />
+        <ElFormItem :label="$t('label.path')" prop="path">
+          <ElInput v-model="filters.path" :placeholder="$t('placeholder.inputText', { field: $t('label.path') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">
-            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('search') }}
+            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset">
-            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('reset') }}
+            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -237,16 +237,17 @@ function onCheckChange(item: string) {
     <ElCard shadow="never">
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
-          <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain @click="importRows">
-            <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{ $t('import') }}
+          <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
+            <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{
+              $t('action.import') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
+            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('action.export') }}
           </ElButton>
         </ElCol>
         <ElCol :span="8" class="text-right">
-          <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+          <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="view" plain circle @click="load()">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
@@ -256,16 +257,16 @@ function onCheckChange(item: string) {
 
       <ElTable ref="tableRef" v-loading="loading" :data="datas" lazy :load="load" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
-        <ElTableColumn type="index" :label="$t('no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('name')" class-name="name-cell" sortable>
+        <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+        <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell" sortable>
           <template #default="scope">
             <Icon :icon="`material-symbols:${scope.row.icon}-rounded`" width="18" height="18" class="mr-2" />
-            {{ $t(scope.row.name) }}
+            {{ $t(`page.${scope.row.name}`) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="path" :label="$t('path')" sortable />
-        <ElTableColumn prop="redirect" :label="$t('redirect')" />
-        <ElTableColumn prop="actions" :label="$t('actions')">
+        <ElTableColumn prop="path" :label="$t('label.path')" sortable />
+        <ElTableColumn prop="redirect" :label="$t('label.redirect')" />
+        <ElTableColumn prop="actions" :label="$t('label.actions')">
           <template #default="scope">
             <template v-if="scope.row.actions && scope.row.actions.length > 0">
               <ElTag v-for="(item, index) in visibleArray(scope.row.actions, 3)" :key="index" :type="actions[item]"
@@ -286,36 +287,38 @@ function onCheckChange(item: string) {
             </template>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="enabled" :label="$t('enabled')" sortable>
+        <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
           <template #default="scope">
             <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
               style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip prop="description" :label="$t('description')" />
-        <ElTableColumn :label="$t('actions')">
+        <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
+        <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
             <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" size="small" type="primary" link
               @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('modify') }}
+              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
           </template>
         </ElTableColumn>
       </ElTable>
       <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
         <template #default>
-          {{ $t('selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+          {{ $t('message.selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
         </template>
       </ElPagination>
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center :title="$t('privileges')" width="36%">
+  <!-- form -->
+  <ElDialog v-model="visible" align-center width="36%">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="12">
-          <ElFormItem :label="$t('name')" prop="name">
-            <ElInput v-model="form.name" :placeholder="$t('inputText', { field: $t('name') })" disabled>
+          <ElFormItem :label="$t('label.name')" prop="name">
+            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })"
+              disabled>
               <template #prefix>
                 <Icon :icon="`material-symbols:${form.icon}-rounded`" />
               </template>
@@ -323,20 +326,21 @@ function onCheckChange(item: string) {
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem :label="$t('path')" prop="path">
-            <ElInput v-model="form.path" :placeholder="$t('inputText', { field: $t('path') })" disabled />
+          <ElFormItem :label="$t('label.path')" prop="path">
+            <ElInput v-model="form.path" :placeholder="$t('placeholder.inputText', { field: $t('path') })" disabled />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol :span="12">
-          <ElFormItem :label="$t('component')" prop="component">
-            <ElInput v-model="form.component" :placeholder="$t('inputText', { field: $t('component') })" disabled />
+          <ElFormItem :label="$t('label.component')" prop="component">
+            <ElInput v-model="form.component" :placeholder="$t('placeholder.inputText', { field: $t('component') })"
+              disabled />
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem :label="$t('redirect')" prop="redirect">
-            <ElSelect v-model="form.redirect" :placeholder="$t('selectText', { field: $t('redirect') })">
+          <ElFormItem :label="$t('label.redirect')" prop="redirect">
+            <ElSelect v-model="form.redirect" :placeholder="$t('placeholder.selectText', { field: $t('redirect') })">
               <ElOption v-for="item in subset" :key="item.id" :label="$t(item.name)" :value="item.path" />
             </ElSelect>
           </ElFormItem>
@@ -344,7 +348,7 @@ function onCheckChange(item: string) {
       </ElRow>
       <ElRow :gutter="20" v-if="!form.redirect">
         <ElCol>
-          <ElFormItem :label="$t('actions')" prop="meta.actions">
+          <ElFormItem :label="$t('label.actions')" prop="meta.actions">
             <ElCheckTag v-for="item in buttonOptions" :key="item.id" :checked="form.actions?.includes(item.name)"
               :type="actions[item.name]" class="mr-2 mb-2" @change="onCheckChange(item.name)">
               {{ $t(item.name) }}
@@ -354,25 +358,25 @@ function onCheckChange(item: string) {
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('description')" prop="description">
-            <ElInput v-model="form.description" type="textarea" :placeholder="$t('description')" />
+          <ElFormItem :label="$t('label.description')" prop="description">
+            <ElInput v-model="form.description" type="textarea" :placeholder="$t('label.description')" />
           </ElFormItem>
         </ElCol>
       </ElRow>
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('import')" width="36%">
-    <p>{{ $t('samples') + ' ' + $t('download') }}：
+  <ElDialog v-model="importVisible" align-center width="36%">
+    <p>{{ $t('action.download') }}：
       <a :href="`templates/privileges.xlsx`" :download="$t('privileges') + '.xlsx'">
         {{ $t('privileges') }}.xlsx
       </a>
@@ -383,21 +387,21 @@ function onCheckChange(item: string) {
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
       <div class="el-upload__text">
-        {{ $t('drop2Here') }}<em>{{ $t('click2Upload') }}</em>
+        {{ $t('tips.drop2Here') }}<em>{{ $t('tips.click2Upload') }}</em>
       </div>
       <template #tip>
         <div class="el-upload__tip">
-          {{ $t('fileSizeLimit', { size: '50MB' }) }}
+          {{ $t('tips.fileSizeLimit', { size: '50MB' }) }}
         </div>
       </template>
     </ElUpload>
     <p class="text-red-600">xxxx</p>
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('cancel') }}
+        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>

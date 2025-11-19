@@ -50,19 +50,19 @@ api.interceptors.response.use(
           signIn()
           return
         case 403:
-          ElMessage.error({ message: t('forbidden'), grouping: true })
+          ElMessage.error({ message: t('message.forbidden'), grouping: true })
           break
         case 404:
-          ElMessage.error({ message: t('notFound'), grouping: true })
+          ElMessage.error({ message: t('message.notFound'), grouping: true })
           break
         case 409:
-          ElMessage.error({ message: t('alreadyExists'), grouping: true })
+          ElMessage.error({ message: t('message.alreadyExists'), grouping: true })
           break
         case 500:
-          ElMessage.error({ message: t('serverError'), grouping: true })
+          ElMessage.error({ message: t('message.serverError'), grouping: true })
           break
         default:
-          ElMessage.error({ message: t('error'), grouping: true })
+          ElMessage.error({ message: t('message.error'), grouping: true })
       }
     }
     return Promise.reject(error)

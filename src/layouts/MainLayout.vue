@@ -42,7 +42,6 @@ async function logout() {
         </ElButton>
       </div>
 
-
       <div class="inline-flex justify-end items-center space-x-4">
         <ThemeToogle />
         <LanguageSelector />
@@ -66,12 +65,12 @@ async function logout() {
               <RouterLink to="/profile" class="no-underline">
                 <ElDropdownItem>
                   <Icon icon="material-symbols:manage-accounts-rounded" width="18" height="18" class="mr-2" />
-                  {{ $t('profile') }}
+                  {{ $t('page.profile') }}
                 </ElDropdownItem>
               </RouterLink>
               <ElDropdownItem divided @click="logout">
                 <Icon icon="material-symbols:logout-rounded" width="18" height="18" class="mr-2" />
-                {{ $t('signout') }}
+                {{ $t('action.signout') }}
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
@@ -84,14 +83,14 @@ async function logout() {
     <ElScrollbar>
       <ElMenu router unique-opened class="el-menu-collapse" :default-active="currentRoute.fullPath">
         <ElMenuItem :index="'/'">
-          <Icon icon="material-symbols:home-outline-rounded" width="18" height="18" class="mr-2" />{{ $t('home') }}
+          <Icon icon="material-symbols:home-outline-rounded" width="18" height="18" class="mr-2" />{{ $t('page.home') }}
         </ElMenuItem>
         <template v-for="link in user.privileges" :key="link.id">
           <EssentialList v-if="link.children && link.children.length > 0" :essentialLink="link"
             :parent-path="`/${link.meta.path}`" />
           <ElMenuItem v-else :index="`/${link.meta.path}`">
             <Icon :icon="`material-symbols:${link.meta.icon}-rounded`" width="18" height="18" class="mr-2" />
-            {{ $t(link.name) }}
+            {{ $t(`page.${link.name}`) }}
           </ElMenuItem>
         </template>
       </ElMenu>

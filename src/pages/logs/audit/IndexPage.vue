@@ -132,17 +132,17 @@ function confirmEvent(id: number) {
     <ElCard shadow="never">
       <ElForm inline :model="filters">
         <ElFormItem :label="$t('resource')" prop="resource">
-          <ElInput v-model="filters.resource" :placeholder="$t('inputText', { field: $t('resource') })" />
+          <ElInput v-model="filters.resource" :placeholder="$t('placeholder.inputText', { field: $t('resource') })" />
         </ElFormItem>
         <ElFormItem :label="$t('operation')" prop="operation">
-          <ElInput v-model="filters.operation" :placeholder="$t('inputText', { field: $t('operation') })" />
+          <ElInput v-model="filters.operation" :placeholder="$t('placeholder.inputText', { field: $t('operation') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load">
-            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('search') }}
+            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset">
-            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('reset') }}
+            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -153,12 +153,12 @@ function confirmEvent(id: number) {
         <ElCol :span="16" class="text-left">
           <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('export') }}
+            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('action.export') }}
           </ElButton>
         </ElCol>
 
         <ElCol :span="8" class="text-right">
-          <ElTooltip class="box-item" effect="dark" :content="$t('refresh')" placement="top">
+          <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="view" plain circle @click="load">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
@@ -167,7 +167,7 @@ function confirmEvent(id: number) {
       </ElRow>
 
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
-        <ElTableColumn type="index" :label="$t('no')" width="55" />
+        <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="resource" :label="$t('resource')" sortable>
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
@@ -201,12 +201,13 @@ function confirmEvent(id: number) {
             {{ formatDuration(scope.row.operatedTimes) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('actions')">
+        <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElPopconfirm :title="$t('removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+            <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('remove') }}
+                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
+                  }}
                 </ElButton>
               </template>
             </ElPopconfirm>
@@ -217,7 +218,7 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center show-close :title="$t('details')">
+  <ElDialog v-model="visible" align-center show-close>
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('operation')">
         <ElBadge is-dot :type="actions[row.operation.toLowerCase()]" class="mr-1" />{{ row.operation }}

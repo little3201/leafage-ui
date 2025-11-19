@@ -16,5 +16,9 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.format.enable": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "i18n-ally.localesPaths": [
+    "src/i18n",
+    "src/locales"
+  ]
 }

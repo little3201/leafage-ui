@@ -140,18 +140,18 @@ export interface SampleTreeNode extends TreeNode {
 }
 
 export interface OperationLog extends AudtiMetadata {
-  operation: string
-  content: string
-  ip: string
-  location: string
+  module: string
+  action: string
+  ip?: string
+  params: string
+  body?: string
   referer?: string
   sessionId?: string
-  os?: string
   deviceType?: string
   userAgent?: string
   browser?: string
-  statusCode?: number
-  operatedTimes?: number
+  operator?: string
+  operatedAt?: string
 }
 
 export interface AccessLog extends AudtiMetadata {

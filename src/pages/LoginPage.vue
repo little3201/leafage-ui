@@ -26,12 +26,12 @@ const form = reactive({
 
 const rules = reactive<FormRules<typeof form>>({
   username: [
-    { required: true, message: t('inputText', { field: t('username') }), trigger: 'blur' },
-    { min: 5, max: 12, message: t('lengthRange', { min: 5, max: 12 }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('username') }), trigger: 'blur' },
+    { min: 5, max: 12, message: t('placeholder.lengthRange', { min: 5, max: 12 }), trigger: 'blur' }
   ],
   password: [
-    { required: true, message: t('inputText', { field: t('password') }), trigger: 'blur' },
-    { min: 8, max: 32, message: t('lengthRange', { min: 8, max: 32 }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('password') }), trigger: 'blur' },
+    { min: 8, max: 32, message: t('placeholder.lengthRange', { min: 8, max: 32 }), trigger: 'blur' }
   ]
 })
 
@@ -101,10 +101,10 @@ function load() {
               <canvas ref="lottieRef" style="height: 450px; width: 450px" />
               <div>
                 <p class="font-bold text-xl text-left">
-                  {{ $t('welcome') }}
+                  {{ $t('tips.welcome') }}
                 </p>
                 <p class="text-subtitle1">
-                  {{ $t('subtitle') }}
+                  {{ $t('tips.subtitle') }}
                 </p>
               </div>
             </div>
@@ -145,10 +145,6 @@ function load() {
                 </ElRow>
                 <ElRow class="px-12">
                   <ElCol>
-                    <ElFormItem prop="rememberMe">
-                      <ElCheckbox :disable="loading" v-model="form.rememberMe" :label="$t('rememberMe')" dense
-                        v:model-value="changeRememberMe" />
-                    </ElFormItem>
                     <ElFormItem>
                       <ElButton title="signin" size="large" type="primary" :loading="loading" class="w-full"
                         native-type="submit">
