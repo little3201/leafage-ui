@@ -1,4 +1,3 @@
-import { dayjs } from 'element-plus'
 import * as XLSX from 'xlsx'
 import { useUserStore } from 'stores/user-store'
 import type { PrivilegeTreeNode } from 'src/types'
@@ -23,23 +22,6 @@ export function pathResolve(parentPath: string, path: string): string {
  */
 export const isNumber = (val: unknown): val is number => {
   return typeof val === 'number' && isFinite(val)
-}
-
-/**
- * Compare the target date with the current date and return a status
- * @param {string} target - The target date
- * @returns {string} - The status ('success', 'warning', 'danger')
- */
-export function calculate(target: string): 'success' | 'warning' | 'info' | 'primary' | 'danger' {
-  const now = new Date()
-  const targetDate = new Date(target)
-  const diff = dayjs(targetDate).diff(now, 'days')
-  if (diff > 7) {
-    return 'success'
-  } else {
-    const diffSec = dayjs(targetDate).diff(now, 'seconds')
-    return diffSec > 0 ? 'warning' : 'danger'
-  }
 }
 
 /**
