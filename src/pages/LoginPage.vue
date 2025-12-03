@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElFormItem, ElImage, type FormInstance, type FormRules } from 'element-plus'
+import { ElFormItem, ElImage } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { Icon } from '@iconify/vue'
 import { useRouter } from 'vue-router'
 import { api } from 'boot/axios'
@@ -14,7 +15,6 @@ import hello from 'src/assets/hello_ccwj.svg'
 
 const { t } = useI18n()
 const { replace } = useRouter()
-const lottieRef = ref(null)
 
 const loading = ref<boolean>(false)
 const formRef = ref<FormInstance>()
@@ -35,14 +35,10 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
-onMounted(() => {
-  load()
-})
+async function onSubmit() {
+  if (!formRef.value) return
 
-async function onSubmit(formEl: FormInstance | undefined) {
-  if (!formEl) return
-
-  formEl.validate((valid) => {
+  formRef.value.validate((valid) => {
     if (valid) {
       loading.value = true
 
@@ -52,12 +48,6 @@ async function onSubmit(formEl: FormInstance | undefined) {
       })
     }
   })
-}
-
-function load() {
-  if (lottieRef.value) {
-    // play the lottie animation
-  }
 }
 </script>
 
@@ -110,9 +100,9 @@ function load() {
               <div class="text-lg font-bold text-center mb-xs">
                 {{ $t('signinTo') }}
               </div>
-              <ElForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit(formRef)"
-                class="bg-transparent max-w-xl w-full my-6">
-                <ElRow class="px-12 my-3">
+              <ElForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit"
+                class="bg-transparent max-w-lg w-full my-6 space-y-4">
+                <ElRow>
                   <ElCol>
                     <ElFormItem prop="username">
                       <ElInput size="large" :disable="loading" v-model="form.username" :placeholder="$t('username')">
@@ -123,7 +113,7 @@ function load() {
                     </ElFormItem>
                   </ElCol>
                 </ElRow>
-                <ElRow class="px-12">
+                <ElRow>
                   <ElCol>
                     <ElFormItem prop="password">
                       <ElInput size="large" :disable="loading" type="password" v-model="form.password"
@@ -135,7 +125,7 @@ function load() {
                     </ElFormItem>
                   </ElCol>
                 </ElRow>
-                <ElRow class="px-12">
+                <ElRow>
                   <ElCol>
                     <ElFormItem>
                       <ElButton title="signin" size="large" type="primary" :loading="loading" class="w-full"

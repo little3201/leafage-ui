@@ -15,9 +15,8 @@ export default defineConfigWithVueTs(
      * ESLint requires "ignores" key to be the only one in this object
      */
     files: ['**/*.{js,mjs,cjs,ts,mts,vue}'],
+    ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
-
-  globalIngores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
 
   js.configs.recommended,
   vueTsConfigs.recommended,

@@ -1,2 +1,2 @@
+pnpm run lint:lint-staged
 pnpm test
-npx lint-staged
