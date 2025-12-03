@@ -15,11 +15,10 @@ export default defineConfigWithVueTs(
      * ESLint requires "ignores" key to be the only one in this object
      */
     files: ['**/*.{js,mjs,cjs,ts,mts,vue}'],
-    ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
 
-  js.configs.recommended,
-  vueTsConfigs.recommended,
+  globalIngores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+
 
   /**
    * https://eslint.vuejs.org
@@ -33,7 +32,9 @@ export default defineConfigWithVueTs(
    * pluginVue.configs["flat/recommended"]
    *   -> Above, plus rules to enforce subjective community defaults to ensure consistency.
    */
-  ...pluginVue.configs['flat/essential'],
+  pluginVue.configs['flat/essential'],
+  js.configs.recommended,
+  vueTsConfigs.recommended,
 
   {
     languageOptions: {
