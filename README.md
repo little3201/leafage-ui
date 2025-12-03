@@ -1,5 +1,11 @@
 # Leafage UI
 
+<div align="center">
+
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE) [![github stars](https://img.shields.io/github/stars/little3201/leafage-ui)](https://github.com/little3201/leafage-ui/stargazers) [![github forks](https://img.shields.io/github/forks/little3201/leafage-ui)](https://github.com/little3201/leafage-ui/network/members)
+
+</div>
+
 <p align="center">
   免费且美观的管理模板，使用 Vue 3、Vite、Pinia 和 Tailwind CSS构建。设计用于构建高效、响应式和快速加载的管理界面。
   
@@ -19,25 +25,36 @@
 - **响应式设计 -** 自适应各种大小的设备
 - **高度可定制 -** 可根据项目风格定制
 
+## 技术栈
+
+开发框架：Vue3/React、TypeScript、Vite、Element-Plus/Quasar、Tailwind CSS
+
+代码规范：Eslint、Prettier、Stylelint、Husky、Lint-staged、cz-git
+
 ### 目录结构
 
 ```
 ├── src/
 │   ├── api/            # http request api
-│   ├── boot/           # Vue composables
+│   ├── assets/         # assets
+│   ├── boot/           # plugins init
 │   ├── components/     # Vue components
 │   ├── constants/      # Constants
 │   ├── css/            # css
-│   ├── i18n/           # i18n
+│   ├── lang/           # i18n languages
 │   ├── layouts/        # Layout components
-│   ├── mocks/          # Mocks
+│   ├── mocks/          # Mocks with msw
 │   ├── pages/          # Pages
 │   ├── router/         # vue router
 │   ├── stores/         # Pinia
 │   ├── utils/          # Utils
 │   └── App.vue         # Root component
 ├── public/             # Public static assets
+│   ├── icons/          # Public icons
+│   ├── svgs/           # Public svgs
 ├── index.html          # Entry HTML file
+├── .env.development    # Env for dev
+├── .env.production     # Env for prod
 └── eslint.config.js    # Eslint configuration
 └── vite.config.js      # Vite configuration
 ```

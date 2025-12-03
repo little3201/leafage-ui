@@ -147,13 +147,15 @@ function load() {
                 </ElRow>
               </ElForm>
             </div>
+
           </div>
         </ElCard>
       </Transition>
     </ElMain>
     <ElFooter class="z-10" height="50px">
-      <p class="text-sm text-center">&copy; {{ new Date().getFullYear() }}
-        All Rights Reserved.</p>
+      <p class="text-sm text-center">
+        Copyright &copy; {{ new Date().getFullYear() }} Leafage. All Rights Reserved.
+      </p>
     </ElFooter>
   </ElContainer>
 </template>
