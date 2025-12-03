@@ -19,6 +19,8 @@ export default defineConfigWithVueTs(
 
   globalIngores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
 
+  js.configs.recommended,
+  vueTsConfigs.recommended,
 
   /**
    * https://eslint.vuejs.org
@@ -33,8 +35,6 @@ export default defineConfigWithVueTs(
    *   -> Above, plus rules to enforce subjective community defaults to ensure consistency.
    */
   pluginVue.configs['flat/essential'],
-  js.configs.recommended,
-  vueTsConfigs.recommended,
 
   {
     languageOptions: {
