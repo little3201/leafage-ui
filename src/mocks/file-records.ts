@@ -6,13 +6,16 @@ const datas: FileRecord[] = [
 ]
 
 for (let i = 1; i < 28; i++) {
+  const randomIndex = Math.floor(Math.random() * 6)
   const data: FileRecord = {
     id: i,
-    name: 'name_' + i + (i % 3 > 0 ? '' : (i % 2 > 0 ? '.jpg':'.zip')),
-    type: i % 3 > 0 ? 'directory' : 'file',
-    mimeType:  i % 3 > 0 ? 'folder' : (i % 2 > 0 ? 'jpg' : 'zip'),
+    name: 'test' + i + ['.jpg', '.png', '.pdf', '.zip', '.docx', 'xlsx'][randomIndex] || '',
+    contentType:  ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || 'unknown',
     size: Math.floor(Math.random() * 100000),
-    path: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+    path: '/path/to/test' + i,
+    directory: false,
+    regularFile: true,
+    symbolicLink: false,
     lastModifiedDate: new Date()
   }
   datas.push(data)

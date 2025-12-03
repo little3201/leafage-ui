@@ -168,24 +168,23 @@ function confirmEvent(id: number) {
 
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="resource" :label="$t('resource')" sortable>
+        <ElTableColumn prop="resource" :label="$t('label.resource')" sortable>
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
               {{ scope.row.resource }}
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="operation" :label="$t('operation')" sortable>
+        <ElTableColumn prop="operation" :label="$t('label.operation')" sortable>
           <template #default="scope">
             <ElBadge is-dot :type="actions[scope.row.operation.toLowerCase()]" class="mr-1" />
             {{ scope.row.operation }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip prop="oldValue" :label="$t('oldValue')" />
-        <ElTableColumn show-overflow-tooltip prop="newValue" :label="$t('newValue')" />
-        <ElTableColumn prop="ip" :label="$t('ip')" sortable />
-        <ElTableColumn prop="location" :label="$t('location')" sortable />
-        <ElTableColumn prop="statusCode" :label="$t('statusCode')" sortable>
+        <ElTableColumn show-overflow-tooltip prop="oldValue" :label="$t('label.oldValue')" />
+        <ElTableColumn show-overflow-tooltip prop="newValue" :label="$t('label.newValue')" />
+        <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
+        <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
           <template #default="scope">
             <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
               {{ scope.row.statusCode }}
@@ -196,7 +195,7 @@ function confirmEvent(id: number) {
             <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="operatedTimes" :label="$t('operatedTimes')" sortable>
+        <ElTableColumn prop="operatedTimes" :label="$t('label.operatedTimes')" sortable>
           <template #default="scope">
             {{ formatDuration(scope.row.operatedTimes) }}
           </template>
@@ -218,13 +217,14 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center show-close>
+  <ElDialog v-model="visible" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('operation')">
-        <ElBadge is-dot :type="actions[row.operation.toLowerCase()]" class="mr-1" />{{ row.operation }}
+      <ElDescriptionsItem :label="$t('label.resource')">{{ row.resource }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.operation')">
+        <ElBadge is-dot :type="actions[row.operation.toLowerCase()]" class="mr-1" />
+        {{ row.operation }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('resource')">{{ row.resource }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('statusCode')">
+      <ElDescriptionsItem :label="$t('label.statusCode')">
         <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>
           {{ row.statusCode }}
         </ElTag>
@@ -233,11 +233,11 @@ function confirmEvent(id: number) {
         </ElTag>
         <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('oldValue')" :span="3">{{ row.oldValue }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('newValue')" :span="3">{{ row.newValue }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('ip')">{{ row.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('location')">{{ row.location }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('operatedTimes')">{{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
+      <ElDescriptionsItem :label="$t('label.oldValue')" :span="3">{{ row.oldValue }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.newValue')" :span="3">{{ row.newValue }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.operatedTimes')">
+        {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
       </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>

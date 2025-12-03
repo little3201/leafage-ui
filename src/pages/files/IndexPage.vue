@@ -12,6 +12,8 @@ const loading = ref<boolean>(false)
 const uploadLoading = ref<boolean>(false)
 const datas = ref<Array<FileRecord>>([])
 const total = ref<number>(0)
+const expandRows = ref<Array<FileRecord>>([])
+const currentRow = ref<FileRecord | null>(null)
 
 const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
@@ -22,8 +24,6 @@ const pagination = reactive<Pagination>({
 const initialValues: FileRecord = {
   id: undefined,
   name: '',
-  type: 'file',
-  mimeType: '',
   size: 0,
   path: ''
 }
@@ -37,6 +37,7 @@ const uploadVisible = ref<boolean>(false)
 const uploadRef = ref<UploadInstance>()
 
 const filters = ref({
+  superiorId: null as string | null,
   name: null
 })
 
@@ -55,6 +56,7 @@ function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
+  filters.value.superiorId = currentRow.value ? `eq:${currentRow.value.id}` : null
   retrieveFiles(pagination, filters.value).then(res => {
     datas.value = res.data.content
     total.value = res.data.page.totalElements
@@ -71,9 +73,7 @@ async function loadOne(id: number) {
  * reset
  */
 function reset() {
-  filters.value = {
-    name: null
-  }
+  filters.value.name = null
   load()
 }
 
@@ -104,9 +104,9 @@ function uploadRow() {
  * 下载
  * @param id 主键
  */
-function downloadRow(id: number, name: string, mimeType: string) {
+function downloadRow(id: number, name: string, type: string) {
   downloadFile(id).then(res => {
-    download(res.data, name, mimeType)
+    download(res.data, name, type)
   })
 }
 
@@ -145,7 +145,31 @@ function confirmEvent(id: number) {
   }
 }
 
+function onRowClick(row: FileRecord | null) {
+  if (row?.directory) {
+    currentRow.value = row
+    if (row) {
+      expandRows.value.push(row)
+    }
+    load()
+  } else if (row?.regularFile) {
+    showRow(row.id)
+  }
+}
 
+function handleBreadcrumbClick(index: number) {
+  if (index === -1) {
+    // 点击"全部文件夹"，回到根目录
+    expandRows.value = []
+    currentRow.value = null
+  } else {
+    // 点击中间层级的面包屑
+    // 截断面包屑数组，保留点击位置及之前的部分
+    expandRows.value = expandRows.value.slice(0, index + 1)
+    currentRow.value = expandRows.value[index] ?? null
+  }
+  load()
+}
 </script>
 
 <template>
@@ -201,7 +225,7 @@ function confirmEvent(id: number) {
           <li v-for="i in 5" :key="i" index="images"
             class="flex items-center space-x-2 py-2 rounded-md group hover:bg-neutral-100">
             <Icon icon="material-symbols:imagesmode-outline-rounded" width="20" height="20" />
-            <span class="flex-1">name_{{ i }}.jpg</span>
+            <span class="flex-1">fullName{{ i }}.jpg</span>
             <Icon icon="material-symbols:close-small-outline-rounded" width="20" height="20"
               class="hidden group-hover:block" />
           </li>
@@ -227,21 +251,33 @@ function confirmEvent(id: number) {
       </ElCard>
 
       <ElCard shadow="never">
-        <ElRow :gutter="20" justify="space-between" class="mb-4">
+        <ElRow :gutter="20" justify="space-between" class="items-center">
           <ElCol :span="16" class="text-left">
-            <ElButton v-if="hasAction($route.name, 'upload')" title="upload" type="primary" plain @click="uploadRow">
-              <Icon icon="material-symbols:upload" />{{ $t('upload') }}
-            </ElButton>
+            <ElBreadcrumb separator=">">
+              <ElBreadcrumbItem :class="{ 'is-active': expandRows.length === 0 }" @click="handleBreadcrumbClick(-1)">
+                全部文件夹
+              </ElBreadcrumbItem>
+              <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="row.id"
+                :class="{ 'is-active': index === expandRows.length - 1 }" @click="handleBreadcrumbClick(index)">
+                {{ row.name }}
+              </ElBreadcrumbItem>
+            </ElBreadcrumb>
           </ElCol>
 
           <ElCol :span="8" class="text-right">
-            <ElTooltip effect="dark" :content="$t('action.refresh')" placement="top">
+            <ElTooltip :content="$t('action.upload')" placement="top">
+              <ElButton v-if="hasAction($route.name, 'upload')" title="upload" plain circle type="primary"
+                @click="uploadRow">
+                <Icon icon="material-symbols:upload" width="18" height="18" />
+              </ElButton>
+            </ElTooltip>
+            <ElTooltip :content="$t('action.refresh')" placement="top">
               <ElButton title="refresh" plain circle @click="load">
                 <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
               </ElButton>
             </ElTooltip>
-            <ElTooltip :content="$t('view')" placement="top">
-              <ElButton title="view" type="primary" plain circle @click="onViewChange(!view.showGrid)">
+            <ElTooltip :content="$t('action.view')" placement="top">
+              <ElButton title="view" type="success" plain circle @click="onViewChange(!view.showGrid)">
                 <Icon :icon="`material-symbols:${view.showTable ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
                   width="18" height="18" />
               </ElButton>
@@ -250,37 +286,38 @@ function confirmEvent(id: number) {
         </ElRow>
 
         <div v-show="view.showTable">
-          <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
+          <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto"
+            @row-click="onRowClick">
             <ElTableColumn type="index" :label="$t('label.no')" width="55" />
             <ElTableColumn prop="name" :label="$t('label.name')" sortable>
               <template #default="scope">
-                <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
-                  <Icon v-if="scope.row.type === 'directory'" icon="flat-color-icons:folder" width="20" height="20" />
-                  <template v-else-if="scope.row.mimeType">
-                    <Icon v-if="['text/jpg', 'jpeg', 'svg'].includes(scope.row.mimeType)"
-                      icon="flat-color-icons:image-file" width="20" height="20" />
-                    <Icon v-else icon="flat-color-icons:document" width="20" height="20" />
+                <div class="flex items-center">
+                  <Icon v-if="scope.row.directory" icon="flat-color-icons:folder" width="26" height="26" />
+                  <template v-else-if="scope.row.regularFile && scope.row.contentType">
+                    <Icon v-if="scope.row.contentType.includes('image')" icon="flat-color-icons:image-file" width="26"
+                      height="26" />
+                    <Icon v-else icon="flat-color-icons:document" width="26" height="26" />
                   </template>
                   <span class="ml-2">{{ scope.row.name }}</span>
-                </ElButton>
+                </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="size" :label="$t('size')" sortable>
+            <ElTableColumn prop="size" :label="$t('label.size')" sortable>
               <template #default="scope">
                 {{ formatFileSize(scope.row.size) }}
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="mimeType" :label="$t('type')" sortable />
-            <ElTableColumn prop="lastModifiedDate" :label="$t('lastModifiedDate')" sortable>
+            <ElTableColumn prop="contentType" :label="$t('label.contentType')" sortable />
+            <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
               <template #default="scope">
-                {{ dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
+                {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
               </template>
             </ElTableColumn>
             <ElTableColumn :label="$t('label.actions')">
               <template #default="scope">
-                <ElButton v-if="hasAction($route.name, 'download')" title="download" size="small" type="success" link
-                  @click="downloadRow(scope.row.id, scope.row.name, scope.row.mimeType)">
-                  <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('download') }}
+                <ElButton v-if="scope.row.regularFile && hasAction($route.name, 'download')" title="download"
+                  size="small" type="success" link @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
+                  <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('action.download') }}
                 </ElButton>
                 <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
                   <template #reference>
@@ -300,10 +337,10 @@ function confirmEvent(id: number) {
         <div v-show="view.showGrid" class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
           <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
             body-class="hover:bg-(--el-bg-color-page)">
-            <Icon v-if="data.type === 'directory'" icon="flat-color-icons:folder" width="64" height="64" />
-            <template v-else-if="data.mimeType">
-              <Icon v-if="['text/jpg', 'jpeg', 'svg'].includes(data.mimeType)" icon="flat-color-icons:image-file"
-                width="64" height="64" />
+            <Icon v-if="data.directory" icon="flat-color-icons:folder" width="64" height="64" />
+            <template v-else-if="data.regularFile && data.contentType">
+              <Icon v-if="data.contentType.includes('image')" icon="flat-color-icons:image-file" width="64"
+                height="64" />
               <Icon v-else icon="flat-color-icons:document" width="64" height="64" />
             </template>
             <div>
@@ -318,25 +355,25 @@ function confirmEvent(id: number) {
   </ElSpace>
 
   <!-- details -->
-  <ElDialog v-model="visible" align-center show-close width="25%">
-    <Icon v-if="row.type === 'directory'" icon="flat-color-icons:folder" width="80" height="80" />
-    <template v-else-if="row.mimeType">
-      <ElImage v-if="['text/jpg', 'jpeg', 'svg'].includes(row.mimeType)" :src="row.path"
+  <ElDialog v-model="visible" align-center show-close width="400">
+    <Icon v-if="row.directory" icon="flat-color-icons:folder" width="80" height="80" />
+    <template v-else-if="row.regularFile">
+      <ElImage v-if="row.contentType && row.contentType.includes('image')" :src="row.path"
         class="w-full h-52 overflow-hidden" />
       <Icon v-else icon="flat-color-icons:document" width="80" height="80" />
     </template>
     <ElDescriptions v-loading="loading" :column="1" class="mt-4">
       <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('type')">{{ row.type }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('lastModifiedDate')">
-        {{ dayjs(row.lastModifiedDate).format('YYYY-MM-DD HH:mm') }}
+      <ElDescriptionsItem :label="$t('label.size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.contentType')">{{ row.contentType }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.lastModifiedDate')">
+        {{ row.lastModifiedDate ? dayjs(row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
       </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
 
   <!-- upload -->
-  <ElDialog v-model="uploadVisible" width="35%">
+  <ElDialog v-model="uploadVisible" align-center width="480">
     <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" :on-success="load">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />

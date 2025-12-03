@@ -96,11 +96,11 @@ export function visibleArray<T extends string | number>(array: T[], count: numbe
  * 下载
  * @param data 数据
  * @param filename 文件名
- * @param mimeType 文件类型
+ * @param type 文件类型
  */
-export function download(data: Blob, filename: string, mimeType?: string): void {
+export function download(data: Blob, filename: string, type?: string): void {
   // 创建一个新的 Blob 对象，指定 MIME 类型
-  const blob = new Blob([data], { type: mimeType || 'application/octet-stream' })
+  const blob = new Blob([data], { type: type || 'application/octet-stream' })
 
   // 创建一个临时的下载链接
   const url = window.URL.createObjectURL(blob)

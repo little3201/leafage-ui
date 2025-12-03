@@ -60,8 +60,8 @@ onMounted(() => {
         </ElRow>
         <ElRow>
           <ElCol :span="20">
-            <ElFormItem :label="$t('name_')" prop="name_">
-              <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('name_') })"
+            <ElFormItem :label="$t('fullName')" prop="fullName">
+              <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('fullName') })"
                 :maxLength="50" :disabled="!state.name" />
               <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
                 you've

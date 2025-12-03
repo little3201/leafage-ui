@@ -179,12 +179,12 @@ function confirmEvent(id: number) {
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="startTime" :label="$t('startTime')" sortable>
+        <ElTableColumn prop="startTime" :label="$t('label.startTime')" sortable>
           <template #default="scope">
             {{ dayjs(scope.row.startTime).format('YYYY-MM-DD HH:mm') }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="status" :label="$t('status')" sortable>
+        <ElTableColumn prop="status" :label="$t('label.status')" sortable>
           <template #default="scope">
             <ElTag :type="shceduleStatus[scope.row.status]" round>
               <Icon :icon="`material-symbols:${shceduleStatusIcon[scope.row.status]}`"
@@ -193,12 +193,12 @@ function confirmEvent(id: number) {
             </ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="executedTimes" :label="$t('executedTimes')" sortable>
+        <ElTableColumn prop="executedTimes" :label="$t('label.executedTimes')" sortable>
           <template #default="scope">
             {{ scope.row.executedTimes ? formatDuration(scope.row.executedTimes) : '-' }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="nextExecuteTime" :label="$t('nextExecuteTime')" sortable>
+        <ElTableColumn prop="nextExecuteTime" :label="$t('label.nextExecuteTime')" sortable>
           <template #default="scope">
             {{ dayjs(scope.row.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}
           </template>
@@ -224,26 +224,26 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center show-close>
+  <ElDialog v-model="visible" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('startTime')">
+      <ElDescriptionsItem :label="$t('label.startTime')">
         {{ dayjs(row.startTime).format('YYYY-MM-DD HH:mm') }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('status')">
+      <ElDescriptionsItem :label="$t('label.status')">
         <ElTag :type="shceduleStatus[row.status || '']" round>
           <Icon :icon="`material-symbols:${shceduleStatusIcon[row.status || '']}`"
             :class="[row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="16" height="16" />
           {{ row.status }}
         </ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('executedTimes')">
+      <ElDescriptionsItem :label="$t('label.executedTimes')">
         {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('nextExecuteTime')" :span="2">
+      <ElDescriptionsItem :label="$t('label.nextExecuteTime')" :span="2">
         {{ dayjs(row.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('logs')" :span="3">
+      <ElDescriptionsItem :label="$t('label.record')" :span="3">
         {{ row.record }}
       </ElDescriptionsItem>
     </ElDescriptions>

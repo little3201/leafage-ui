@@ -178,7 +178,7 @@ function confirmEvent(id: number) {
     </ElTable>
   </ElCard>
 
-  <ElDialog v-model="visible" align-center append-to-body width="25%">
+  <ElDialog v-model="visible" align-center append-to-body width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="24">

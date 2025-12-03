@@ -12,13 +12,10 @@ export interface Pagination {
 
 export interface User extends AudtiMetadata {
   username: string
-  name: string
+  fullName: string
   email: string
-  accountNonLocked?: boolean
-  accountExpiresAt?: Date
-  credentialsExpiresAt?: Date
+  status: string
   enabled?: boolean
-  birthday?: Date
 }
 
 export interface UserPrivileges {
@@ -188,10 +185,14 @@ export interface SchedulerLog extends AudtiMetadata {
 
 export interface FileRecord extends AudtiMetadata {
   name: string
-  type: 'file' | 'directory'
-  mimeType?: string
-  size: number
+  extension?: string
   path: string
+  contentType?: string
+  size: number
+  directory?: boolean
+  regularFile?: boolean
+  symbolicLink?: boolean
+  lastModifiedDate?: Date
 }
 
 export interface Schema extends AudtiMetadata {

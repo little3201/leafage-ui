@@ -391,7 +391,7 @@ function handleActionCheck(privilegeId: number, item: string) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="25%">
+  <ElDialog v-model="visible" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -450,7 +450,7 @@ function handleActionCheck(privilegeId: number, item: string) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="36%">
+  <ElDialog v-model="importVisible" align-center width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/roles.xlsx`" :download="$t('roles') + '.xlsx'">
         {{ $t('roles') }}.xlsx

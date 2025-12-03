@@ -1,7 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import type { User } from 'src/types'
 import { SERVER_URL } from 'src/constants'
-import { dayjs } from 'element-plus'
 
 const datas: User[] = []
 
@@ -9,12 +8,10 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    name: '张三' + i,
+    fullName: '张三' + i,
     email: 'use***' + '@**t.com',
-    accountNonLocked: i % 2 > 0,
-    enabled: i % 2 > 0,
-    accountExpiresAt: dayjs().add(Math.floor(Math.random() * 30), 'day').toDate(),
-    credentialsExpiresAt: dayjs().add(Math.floor(Math.random() * 30), 'day').toDate()
+    status: i % 2 > 0 ? 'ACTIVE' : 'INACTIVE',
+    enabled: i % 2 > 0
   }
   datas.push(row)
 }
@@ -31,12 +28,12 @@ export const usersHandlers = [
       enabled: true,
       lastModifiedDate: null,
       username: 'admin',
-      name_: '勒布朗 詹姆斯 雷蒙',
+      fullName: '勒布朗 詹姆斯 雷蒙',
       avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
       email: 'test@test.com',
-      accountExpiresAt: null,
+      accountNonExpires: null,
       accountNonLocked: true,
-      credentialsExpiresAt: null
+      credentialsNonExpires: null
     })
   }),
   http.get(`/api${SERVER_URL.USER}/:id`, ({ params }) => {

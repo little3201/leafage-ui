@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
-import { dayjs } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import {
-  retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, importUsers
+  retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, importUsers
 } from 'src/api/users'
 import type { Pagination, User } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { calculate, hasAction, exportToExcel } from 'src/utils'
+import { hasAction, exportToExcel } from 'src/utils'
 
 
 const { t } = useI18n()
@@ -40,8 +39,9 @@ const formRef = ref<FormInstance>()
 const initialValues: User = {
   id: undefined,
   username: '',
-  name: '',
-  email: ''
+  fullName: '',
+  email: '',
+  status: ''
 }
 const form = ref<User>({ ...initialValues })
 
@@ -49,8 +49,8 @@ const rules = reactive<FormRules<typeof form>>({
   username: [
     { required: true, message: t('placeholder.inputText', { field: t('username') }), trigger: 'blur' }
   ],
-  name: [
-    { required: true, message: t('placeholder.inputText', { field: t('name_') }), trigger: 'blur' }
+  fullName: [
+    { required: true, message: t('placeholder.inputText', { field: t('fullName') }), trigger: 'blur' }
   ],
   email: [
     { required: true, message: t('placeholder.inputText', { field: t('email') }), trigger: 'blur' }
@@ -201,16 +201,6 @@ function confirmEvent(id: number) {
     removeRow(id)
   }
 }
-
-/**
- * 解锁/上锁
- * @param row 数据
- */
-function lockRow(id: number) {
-  unlockUser(id).then(() => load())
-}
-
-
 </script>
 
 <template>
@@ -274,36 +264,17 @@ function lockRow(id: number) {
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="email" :label="$t('label.email')" />
-        <ElTableColumn prop="accountNonLocked" :label="$t('label.accountNonLocked')" sortable>
+        <ElTableColumn show-overflow-tooltip prop="groups" :label="$t('label.groups')" />
+        <ElTableColumn show-overflow-tooltip prop="roles" :label="$t('label.roles')" />
+        <ElTableColumn prop="status" :label="$t('label.status')" sortable>
           <template #default="scope">
-            <ElButton title="unlock" :type="scope.row.accountNonLocked ? 'success' : 'warning'" link
-              @click="lockRow(scope.row.id)" :disabled="!hasAction($route.name, 'unlock')">
-              <Icon
-                :icon="`material-symbols:${scope.row.accountNonLocked ? 'lock-open-right-outline-rounded' : 'lock-outline'}`"
-                width="18" height="18" />
-            </ElButton>
+            {{ scope.row.status }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
           <template #default="scope">
             <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
               style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="accountExpiresAt" :label="$t('label.accountExpiresAt')" sortable>
-          <template #default="scope">
-            <ElBadge v-if="scope.row.accountExpiresAt" is-dot :type="calculate(scope.row.accountExpiresAt)"
-              class="mr-1" />
-            {{ scope.row.accountExpiresAt ? dayjs(scope.row.accountExpiresAt).format('YYYY-MM-DD HH:mm') : '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="credentialsExpiresAt" :label="$t('label.credentialsExpiresAt')" sortable>
-          <template #default="scope">
-            <ElBadge v-if="scope.row.credentialsExpiresAt" is-dot :type="calculate(scope.row.credentialsExpiresAt)"
-              class="mr-1" />
-            {{ scope.row.credentialsExpiresAt ? dayjs(scope.row.credentialsExpiresAt).format('YYYY-MM-DD HH:mm') :
-              '-'
-            }}
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
@@ -332,43 +303,21 @@ function lockRow(id: number) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="36%">
+  <ElDialog v-model="visible" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
-        <ElCol :span="12">
+        <ElCol>
           <ElFormItem :label="$t('username')" prop="username">
             <ElInput v-model="form.username" :placeholder="$t('placeholder.inputText', { field: $t('username') })"
               :maxLength="50" :disabled="!!form.id" />
           </ElFormItem>
         </ElCol>
-        <ElCol :span="12">
-          <ElFormItem :label="$t('name_')" prop="name_">
-            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('name_') })"
-              :maxLength="50" />
-          </ElFormItem>
-        </ElCol>
-
       </ElRow>
-      <ElRow :gutter="20">
+      <ElRow>
         <ElCol>
-          <ElFormItem :label="$t('email')" prop="email">
-            <ElInput type="email" v-model="form.email"
-              :placeholder="$t('placeholder.inputText', { field: $t('email') })" :maxLength="50"
-              :disabled="!!form.id" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol :span="12">
-          <ElFormItem :label="$t('accountExpiresAt')" prop="accountExpiresAt">
-            <ElDatePicker v-model="form.accountExpiresAt" type="datetime" :placeholder="$t('placeholder.selectText')"
-              style="width: 100%;" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem :label="$t('credentialsExpiresAt')" prop="credentialsExpiresAt">
-            <ElDatePicker v-model="form.credentialsExpiresAt" type="datetime"
-              :placeholder="$t('placeholder.selectText')" style="width: 100%;" />
+          <ElFormItem :label="$t('fullName')" prop="fullName">
+            <ElInput v-model="form.fullName" :placeholder="$t('placeholder.inputText', { field: $t('fullName') })"
+              :maxLength="50" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -384,7 +333,7 @@ function lockRow(id: number) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="36%">
+  <ElDialog v-model="importVisible" align-center width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/users.xlsx`" :download="$t('users') + '.xlsx'">
         {{ $t('users') }}.xlsx

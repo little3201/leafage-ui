@@ -253,7 +253,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="25%">
+  <ElDialog v-model="visible" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="24">
@@ -282,7 +282,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="36%">
+  <ElDialog v-model="importVisible" align-center width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx

@@ -177,7 +177,7 @@ function confirmEvent(id: number) {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="module" :label="$t('module')" sortable>
+        <ElTableColumn prop="module" :label="$t('label.module')" sortable>
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
               {{ $t(scope.row.module) }}
@@ -189,12 +189,12 @@ function confirmEvent(id: number) {
             {{ $t(scope.row.action) }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip prop="params" :label="$t('params')" />
-        <ElTableColumn show-overflow-tooltip prop="body" :label="$t('body')" />
-        <ElTableColumn prop="ip" :label="$t('ip')" sortable />
-        <ElTableColumn show-overflow-tooltip prop="sessionId" :label="$t('sessionId')" />
-        <ElTableColumn prop="operator" :label="$t('operator')" sortable />
-        <ElTableColumn prop="operatedAt" :label="$t('operatedAt')" sortable>
+        <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
+        <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.body')" />
+        <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
+        <ElTableColumn show-overflow-tooltip prop="sessionId" :label="$t('label.sessionId')" />
+        <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
+        <ElTableColumn prop="operatedAt" :label="$t('label.operatedAt')" sortable>
           <template #default="scope">
             {{ dayjs(scope.row.operatedAt).format('YYYY-MM-DD HH:mm') }}
           </template>
@@ -220,17 +220,15 @@ function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center show-close>
+  <ElDialog v-model="visible" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('module')">{{ $t(row.module) }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.module')">{{ $t(row.module) }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.actions')">{{ $t(row.action) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('ip')">{{ row.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('params')" span="3">{{ row.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('body')" span="3">{{ row.body }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('browser')">{{ row.browser }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('userAgent')" :span="2">{{ row.userAgent }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('sessionId')">{{ row.sessionId }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('referer')" :span="2">{{ row.referer }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.params')" span="3">{{ row.params }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.body')" span="3">{{ row.body }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.sessionId')">{{ row.sessionId }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.userAgent')" :span="2">{{ row.userAgent }}</ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
 </template>

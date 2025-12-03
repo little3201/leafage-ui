@@ -45,15 +45,6 @@ export const modifyUser = (id: number, row: User) => {
 }
 
 /**
- * Unlock or lock an existing row
- * @param id Row ID
- * @returns Unlock or lock result
- */
-export const unlockUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}/unlock`)
-}
-
-/**
  * Enable or Disable an existing row
  * @param id Row ID
  * @returns Enable or Disable result

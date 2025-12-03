@@ -248,8 +248,8 @@ function confirmEvent(id: number) {
         </ElTableColumn>
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="name" :label="$t('label.name')" sortable />
-        <ElTableColumn prop="areaCode" :label="$t('areaCode')" sortable />
-        <ElTableColumn prop="postalCode" :label="$t('postalCode')" sortable />
+        <ElTableColumn prop="areaCode" :label="$t('label.areaCode')" sortable />
+        <ElTableColumn prop="postalCode" :label="$t('label.postalCode')" sortable />
         <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
           <template #default="scope">
             <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
@@ -283,7 +283,7 @@ function confirmEvent(id: number) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="25%">
+  <ElDialog v-model="visible" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -293,17 +293,16 @@ function confirmEvent(id: number) {
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('areaCode')" prop="areaCode">
-            <ElInput v-model="form.areaCode" :placeholder="$t('placeholder.inputText', { field: $t('areaCode') })" />
+        <ElCol :span="12">
+          <ElFormItem :label="$t('label.areaCode')" prop="areaCode">
+            <ElInput v-model="form.areaCode"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.areaCode') })" />
           </ElFormItem>
         </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('postalCode')" prop="postalCode">
+        <ElCol :span="12">
+          <ElFormItem :label="$t('label.postalCode')" prop="postalCode">
             <ElInput v-model="form.postalCode"
-              :placeholder="$t('placeholder.inputText', { field: $t('postalCode') })" />
+              :placeholder="$t('placeholder.inputText', { field: $t('label.postalCode') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -327,7 +326,7 @@ function confirmEvent(id: number) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="36%">
+  <ElDialog v-model="importVisible" align-center width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/regions.xlsx`" :download="$t('regions') + '.xlsx'">
         {{ $t('regions') }}.xlsx

@@ -2,14 +2,14 @@ import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || ''
+const BASE_URL = import.meta.env.VITE_BASE_URL || ''
 
 export function signIn() {
-  window.location.href = BACKEND_URL
+  window.location.href = BASE_URL
 }
 
 export function authorize() {
-  window.location.href = BACKEND_URL + '/oauth2/authorization/web-client-authorization-code'
+  window.location.href = BASE_URL + '/oauth2/authorization/web-client-authorization-code'
 }
 
 export async function getUserInfo() {
