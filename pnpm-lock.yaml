@@ -11,9 +11,6 @@ importers:
       '@iconify/vue':
         specifier: ^5.0.0
         version: 5.0.0(vue@3.5.22(typescript@5.9.3))
-      '@lottiefiles/dotlottie-web':
-        specifier: ^0.47.0
-        version: 0.47.0
       '@vueuse/core':
         specifier: ^13.9.0
         version: 13.9.0(vue@3.5.22(typescript@5.9.3))
@@ -430,9 +427,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@lottiefiles/dotlottie-web@0.47.0':
-    resolution: {integrity: sha512-YN6wSB4iYZBYEAFKEs/taufrPH3rfNlUA632Ib61WoR58TALAJ1ZX8yDIGUBT28byMJhZR4+xdpRX4v7X8OeBQ==}
 
   '@mswjs/interceptors@0.40.0':
     resolution: {integrity: sha512-EFd6cVbHsgLa6wa4RljGj6Wk75qoHxUSyc5asLyyPSyuhIcdS2Q3Phw6ImS1q+CkALthJRShiYfKANcQMuMqsQ==}
@@ -2592,8 +2586,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@lottiefiles/dotlottie-web@0.47.0': {}
 
   '@mswjs/interceptors@0.40.0':
     dependencies:

@@ -29,10 +29,7 @@ const initialValues: FileRecord = {
 }
 const row = ref<FileRecord>({ ...initialValues })
 const visible = ref<boolean>(false)
-const view = reactive({
-  showTable: true,
-  showGrid: false
-})
+const showTable = ref(true)
 const uploadVisible = ref<boolean>(false)
 const uploadRef = ref<UploadInstance>()
 
@@ -86,11 +83,6 @@ function showRow(id: number | undefined) {
     loadOne(id)
   }
   visible.value = true
-}
-
-function onViewChange(showGrid: boolean) {
-  view.showTable = !showGrid
-  view.showGrid = showGrid
 }
 
 /**
@@ -277,15 +269,15 @@ function handleBreadcrumbClick(index: number) {
               </ElButton>
             </ElTooltip>
             <ElTooltip :content="$t('action.view')" placement="top">
-              <ElButton title="view" type="success" plain circle @click="onViewChange(!view.showGrid)">
-                <Icon :icon="`material-symbols:${view.showTable ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
+              <ElButton title="view" type="success" plain circle @click="showTable = !showTable">
+                <Icon :icon="`material-symbols:${showTable ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
                   width="18" height="18" />
               </ElButton>
             </ElTooltip>
           </ElCol>
         </ElRow>
 
-        <div v-show="view.showTable">
+        <div v-show="showTable">
           <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto"
             @row-click="onRowClick">
             <ElTableColumn type="index" :label="$t('label.no')" width="55" />
@@ -334,9 +326,9 @@ function handleBreadcrumbClick(index: number) {
           <ElPagination layout="->, total, prev, pager, next, sizes" @change="pageChange" :total="total" />
         </div>
 
-        <div v-show="view.showGrid" class="grid gap-4 mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
-          <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="showRow(data.id)"
-            body-class="hover:bg-(--el-bg-color-page)">
+        <div v-show="!showTable"
+          class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-10">
+          <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="onRowClick(data)">
             <Icon v-if="data.directory" icon="flat-color-icons:folder" width="64" height="64" />
             <template v-else-if="data.regularFile && data.contentType">
               <Icon v-if="data.contentType.includes('image')" icon="flat-color-icons:image-file" width="64"

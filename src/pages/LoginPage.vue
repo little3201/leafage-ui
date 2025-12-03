@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElFormItem, type FormInstance, type FormRules } from 'element-plus'
+import { ElFormItem, ElImage, type FormInstance, type FormRules } from 'element-plus'
 import { Icon } from '@iconify/vue'
 import { useRouter } from 'vue-router'
-import { DotLottie } from '@lottiefiles/dotlottie-web'
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import logo from 'src/assets/logo.svg'
+import hello from 'src/assets/hello_ccwj.svg'
 
 
 const { t } = useI18n()
 const { replace } = useRouter()
-const lottieRef = ref<HTMLCanvasElement | null>(null)
+const lottieRef = ref(null)
 
 const loading = ref<boolean>(false)
 const formRef = ref<FormInstance>()
@@ -56,15 +56,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 
 function load() {
   if (lottieRef.value) {
-    new DotLottie({
-      canvas: lottieRef.value,
-      loop: true,
-      autoplay: true,
-      src: '/1707289607880.lottie',
-      renderConfig: {
-        autoResize: true
-      }
-    })
+    // play the lottie animation
   }
 }
 </script>
@@ -98,7 +90,7 @@ function load() {
           body-class="flex items-center !p-0 h-full">
           <div class="hidden xl:flex flex-col items-center h-full w-1/2  ">
             <div class="inline-flex grow flex-col items-center justify-center w-full">
-              <canvas ref="lottieRef" style="height: 450px; width: 450px" />
+              <ElImage :src="hello" alt="hello" class="m-24" />
               <div>
                 <p class="font-bold text-xl text-left">
                   {{ $t('tips.welcome') }}
@@ -110,7 +102,7 @@ function load() {
             </div>
           </div>
           <div
-            class="flex flex-row items-center w-full xl:w-1/2 h-full  bg-(--el-color-primary-light-9) dark:bg-transparent">
+            class="flex flex-row items-center w-full xl:w-1/2 h-full bg-(--el-color-primary-light-9) dark:bg-transparent">
             <div class="inline-flex flex-col w-full h-full space-y-2xl justify-center items-center">
               <div class="text-center">
                 <ElImage :src="logo" alt="logo" class="w-24 h-24" />
