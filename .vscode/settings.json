@@ -2,23 +2,19 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-  },
+  "editor.codeActionsOnSave": [
+    "source.fixAll.eslint"
+  ],
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
-    "typescriptreact",
-    "vue",
-    "css",
-    "scss",
+    "vue"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.format.enable": true,
   "editor.formatOnSave": true,
-  "i18n-ally.localesPaths": [
-    "src/i18n",
-    "src/locales"
-  ]
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
