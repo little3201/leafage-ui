@@ -42,7 +42,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('privileges')" selection="multiple" v-model:selected="selected" :rows="rows"
+    <q-table ref="tableRef" flat :title="$t('privileges')" selection="multiple" v-model:selected="selected" :rows="rows"
       :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -186,11 +186,11 @@ const columns: QTableProps['columns'] = [
 
 const subset = ref<Array<Privilege>>()
 
-onMounted(() => {
-  tableRef.value.requestServerInteraction()
-  retrieveDictionarySubset(100).then(res => {
-    buttonOptions.value = res.data
-  })
+onMounted(async () => {
+  refresh()
+
+  const res = await retrieveDictionarySubset(100)
+  buttonOptions.value = res.data
 })
 
 /**
@@ -204,7 +204,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrievePrivileges({ ...params }, filter).then(res => {
+  try {
+    const res = await retrievePrivileges({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -212,9 +213,11 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function importRow() {
@@ -226,25 +229,38 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  enablePrivilege(id)
+  try {
+    await enablePrivilege(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id: number) {
   form.value = { ...initialValues }
   // You can populate the form with existing user data based on the id
   if (id) {
-    fetchPrivilege(id).then(res => { form.value = res.data })
-    retrievePrivilegeSubset(id).then(res => { subset.value = res.data })
+    try {
+      const [res, subRes] = await Promise.all([fetchPrivilege(id), retrievePrivilegeSubset(id)])
+      form.value = res.data
+      subset.value = subRes.data
+    } catch {
+      return Promise.resolve()
+    }
   }
   visible.value = true
 }
 
-function onSubmit() {
+async function onSubmit() {
   if (form.value.id) {
-    modifyPrivilege(form.value.id, form.value)
+    try {
+      await modifyPrivilege(form.value.id, form.value)
+      refresh()
+    } catch {
+      return Promise.resolve()
+    }
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 
@@ -252,10 +268,13 @@ async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
     return Promise.reject(new Error('No file provided'))
   }
-  const res = await importPrivileges(files[0])
-
-  importVisible.value = false
-  refresh()
-  return res.data
+  try {
+    const res = await importPrivileges(files[0])
+    importVisible.value = false
+    refresh()
+    return res.data
+  } catch {
+    return Promise.resolve()
+  }
 }
 </script>

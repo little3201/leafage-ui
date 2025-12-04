@@ -95,7 +95,7 @@ export const groupsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -120,7 +120,7 @@ export const groupsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`, async ({ params }) => {
+  http.delete(`/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`, ({ params }) => {
     const { groupId, privilegeId } = params
     if (groupId && privilegeId) {
       return HttpResponse.json()

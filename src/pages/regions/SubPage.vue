@@ -101,9 +101,8 @@ const loading = ref<boolean>(false)
 
 const initialValues: Region = {
   id: undefined,
+  superiorId: props.superiorId,
   name: '',
-  areaCode: 0,
-  postalCode: 0,
   description: ''
 }
 const form = ref<Region>({ ...initialValues })
@@ -124,7 +123,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  subtableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -134,11 +133,14 @@ async function onRequest() {
   loading.value = true
 
   if (props.superiorId) {
-    retrieveRegionSubset(props.superiorId).then(res => {
+    try {
+      const res = await retrieveRegionSubset(props.superiorId)
       rows.value = res.data
-    }).finally(() => {
+    } catch {
+      return Promise.resolve()
+    } finally {
       loading.value = false
-    })
+    }
   }
 }
 
@@ -147,31 +149,50 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  enableRegion(id)
+  try {
+    await enableRegion(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id?: number) {
   form.value = { ...initialValues }
-  // You can populate the form with existing user data based on the id
   if (id) {
-    fetchRegion(id).then(res => { form.value = res.data })
+    try {
+      const res = await fetchRegion(id)
+      form.value = res.data
+    } catch {
+      return Promise.resolve()
+    }
   }
   visible.value = true
 }
 
-function removeRow(id: number) {
+async function removeRow(id: number) {
   loading.value = true
-  removeRegion(id).finally(() => { loading.value = false })
+  try {
+    await removeRegion(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
-function onSubmit() {
-  if (form.value.id) {
-    modifyRegion(form.value.id, form.value)
-  } else {
-    createRegion(form.value)
+async function onSubmit() {
+  try {
+    if (form.value.id) {
+      await modifyRegion(form.value.id, form.value)
+    } else {
+      await createRegion(form.value)
+    }
+    refresh()
+  } catch {
+    return Promise.resolve()
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 </script>

@@ -53,7 +53,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('access_logs')" selection="multiple" v-model:selected="selected"
+    <q-table ref="tableRef" flat :title="$t('access_logs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -115,7 +115,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
-import { retrieveAccessLogs, fetchAccessLog } from 'src/api/access-logs'
+import { retrieveAccessLogs, fetchAccessLog, removeAccessLog } from 'src/api/access-logs'
 import { formatDuration, exportTable } from 'src/utils'
 import { httpMethods } from 'src/constants'
 import type { AccessLog } from 'src/types'
@@ -162,7 +162,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -176,7 +176,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveAccessLogs({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveAccessLogs({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -184,27 +185,33 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function refresh() {
   tableRef.value.requestServerInteraction()
 }
 
-function showRow(id: number) {
-  visible.value = true
-  if (id) {
-    fetchAccessLog(id).then(res => { row.value = res.data })
+async function showRow(id: number) {
+  try {
+    const res = await fetchAccessLog(id)
+    row.value = res.data
+  } catch {
+    return Promise.resolve()
   }
+  visible.value = true
 }
 
-function removeRow(id: number) {
-  console.log('id: ', id)
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
+async function removeRow(id: number) {
+  try {
+    await removeAccessLog(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 </script>

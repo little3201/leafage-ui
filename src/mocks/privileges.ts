@@ -482,7 +482,7 @@ export const privilegesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.PRIVILEGE}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.PRIVILEGE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

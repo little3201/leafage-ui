@@ -23,7 +23,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('dictionaries')" :rows="rows" :columns="columns" row-key="id"
+    <q-table ref="tableRef" flat :title="$t('dictionaries')" :rows="rows" :columns="columns" row-key="id"
       :loading="loading" v-model:pagination="pagination" binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
@@ -135,8 +135,8 @@ const columns: QTableProps['columns'] = [
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
-onMounted(async () => {
-  tableRef.value.requestServerInteraction()
+onMounted(() => {
+  refresh()
 })
 
 /**
@@ -150,7 +150,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveDictionaries({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveDictionaries({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -158,7 +159,11 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 function importRow() {
@@ -169,25 +174,37 @@ function refresh() {
   tableRef.value.requestServerInteraction()
 }
 
-function enableRow(id: number) {
-  enableDictionary(id)
+async function enableRow(id: number) {
+  try {
+    await enableDictionary(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id: number) {
   form.value = { ...initialValues }
-  // You can populate the form with existing user data based on the id
   if (id) {
-    fetchDictionary(id).then(res => { form.value = res.data })
+    try {
+      const res = await fetchDictionary(id)
+      form.value = res.data
+    } catch {
+      return Promise.resolve()
+    }
   }
   visible.value = true
 }
 
-function onSubmit() {
+async function onSubmit() {
   if (form.value.id) {
-    modifyDictionary(form.value.id, form.value)
+    try {
+      await modifyDictionary(form.value.id, form.value)
+      refresh()
+    } catch {
+      return Promise.resolve()
+    }
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 

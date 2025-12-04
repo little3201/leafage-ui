@@ -5,12 +5,12 @@ import { signIn, getUserInfo } from 'src/api/authentication'
 import type { RouteRecordRaw } from 'vue-router'
 import type { PrivilegeTreeNode } from 'src/types'
 
-// 生成路由
+
 const BlankLayout = () => import('src/layouts/BlankLayout.vue')
 
 const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
 
-export default defineBoot(async ({ router, store }) => {
+export default defineBoot(({ router, store }) => {
   router.beforeEach(async (to, from) => {
     if (['/callback', '/login'].includes(to.path)) return true
 
@@ -25,7 +25,7 @@ export default defineBoot(async ({ router, store }) => {
       const res = await getUserInfo()
       userStore.$patch({
         username: res.data.sub,
-        name: res.data.name,
+        fullName: res.data.name,
       })
     }
 
@@ -39,7 +39,7 @@ export default defineBoot(async ({ router, store }) => {
     if (!to.name || !router.hasRoute(to.name)) {
       const routes = generateRoutes(userStore.privileges)
       routes.forEach((route) => {
-        router.addRoute('home', route as RouteRecordRaw)
+        router.addRoute('home', route)
       })
 
       router.addRoute({
@@ -72,7 +72,7 @@ export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] =>
     }
     if (route.meta.component) {
       const comModule = modules[`../pages/${route.meta.component}/IndexPage.vue`]
-      const component = route.meta.component as string
+      const component = route.meta.component
       if (comModule) {
         // 动态加载路由文件
         item.component = comModule

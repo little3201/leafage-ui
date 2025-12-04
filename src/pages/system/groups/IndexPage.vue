@@ -23,7 +23,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('groups')" selection="multiple" v-model:selected="selected" :rows="rows"
+    <q-table ref="tableRef" flat :title="$t('groups')" selection="multiple" v-model:selected="selected" :rows="rows"
       :columns="columns" row-key="id" :pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
       @request="onRequest" class="full-width col">
       <template v-slot:top-right>
@@ -152,7 +152,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -166,7 +166,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveGroups({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveGroups({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -174,9 +175,11 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function importRow() {
@@ -191,33 +194,52 @@ function relationRow(id: number) {
   console.log(id)
 }
 
-function enableRow(id: number) {
-  enableGroup(id)
+async function enableRow(id: number) {
+  try {
+    await enableGroup(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id?: number) {
   form.value = { ...initialValues }
   // You can populate the form with existing user data based on the id
   if (id) {
-    fetchGroup(id).then(res => { form.value = res.data })
+    try {
+      const res = await fetchGroup(id)
+      form.value = res.data
+    } catch {
+      return Promise.resolve()
+    }
   }
   visible.value = true
 }
 
-function removeRow(id: number) {
+async function removeRow(id: number) {
   loading.value = true
-  // You can send a request to delete the group with the specified id
-  removeGroup(id).finally(() => { loading.value = false })
+  try {
+    await removeGroup(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
-function onSubmit() {
-  if (form.value.id) {
-    modifyGroup(form.value.id, form.value)
-  } else {
-    createGroup(form.value)
+async function onSubmit() {
+  try {
+    if (form.value.id) {
+      await modifyGroup(form.value.id, form.value)
+    } else {
+      await createGroup(form.value)
+    }
+    refresh()
+  } catch {
+    return Promise.resolve()
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 
@@ -225,10 +247,13 @@ async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
     return Promise.reject(new Error('No file provided'))
   }
-  const res = await importGroups(files[0])
-
-  importVisible.value = false
-  refresh()
-  return res.data
+  try {
+    const res = await importGroups(files[0])
+    importVisible.value = false
+    refresh()
+    return res.data
+  } catch {
+    return Promise.resolve()
+  }
 }
 </script>

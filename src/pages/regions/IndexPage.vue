@@ -24,7 +24,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('regions')" selection="multiple" v-model:selected="selected" :rows="rows"
+    <q-table ref="tableRef" flat :title="$t('regions')" selection="multiple" v-model:selected="selected" :rows="rows"
       :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -122,8 +122,6 @@ const loading = ref<boolean>(false)
 const initialValues: Region = {
   id: undefined,
   name: '',
-  areaCode: 0,
-  postalCode: 0,
   description: ''
 }
 const form = ref<Region>({ ...initialValues })
@@ -148,7 +146,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -162,7 +160,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveRegions({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveRegions({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -170,9 +169,11 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function importRow() {
@@ -184,31 +185,50 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  enableRegion(id)
+  try {
+    await enableRegion(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id?: number) {
   form.value = { ...initialValues }
   // You can populate the form with existing user data based on the id
-  if (id) {
-    fetchRegion(id).then(res => { form.value = res.data })
+  try {
+    if (id) {
+      const res = await fetchRegion(id)
+      form.value = res.data
+    }
+  } catch {
+    return Promise.resolve()
   }
   visible.value = true
 }
 
-function removeRow(id: number) {
+async function removeRow(id: number) {
   loading.value = true
-  removeRegion(id).finally(() => { loading.value = false })
+  try {
+    await removeRegion(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
-function onSubmit() {
-  if (form.value.id) {
-    modifyRegion(form.value.id, form.value)
-  } else {
-    createRegion(form.value)
+async function onSubmit() {
+  try {
+    if (form.value.id) {
+      await modifyRegion(form.value.id, form.value)
+    } else {
+      await createRegion(form.value)
+    }
+  } catch {
+    return Promise.resolve()
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 
@@ -216,10 +236,13 @@ async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
     return Promise.reject(new Error('No file provided'))
   }
-  const res = await importRegions(files[0])
-
-  importVisible.value = false
-  refresh()
-  return res.data
+  try {
+    const res = await importRegions(files[0])
+    importVisible.value = false
+    refresh()
+    return res.data
+  } catch {
+    return Promise.resolve()
+  }
 }
 </script>

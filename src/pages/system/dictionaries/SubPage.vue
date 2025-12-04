@@ -75,6 +75,7 @@ const loading = ref<boolean>(false)
 
 const initialValues: Dictionary = {
   id: undefined,
+  superiorId: props.superiorId,
   name: '',
   enabled: true
 }
@@ -97,11 +98,14 @@ onMounted(() => {
 async function onRequest() {
   loading.value = true
   if (props.superiorId) {
-    retrieveDictionarySubset(props.superiorId).then(res => {
+    try {
+      const res = await retrieveDictionarySubset(props.superiorId)
       rows.value = res.data
-    }).finally(() => {
+    } catch {
+      return Promise.resolve()
+    } finally {
       loading.value = false
-    })
+    }
   }
 }
 
@@ -109,32 +113,51 @@ function refresh() {
   subtableRef.value.requestServerInteraction()
 }
 
-function enableRow(id: number) {
-  enableDictionary(id)
+async function enableRow(id: number) {
+  try {
+    await enableDictionary(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id?: number) {
   form.value = { ...initialValues }
-  visible.value = true
-  // You can populate the form with existing user data based on the id
   if (id) {
-    fetchDictionary(id).then(res => { form.value = res.data })
+    try {
+      const res = await fetchDictionary(id)
+      form.value = res.data
+    } catch {
+      return Promise.resolve()
+    }
   }
+  visible.value = true
 }
 
-function removeRow(id: number) {
+async function removeRow(id: number) {
   loading.value = true
-  removeDictionary(id).finally(() => { loading.value = false })
+  try {
+    await removeDictionary(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
-function onSubmit() {
-  if (form.value.id) {
-    modifyDictionary(form.value.id, form.value)
-  } else {
-    createDictionary(form.value)
+async function onSubmit() {
+  try {
+    if (form.value.id) {
+      await modifyDictionary(form.value.id, form.value)
+    } else {
+      await createDictionary(form.value)
+    }
+    refresh()
+  } catch {
+    return Promise.resolve()
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 </script>

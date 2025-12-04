@@ -100,7 +100,7 @@ export const usersHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.USER}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -117,7 +117,7 @@ export const usersHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, async ({ params }) => {
+  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, ({ params }) => {
     const { username, privilegeId } = params
     if (username && privilegeId) {
       return HttpResponse.json()

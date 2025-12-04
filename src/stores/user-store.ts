@@ -5,7 +5,7 @@ import type { PrivilegeTreeNode } from 'src/types'
 export const useUserStore = defineStore('user', {
   state: () => ({
     username: '',
-    name: '',
+    fullName: '',
     accessToken: '',
     idToken: '',
     privileges: [] as PrivilegeTreeNode[]

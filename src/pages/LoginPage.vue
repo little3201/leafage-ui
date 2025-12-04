@@ -26,7 +26,7 @@
           <q-card-section horizontal :class="['full-height', $q.screen.lt.md ? 'hidden' : '']" style="width: 50%;">
             <transition appear enter-active-class="animated slideInLeft" leave-active-class="animated slideOutLeft">
               <div class="column inline justify-center items-center" style="margin-top: -60px">
-                <canvas ref="lottieRef" style="height: 32em; width: 32em" />
+                <q-img :src="hello" alt="hello" />
                 <div class="column q-gutter-y-xs">
                   <span class="text-weight-bold text-h5" style="margin-top: -20px">
                     {{ $t('welcome') }}
@@ -87,13 +87,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { DotLottie } from '@lottiefiles/dotlottie-web'
+import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { signIn } from 'src/api/authentication'
 import logo from 'src/assets/logo.svg'
+import hello from 'src/assets/hello_ccwj.svg'
 
 
 const $q = useQuasar()
@@ -101,15 +101,10 @@ const $q = useQuasar()
 const showPwd = ref<boolean>(true)
 const rememberMe = ref<boolean>(false)
 const loading = ref<boolean>(false)
-const lottieRef = ref<HTMLCanvasElement | null>(null)
 
 const form = ref({
   username: '',
   password: ''
-})
-
-onMounted(() => {
-  load()
 })
 
 function changeRememberMe(value: boolean) {
@@ -118,20 +113,6 @@ function changeRememberMe(value: boolean) {
 
 async function onSubmit() {
   loading.value = true
-  signIn()
-}
-
-function load() {
-  if (lottieRef.value) {
-    new DotLottie({
-      canvas: lottieRef.value,
-      loop: true,
-      autoplay: true,
-      src: '/1707289607880.lottie',
-      renderConfig: {
-        autoResize: true
-      }
-    })
-  }
+  await signIn()
 }
 </script>

@@ -10,7 +10,7 @@
 
             <div class="q-ml-md">
               <span class="text-subtitle2">
-                {{ me.name }}
+                {{ me.fullName }}
               </span>
 
               <div class="text-caption">
@@ -59,7 +59,7 @@ const userStore = useUserStore()
 const cdn_url = process.env.CDN_URL
 const me = {
   username: userStore.username,
-  name: userStore.name
+  fullName: userStore.fullName
 }
 
 const items = ref([

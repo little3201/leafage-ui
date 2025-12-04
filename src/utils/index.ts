@@ -1,4 +1,4 @@
-import { Notify, date, exportFile } from 'quasar'
+import { Notify, exportFile } from 'quasar'
 import type { QTableProps } from 'quasar'
 import type { Dictionary } from 'src/types'
 
@@ -14,29 +14,6 @@ export function pathResolve(parentPath: string | undefined, path: string | undef
   }
   const childPath = path.startsWith('/') ? path : `/${path}`
   return `${parentPath}${childPath}`.replace(/\/\//g, '/').trim()
-}
-
-/**
- * Compare the target date with the current date and return a status
- * @param {string} target - The target date
- * @returns {string} - The status ('success', 'warning', 'danger')
- */
-export function calculate(target: string) {
-  const now = new Date()
-  const targetDate = new Date(target)
-  // 失效时间是否小于7天
-  const diff = date.getDateDiff(targetDate, now, 'days')
-  if (diff > 7) {
-    return 'positive'
-  } else {
-    // 是否失效
-    const diffSec = date.getDateDiff(targetDate, now, 'seconds')
-    if (diffSec > 0) {
-      return 'warning'
-    } else {
-      return 'negative'
-    }
-  }
 }
 
 /**
@@ -150,7 +127,7 @@ export function generateVerifier(): string {
   return base64UrlEncode(array);
 }
 
-export function generateCodeChallenge(codeVerifier: string) {
+export async function generateCodeChallenge(codeVerifier: string) {
   return crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
     .then(buffer => base64UrlEncode(new Uint8Array(buffer)))
 }

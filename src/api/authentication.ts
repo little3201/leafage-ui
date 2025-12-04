@@ -6,11 +6,11 @@ import { generateVerifier, generateCodeChallenge } from 'src/utils'
 const CLIENT_ID = process.env.CLIENT_ID || ''
 const REDIRECT_URI = `${window.location.origin}/callback`
 
-export function signIn() {
+export async function signIn() {
   const codeVerifier = generateVerifier()
   localStorage.setItem('code_verifier', codeVerifier)
 
-  generateCodeChallenge(codeVerifier).then(challenge => {
+  await generateCodeChallenge(codeVerifier).then(challenge => {
     const state = Math.random().toString(36).substring(2)
     localStorage.setItem('state', state)
 
@@ -28,7 +28,7 @@ export function signIn() {
       window.location.replace(res.request.responseURL)
     }).catch(error => {
       if (error) {
-        window.location.replace('/login')
+        // window.location.replace('/login')
       }
     })
   })
@@ -48,7 +48,7 @@ export async function handleCallback() {
       client_id: CLIENT_ID,
       redirect_uri: REDIRECT_URI,
       code: code,
-      code_verifier: codeVerifier!,
+      code_verifier: codeVerifier || '',
       grant_type: 'authorization_code'
     }))
 
@@ -63,14 +63,15 @@ export function getUserInfo() {
   return api.get(SERVER_URL.USERINFO)
 }
 
-export function signOut(idToken: string) {
+export async function signOut(idToken: string) {
   const params = new URLSearchParams({
     id_token_hint: idToken,
     client_id: CLIENT_ID,
     post_logout_redirect_uri: `${window.location.origin}`
   })
 
-  api.post(SERVER_URL.LOGOUT, params).then(res => {
+  const res = await api.post(SERVER_URL.LOGOUT, params)
+  if (res && res.status === 200) {
     window.location.replace(res.request.responseURL)
-  })
+  }
 }

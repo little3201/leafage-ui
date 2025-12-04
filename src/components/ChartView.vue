@@ -27,7 +27,6 @@ const options = computed(() => ({
 }))
 
 const elRef = ref<HTMLElement | null>(null)
-
 let chartRef: ApexCharts | null = null
 
 const styles = computed(() => {
@@ -40,23 +39,23 @@ const styles = computed(() => {
   }
 })
 
-const initChart = () => {
+const initChart = async () => {
   if (elRef.value && props.options) {
     // 销毁旧图表，防止重复渲染
     if (chartRef) {
       chartRef.destroy()
     }
     chartRef = new ApexCharts(elRef.value, options.value)
-    chartRef?.render()
+    await chartRef?.render()
   }
 }
 
 watch(
   () => options.value,
-  (options) => {
+  async (options) => {
     if (chartRef) {
       // 第二个参数 true 表示对图表强制更新
-      chartRef?.updateOptions(options, true, false)
+      await chartRef?.updateOptions(options, true, false)
     }
   },
   {
@@ -64,9 +63,9 @@ watch(
   }
 )
 
-const resizeHandler = debounce(() => {
+const resizeHandler = debounce(async () => {
   if (chartRef) {
-    chartRef.updateOptions(options.value, true, false)
+    await chartRef.updateOptions(options.value, true, false)
   }
 }, 100)
 
@@ -76,8 +75,8 @@ const contentResizeHandler = (e: TransitionEvent): void => {
   }
 }
 
-onMounted(() => {
-  initChart()
+onMounted(async () => {
+  await initChart()
 
   window.addEventListener('resize', resizeHandler)
   if (elRef.value) {

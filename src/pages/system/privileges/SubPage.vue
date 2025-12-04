@@ -163,11 +163,14 @@ async function onRequest() {
   loading.value = true
 
   if (props.superiorId) {
-    retrievePrivilegeSubset(props.superiorId).then(res => {
+    try {
+      const res = await retrievePrivilegeSubset(props.superiorId)
       rows.value = res.data
-    }).finally(() => {
+    } catch {
+      return Promise.resolve()
+    } finally {
       loading.value = false
-    })
+    }
   }
 }
 
@@ -176,24 +179,37 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  enablePrivilege(id)
+  try {
+    await enablePrivilege(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id: number) {
   form.value = { ...initialValues }
   // You can populate the form with existing user data based on the id
   if (id) {
-    fetchPrivilege(id).then(res => { form.value = res.data })
+    try {
+      const res = await fetchPrivilege(id)
+      form.value = res.data
+    } catch {
+      return Promise.resolve()
+    }
   }
   visible.value = true
 }
 
-function onSubmit() {
+async function onSubmit() {
   if (form.value.id) {
-    modifyPrivilege(form.value.id, form.value)
+    try {
+      await modifyPrivilege(form.value.id, form.value)
+      refresh()
+    } catch {
+      return Promise.resolve()
+    }
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 </script>

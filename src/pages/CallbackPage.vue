@@ -15,22 +15,20 @@ import { useUserStore } from 'stores/user-store'
 import { signIn, handleCallback } from 'src/api/authentication'
 
 
-const { replace } = useRouter()
+const router = useRouter()
 const userStore = useUserStore()
 
-onMounted(() => {
-  handleCallback().then(res => {
-    if (res) {
-      userStore.$patch({
-        accessToken: res.data.access_token,
-        idToken: res.data.id_token
-      })
-      // 路由跳转
-      replace('/')
-    }
-  }).catch(() => {
-    // 回调失败，登录
-    signIn()
-  })
+onMounted(async () => {
+  const res = await handleCallback()
+  if (res && res.status === 200) {
+    userStore.$patch({
+      accessToken: res.data.access_token,
+      idToken: res.data.id_token
+    })
+    // 路由跳转
+    await router.replace('/')
+  } else {
+    await signIn()
+  }
 })
 </script>

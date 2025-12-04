@@ -16,7 +16,7 @@
             </div>
 
             <q-input outlined dense v-model="form.email" :label="$t('email')" lazy-rules type="email"
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
+              :rules="[(val, rules) => rules.email(val) || $t('inputText')]" />
 
             <q-input outlined dense v-model="form.accountExpiresAt" :label="$t('accountExpiresAt')" mask="date">
               <template v-slot:append>
@@ -48,7 +48,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('users')" selection="multiple" v-model:selected="selected" :rows="rows"
+    <q-table ref="tableRef" flat :title="$t('users')" selection="multiple" v-model:selected="selected" :rows="rows"
       :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -84,7 +84,7 @@
             </q-avatar>
             <div class="column q-ml-sm">
               <span class="text-subtitle">
-                {{ props.row.name }}
+                {{ props.row.fullName }}
               </span>
               <span class="text-caption text-grey-7">{{ props.row.username }}</span>
             </div>
@@ -95,21 +95,6 @@
         <q-td :props="props">
           <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
             color="positive" />
-        </q-td>
-      </template>
-      <template v-slot:body-cell-accountExpiresAt="props">
-        <q-td :props="props">
-          <q-badge v-if="props.row.accountExpiresAt" :color="calculate(props.row.accountExpiresAt)" rounded
-            class="q-mr-xs" />
-          {{ props.row.accountExpiresAt ? date.formatDate(props.row.accountExpiresAt, 'YYYY/MM/DD HH:mm') : '-' }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-credentialsExpiresAt="props">
-        <q-td :props="props">
-          <q-badge v-if="props.row.credentialsExpiresAt" :color="calculate(props.row.credentialsExpiresAt)" rounded
-            class="q-mr-xs" />
-          {{ props.row.credentialsExpiresAt ? date.formatDate(props.row.credentialsExpiresAt, 'YYYY/MM/DD HH:mm') :
-            '-' }}
         </q-td>
       </template>
       <template v-slot:body-cell-accountNonLocked="props">
@@ -152,10 +137,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
-import { date } from 'quasar'
 import { useUserStore } from 'stores/user-store'
 import { retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, importUsers } from 'src/api/users'
-import { calculate, exportTable } from 'src/utils'
+import { exportTable } from 'src/utils'
 import type { User } from 'src/types'
 
 
@@ -201,7 +185,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  refresh()
 })
 
 async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
@@ -212,7 +196,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveUsers({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveUsers({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -220,9 +205,11 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function importRow() {
@@ -234,36 +221,58 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  enableUser(id).then(() => refresh())
+  try {
+    await enableUser(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function unlockRow(id: number) {
-  unlockUser(id).then(() => refresh())
+  try {
+    await unlockUser(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function saveRow(id?: number) {
   form.value = { ...initialValues }
-  // You can populate the form with existing user data based on the id
   if (id) {
-    fetchUser(id).then(res => { form.value = res.data })
+    try {
+      const res = await fetchUser(id)
+      form.value = res.data
+    } catch {
+      return Promise.resolve()
+    }
   }
   visible.value = true
 }
 
-function removeRow(id: number) {
+async function removeRow(id: number) {
   loading.value = true
-  // You can send a request to delete the user with the specified id
-  removeUser(id).then(() => tableRef.value.requestServerInteraction()).finally(() => { loading.value = false })
+  try {
+    await removeUser(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 async function onSubmit() {
-  if (form.value.id) {
-    modifyUser(form.value.id, form.value)
-  } else {
-    createUser(form.value)
+  try {
+    if (form.value.id) {
+      await modifyUser(form.value.id, form.value)
+    } else {
+      await createUser(form.value)
+    }
+  } catch {
+    return Promise.resolve()
   }
-
-  // Close the dialog after submitting
   visible.value = false
 }
 
@@ -271,10 +280,13 @@ async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
     return Promise.reject(new Error('No file provided'))
   }
-  const res = await importUsers(files[0])
-
-  importVisible.value = false
-  refresh()
-  return res.data
+  try {
+    const res = await importUsers(files[0])
+    importVisible.value = false
+    refresh()
+    return res.data
+  } catch {
+    return Promise.resolve()
+  }
 }
 </script>

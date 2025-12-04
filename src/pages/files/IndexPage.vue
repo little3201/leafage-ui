@@ -65,7 +65,7 @@
       </div>
 
       <div class="col">
-        <q-table flat ref="tableRef" :title="$t('files')" :rows="rows" :columns="columns" row-key="id"
+        <q-table ref="tableRef" flat :title="$t('files')" :rows="rows" :columns="columns" row-key="id"
           v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort @request="onRequest"
           class="full-width">
           <template v-slot:top-right>
@@ -118,7 +118,7 @@ import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { date } from 'quasar'
 import { useUserStore } from 'stores/user-store'
-import { retrieveFiles, uploadFile, download } from 'src/api/files'
+import { retrieveFiles, uploadFile, download, removeFile } from 'src/api/files'
 import { formatFileSize } from 'src/utils'
 
 
@@ -160,7 +160,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveFiles({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveFiles({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -168,9 +169,11 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function refresh() {
@@ -193,19 +196,20 @@ async function onUpload(files: readonly File[]) {
 }
 
 async function downloadRow(id: number) {
-  visible.value = true
-  // You can populate the form with existing user data based on the id
-  if (id) {
-    download(id)
+  try {
+    await download(id)
+  } catch {
+    return Promise.resolve()
   }
 }
 
-function removeRow(id: number) {
-  console.log('id: ', id)
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
+async function removeRow(id: number) {
+  try {
+    await removeFile(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 function onSubmit() {

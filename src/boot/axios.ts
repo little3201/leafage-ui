@@ -57,12 +57,12 @@ export default defineBoot(({ store }) => {
       }
       return response
     },
-    (error: AxiosError) => {
+    async (error: AxiosError) => {
       const status = error.response?.status
       switch (status) {
         case 401:
           cancelAllRequest()
-          signIn()
+          await signIn()
           return
         case 403:
           Notify.create({ type: 'forbidden', message: t('error') })

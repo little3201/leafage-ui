@@ -41,7 +41,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('scheduler_logs')" selection="multiple" v-model:selected="selected"
+    <q-table ref="tableRef" flat :title="$t('scheduler_logs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -114,7 +114,7 @@
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { date } from 'quasar'
-import { retrieveSchedulerLogs, fetchSchedulerLog } from 'src/api/scheduler-logs'
+import { retrieveSchedulerLogs, fetchSchedulerLog, removeSchedulerLog } from 'src/api/scheduler-logs'
 import { formatDuration, exportTable } from 'src/utils'
 import type { SchedulerLog } from 'src/types'
 
@@ -152,7 +152,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -166,7 +166,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveSchedulerLogs({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveSchedulerLogs({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -174,28 +175,34 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function refresh() {
   tableRef.value.requestServerInteraction()
 }
 
-function showRow(id: number) {
+async function showRow(id: number) {
   row.value = { ...initialValues }
-  visible.value = true
-  if (id) {
-    fetchSchedulerLog(id).then(res => { row.value = res.data })
+  try {
+    const res = await fetchSchedulerLog(id)
+    row.value = res.data
+  } catch {
+    return Promise.resolve()
   }
+  visible.value = true
 }
 
-function removeRow(id: number) {
-  console.log('id: ', id)
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
+async function removeRow(id: number) {
+  try {
+    await removeSchedulerLog(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
+  }
 }
 </script>

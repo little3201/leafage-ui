@@ -123,7 +123,7 @@ export const scriptsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

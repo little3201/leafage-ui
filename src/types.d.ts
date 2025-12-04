@@ -70,7 +70,7 @@ export interface Privilege extends AudtiMetadata {
 
 export interface Dictionary extends AudtiMetadata {
   name: string
-  superiorId?: number
+  superiorId?: number | undefined
   enabled?: boolean
   description?: string
   count?: number
@@ -79,9 +79,9 @@ export interface Dictionary extends AudtiMetadata {
 
 export interface Region extends AudtiMetadata {
   name: string
-  superiorId?: number
-  areaCode?: number
-  postalCode?: number
+  superiorId?: number | undefined
+  areaCode?: string
+  postalCode?: string
   hasChildren?: boolean
   enabled?: boolean
   description?: string
