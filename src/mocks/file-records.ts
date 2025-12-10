@@ -6,18 +6,22 @@ const datas: FileRecord[] = [
 ]
 
 for (let i = 1; i < 28; i++) {
+  const randomIndex = Math.floor(Math.random() * 6)
   const data: FileRecord = {
     id: i,
     name: 'file_name_' + i + (i % 3 > 0 ? '.zip' : '.jpg'),
-    mimeType: i % 3 > 0 ? 'application/zip' : 'text/jpg',
+    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || 'unknown',
     size: Math.floor(Math.random() * 100000),
-    path: '/images',
+    path: '/path/to/test' + i,
+    directory: false,
+    regularFile: true,
+    symbolicLink: false,
     lastModifiedDate: new Date()
   }
   datas.push(data)
 }
 
-export const filesHandlers = [
+export const fileRecordsHandlers = [
   http.get(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {

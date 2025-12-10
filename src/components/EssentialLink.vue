@@ -4,7 +4,7 @@
       <q-icon :name="`sym_r_${icon}`" />
     </q-item-section>
     <q-item-section>
-      <q-item-label>{{ $t(name) }}</q-item-label>
+      <q-item-label>{{ $t(`page.${name}`) }}</q-item-label>
     </q-item-section>
   </q-item>
 </template>

@@ -9,29 +9,24 @@ const REDIRECT_URI = `${window.location.origin}/callback`
 export async function signIn() {
   const codeVerifier = generateVerifier()
   localStorage.setItem('code_verifier', codeVerifier)
+  const state = Math.random().toString(36).substring(2)
+  localStorage.setItem('state', state)
 
-  await generateCodeChallenge(codeVerifier).then(challenge => {
-    const state = Math.random().toString(36).substring(2)
-    localStorage.setItem('state', state)
-
-    const params = new URLSearchParams({
-      client_id: CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
-      state: state,
-      scope: 'openid profile',
-      response_type: 'code',
-      code_challenge: challenge,
-      code_challenge_method: 'S256'
-    })
-
-    api.get(SERVER_URL.AUTHORIZE, { params }).then(res => {
-      window.location.replace(res.request.responseURL)
-    }).catch(error => {
-      if (error) {
-        // window.location.replace('/login')
-      }
-    })
+  const challenge = await generateCodeChallenge(codeVerifier)
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
+    state: state,
+    scope: 'openid profile',
+    response_type: 'code',
+    code_challenge: challenge,
+    code_challenge_method: 'S256'
   })
+
+  const res = await api.get(SERVER_URL.AUTHORIZE, { params })
+  if (res && res.status === 200) {
+    window.location.replace(res.request.responseURL)
+  }
 }
 
 export async function handleCallback() {

@@ -8,13 +8,10 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    name: 'name_' + i,
+    fullName: 'name_' + i,
     email: 'usexxx' + '@test.com',
-    enabled: i % 2 > 0,
-    accountNonLocked: i % 3 > 0,
-    accountExpiresAt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 28).toISOString(),
-    credentialsExpiresAt: new Date(new Date().getFullYear() + 1, 12, 30).toISOString(),
-    lastModifiedDate: new Date()
+    status: i % 2 > 0 ? 'ACTIVE' : 'INACTIVE',
+    enabled: i % 2 > 0
   }
   datas.push(row)
 }

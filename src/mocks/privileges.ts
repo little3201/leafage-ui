@@ -114,7 +114,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'operation',
     component: 'logs/operation',
-    name: 'operation_logs',
+    name: 'operationLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -126,7 +126,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'access',
     component: 'logs/access',
-    name: 'access_logs',
+    name: 'accessLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -138,7 +138,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'audit',
     component: 'logs/audit',
-    name: 'audit_logs',
+    name: 'auditLogs',
     actions: ['remove', 'export'],
     count: 0,
     enabled: true,
@@ -150,7 +150,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'scheduler',
     component: 'logs/scheduler',
-    name: 'scheduler_logs',
+    name: 'schedulerLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -261,7 +261,7 @@ const treeNodes: PrivilegeTreeNode[] = [
     children: [
       {
         id: 8,
-        name: 'operation_logs',
+        name: 'operationLogs',
         meta: {
           path: 'operation',
           component: 'logs/operation',
@@ -271,7 +271,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 9,
-        name: 'access_logs',
+        name: 'accessLogs',
         meta: {
           path: 'access',
           component: 'logs/access',
@@ -281,7 +281,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 10,
-        name: 'audit_logs',
+        name: 'auditLogs',
         meta: {
           path: 'audit',
           component: 'logs/audit',
@@ -291,7 +291,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 11,
-        name: 'scheduler_logs',
+        name: 'schedulerLogs',
         meta: {
           path: 'scheduler',
           component: 'logs/scheduler',

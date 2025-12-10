@@ -5,6 +5,7 @@
 export default {
   label: {
     no: '序號',
+    action: '操作',
     actions: '操作',
     name: '名稱',
     id: '主鍵',
@@ -86,6 +87,11 @@ export default {
     oldPassword: '舊密碼',
     newPassword: '新密碼',
     confirmPassword: '確認密碼',
+    samples: '樣板',
+    comment: '註解',
+    userAgent: 'User Agent',
+    stack: '技術棧',
+    members: '成員',
   },
 
   action: {
@@ -158,7 +164,6 @@ export default {
   },
 
   message: {
-    selectedTotal: '已選擇 {total} 條',
     removeConfirm: '是否確定要刪除這條數據？',
     signinTo: '登錄您的帳戶',
     alreadyExists: '數據已存在',

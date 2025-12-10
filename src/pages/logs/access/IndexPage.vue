@@ -4,37 +4,19 @@
     <q-dialog v-model="visible">
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('access_logs') }}</div>
+          <div class="text-h6">{{ $t('page.accessLogs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('url') }}</strong>
+            <p><strong>{{ $t('label.url') }}</strong>
               {{ row.url }}
             </p>
-            <p><strong>{{ $t('httpMethod') }}</strong>{{ row.httpMethod }}</p>
-            <p><strong>{{ $t('ip') }}</strong>
-              {{ row.ip }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
-            <p><strong>{{ $t('location') }}</strong>
-              {{ row.location }}
-            </p>
-            <p><strong>{{ $t('params') }}</strong>
-              {{ row.params }}
-            </p>
-            <p v-if="row.body"><strong>{{ $t('body') }}</strong>
-              {{ row.body }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
+            <p><strong>{{ $t('label.httpMethod') }}</strong>{{ row.httpMethod }}</p>
             <p>
-              <strong>{{ $t('statusCode') }}</strong>
+              <strong>{{ $t('label.statusCode') }}</strong>
               <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
                 text-color="white">{{ row.statusCode }}</q-chip>
               <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning"
@@ -42,10 +24,27 @@
                   row.statusCode }}</q-chip>
               <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
             </p>
-            <p><strong>{{ $t('responseTimes') }}</strong>
+          </div>
+
+          <div class="q-gutter-md">
+            <p><strong>{{ $t('label.params') }}</strong>
+              {{ row.params }}
+            </p>
+            <p><strong>{{ $t('label.body') }}</strong>
+              {{ row.body }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('label.ip') }}</strong>
+              {{ row.ip }}
+            </p>
+          </div>
+          <div class="q-gutter-md">
+            <p><strong>{{ $t('label.responseTimes') }}</strong>
               {{ row.responseTimes ? formatDuration(row.responseTimes) : '' }}
             </p>
-            <p><strong>{{ $t('responseMessage') }}</strong>
+            <p><strong>{{ $t('label.responseMessage') }}</strong>
               {{ row.responseMessage }}
             </p>
           </div>
@@ -53,7 +52,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('access_logs')" selection="multiple" v-model:selected="selected"
+    <q-table ref="tableRef" flat :title="$t('page.accessLogs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -73,7 +72,7 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
@@ -105,7 +104,7 @@
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
           <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+            @click="removeRow(props.row.id)" />
         </q-td>
       </template>
     </q-table>
@@ -133,7 +132,6 @@ const initialValues: AccessLog = {
   url: '',
   httpMethod: '',
   ip: '',
-  location: '',
   responseMessage: ''
 }
 const row = ref<AccessLog>({ ...initialValues })
@@ -153,7 +151,6 @@ const columns: QTableProps['columns'] = [
   { name: 'params', label: 'params', align: 'left', field: 'params' },
   { name: 'body', label: 'body', align: 'left', field: 'body' },
   { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
-  { name: 'location', label: 'location', align: 'center', field: 'location' },
   { name: 'operator', label: 'operator', align: 'center', field: 'operator' },
   { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
   { name: 'responseTimes', label: 'responseTimes', align: 'center', field: 'responseTimes' },

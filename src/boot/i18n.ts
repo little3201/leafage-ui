@@ -9,7 +9,6 @@ import zhTW from 'src/lang/zh-TW'
 export const i18n = createI18n({
   legacy: false,
   locale: Cookies.get('lang') || 'en-US',
-  fallbackLocale: 'en-US',
   messages: {
     'en-US': enUS,
     'zh-CN': zhCN,

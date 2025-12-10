@@ -4,51 +4,30 @@
       <q-card style="min-width: 25em">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('users') }}</div>
+            <div class="text-h6">{{ $t('page.users') }}</div>
           </q-card-section>
 
           <q-card-section>
             <div class="row q-gutter-md">
-              <q-input outlined dense v-model="form.username" :label="$t('username')" lazy-rules
-                :rules="[val => val && val.length > 0 || $t('inputText')]" />
-              <q-input outlined dense v-model="form.name" :label="$t('name_')" lazy-rules
-                :rules="[val => val && val.length > 0 || $t('inputText')]" />
+              <q-input outlined dense v-model="form.username" :label="$t('label.username')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
+              <q-input outlined dense v-model="form.fullName" :label="$t('label.fullName')" lazy-rules
+                :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
             </div>
 
-            <q-input outlined dense v-model="form.email" :label="$t('email')" lazy-rules type="email"
-              :rules="[(val, rules) => rules.email(val) || $t('inputText')]" />
-
-            <q-input outlined dense v-model="form.accountExpiresAt" :label="$t('accountExpiresAt')" mask="date">
-              <template v-slot:append>
-                <q-icon name="sym_r_event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="form.accountExpiresAt">
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
-            <q-input outlined dense v-model="form.credentialsExpiresAt" :label="$t('credentialsExpiresAt')" mask="date">
-              <template v-slot:append>
-                <q-icon name="sym_r_event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="form.credentialsExpiresAt">
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
+            <q-input outlined dense v-model="form.email" :label="$t('label.email')" lazy-rules type="email"
+              :rules="[(val, rules) => rules.email(val) || $t('placeholder.inputText')]" />
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-            <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
+            <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
+            <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
           </q-card-actions>
         </q-form>
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('users')" selection="multiple" v-model:selected="selected" :rows="rows"
+    <q-table ref="tableRef" flat :title="$t('page.users')" selection="multiple" v-model:selected="selected" :rows="rows"
       :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -71,7 +50,7 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
@@ -91,26 +70,26 @@
           </div>
         </q-td>
       </template>
+      <template v-slot:body-cell-status="props">
+        <q-td :props="props">
+          <q-badge :color="props.row.nullable ? 'positive' : 'primary'" rounded class="q-mr-sm" />
+          {{ props.row.nullable ? 'Y' : 'N' }}
+        </q-td>
+      </template>
       <template v-slot:body-cell-enabled="props">
         <q-td :props="props">
           <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
             color="positive" />
         </q-td>
       </template>
-      <template v-slot:body-cell-accountNonLocked="props">
-        <q-td :props="props">
-          <q-btn title="accountNonLocked" padding="xs" flat round :disable="props.row.accountNonLocked || loading"
-            :color="props.row.accountNonLocked ? 'positive' : 'warning'"
-            :icon="props.row.accountNonLocked ? 'sym_r_lock_open_right' : 'sym_r_lock'"
-            @click="unlockRow(props.row.id)" />
-        </q-td>
-      </template>
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
+          <q-btn title="unlock" padding="xs" flat round color="positive" icon="sym_r_lock_open"
+            @click="unlockRow(props.row.id)" />
           <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit" @click="saveRow(props.row.id)"
-            class="q-mt-none" />
+            class="q-mx-sm" />
           <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+            @click="removeRow(props.row.id)" />
         </q-td>
       </template>
     </q-table>
@@ -119,7 +98,7 @@
     <q-dialog v-model="importVisible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('import') }}</div>
+          <div class="text-h6">{{ $t('action.import') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
@@ -159,8 +138,9 @@ const loading = ref<boolean>(false)
 const initialValues: User = {
   id: undefined,
   username: '',
-  name: '',
-  email: ''
+  fullName: '',
+  email: '',
+  status: ''
 }
 const form = ref<User>({ ...initialValues })
 
@@ -177,10 +157,8 @@ const selected = ref([])
 const columns: QTableProps['columns'] = [
   { name: 'username', label: 'username', align: 'left', field: 'username', sortable: true },
   { name: 'email', label: 'email', align: 'center', field: 'email', sortable: true },
+  { name: 'status', label: 'status', align: 'center', field: 'status', sortable: true },
   { name: 'enabled', label: 'enabled', align: 'center', field: 'enabled' },
-  { name: 'accountNonLocked', label: 'accountNonLocked', align: 'center', field: 'accountNonLocked' },
-  { name: 'accountExpiresAt', label: 'accountExpiresAt', align: 'center', field: 'accountExpiresAt', sortable: true },
-  { name: 'credentialsExpiresAt', label: 'credentialsExpiresAt', align: 'center', field: 'credentialsExpiresAt', sortable: true },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 

@@ -59,12 +59,3 @@ export const retrieveTables = (id: number) => {
 export const removeConnection = (id: number) => {
   return api.delete(`${SERVER_URL.CONNECTION}/${id}`)
 }
-
-/**
- * Exeucte a row
- * @param id Row ID
- * @returns Execute result
- */
-export const executeConnection = (id: number) => {
-  return api.get(`${SERVER_URL.CONNECTION}/${id}/execute`)
-}

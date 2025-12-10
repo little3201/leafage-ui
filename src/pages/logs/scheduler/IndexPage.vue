@@ -4,44 +4,43 @@
     <q-dialog v-model="visible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('scheduler_logs') }}</div>
+          <div class="text-h6">{{ $t('page.schedulerLogs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('name') }}</strong>{{ row.name }}</p>
-            <p><strong>{{ $t('startTime') }}</strong>
+            <p><strong>{{ $t('label.name') }}</strong>{{ row.name }}</p>
+            <p><strong>{{ $t('label.startTime') }}</strong>
               {{ row.startTime ? date.formatDate(row.startTime, 'YYYY-MM-DD HH:mm') : '-' }}
             </p>
-            <p><strong>{{ $t('executedTimes') }}</strong>
-              {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
+            <p>
+              <strong>{{ $t('label.status') }}</strong>
+              <q-chip size="sm" :color="shceduleStatus[row.status || '']" text-color="white">
+                <q-icon :name="`sym_r_${shceduleStatusIcon[row.status || '']}`"
+                  :class="[row.status === 'RUNNING' ? 'spin' : '', 'q-mr-xs']" />
+                {{ row.status }}
+              </q-chip>
             </p>
           </div>
 
-          <div class="row q-gutter-md">
-            <p>
-              <strong>{{ $t('status') }}</strong>
-              <q-chip v-if="row.status === 0" size="sm" icon="sym_r_progress_activity" color="primary"
-                text-color="white">
-                {{ $t('processing') }}
-              </q-chip>
-              <q-chip v-else-if="row.status === 1" size="sm" icon="sym_r_check" color="positive" text-color="white">
-                {{ $t('done') }}
-              </q-chip>
-              <q-chip v-else size="sm" icon="sym_r_error" color="negative" text-color="white">{{ $t('failure')
-              }}</q-chip>
+          <div class="q-gutter-md">
+            <p><strong>{{ $t('label.executedTimes') }}</strong>
+              {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
             </p>
-            <p><strong>{{ $t('nextExecuteTime') }}</strong>
+            <p><strong>{{ $t('label.nextExecuteTime') }}</strong>
               {{ row.nextExecuteTime ? date.formatDate(row.nextExecuteTime, 'YYYY-MM-DD HH:mm') : '-' }}
+            </p>
+            <p><strong>{{ $t('label.record') }}</strong>
+              {{ row.record }}
             </p>
           </div>
         </q-card-section>
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('scheduler_logs')" selection="multiple" v-model:selected="selected"
+    <q-table ref="tableRef" flat :title="$t('page.schedulerLogs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -61,7 +60,7 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
@@ -80,14 +79,11 @@
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-chip v-if="props.row.status === 0" size="sm" icon="sym_r_progress_activity" color="primary"
-            text-color="white">
-            {{ $t('processing') }}
+          <q-chip :color="shceduleStatus[props.row.status]" text-color="white">
+            <q-icon :name="`sym_r_${shceduleStatusIcon[props.row.status]}`"
+              :class="[props.row.status === 'RUNNING' ? 'spin' : '', 'q-mr-xs']" size="xs" />
+            {{ props.row.status }}
           </q-chip>
-          <q-chip v-else-if="props.row.status === 1" size="sm" icon="sym_r_check" color="positive" text-color="white">
-            {{ $t('done') }}
-          </q-chip>
-          <q-chip v-else size="sm" icon="sym_r_error" color="negative" text-color="white">{{ $t('failure') }}</q-chip>
         </q-td>
       </template>
       <template v-slot:body-cell-executedTimes="props">
@@ -103,7 +99,7 @@
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
           <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+            @click="removeRow(props.row.id)" />
         </q-td>
       </template>
     </q-table>
@@ -116,6 +112,7 @@ import type { QTableProps } from 'quasar'
 import { date } from 'quasar'
 import { retrieveSchedulerLogs, fetchSchedulerLog, removeSchedulerLog } from 'src/api/scheduler-logs'
 import { formatDuration, exportTable } from 'src/utils'
+import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { SchedulerLog } from 'src/types'
 
 
@@ -148,6 +145,7 @@ const columns: QTableProps['columns'] = [
   { name: 'status', label: 'status', align: 'center', field: 'status' },
   { name: 'executedTimes', label: 'executedTimes', align: 'center', field: 'executedTimes' },
   { name: 'nextExecuteTime', label: 'nextExecuteTime', align: 'center', field: 'nextExecuteTime' },
+  { name: 'record', label: 'record', align: 'center', field: 'record' },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 

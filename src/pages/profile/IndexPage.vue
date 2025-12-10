@@ -31,7 +31,7 @@
                 <q-item-section avatar>
                   <q-icon :name="`sym_r_${item.icon}`" />
                 </q-item-section>
-                <q-item-section>{{ $t(item.name) }}</q-item-section>
+                <q-item-section>{{ $t(`label.${item.name}`) }}</q-item-section>
               </q-item>
             </q-list>
           </q-card-section>

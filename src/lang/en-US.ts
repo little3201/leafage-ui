@@ -4,7 +4,8 @@
 export default {
   label: {
     no: 'NO.',
-    actions: 'Actions ',
+    action: 'Action',
+    actions: 'Actions',
     name: 'Name',
     id: 'ID',
     superior: 'Superior',
@@ -85,6 +86,11 @@ export default {
     oldPassword: 'Old Password',
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
+    samples: 'Samples',
+    comment: 'Comment',
+    userAgent: 'User Agent',
+    stack: 'Stack',
+    members: 'Members',
   },
 
   action: {
@@ -157,7 +163,6 @@ export default {
   },
 
   message: {
-    selectedTotal: '{total} items selected',
     removeConfirm: 'Are you sure to delete this?',
     signinTo: 'Sign in to your account',
     alreadyExists: 'The data already exists',

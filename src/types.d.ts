@@ -12,11 +12,9 @@ export interface Pagination {
 
 export interface User extends AudtiMetadata {
   username: string
-  name: string
+  fullName: string
   email: string
-  accountNonLocked?: boolean
-  accountExpiresAt?: string
-  credentialsExpiresAt?: string
+  status: string
   enabled?: boolean
 }
 
@@ -118,18 +116,16 @@ export interface SampleTreeNode extends TreeNode {
 }
 
 export interface OperationLog extends AudtiMetadata {
-  operation: string
-  content: string
-  ip: string
-  location: string
+  module: string
+  action: string
+  ip?: string
+  params: string
+  body?: string
   referer?: string
   sessionId?: string
-  os?: string
   deviceType?: string
   userAgent?: string
-  browser?: string
   statusCode?: number
-  operatedTimes?: number
 }
 
 export interface AccessLog extends AudtiMetadata {
@@ -138,7 +134,6 @@ export interface AccessLog extends AudtiMetadata {
   params?: string
   body?: string
   ip: string
-  location: string
   responseTimes?: number
   statusCode?: number
   responseMessage?: string
@@ -150,7 +145,6 @@ export interface AuditLog extends AudtiMetadata {
   oldValue?: string
   newValue?: string
   ip: string
-  location: string
   statusCode?: number
   operatedTimes?: number
 }
@@ -160,15 +154,20 @@ export interface SchedulerLog extends AudtiMetadata {
   startTime?: Date
   executedTimes?: number
   nextExecuteTime?: Date
-  status?: number
+  status?: string
   record?: string
 }
 
 export interface FileRecord extends AudtiMetadata {
   name: string
-  mimeType: string
-  size: number
+  extension?: string
   path: string
+  contentType?: string
+  size: number
+  directory?: boolean
+  regularFile?: boolean
+  symbolicLink?: boolean
+  lastModifiedDate?: Date
 }
 
 export interface Schema extends AudtiMetadata {
@@ -196,11 +195,11 @@ export interface Field extends AudtiMetadata {
 
 export interface Sample extends AudtiMetadata {
   name: string
-  suffix: string
-  content: string
-  category: string | undefined
-  type: string | undefined
-  version?: number
+  module: string
+  stack: string
+  type: 'SINGLE' | 'TREE'
+  body: string | undefined
+  filePath?: number
   enabled?: boolean
 }
 

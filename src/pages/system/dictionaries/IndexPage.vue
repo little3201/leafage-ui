@@ -5,26 +5,27 @@
       <q-card style="min-width: 25em">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('dictionaries') }}</div>
+            <div class="text-h6">{{ $t('page.dictionaries') }}</div>
           </q-card-section>
 
           <q-card-section>
-            <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
-            <q-input outlined dense v-model="form.description" :label="$t('description')" type="textarea" />
+            <q-input outlined dense v-model="form.name" :label="$t('label.name')" lazy-rules
+              :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
+            <q-input outlined dense v-model="form.description" :label="$t('label.description')" type="textarea" />
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-            <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
+            <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
+            <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
           </q-card-actions>
 
         </q-form>
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('dictionaries')" :rows="rows" :columns="columns" row-key="id"
-      :loading="loading" v-model:pagination="pagination" binary-state-sort @request="onRequest" class="full-width">
+    <q-table ref="tableRef" flat :title="$t('page.dictionaries')" :rows="rows" :columns="columns" row-key="id"
+      :loading="loading" v-model:pagination="pagination" :filter="filter" binary-state-sort @request="onRequest"
+      class="full-width">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
@@ -43,7 +44,7 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
@@ -57,7 +58,7 @@
           <q-td v-for="col in props.cols" :key="col.name">
             <div v-if="col.name === 'id'" class="text-right">
               <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-                @click="saveRow(col.value)" class="q-mt-none" />
+                @click="saveRow(col.value)" />
             </div>
             <div v-else-if="col.name === 'enabled'" class="text-center">
               <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
@@ -67,7 +68,7 @@
           </q-td>
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%" class="q-pr-none">
+          <q-td colspan="100%">
             <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id" />
           </q-td>
         </q-tr>
@@ -78,7 +79,7 @@
     <q-dialog v-model="importVisible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('import') }}</div>
+          <div class="text-h6">{{ $t('action.import') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>

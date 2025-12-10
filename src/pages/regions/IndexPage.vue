@@ -5,27 +5,27 @@
       <q-card style="min-width: 25em">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('regions') }}</div>
+            <div class="text-h6">{{ $t('page.regions') }}</div>
           </q-card-section>
 
           <q-card-section>
-            <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('inputText')]" />
+            <q-input outlined dense v-model="form.name" :label="$t('label.name')" lazy-rules
+              :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
 
-            <q-input outlined dense v-model="form.description" :label="$t('description')" type="textarea" />
+            <q-input outlined dense v-model="form.description" :label="$t('label.description')" type="textarea" />
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-            <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
+            <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
+            <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
           </q-card-actions>
 
         </q-form>
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('regions')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
+    <q-table ref="tableRef" flat :title="$t('page.regions')" selection="multiple" v-model:selected="selected"
+      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
@@ -47,7 +47,7 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
@@ -61,7 +61,7 @@
           <q-td v-for="col in props.cols" :key="col.name">
             <div v-if="col.name === 'id'" class="text-right">
               <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-                @click="saveRow(props.row.id)" class="q-mt-none" />
+                @click="saveRow(props.row.id)" />
               <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
                 @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
             </div>
@@ -84,7 +84,7 @@
     <q-dialog v-model="importVisible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('import') }}</div>
+          <div class="text-h6">{{ $t('action.import') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>

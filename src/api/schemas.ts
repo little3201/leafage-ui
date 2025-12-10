@@ -57,9 +57,8 @@ export const modifySchema = (id: number, row: Schema) => {
  * @param id Row ID
  * @returns Created row
  */
-export const syncSchema = (ids: number[]) => {
-  const params = { ids: ids.join(',') }
-  return api.patch(`${SERVER_URL.SCHEMA}/sync`, { params })
+export const syncSchema = (id: number) => {
+  return api.patch(`${SERVER_URL.SCHEMA}/${id}/sync`)
 }
 
 /**

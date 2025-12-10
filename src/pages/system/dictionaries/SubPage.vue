@@ -3,17 +3,17 @@
     <q-card style="min-width: 25em">
       <q-form @submit="onSubmit">
         <q-card-section>
-          <div class="text-h6">{{ $t('dictionaries') }}</div>
+          <div class="text-h6">{{ $t('page.dictionaries') }}</div>
         </q-card-section>
 
         <q-card-section>
-          <q-input outlined dense v-model="form.name" :label="$t('name')" lazy-rules
-            :rules="[val => val && val.length > 0 || $t('inputText')]" />
-          <q-input outlined dense v-model="form.description" :label="$t('description')" type="textarea" />
+          <q-input outlined dense v-model="form.name" :label="$t('label.name')" lazy-rules
+            :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
+          <q-input outlined dense v-model="form.description" :label="$t('label.description')" type="textarea" />
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-          <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
+          <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
+          <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
         </q-card-actions>
 
       </q-form>
@@ -21,7 +21,7 @@
   </q-dialog>
 
   <q-table flat ref="subtableRef" :title="title" :rows="rows" :columns="columns" row-key="id" binary-state-sort
-    @request="onRequest" hide-pagination hide-selected-banner class="full-width bg-transparent">
+    @request="onRequest" hide-pagination :pagination="{ rowsPerPage: 0 }" class="full-width bg-transparent">
     <template v-slot:top-right>
       <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
         icon="sym_r_refresh" @click="refresh" />
@@ -31,7 +31,7 @@
     <template v-slot:header="props">
       <q-tr :props="props">
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
-          {{ $t(col.label) }}
+          {{ $t(`label.${col.label}`) }}
         </q-th>
       </q-tr>
     </template>
@@ -44,10 +44,10 @@
     </template>
     <template v-slot:body-cell-id="props">
       <q-td :props="props">
-        <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit" @click="saveRow(props.row.id)"
-          class="q-mt-none" />
+        <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
+          @click="saveRow(props.row.id)" />
         <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-          @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+          @click="removeRow(props.row.id)" class="q-ml-sm" />
       </q-td>
     </template>
   </q-table>

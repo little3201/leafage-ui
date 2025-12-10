@@ -4,43 +4,17 @@
     <q-dialog v-model="visible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('operation_logs') }}</div>
+          <div class="text-h6">{{ $t('page.operationLogs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('operation') }}</strong>{{ row.operation }}</p>
-            <p><strong>{{ $t('ip') }}</strong>
-              {{ row.ip }}
-            </p>
-            <p><strong>{{ $t('location') }}</strong>
-              {{ row.location }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
-            <p><strong>{{ $t('os') }}</strong>
-              {{ row.os }}
-            </p>
-            <p><strong>{{ $t('userAgent') }}</strong>
-              {{ row.userAgent }}
-            </p>
-            <p><strong>{{ $t('browser') }}</strong>
-              {{ row.browser }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
-            <p><strong>{{ $t('referer') }}</strong>
-              {{ row.referer }}
-            </p>
-            <p><strong>{{ $t('operatedTimes') }}</strong>
-              {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
-            </p>
+            <p><strong>{{ $t('label.module') }}</strong>{{ row.module }}</p>
+            <p><strong>{{ $t('label.action') }}</strong>{{ row.action }}</p>
             <p>
-              <strong>{{ $t('statusCode') }}</strong>
+              <strong>{{ $t('label.statusCode') }}</strong>
               <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
                 text-color="white">{{ row.statusCode }}</q-chip>
               <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning"
@@ -50,14 +24,31 @@
             </p>
           </div>
 
-          <p><strong>{{ $t('sessionId') }}</strong>
-            {{ row.sessionId }}
-          </p>
+          <div class="q-gutter-md">
+            <p><strong>{{ $t('label.params') }}</strong>
+              {{ row.params }}
+            </p>
+            <p><strong>{{ $t('label.body') }}</strong>
+              {{ row.body }}
+            </p>
+            <p><strong>{{ $t('label.userAgent') }}</strong>
+              {{ row.userAgent }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('label.ip') }}</strong>
+              {{ row.ip }}
+            </p>
+            <p><strong>{{ $t('label.sessionId') }}</strong>
+              {{ row.sessionId }}
+            </p>
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('operation_logs')" selection="multiple" v-model:selected="selected"
+    <q-table ref="tableRef" flat :title="$t('page.operationLogs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
@@ -77,15 +68,15 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
 
-      <template v-slot:body-cell-operation="props">
+      <template v-slot:body-cell-module="props">
         <q-td :props="props">
-          <q-btn :title="props.row.operation" flat rounded no-caps color="primary" @click="showRow(props.row.id)">
-            {{ props.row.operation }}
+          <q-btn :title="props.row.module" flat rounded no-caps color="primary" @click="showRow(props.row.id)">
+            {{ props.row.module }}
           </q-btn>
         </q-td>
       </template>
@@ -106,7 +97,7 @@
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
           <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+            @click="removeRow(props.row.id)" />
         </q-td>
       </template>
     </q-table>
@@ -130,10 +121,9 @@ const loading = ref<boolean>(false)
 
 const initialValues: OperationLog = {
   id: undefined,
-  operation: '',
-  content: '',
-  ip: '',
-  location: ''
+  module: '',
+  action: '',
+  params: ''
 }
 const row = ref<OperationLog>({ ...initialValues })
 
@@ -148,14 +138,13 @@ const pagination = ref({
 const selected = ref([])
 
 const columns: QTableProps['columns'] = [
-  { name: 'operation', label: 'operation', align: 'left', field: 'operation' },
-  { name: 'os', label: 'os', align: 'left', field: 'os' },
-  { name: 'browser', label: 'browser', align: 'left', field: 'browser' },
+  { name: 'module', label: 'module', align: 'left', field: 'module' },
+  { name: 'action', label: 'action', align: 'left', field: 'action' },
+  { name: 'params', label: 'params', align: 'left', field: 'params' },
+  { name: 'body', label: 'body', align: 'left', field: 'body' },
   { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
-  { name: 'location', label: 'location', align: 'center', field: 'location' },
+  { name: 'sessionId', label: 'sessionId', align: 'center', field: 'sessionId' },
   { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
-  { name: 'operatedTimes', label: 'operatedTimes', align: 'center', field: 'operatedTimes' },
-  { name: 'operator', label: 'operator', align: 'center', field: 'operator' },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 

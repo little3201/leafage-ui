@@ -3,9 +3,8 @@
     <q-header :class="['transparent', $q.dark.isActive ? '' : 'text-black']">
       <q-toolbar>
         <q-space />
-        <!-- theme -->
+
         <ThemeToogle class="q-mx-sm" />
-        <!-- language -->
         <LanguageSelector />
       </q-toolbar>
     </q-header>
@@ -29,10 +28,10 @@
                 <q-img :src="hello" alt="hello" />
                 <div class="column q-gutter-y-xs">
                   <span class="text-weight-bold text-h5" style="margin-top: -20px">
-                    {{ $t('welcome') }}
+                    {{ $t('tips.welcome') }}
                   </span>
                   <span class="text-subtitle1">
-                    {{ $t('subtitle') }}
+                    {{ $t('tips.subtitle') }}
                   </span>
                 </div>
               </div>
@@ -47,19 +46,19 @@
                   <q-img alt="logo" :src="logo" width="8em" height="8em" />
                 </div>
                 <div class="text-h6 text-center q-mb-xs">
-                  {{ $t('signinTo') }}
+                  {{ $t('message.signinTo') }}
                 </div>
                 <q-form @submit="onSubmit" class="q-mt-md full-width q-px-xl">
                   <q-input :disable="loading" dense no-error-icon v-model.trim="form.username"
-                    :placeholder="$t('username')"
-                    :rules="[(val) => (val && val.length >= 5 && val.length <= 12) || $t('username')]">
+                    :placeholder="$t('label.username')"
+                    :rules="[(val) => (val && val.length >= 5 && val.length <= 12) || $t('label.username')]">
                     <template #prepend>
                       <q-icon name="sym_r_person" />
                     </template>
                   </q-input>
                   <q-input :disable="loading" dense no-error-icon :type="showPwd ? 'password' : 'text'"
-                    v-model.trim="form.password" :placeholder="$t('password')"
-                    :rules="[(val) => (val && val.length >= 8 && val.length <= 32) || $t('password')]">
+                    v-model.trim="form.password" :placeholder="$t('label.password')"
+                    :rules="[(val) => (val && val.length >= 8 && val.length <= 32) || $t('label.password')]">
                     <template #prepend>
                       <q-icon name="sym_r_key_vertical" />
                     </template>
@@ -68,10 +67,10 @@
                         class="cursor-pointer" @click="showPwd = !showPwd" />
                     </template>
                   </q-input>
-                  <q-checkbox :disable="loading" v-model="rememberMe" :label="$t('rememberMe')" dense
+                  <q-checkbox :disable="loading" v-model="rememberMe" :label="$t('label.rememberMe')" dense
                     @update:model-value="changeRememberMe" class="q-my-md" />
-                  <q-btn title="signin" no-caps rounded glossy :label="$t('signin')" type="submit" color="primary"
-                    :loading="loading" class="full-width" />
+                  <q-btn title="signin" no-caps rounded glossy :label="$t('action.signin')" type="submit"
+                    color="primary" :loading="loading" class="full-width" />
                 </q-form>
               </div>
             </transition>

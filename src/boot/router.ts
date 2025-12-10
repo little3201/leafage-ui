@@ -20,41 +20,49 @@ export default defineBoot(({ router, store }) => {
       return false
     }
 
-    // 加载用户信息
     if (!userStore.username) {
-      const res = await getUserInfo()
-      userStore.$patch({
-        username: res.data.sub,
-        fullName: res.data.name,
-      })
+      try {
+        const res = await getUserInfo()
+        userStore.$patch({
+          username: res.data.sub,
+          fullName: res.data.name,
+        })
+      } catch {
+        userStore.$reset()
+        await signIn()
+        return false
+      }
     }
 
-    // 加载权限信息
     if (!userStore.privileges.length) {
-      const privilegesResp = await retrievePrivilegeTree()
-      userStore.$patch({ privileges: privilegesResp.data })
+      try {
+        const privilegesResp = await retrievePrivilegeTree()
+        userStore.$patch({ privileges: privilegesResp.data })
+      } catch {
+        userStore.$reset()
+        await signIn()
+        return false
+      }
     }
 
-    // 动态注册路由
-    if (!to.name || !router.hasRoute(to.name)) {
-      const routes = generateRoutes(userStore.privileges)
-      routes.forEach((route) => {
+    if (!userStore.routesAdded) {
+      generateRoutes(userStore.privileges).forEach((route) => {
         router.addRoute('home', route)
       })
 
-      router.addRoute({
-        path: '/:cacheAll(.*)*',
-        name: 'ErrorNotFound',
-        component: () => import('pages/ErrorNotFound.vue'),
-      })
+      if (!router.hasRoute('ErrorNotFound')) {
+        router.addRoute({
+          path: '/:pathMatch(.*)*',
+          name: 'ErrorNotFound',
+          component: () => import('pages/ErrorNotFound.vue'),
+        })
+      }
 
-      const redirectPath = from.query.redirect || to.path
-      const redirect = decodeURIComponent(redirectPath as string)
-      const nextData = to.path === redirect
-        ? { ...to, replace: true }
-        : { path: redirect }
+      userStore.routesAdded = true
+    }
 
-      return nextData
+    if (!from.name && to.matched.length === 0) {
+      return { path: to.fullPath, replace: true, query: to.query, hash: to.hash }
     }
     return true
   })

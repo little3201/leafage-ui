@@ -4,37 +4,19 @@
     <q-dialog v-model="visible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('audit_logs') }}</div>
+          <div class="text-h6">{{ $t('page.auditLogs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('resource') }}</strong>
+            <p><strong>{{ $t('label.resource') }}</strong>
               {{ row.resource }}
             </p>
-            <p><strong>{{ $t('operation') }}</strong>{{ row.operation }}</p>
-            <p><strong>{{ $t('ip') }}</strong>
-              {{ row.ip }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
-            <p><strong>{{ $t('oldValue') }}</strong>
-              {{ row.oldValue }}
-            </p>
-            <p><strong>{{ $t('newValue') }}</strong>
-              {{ row.newValue }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
-            <p><strong>{{ $t('location') }}</strong>
-              {{ row.location }}
-            </p>
+            <p><strong>{{ $t('label.operation') }}</strong>{{ row.operation }}</p>
             <p>
-              <strong>{{ $t('statusCode') }}</strong>
+              <strong>{{ $t('label.statusCode') }}</strong>
               <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
                 text-color="white">{{ row.statusCode }}</q-chip>
               <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning"
@@ -42,7 +24,22 @@
                   row.statusCode }}</q-chip>
               <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
             </p>
-            <p><strong>{{ $t('operatedTimes') }}</strong>
+          </div>
+
+          <div class="q-gutter-md">
+            <p><strong>{{ $t('label.oldValue') }}</strong>
+              {{ row.oldValue }}
+            </p>
+            <p><strong>{{ $t('label.newValue') }}</strong>
+              {{ row.newValue }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('label.ip') }}</strong>
+              {{ row.ip }}
+            </p>
+            <p><strong>{{ $t('label.operatedTimes') }}</strong>
               {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
             </p>
           </div>
@@ -50,8 +47,8 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('audit_logs')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
+    <q-table ref="tableRef" flat :title="$t('page.page.auditLogs')" selection="multiple" v-model:selected="selected"
+      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
@@ -69,7 +66,7 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
@@ -98,7 +95,7 @@
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
           <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+            @click="removeRow(props.row.id)" />
         </q-td>
       </template>
     </q-table>
@@ -124,8 +121,7 @@ const initialValues: AuditLog = {
   id: undefined,
   operation: '',
   resource: '',
-  ip: '',
-  location: ''
+  ip: ''
 }
 const row = ref<AuditLog>({ ...initialValues })
 
@@ -145,7 +141,6 @@ const columns: QTableProps['columns'] = [
   { name: 'oldValue', label: 'oldValue', align: 'left', field: 'oldValue' },
   { name: 'newValue', label: 'newValue', align: 'center', field: 'newValue' },
   { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
-  { name: 'location', label: 'location', align: 'center', field: 'location' },
   { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
   { name: 'operatedTimes', label: 'operatedTimes', align: 'center', field: 'operatedTimes' },
   { name: 'id', label: 'actions', field: 'id' }

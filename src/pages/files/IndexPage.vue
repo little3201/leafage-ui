@@ -4,8 +4,42 @@
     <q-dialog v-model="visible" persistent>
       <q-card style="min-width: 25em">
         <q-form @submit="onSubmit">
+          <q-card-section class="flex items-center q-pb-none">
+            <div class="text-h6">{{ $t('page.files') }}</div>
+            <q-space />
+            <q-btn icon="sym_r_close" flat round dense v-close-popup class="q-pr-none" />
+          </q-card-section>
+
           <q-card-section>
-            <div class="text-h6">{{ $t('files') }}</div>
+            <div class="row flex-center q-gutter-md">
+              <q-img v-if="row.contentType && row.contentType.includes('image')" :src="row.path" />
+              <q-icon v-else name="sym_r_docs" size="80px" />
+            </div>
+
+            <div class="q-gutter-md q-mt-md">
+              <p><strong>{{ $t('label.name') }}</strong>
+                {{ row.name }}
+              </p>
+              <p><strong>{{ $t('label.size') }}</strong>
+                {{ formatFileSize(row.size) }}
+              </p>
+              <p><strong>{{ $t('label.contentType') }}</strong>
+                {{ row.contentType }}
+              </p>
+              <p><strong>{{ $t('label.lastModifiedDate') }}</strong>
+                {{ row.lastModifiedDate ? date.formatDate(row.lastModifiedDate, 'YYYY-MM-DD HH:mm') : '-' }}
+              </p>
+            </div>
+          </q-card-section>
+        </q-form>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="uploadVisible" persistent>
+      <q-card style="min-width: 25em">
+        <q-form @submit="onSubmit">
+          <q-card-section>
+            <div class="text-h6">{{ $t('page.files') }}</div>
           </q-card-section>
 
           <q-card-section>
@@ -14,8 +48,8 @@
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn title="cancel" type="reset" unelevated :label="$t('cancel')" v-close-popup />
-            <q-btn title="submit" type="submit" flat :label="$t('submit')" color="primary" />
+            <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
+            <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
           </q-card-actions>
 
         </q-form>
@@ -65,11 +99,21 @@
       </div>
 
       <div class="col">
-        <q-table ref="tableRef" flat :title="$t('files')" :rows="rows" :columns="columns" row-key="id"
+        <q-table ref="tableRef" flat :title="$t('page.files')" :rows="rows" :columns="columns" row-key="id"
           v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort @request="onRequest"
-          class="full-width">
+          class="full-width" @row-click="onRowClick">
+          <template v-slot:top-left>
+            <q-breadcrumbs class="cursor-pointer">
+              <template v-slot:separator>
+                <q-icon size="1.5em" name="sym_r_chevron_right" color="primary" />
+              </template>
+              <q-breadcrumbs-el label="全部文件夹" @click="handleBreadcrumbClick(-1)" />
+              <q-breadcrumbs-el v-for="(row, index) in expandRows" :key="index" :label="row.name"
+                @click="handleBreadcrumbClick(index)" />
+            </q-breadcrumbs>
+          </template>
           <template v-slot:top-right>
-            <q-input dense debounce="300" v-model="filter" placeholder="Search">
+            <q-input dense debounce="300" v-model="filter.name" placeholder="Search">
               <template v-slot:append>
                 <q-icon name="sym_r_search" />
               </template>
@@ -83,11 +127,23 @@
           <template v-slot:header="props">
             <q-tr :props="props">
               <q-th v-for="col in props.cols" :key="col.name" :props="props">
-                {{ $t(col.label) }}
+                {{ $t(`label.${col.label}`) }}
               </q-th>
             </q-tr>
           </template>
 
+          <template v-slot:body-cell-name="props">
+            <q-td :props="props">
+              <q-btn :title="props.row.name" flat rounded no-caps color="primary">
+                <q-icon v-if="props.row.directory" name="sym_r_folder_open" />
+                <template v-else-if="props.row.regularFile">
+                  <q-icon v-if="props.row.contentType && props.row.contentType.includes('image')" name="sym_r_image" />
+                  <q-icon v-else name="sym_r_docs" />
+                </template>
+                <span class="q-ml-xs">{{ props.row.name }}</span>
+              </q-btn>
+            </q-td>
+          </template>
           <template v-slot:body-cell-size="props">
             <q-td :props="props">
               {{ formatFileSize(props.row.size) }}
@@ -101,14 +157,13 @@
           <template v-slot:body-cell-id="props">
             <q-td :props="props">
               <q-btn title="download" padding="xs" flat round color="primary" icon="sym_r_download"
-                @click="downloadRow(props.row.id)" class="q-mt-none" />
+                @click="downloadRow(props.row.id)" />
               <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-                @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+                @click="removeRow(props.row.id)" class="q-ml-sm" />
             </q-td>
           </template>
         </q-table>
       </div>
-
     </div>
   </q-page>
 </template>
@@ -118,17 +173,30 @@ import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
 import { date } from 'quasar'
 import { useUserStore } from 'stores/user-store'
-import { retrieveFiles, uploadFile, download, removeFile } from 'src/api/files'
+import { retrieveFiles, fetchFile, uploadFile, download, removeFile } from 'src/api/files'
 import { formatFileSize } from 'src/utils'
+import type { FileRecord } from 'src/types'
 
 
 const userStore = useUserStore()
 const visible = ref<boolean>(false)
+const uploadVisible = ref<boolean>(false)
 
 const tableRef = ref()
 const rows = ref<QTableProps['rows']>([])
-const filter = ref('')
+const filter = ref({
+  superiorId: null as string | null,
+  name: null
+})
 const loading = ref<boolean>(false)
+
+const initialValues: FileRecord = {
+  id: undefined,
+  name: '',
+  size: 0,
+  path: ''
+}
+const row = ref<FileRecord>({ ...initialValues })
 
 const pagination = ref({
   sortBy: 'id',
@@ -138,10 +206,14 @@ const pagination = ref({
   rowsNumber: 0
 })
 
+const expandRows = ref<Array<FileRecord>>([])
+const currentRow = ref<FileRecord | null>(null)
+
 const columns: QTableProps['columns'] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
-  { name: 'mimeType', label: 'type', align: 'left', field: 'mimeType', sortable: true },
+  { name: 'contentType', label: 'contentType', align: 'left', field: 'contentType', sortable: true },
   { name: 'size', label: 'size', align: 'left', field: 'size', sortable: true },
+  { name: 'lastModifiedDate', label: 'lastModifiedDate', align: 'left', field: 'lastModifiedDate', sortable: true },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
@@ -156,8 +228,9 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
 
+  props.filter.superiorId = currentRow.value ? `eq:${currentRow.value.id}` : null
+  const filter = props.filter
   const params = { page, size: rowsPerPage, sortBy, descending }
 
   try {
@@ -180,8 +253,19 @@ function refresh() {
   tableRef.value.requestServerInteraction()
 }
 
-function uploadRow() {
+function showRow(id: number | undefined) {
+  if (id) {
+    fetchFile(id).then(res => {
+      row.value = res.data
+    }).catch(() => {
+      return Promise.resolve()
+    })
+  }
   visible.value = true
+}
+
+function uploadRow() {
+  uploadVisible.value = true
 }
 
 async function onUpload(files: readonly File[]) {
@@ -190,7 +274,7 @@ async function onUpload(files: readonly File[]) {
   }
   const res = await uploadFile(files[0])
 
-  visible.value = false
+  uploadVisible.value = false
   refresh()
   return res.data
 }
@@ -214,7 +298,32 @@ async function removeRow(id: number) {
 
 function onSubmit() {
   // Close the dialog after submitting
-  visible.value = false
+  uploadVisible.value = false
 }
 
+function onRowClick(evt: Event, row: FileRecord) {
+  if (row?.directory) {
+    currentRow.value = row
+    if (row) {
+      expandRows.value.push(row)
+    }
+    refresh()
+  } else if (row?.regularFile) {
+    showRow(row.id)
+  }
+}
+
+function handleBreadcrumbClick(index: number) {
+  if (index === -1) {
+    // 点击"全部文件夹"，回到根目录
+    expandRows.value = []
+    currentRow.value = null
+  } else {
+    // 点击中间层级的面包屑
+    // 截断面包屑数组，保留点击位置及之前的部分
+    expandRows.value = expandRows.value.slice(0, index + 1)
+    currentRow.value = expandRows.value[index] ?? null
+  }
+  refresh()
+}
 </script>

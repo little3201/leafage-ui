@@ -11,7 +11,7 @@ for (let i = 1; i < 28; i++) {
     name: 'DailyBackup',
     startTime: new Date(),
     nextExecuteTime: new Date(),
-    status: 0
+    status: ['PENDING', 'RUNNING', 'SUCCESS', 'FAILED', 'CANCELED'][Math.floor(Math.random() * 5)] || '',
   }
   datas.push(row)
 }
