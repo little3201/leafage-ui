@@ -34,24 +34,35 @@ const initialValues: OperationLog = {
 const row = ref<OperationLog>({ ...initialValues })
 
 const visible = ref<boolean>(false)
+
+onMounted(async () => {
+  await load()
+})
+
 /**
  * 分页变化
  * @param value 当前页码
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
  * 加载列表
  */
 async function load() {
-  retrieveOperationLogs(pagination, filters.value).then(res => {
+  loading.value = true
+  try {
+    const res = await retrieveOperationLogs(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
@@ -60,30 +71,31 @@ async function load() {
  */
 async function loadOne(id: number) {
   detailLoading.value = true
-  fetchOperationLog(id).then(res => {
+  try {
+    const res = await fetchOperationLog(id)
     row.value = res.data
-  }).finally(() => { detailLoading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    detailLoading.value = false
+  }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value = {
     module: null,
     action: null
   }
-  load()
+  await load()
 }
-
-onMounted(() => {
-  load()
-})
 
 /**
  * 导出
  */
-async function exportRows() {
+function exportRows() {
   exportLoading.value = true
 
   const selectedRows = tableRef.value?.getSelectionRows()
@@ -97,9 +109,9 @@ async function exportRows() {
  * 详情
  * @param id 主键
  */
-function showRow(id: number) {
+async function showRow(id: number) {
   row.value = { ...initialValues }
-  loadOne(id)
+  await loadOne(id)
   visible.value = true
 }
 
@@ -107,28 +119,34 @@ function showRow(id: number) {
  * 删除
  * @param id 主键
  */
-function removeRow(id: number) {
-  removeOperationLog(id).then(() => load())
+async function removeRow(id: number) {
+  try {
+    await removeOperationLog(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 清空
  */
-function clearRows() {
-  clearOperationLogs().then(() => load())
+async function clearRows() {
+  try {
+    await clearOperationLogs()
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 确认
  * @param id 主键
  */
-function confirmEvent(id: number) {
-  if (id) {
-    removeRow(id)
-  }
+async function confirmEvent(id: number) {
+  await removeRow(id)
 }
-
-
 </script>
 
 <template>

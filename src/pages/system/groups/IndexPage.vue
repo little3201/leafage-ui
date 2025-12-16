@@ -77,6 +77,20 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
+onMounted(async () => {
+  await loadTree()
+})
+
+/**
+ * 监听tree
+ */
+watch(
+  () => currentNode.value,
+  (val) => {
+    treeEl.value!.filter(val)
+  }
+)
+
 /**
  * tree过滤
  */
@@ -89,33 +103,49 @@ const filterNode = (value: string, data: { [key: string]: string }) => {
  * node 变化
  * @param data node节点
  */
-function currentChange(data: TreeNode) {
+async function currentChange(data: TreeNode) {
   if (currentNodeKey.value === data.id) {
     return
   }
   currentNodeKey.value = data.id as number
   pagination.page = 1
-  load()
+  await load()
 }
 
 async function loadUsers() {
-  retrieveUsers({ page: 1, size: 99 }).then(res => {
+  try {
+    const res = await retrieveUsers({ page: 1, size: 99 })
     members.value = res.data.content
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function loadRoles() {
-  retrieveRoles({ page: 1, size: 99 }).then(res => {
+  try {
+    const res = await retrieveRoles({ page: 1, size: 99 })
     roles.value = res.data.content
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function loadGroupUsers(id: number) {
-  retrieveGroupMembers(id).then(res => { relationUsers.value = res.data.map((item: GroupMembers) => item.username) })
+  try {
+    const res = await retrieveGroupMembers(id)
+    relationUsers.value = res.data.map((item: GroupMembers) => item.username)
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function loadGrouRoles(id: number) {
-  retrieveGroupRoles(id).then(res => { relationRoles.value = res.data.map((item: GroupRoles) => item.roleId) })
+  try {
+    const res = await retrieveGroupRoles(id)
+    relationRoles.value = res.data.map((item: GroupRoles) => item.roleId)
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -123,16 +153,20 @@ async function loadGrouRoles(id: number) {
  */
 async function loadTree() {
   treeLoading.value = true
-  retrieveGroupTree().then(res => {
+  try {
+    const res = await retrieveGroupTree()
     groupTree.value = res.data
     if (!currentNodeKey.value) {
       currentNodeKey.value = (res.data[0] && res.data[0]?.id) || ''
     }
 
     treeEl.value!.setCurrentKey(currentNodeKey.value)
-
-    load()
-  }).finally(() => { treeLoading.value = false })
+    await load()
+  } catch {
+    return Promise.resolve()
+  } finally {
+    treeLoading.value = false
+  }
 }
 
 /**
@@ -140,10 +174,10 @@ async function loadTree() {
  * @param currentPage 当前页码
  * @param pageSize 分页大小
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
@@ -152,33 +186,171 @@ function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   filters.value.superiorId = currentNodeKey.value ? 'eq:' + currentNodeKey.value : null
-  retrieveGroups(pagination, filters.value).then(res => {
+  try {
+    const res = await retrieveGroups(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally { loading.value = false }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value.name = null
-  load()
+  await load()
 }
 
 /**
- * 监听tree
+ * 关联弹出框
+ * @param id 主键
  */
-watch(
-  () => currentNode.value,
-  (val) => {
-    treeEl.value!.filter(val)
+async function relationRow(id: number) {
+  relationVisible.value = true
+  try {
+    await Promise.all([loadGroupUsers(id), loadUsers()])
+  } catch {
+    return Promise.resolve()
   }
-)
+}
 
-onMounted(() => {
-  loadTree()
-})
+async function authorizeRow(id: number) {
+  authorities.value = []
+  form.value.id = id
+  try {
+    const res = await retrieveGroupPrivileges(id)
+    authorities.value = res.data.map((row: GroupPrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
+  } catch {
+    return Promise.resolve()
+  }
+  authorizeVisible.value = true
+}
+
+/**
+ * 新增、编辑弹出框
+ * @param id 主键
+ */
+async function saveRow(id?: number) {
+  form.value = { ...initialValues }
+  if (id) {
+    await loadOne(id)
+  }
+  visible.value = true
+}
+
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  try {
+    const res = await fetchGroup(id)
+    form.value = res.data
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 启用、停用
+ * @param id 主键
+ */
+async function enableChange(id: number) {
+  try {
+    await enableGroup(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 表单提交
+ */
+async function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
+
+  await formEl.validate(async (valid) => {
+    if (valid) {
+      saveLoading.value = true
+      try {
+        if (form.value.id) {
+          await modifyGroup(form.value.id, form.value)
+        } else {
+          form.value.superiorId = currentNodeKey.value
+          await createGroup(form.value)
+        }
+        visible.value = false
+        await load()
+        await loadTree()
+      } catch {
+        return Promise.resolve()
+      } finally {
+        saveLoading.value = false
+      }
+    }
+  })
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
+async function removeRow(id: number) {
+  try {
+    await Promise.all([removeGroup(id), load(), loadTree()])
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 确认
+ * @param id 主键
+ */
+async function confirmEvent(id: number) {
+  await removeRow(id)
+}
+
+/**
+ * 关联用户
+ * @param value 用户
+ * @param direction 方向
+ */
+async function handleTransferUserChange(value: TransferKey[], direction: TransferDirection) {
+  if (form.value.id) {
+    try {
+      if (direction === 'right') {
+        await relationGroupMembers(form.value.id, value as string[])
+      } else {
+        await removeGroupMembers(form.value.id, value as string[])
+      }
+    } catch {
+      return Promise.resolve()
+    }
+  }
+}
+
+/**
+ * 关联角色
+ * @param value 角色
+ * @param direction 方向
+ */
+async function handleTransferRoleChange(value: TransferKey[], direction: TransferDirection) {
+  if (form.value.id) {
+    try {
+      if (direction === 'right') {
+        await relationGroupRoles(form.value.id, value as number[])
+      } else {
+        await removeGroupRoles(form.value.id, value as number[])
+      }
+    } catch {
+      return Promise.resolve()
+    }
+  }
+}
 
 /**
  * 导入
@@ -201,88 +373,9 @@ function exportRows() {
 }
 
 /**
- * 关联弹出框
- * @param id 主键
- */
-function relationRow(id: number) {
-  relationVisible.value = true
-  loadUsers()
-  if (id) {
-    form.value.id = id
-    loadGroupUsers(id)
-  }
-}
-
-async function authorizeRow(id: number) {
-  authorities.value = []
-  form.value.id = id
-  retrieveGroupPrivileges(id).then(res => {
-    authorities.value = res.data.map((row: GroupPrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
-  })
-  authorizeVisible.value = true
-}
-
-/**
- * 新增、编辑弹出框
- * @param id 主键
- */
-function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    loadOne(id)
-  }
-  visible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  fetchGroup(id).then(res => {
-    form.value = res.data
-  })
-}
-
-/**
- * 启用、停用
- * @param id 主键
- */
-async function enableChange(id: number) {
-  enableGroup(id).then(() => { load() })
-}
-
-/**
- * 表单提交
- */
-function onSubmit(formEl: FormInstance | undefined) {
-  if (!formEl) return
-
-  formEl.validate((valid) => {
-    if (valid) {
-      saveLoading.value = true
-      if (form.value.id) {
-        modifyGroup(form.value.id, form.value).then(() => {
-          load()
-          loadTree()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      } else {
-        form.value.superiorId = currentNodeKey.value
-        createGroup(form.value).then(() => {
-          load()
-          loadTree()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      }
-    }
-  })
-}
-
-/**
  * 导入提交
  */
-async function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance | undefined) {
   if (!importEl) return
   importLoading.value = true
 
@@ -297,77 +390,29 @@ function onUpload(options: UploadRequestOptions) {
 }
 
 /**
- * 删除
- * @param id 主键
- */
-function removeRow(id: number) {
-  removeGroup(id).then(() => {
-    load()
-    loadTree()
-  })
-}
-
-/**
- * 确认
- * @param id 主键
- */
-function confirmEvent(id: number) {
-  if (id) {
-    removeRow(id)
-  }
-}
-
-/**
- * 关联用户
- * @param value 用户
- * @param direction 方向
- */
-function handleTransferUserChange(value: TransferKey[], direction: TransferDirection) {
-  if (form.value.id) {
-    if (direction === 'right') {
-      relationGroupMembers(form.value.id, value as string[])
-    } else {
-      removeGroupMembers(form.value.id, value as string[])
-    }
-  }
-}
-
-/**
- * 关联角色
- * @param value 角色
- * @param direction 方向
- */
-function handleTransferRoleChange(value: TransferKey[], direction: TransferDirection) {
-  if (form.value.id) {
-    if (direction === 'right') {
-      relationGroupRoles(form.value.id, value as number[])
-    } else {
-      removeGroupRoles(form.value.id, value as number[])
-    }
-  }
-}
-
-/**
  * 权限树check事件
  * @param data 树节点
  * @param checked 是否checked
  */
-function handleCheckChange(data: TreeNode, checked: boolean) {
+async function handleCheckChange(data: TreeNode, checked: boolean) {
   if (!data.id || (data.children?.length ?? 0) > 0 || !form.value.id) return
-
   // 检查是否已授权
   const keyIndex = authorities.value.findIndex(a => a.privilegeId === data.id)
 
-  if (checked && keyIndex === -1) {
-    authorities.value.push({ privilegeId: data.id, actions: [] })
-    relationGroupPrivileges(form.value.id, data.id)
-  } else if (!checked && keyIndex !== -1) {
-    authorities.value.splice(keyIndex, 1)
-    removeGroupPrivileges(form.value.id, data.id)
+  try {
+    if (checked && keyIndex === -1) {
+      authorities.value.push({ privilegeId: data.id, actions: [] })
+      await relationGroupPrivileges(form.value.id, data.id)
+    } else if (!checked && keyIndex !== -1) {
+      authorities.value.splice(keyIndex, 1)
+      await removeGroupPrivileges(form.value.id, data.id)
+    }
+  } catch {
+    return Promise.resolve()
   }
 }
 
-function handleActionCheck(privilegeId: number, item: string) {
+async function handleActionCheck(privilegeId: number, item: string) {
   if (!form.value.id) return
   // 查找对应 privilegeId 的对象
   const keyIndex = authorities.value.findIndex(a => a.privilegeId === privilegeId)
@@ -381,26 +426,26 @@ function handleActionCheck(privilegeId: number, item: string) {
       if (itemIndex >= 0) {
         // 如果 actions 中已有该 item，则移除
         existingAction.actions.splice(itemIndex, 1)
-        removeGroupPrivileges(form.value.id, privilegeId, item)
+        await removeGroupPrivileges(form.value.id, privilegeId, item)
 
       } else {
         existingAction.actions.push(item)
-        relationGroupPrivileges(form.value.id, privilegeId, item)
+        await relationGroupPrivileges(form.value.id, privilegeId, item)
       }
     }
   } else {
     authorities.value.push({ privilegeId, actions: [item] })
-    relationGroupPrivileges(form.value.id, privilegeId, item)
+    await relationGroupPrivileges(form.value.id, privilegeId, item)
   }
 }
 
-function tabChange(tab: string) {
+async function tabChange(tab: string) {
   activeTabName.value = tab
 
   if (tab === 'role') {
-    loadRoles()
+    await loadRoles()
     if (form.value.id) {
-      loadGrouRoles(form.value.id)
+      await loadGrouRoles(form.value.id)
     }
   }
 }

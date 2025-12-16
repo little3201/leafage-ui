@@ -38,14 +38,18 @@ const filters = ref({
   name: null
 })
 
+onMounted(async () => {
+  await load()
+})
+
 /**
  * 分页变化
  * @param value 当前页码
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
@@ -54,33 +58,37 @@ function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   filters.value.superiorId = currentRow.value ? `eq:${currentRow.value.id}` : null
-  retrieveFiles(pagination, filters.value).then(res => {
+  try {
+    const res = await retrieveFiles(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 async function loadOne(id: number) {
-  fetchFile(id).then(res => {
+  try {
+    const res = await fetchFile(id)
     row.value = res.data
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value.name = null
-  load()
+  await load()
 }
 
-onMounted(() => {
-  load()
-})
-
-function showRow(id: number | undefined) {
+async function showRow(id: number | undefined) {
   if (id) {
-    loadOne(id)
+    await loadOne(id)
   }
   visible.value = true
 }
@@ -96,10 +104,13 @@ function uploadRow() {
  * 下载
  * @param id 主键
  */
-function downloadRow(id: number, name: string, type: string) {
-  downloadFile(id).then(res => {
+async function downloadRow(id: number, name: string, type: string) {
+  try {
+    const res = await downloadFile(id)
     download(res.data, name, type)
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -137,19 +148,19 @@ function confirmEvent(id: number) {
   }
 }
 
-function onRowClick(row: FileRecord | null) {
+async function onRowClick(row: FileRecord | null) {
   if (row?.directory) {
     currentRow.value = row
     if (row) {
       expandRows.value.push(row)
     }
-    load()
+    await load()
   } else if (row?.regularFile) {
-    showRow(row.id)
+    await showRow(row.id)
   }
 }
 
-function handleBreadcrumbClick(index: number) {
+async function handleBreadcrumbClick(index: number) {
   if (index === -1) {
     // 点击"全部文件夹"，回到根目录
     expandRows.value = []
@@ -160,7 +171,7 @@ function handleBreadcrumbClick(index: number) {
     expandRows.value = expandRows.value.slice(0, index + 1)
     currentRow.value = expandRows.value[index] ?? null
   }
-  load()
+  await load()
 }
 </script>
 

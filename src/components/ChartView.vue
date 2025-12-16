@@ -37,7 +37,7 @@ const styles = computed(() => {
   }
 })
 
-const initChart = () => {
+const initChart = async () => {
   if (elRef.value && props.options) {
     // 销毁旧图表，防止重复渲染
     if (chartRef) {
@@ -45,16 +45,16 @@ const initChart = () => {
     } else {
       chartRef = new ApexCharts(elRef.value, options.value)
     }
-    chartRef.render()
+    await chartRef.render()
   }
 }
 
 watch(
   () => options.value,
-  (options) => {
+  async (options) => {
     if (chartRef) {
       // 第二个参数 true 表示对图表强制更新
-      chartRef.updateOptions(options, true, false)
+      await chartRef.updateOptions(options, true, false)
     }
   },
   {
@@ -62,27 +62,21 @@ watch(
   }
 )
 
-const resizeHandler = () => {
+const resizeHandler = async () => {
   if (chartRef) {
     chartRef.destroy()
-    initChart()
-  }
-}
-
-const contentResizeHandler = async (e: TransitionEvent) => {
-  if (e.propertyName === 'width') {
-    resizeHandler()
+    await initChart()
   }
 }
 
 useEventListener(document, 'transitionend', (evt) => {
-  if (elRef.value) {
-    contentResizeHandler(evt)
+  if (elRef.value && evt.propertyName === 'width') {
+    setTimeout(async () => await resizeHandler())
   }
 })
 
-onMounted(() => {
-  initChart()
+onMounted(async () => {
+  await initChart()
 })
 
 onBeforeUnmount(() => {
@@ -91,9 +85,9 @@ onBeforeUnmount(() => {
   }
 })
 
-onActivated(() => {
+onActivated(async () => {
   if (chartRef) {
-    resizeHandler()
+    await resizeHandler()
   }
 })
 </script>

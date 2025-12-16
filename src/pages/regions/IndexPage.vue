@@ -48,15 +48,19 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
+onMounted(async () => {
+  await load()
+})
+
 /**
  * 分页变化
  * @param currentPage 当前页码
  * @param pageSize 分页大小
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
@@ -64,25 +68,90 @@ function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  retrieveRegions(pagination, filters.value).then(res => {
+  try {
+    const res = await retrieveRegions(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value = {
     name: null
   }
-  load()
+  await load()
 }
 
-onMounted(() => {
-  load()
-})
+/**
+ * 弹出框
+ * @param id 主键
+ */
+async function saveRow(id?: number) {
+  form.value = { ...initialValues }
+  if (id) {
+    await loadOne(id)
+  }
+  visible.value = true
+}
+
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  try {
+    const res = await fetchRegion(id)
+    form.value = res.data
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 启用、停用
+ * @param id 主键
+ */
+async function enableChange(id: number) {
+  try {
+    await enableRegion(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 表单提交
+ */
+async function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
+
+  await formEl.validate(async (valid) => {
+    if (valid) {
+      saveLoading.value = true
+      try {
+        if (form.value.id) {
+          await modifyRegion(form.value.id, form.value)
+        } else {
+          await createRegion(form.value)
+        }
+        visible.value = false
+        await load()
+      } catch {
+        return Promise.resolve()
+      } finally {
+        saveLoading.value = false
+      }
+    }
+  })
+}
 
 /**
  * 导入
@@ -105,63 +174,9 @@ function exportRows() {
 }
 
 /**
- * 弹出框
- * @param id 主键
- */
-function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    loadOne(id)
-  }
-  visible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  fetchRegion(id).then(res => {
-    form.value = res.data
-  })
-}
-
-/**
- * 启用、停用
- * @param id 主键
- */
-async function enableChange(id: number) {
-  enableRegion(id).then(() => { load() })
-}
-
-/**
- * 表单提交
- */
-function onSubmit(formEl: FormInstance | undefined) {
-  if (!formEl) return
-
-  formEl.validate((valid) => {
-    if (valid) {
-      saveLoading.value = true
-      if (form.value.id) {
-        modifyRegion(form.value.id, form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      } else {
-        createRegion(form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      }
-    }
-  })
-}
-
-/**
  * 导入提交
  */
-async function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance | undefined) {
   if (!importEl) return
   importLoading.value = true
 
@@ -179,18 +194,21 @@ function onUpload(options: UploadRequestOptions) {
  * 删除
  * @param id 主键
  */
-function removeRow(id: number) {
-  removeRegion(id).then(() => load())
+async function removeRow(id: number) {
+  try {
+    await removeRegion(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 确认
  * @param id 主键
  */
-function confirmEvent(id: number) {
-  if (id) {
-    removeRow(id)
-  }
+async function confirmEvent(id: number) {
+  await removeRow(id)
 }
 
 

@@ -3,7 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { constantRouterMap } from './routes'
 import { useUserStore } from 'stores/user-store'
 import { retrievePrivilegeTree } from 'src/api/privileges'
-import { getUserInfo } from 'src/api/authentication'
+import { signIn, getUserInfo } from 'src/api/authentication'
 import type { PrivilegeTreeNode } from 'src/types'
 // Lazy load layout
 const BlankLayout = () => import('layouts/BlankLayout.vue')
@@ -14,7 +14,7 @@ const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
 // Create router instance
 const router = createRouter({
   history: createWebHistory(),
-  routes: constantRouterMap as RouteRecordRaw[],
+  routes: constantRouterMap,
   scrollBehavior: () => ({ left: 0, top: 0 })
 })
 
@@ -26,47 +26,56 @@ router.beforeEach(async (to, from) => {
 
   // 加载用户信息
   if (!userStore.username) {
-    const res = await getUserInfo()
-    if (res && res.data) {
-      userStore.$patch({
-        username: res.data.sub,
-        name: res.data.name,
-        email: res.data.email
-      })
+    try {
+      const res = await getUserInfo()
+      if (res && res.data) {
+        userStore.$patch({
+          username: res.data.sub,
+          fullName: res.data.name,
+          email: res.data.email
+        })
+      }
+    } catch {
+      userStore.$reset()
+      signIn()
+      return false
     }
-
   }
 
   // 加载权限信息
   if (!userStore.privileges.length) {
-    const res = await retrievePrivilegeTree()
-    if (res && res.data) {
-      userStore.$patch({ privileges: res.data })
+    try {
+      const res = await retrievePrivilegeTree()
+      if (res && res.data) {
+        userStore.$patch({ privileges: res.data })
+      }
+    } catch {
+      userStore.$reset()
+      signIn()
+      return false
     }
   }
 
   // 动态注册路由
-  if (!to.name || !router.hasRoute(to.name)) {
-    const routes = generateRoutes(userStore.privileges)
-    routes.forEach((route) => {
-      router.addRoute('home', route as RouteRecordRaw)
+  if (!userStore.routesAdded) {
+    generateRoutes(userStore.privileges).forEach((route) => {
+      router.addRoute('home', route)
     })
 
-    router.addRoute({
-      path: '/:cacheAll(.*)*',
-      name: 'ErrorNotFound',
-      component: () => import('pages/ErrorNotFound.vue'),
-    })
+    if (!router.hasRoute('ErrorNotFound')) {
+      router.addRoute({
+        path: '/:cacheAll(.*)*',
+        name: 'ErrorNotFound',
+        component: () => import('pages/ErrorNotFound.vue'),
+      })
+    }
 
-    const redirectPath = from.query.redirect || to.path
-    const redirect = decodeURIComponent(redirectPath as string)
-    const nextData = to.path === redirect
-      ? { ...to, replace: true }
-      : { path: redirect }
-
-    return nextData
+    userStore.routesAdded = true
   }
 
+  if (!from.name && to.matched.length === 0) {
+    return { path: to.fullPath, replace: true, query: to.query, hash: to.hash }
+  }
   return true
 })
 
@@ -82,13 +91,13 @@ export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] =>
     const item: RouteRecordRaw = {
       path: route.meta.path,
       name: route.name,
-      redirect: route.meta.redirect as string,
+      redirect: route.meta.redirect,
       component: null,
       children: []
     }
     if (route.meta.component) {
       const comModule = modules[`../pages/${route.meta.component}/IndexPage.vue`]
-      const component = route.meta.component as string
+      const component = route.meta.component
       if (comModule) {
         item.component = comModule
       } else if (component.includes('#')) {

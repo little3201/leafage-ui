@@ -4,6 +4,7 @@
 export default {
   label: {
     no: '序号',
+    action: '操作',
     actions: '操作',
     name: '名称',
     id: '主键',
@@ -85,6 +86,9 @@ export default {
     oldPassword: '旧密码',
     newPassword: '新密码',
     confirmPassword: '确认密码',
+    samples: '样板',
+    comment: '注释',
+    userAgent: 'User Agent',
   },
 
   action: {

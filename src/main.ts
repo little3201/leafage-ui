@@ -14,13 +14,13 @@ import { i18n } from 'boot/i18n'
 async function prepareApp() {
   if (!import.meta.env.DEV) {
     const { worker } = await import('boot/msw-browser')
-    
+
     router.addRoute({
       path: '/login',
       name: 'login',
       component: () => import('pages/LoginPage.vue')
     })
-    
+
     return worker.start({
       onUnhandledRequest: 'bypass'
     })
@@ -31,6 +31,5 @@ async function prepareApp() {
 
 const app = createApp(App)
 
-prepareApp().then(() => {
-  app.use(pinia).use(router).use(i18n).mount('#app')
-})
+await prepareApp()
+app.use(pinia).use(router).use(i18n).mount('#app')

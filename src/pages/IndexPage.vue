@@ -12,14 +12,17 @@ const today = ref(new Date())
 const lineOptionsData = reactive<ApexOptions | object>(lineOptions) as ApexOptions
 const datas = ref<Record<string, Schedule[]>>({})
 
-function load(month: number) {
-  retrieveCalendarEvents(month).then(res => {
+async function load(month: number) {
+  try {
+    const res = await retrieveCalendarEvents(month)
     datas.value = res.data
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
-onMounted(() => {
-  load(today.value.getMonth() + 1)
+onMounted(async () => {
+  await load(today.value.getMonth() + 1)
 })
 </script>
 

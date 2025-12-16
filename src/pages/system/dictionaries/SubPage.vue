@@ -37,28 +37,33 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
+onMounted(async () => {
+  await load()
+})
+
 /**
  * 加载列表
  */
 async function load() {
   loading.value = true
-  retrieveDictionarySubset(props.superiorId).then(res => {
+  try {
+    const res = await retrieveDictionarySubset(props.superiorId)
     datas.value = res.data
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
-
-onMounted(() => {
-  load()
-})
 
 /**
  * 弹出框
  * @param id 主键
  */
-function saveRow(id?: number) {
+async function saveRow(id?: number) {
   form.value = { ...initialValues }
   if (id) {
-    loadOne(id)
+    await loadOne(id)
   }
   visible.value = true
 }
@@ -68,9 +73,12 @@ function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  fetchDictionary(id).then(res => {
+  try {
+    const res = await fetchDictionary(id)
     form.value = res.data
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -78,28 +86,33 @@ async function loadOne(id: number) {
  * @param id 主键
  */
 async function enableChange(id: number) {
-  enableDictionary(id).then(() => { load() })
+  try {
+    await enableDictionary(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 表单提交
  */
-function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  formEl.validate((valid) => {
+  await formEl.validate(async (valid) => {
     if (valid) {
       saveLoading.value = true
-      if (form.value.id) {
-        modifyDictionary(form.value.id, form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      } else {
-        createDictionary(form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
+      try {
+        if (form.value.id) {
+          await modifyDictionary(form.value.id, form.value)
+        } else {
+          await createDictionary(form.value)
+        }
+      } catch {
+        return Promise.resolve()
+      } finally {
+        saveLoading.value = false
       }
     }
   })
@@ -109,19 +122,21 @@ function onSubmit(formEl: FormInstance | undefined) {
  * 删除
  * @param id 主键
  */
-function removeRow(id: number) {
-  removeDictionary(id)
-    .then(() => load())
+async function removeRow(id: number) {
+  try {
+    await removeDictionary(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 确认
  * @param id 主键
  */
-function confirmEvent(id: number) {
-  if (id) {
-    removeRow(id)
-  }
+async function confirmEvent(id: number) {
+  await removeRow(id)
 }
 
 </script>

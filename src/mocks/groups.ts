@@ -6,7 +6,7 @@ const datas: Group[] = []
 
 for (let i = 1; i < 28; i++) {
   let superiorId: number | undefined
-   if (i === 1) {
+  if (i === 1) {
     superiorId = undefined // 根节点
   } else if (i <= 3) {
     superiorId = 1 // 第二层
@@ -62,7 +62,7 @@ for (let i = 1; i < 17; i++) {
 function buildTree(groups: Group[]): TreeNode[] {
   const map = new Map<number, TreeNode>()
   const tree: TreeNode[] = []
-  
+
   // 第一步：创建映射，只处理有 id 的节点
   groups.forEach(group => {
     if (group.id !== undefined) {
@@ -72,16 +72,16 @@ function buildTree(groups: Group[]): TreeNode[] {
       })
     }
   })
-  
+
   // 第二步：构建层级关系
   groups.forEach(group => {
     // 跳过没有 id 的节点
     if (group.id === undefined) return
-    
+
     const currentNode = map.get(group.id)
     // 确保当前节点存在
     if (!currentNode) return
-    
+
     // 处理上级关系
     if (group.superiorId === undefined || group.superiorId === null) {
       // 没有上级，作为根节点
@@ -98,7 +98,7 @@ function buildTree(groups: Group[]): TreeNode[] {
       }
     }
   })
-  
+
   return tree
 }
 
@@ -206,7 +206,7 @@ export const groupsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -232,7 +232,7 @@ export const groupsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`, ({ params }) => {
     const { id, privilegeId } = params
     if (id && privilegeId) {
       return HttpResponse.json()
@@ -240,7 +240,7 @@ export const groupsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`, async ({ params }) => {
+  http.delete(`/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`, ({ params }) => {
     const { groupId, privilegeId } = params
     if (groupId && privilegeId) {
       return HttpResponse.json()

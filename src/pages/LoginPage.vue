@@ -14,7 +14,7 @@ import hello from 'src/assets/hello_ccwj.svg'
 
 
 const { t } = useI18n()
-const { replace } = useRouter()
+const router = useRouter()
 
 const loading = ref<boolean>(false)
 const formRef = ref<FormInstance>()
@@ -38,14 +38,15 @@ const rules = reactive<FormRules<typeof form>>({
 async function onSubmit() {
   if (!formRef.value) return
 
-  formRef.value.validate((valid) => {
+  await formRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
-
-      api.get(SERVER_URL.LOGIN).finally(() => {
-        replace('/')
+      try {
+        await api.get(SERVER_URL.LOGIN)
+        await router.replace('/')
+      } finally {
         loading.value = false
-      })
+      }
     }
   })
 }

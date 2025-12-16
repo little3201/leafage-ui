@@ -63,14 +63,26 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
+onMounted(async () => {
+  await load()
+})
+
 async function loadUsers() {
-  retrieveUsers({ page: 1, size: 99 }).then(res => {
+  try {
+    const res = await retrieveUsers({ page: 1, size: 99 })
     members.value = res.data.content
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 async function loadRoleUsers(id: number) {
-  retrieveRoleMembers(id).then(res => { relations.value = res.data.map((item: RoleMembers) => item.username) })
+  try {
+    const res = await retrieveRoleMembers(id)
+    relations.value = res.data.map((item: RoleMembers) => item.username)
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -78,10 +90,10 @@ async function loadRoleUsers(id: number) {
  * @param currentPage 当前页码
  * @param pageSize 分页大小
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
@@ -89,25 +101,136 @@ function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  retrieveRoles(pagination, filters.value).then(res => {
+  try {
+    const res = await retrieveRoles(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value = {
     name: null
   }
-  load()
+  await load()
 }
 
-onMounted(() => {
-  load()
-})
+/**
+ * 关联弹出框
+ * @param id 主键
+ */
+async function relationRow(id: number) {
+  relationVisible.value = true
+  try {
+    await Promise.all([loadRoleUsers(id), loadUsers()])
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+async function authorizeRow(id: number) {
+  authorities.value = []
+  form.value.id = id
+  try {
+    const res = await retrieveRolePrivileges(id)
+    authorities.value = res.data.map((row: RolePrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
+  } catch {
+    return Promise.resolve()
+  }
+  authorizeVisible.value = true
+}
+
+/**
+ * 新增、编辑弹出框
+ * @param id 主键
+ */
+async function saveRow(id?: number) {
+  form.value = { ...initialValues }
+  if (id) {
+    await loadOne(id)
+  }
+  visible.value = true
+}
+
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  try {
+    const res = await fetchRole(id)
+    form.value = res.data
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 启用、停用
+ * @param id 主键
+ */
+async function enableChange(id: number) {
+  try {
+    await enableRole(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 表单提交
+ */
+async function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
+
+  await formEl.validate(async (valid) => {
+    if (valid) {
+      saveLoading.value = true
+      try {
+        if (form.value.id) {
+          await modifyRole(form.value.id, form.value)
+        } else {
+          await createRole(form.value)
+        }
+        visible.value = false
+        await load()
+      } catch {
+        return Promise.resolve()
+      } finally {
+        saveLoading.value = false
+      }
+    }
+  })
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
+async function removeRow(id: number) {
+  try {
+    await removeRole(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 确认
+ * @param id 主键
+ */
+async function confirmEvent(id: number) {
+  await removeRow(id)
+}
 
 /**
  * 导入
@@ -130,85 +253,9 @@ function exportRows() {
 }
 
 /**
- * 关联弹出框
- * @param id 主键
- */
-async function relationRow(id: number) {
-  relationVisible.value = true
-  loadUsers()
-  if (id) {
-    form.value.id = id
-    loadRoleUsers(id)
-  }
-}
-
-async function authorizeRow(id: number) {
-  authorities.value = []
-  form.value.id = id
-  retrieveRolePrivileges(id).then(res => {
-    authorities.value = res.data.map((row: RolePrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
-  })
-  authorizeVisible.value = true
-}
-
-/**
- * 新增、编辑弹出框
- * @param id 主键
- */
-function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    loadOne(id)
-  }
-  visible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  fetchRole(id).then(res => {
-    form.value = res.data
-  })
-}
-
-/**
- * 启用、停用
- * @param id 主键
- */
-async function enableChange(id: number) {
-  enableRole(id).then(() => { load() })
-}
-
-/**
- * 表单提交
- */
-function onSubmit(formEl: FormInstance | undefined) {
-  if (!formEl) return
-
-  formEl.validate((valid) => {
-    if (valid) {
-      saveLoading.value = true
-      if (form.value.id) {
-        modifyRole(form.value.id, form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      } else {
-        createRole(form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      }
-    }
-  })
-}
-
-/**
  * 导入提交
  */
-async function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance | undefined) {
   if (!importEl) return
   importLoading.value = true
 
@@ -222,33 +269,16 @@ function onUpload(options: UploadRequestOptions) {
   return importRoles(options.file)
 }
 
-/**
- * 删除
- * @param id 主键
- */
-function removeRow(id: number) {
-  removeRole(id)
-    .then(() => load())
-}
-
-/**
- * 确认
- * @param id 主键
- */
-function confirmEvent(id: number) {
-  if (id) {
-    removeRow(id)
-  }
-}
-
-
-
-function handleTransferChange(value: TransferKey[], direction: TransferDirection) {
+async function handleTransferChange(value: TransferKey[], direction: TransferDirection) {
   if (form.value.id) {
-    if (direction === 'right') {
-      relationRoleMembers(form.value.id, value as string[])
-    } else {
-      removeRoleMembers(form.value.id, value as string[])
+    try {
+      if (direction === 'right') {
+        await relationRoleMembers(form.value.id, value as string[])
+      } else {
+        await removeRoleMembers(form.value.id, value as string[])
+      }
+    } catch {
+      return Promise.resolve()
     }
   }
 }
@@ -258,7 +288,7 @@ function handleTransferChange(value: TransferKey[], direction: TransferDirection
  * @param data 树节点
  * @param checked 是否checked
  */
-function handleCheckChange(data: TreeNode, checked: boolean) {
+async function handleCheckChange(data: TreeNode, checked: boolean) {
   if (!data.id || (data.children?.length ?? 0) > 0 || !form.value.id) return
 
   // 检查是否已授权
@@ -266,14 +296,14 @@ function handleCheckChange(data: TreeNode, checked: boolean) {
 
   if (checked && keyIndex === -1) {
     authorities.value.push({ privilegeId: data.id, actions: [] })
-    relationRolePrivileges(form.value.id, data.id)
+    await relationRolePrivileges(form.value.id, data.id)
   } else if (!checked && keyIndex !== -1) {
     authorities.value.splice(keyIndex, 1)
-    removeRolePrivileges(form.value.id, data.id)
+    await removeRolePrivileges(form.value.id, data.id)
   }
 }
 
-function handleActionCheck(privilegeId: number, item: string) {
+async function handleActionCheck(privilegeId: number, item: string) {
   if (!form.value.id) return
   // 查找对应 privilegeId 的对象
   const keyIndex = authorities.value.findIndex(a => a.privilegeId === privilegeId)
@@ -287,16 +317,16 @@ function handleActionCheck(privilegeId: number, item: string) {
       if (itemIndex >= 0) {
         // 如果 actions 中已有该 item，则移除
         existingAction.actions.splice(itemIndex, 1)
-        removeRolePrivileges(form.value.id, privilegeId, item)
+        await removeRolePrivileges(form.value.id, privilegeId, item)
 
       } else {
         existingAction.actions.push(item)
-        relationRolePrivileges(form.value.id, privilegeId, item)
+        await relationRolePrivileges(form.value.id, privilegeId, item)
       }
     }
   } else {
     authorities.value.push({ privilegeId, actions: [item] })
-    relationRolePrivileges(form.value.id, privilegeId, item)
+    await relationRolePrivileges(form.value.id, privilegeId, item)
   }
 }
 </script>

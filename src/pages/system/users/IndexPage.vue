@@ -57,15 +57,19 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
+onMounted(async () => {
+  await load()
+})
+
 /**
  * 分页变化
  * @param currentPage 当前页码
  * @param pageSize 分页大小
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
@@ -73,25 +77,24 @@ function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  retrieveUsers(pagination, filters.value).then(res => {
+  try {
+    const res = await retrieveUsers(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally { loading.value = false }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value = {
     username: null
   }
-  load()
+  await load()
 }
-
-onMounted(() => {
-  load()
-})
 
 /**
  * 导入
@@ -117,10 +120,10 @@ function exportRows() {
  * 弹出框
  * @param id 主键
  */
-function saveRow(id?: number) {
+async function saveRow(id?: number) {
   form.value = { ...initialValues }
   if (id) {
-    loadOne(id)
+    await loadOne(id)
   }
   visible.value = true
 }
@@ -130,9 +133,12 @@ function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  fetchUser(id).then(res => {
+  try {
+    const res = await fetchUser(id)
     form.value = res.data
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -140,37 +146,65 @@ async function loadOne(id: number) {
  * @param id 主键
  */
 async function enableChange(id: number) {
-  enableUser(id).then(() => { load() })
+  try {
+    await enableUser(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 表单提交
  */
-function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  formEl.validate((valid) => {
+  await formEl.validate(async (valid) => {
     if (valid) {
-      saveLoading.value = true
-      if (form.value.id) {
-        modifyUser(form.value.id, form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      } else {
-        createUser(form.value).then(() => {
-          load()
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
+      try {
+        saveLoading.value = true
+        if (form.value.id) {
+          await modifyUser(form.value.id, form.value)
+        } else {
+          await createUser(form.value)
+        }
+        visible.value = false
+        await load()
+      } catch {
+        return Promise.resolve()
+      } finally {
+        saveLoading.value = false
       }
     }
   })
 }
 
 /**
+ * 删除
+ * @param id 主键
+ */
+async function removeRow(id: number) {
+  try {
+    await removeUser(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 确认
+ * @param id 主键
+ */
+async function confirmEvent(id: number) {
+  await removeRow(id)
+}
+
+/**
  * 导入提交
  */
-async function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance | undefined) {
   if (!importEl) return
   importLoading.value = true
 
@@ -184,23 +218,6 @@ function onUpload(options: UploadRequestOptions) {
   return importUsers(options.file)
 }
 
-/**
- * 删除
- * @param id 主键
- */
-function removeRow(id: number) {
-  removeUser(id).then(() => load())
-}
-
-/**
- * 确认
- * @param id 主键
- */
-function confirmEvent(id: number) {
-  if (id) {
-    removeRow(id)
-  }
-}
 </script>
 
 <template>

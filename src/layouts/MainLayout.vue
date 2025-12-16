@@ -10,24 +10,24 @@ import { Icon } from '@iconify/vue'
 import logo from 'src/assets/logo.svg'
 
 
-const { push, currentRoute } = useRouter()
+const router = useRouter()
+const { currentRoute } = useRouter()
 const userStore = useUserStore()
 
 const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const user = {
   username: userStore.username,
-  name: userStore.name,
+  fullName: userStore.fullName,
   privileges: userStore.privileges
 }
 
 const isCollapse = ref(false)
 
 async function logout() {
-  signOut().then(res => {
-    if (res && res.status === 200) {
-      userStore.$reset()
-    }
-  })
+  const res = await signOut()
+  if (res && res.status === 200) {
+    userStore.$reset()
+  }
 }
 </script>
 
@@ -45,7 +45,7 @@ async function logout() {
       <div class="inline-flex justify-end items-center space-x-4">
         <ThemeToogle />
         <LanguageSelector />
-        <ElButton title="faq" type="default" link @click="push('/faq')">
+        <ElButton title="faq" type="default" link @click="router.push('/faq')">
           <Icon icon="material-symbols:help-outline-rounded" class="text-white" width="22" height="22" />
         </ElButton>
         <ElDropdown trigger="click" class="cursor-pointer">
@@ -58,7 +58,7 @@ async function logout() {
               <ElAvatar alt="avatar" :size="32" :src="`${cdn_url}/${user.username}`" />
               <div class="inline-flex flex-col">
                 <span>{{ user.username }}</span>
-                <span class="text-xs text-(--el-text-color-secondary)">{{ user.name }}</span>
+                <span class="text-xs text-(--el-text-color-secondary)">{{ user.fullName }}</span>
               </div>
             </div>
             <ElDropdownMenu>

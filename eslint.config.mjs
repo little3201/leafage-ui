@@ -14,12 +14,10 @@ export default defineConfigWithVueTs(
      *
      * ESLint requires "ignores" key to be the only one in this object
      */
-    files: ['**/*.{js,mjs,cjs,ts,mts,vue}'],
-    ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
+    // ignores: [],
   },
 
   js.configs.recommended,
-  vueTsConfigs.recommended,
 
   /**
    * https://eslint.vuejs.org
@@ -36,6 +34,18 @@ export default defineConfigWithVueTs(
   pluginVue.configs['flat/essential'],
 
   {
+    files: ['**/*.ts', '**/*.vue'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports' }
+      ],
+    }
+  },
+  // https://github.com/vuejs/eslint-config-typescript
+  vueTsConfigs.recommendedTypeChecked,
+
+  {
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -50,30 +60,11 @@ export default defineConfigWithVueTs(
     // add your custom rules here
     rules: {
       'prefer-promise-reject-errors': 'off',
-      '@typescript-eslint/consistent-type-imports': [
-        'error',
-        { prefer: 'type-imports' }
-      ],
-      'space-before-function-paren': 'off',
-      // allow async-await
-      'generator-star-spacing': 'off',
-      // allow paren-less arrow functions
-      'arrow-parens': 'off',
-      'one-var': 'off',
-      'no-void': 'off',
-      'multiline-ternary': 'off',
-
-      // The core 'import/named' rules
-      // does not work with type definitions
-      'import/named': 'off',
 
       quotes: ['warn', 'single', { avoidEscape: true }],
 
       // this rule, if on, would require explicit return type on the `render` function
       '@typescript-eslint/explicit-function-return-type': 'off',
-
-      // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
-      '@typescript-eslint/no-var-requires': 'off',
 
       // allow debugger during development only
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'

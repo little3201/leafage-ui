@@ -1,8 +1,6 @@
 // 服务匹配前缀
 const SERVER_PREFIX = {
   HYPERVISOR: '/hypervisor', // 系统
-  ASSETS: '/assets', // 资源
-  EXPLOITER: '/exploiter', // 开发者
 }
 
 // 接口请求路径
@@ -24,18 +22,18 @@ export const SERVER_URL = {
   CALENDAR_EVENT: SERVER_PREFIX.HYPERVISOR.concat('/calendar-events'), // 日历事件
 
   // assets
-  REGION: SERVER_PREFIX.ASSETS.concat('/regions'), // 行政区划
-  FILE: SERVER_PREFIX.ASSETS.concat('/files'), // 文件
-  POST: SERVER_PREFIX.ASSETS.concat('/posts'), // 帖子
-  CATEGORY: SERVER_PREFIX.ASSETS.concat('/categories'), // 类别
-  STATISTICS: SERVER_PREFIX.ASSETS.concat('/statistics'), // 统计
-  COMMENT: SERVER_PREFIX.ASSETS.concat('/comments'), // 评论
+  REGION: SERVER_PREFIX.HYPERVISOR.concat('/regions'), // 行政区划
+  FILE: SERVER_PREFIX.HYPERVISOR.concat('/files'), // 文件
+  POST: SERVER_PREFIX.HYPERVISOR.concat('/posts'), // 帖子
+  CATEGORY: SERVER_PREFIX.HYPERVISOR.concat('/categories'), // 类别
+  STATISTICS: SERVER_PREFIX.HYPERVISOR.concat('/statistics'), // 统计
+  COMMENT: SERVER_PREFIX.HYPERVISOR.concat('/comments'), // 评论
 
   // exploiters
-  SCRIPT: SERVER_PREFIX.EXPLOITER.concat('/scripts'), // 脚本
-  SCHEMA: SERVER_PREFIX.EXPLOITER.concat('/schemas'), // 表配置
-  MASTER_PLATE: SERVER_PREFIX.EXPLOITER.concat('/samples'), // 母板
-  CONNECTIONS: SERVER_PREFIX.EXPLOITER.concat('/connections') // 库连接
+  SCRIPT: SERVER_PREFIX.HYPERVISOR.concat('/scripts'), // 脚本
+  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 表配置
+  MASTER_PLATE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 母板
+  CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 库连接
 }
 
 // 按钮对应tag类型
@@ -86,18 +84,18 @@ export const queryTypes: { [key: string]: string } = {
   isNotNull: 'IS NOT NULL'
 }
 
-export const shceduleStatus: {[key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger'} = {
-  PENDING: 'info', 
-  RUNNING: 'primary', 
+export const shceduleStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
+  PENDING: 'info',
+  RUNNING: 'primary',
   SUCCESS: 'success',
-  FAILED: 'danger', 
+  FAILED: 'danger',
   CANCELED: 'warning'
 }
 
-export const shceduleStatusIcon: {[key: string]: string} = {
-  PENDING: 'pending-outline', 
-  RUNNING: 'progress-activity', 
+export const shceduleStatusIcon: { [key: string]: string } = {
+  PENDING: 'pending-outline',
+  RUNNING: 'progress-activity',
   SUCCESS: 'check-rounded',
-  FAILED: 'error-outline-rounded', 
+  FAILED: 'error-outline-rounded',
   CANCELED: 'cancel-outline-rounded'
 }

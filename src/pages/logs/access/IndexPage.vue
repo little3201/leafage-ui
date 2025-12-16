@@ -36,14 +36,20 @@ const initialValues: AccessLog = {
 const row = ref<AccessLog>({ ...initialValues })
 
 const visible = ref<boolean>(false)
+
+
+onMounted(async () => {
+  await load()
+})
+
 /**
- * 分页变化
- * @param value 当前页码
- */
-function pageChange(currentPage: number, pageSize: number) {
+* 分页变化
+* @param value 当前页码
+*/
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
@@ -51,10 +57,15 @@ function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  retrieveAccessLogs(pagination, filters.value).then(res => {
+  try {
+    const res = await retrieveAccessLogs(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
@@ -63,30 +74,31 @@ async function load() {
  */
 async function loadOne(id: number) {
   detailLoading.value = true
-  fetchAccessLog(id).then(res => {
+  try {
+    const res = await fetchAccessLog(id)
     row.value = res.data
-  }).finally(() => { detailLoading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    detailLoading.value = false
+  }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value = {
     url: null,
     statusCode: null
   }
-  load()
+  await load()
 }
-
-onMounted(() => {
-  load()
-})
 
 /**
  * 导出
  */
-async function exportRows() {
+function exportRows() {
   exportLoading.value = true
 
   const selectedRows = tableRef.value?.getSelectionRows()
@@ -100,9 +112,9 @@ async function exportRows() {
  * 详情
  * @param id 主键
  */
-function showRow(id: number) {
+async function showRow(id: number) {
   row.value = { ...initialValues }
-  loadOne(id)
+  await loadOne(id)
   visible.value = true
 }
 
@@ -110,25 +122,33 @@ function showRow(id: number) {
  * 删除
  * @param id 主键
  */
-function removeRow(id: number) {
-  removeAccessLog(id).then(() => load())
+async function removeRow(id: number) {
+  try {
+    await removeAccessLog(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 清空
  */
-function clearRows() {
-  clearAccessLogs().then(() => load())
+async function clearRows() {
+  try {
+    await clearAccessLogs()
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 确认
  * @param id 主键
  */
-function confirmEvent(id: number) {
-  if (id) {
-    removeRow(id)
-  }
+async function confirmEvent(id: number) {
+  await removeRow(id)
 }
 
 

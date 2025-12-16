@@ -55,34 +55,41 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
+onMounted(async () => {
+  await load()
+
+  const res = await retrieveDictionarySubset(100)
+  buttonOptions.value = res.data
+})
+
 /**
  * 分页变化
  * @param currentPage 当前页码
  * @param pageSize 分页大小
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privilege[]) => void) {
   loading.value = true
-  if (row && row.id && resolve) {
-    retrievePrivilegeSubset(row.id).then(res => {
+  try {
+    if (row && row.id && resolve) {
+      const res = await retrievePrivilegeSubset(row.id)
       const list = res.data
-      // 处理字节点
+      // 处理子节点
       list.forEach((element: Privilege) => {
         if (element.count && element.count > 0) {
           element.hasChildren = true
         }
       })
       resolve(list)
-    }).finally(() => { loading.value = false })
-  } else {
-    retrievePrivileges(pagination, filters.value).then(res => {
+    } else {
+      const res = await retrievePrivileges(pagination, filters.value)
       const list = res.data.content
-      // 处理字节点
+      // 处理子节点
       list.forEach((element: Privilege) => {
         if (element.count && element.count > 0) {
           element.hasChildren = true
@@ -90,24 +97,86 @@ async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privil
       })
       datas.value = list
       total.value = res.data.page.totalElements
-    }).finally(() => { loading.value = false })
+    }
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
   }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value = {
     name: null,
     path: null
   }
-  load()
+  await load()
 }
 
-onMounted(() => {
-  load()
-})
+/**
+ * 弹出框
+ * @param id 主键
+ */
+async function saveRow(id?: number) {
+  form.value = { ...initialValues }
+  try {
+    if (id) {
+      await loadOne(id)
+      const res = await retrievePrivilegeSubset(id)
+      subset.value = res.data
+    }
+  } catch {
+    return Promise.resolve()
+  }
+  visible.value = true
+}
+
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  try {
+    const res = await fetchPrivilege(id)
+    form.value = res.data
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+async function enableChange(id: number) {
+  try {
+    await enablePrivilege(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
+ * 表单提交
+ */
+async function onSubmit(formEl: FormInstance | undefined) {
+  if (!formEl) return
+
+  await formEl.validate(async (valid) => {
+    if (valid) {
+      saveLoading.value = true
+      if (form.value.id) {
+        try {
+          const res = await modifyPrivilege(form.value.id, form.value)
+          await load(res.data)
+          visible.value = false
+        } catch {
+          return Promise.resolve()
+        } finally { saveLoading.value = false }
+      }
+    }
+  })
+}
 
 /**
  * 导入
@@ -130,58 +199,9 @@ function exportRows() {
 }
 
 /**
- * 弹出框
- * @param id 主键
- */
-function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    loadOne(id)
-    retrievePrivilegeSubset(id).then(res => { subset.value = res.data })
-  }
-  retrieveDictionarySubset(100).then(res => {
-    buttonOptions.value = res.data
-  })
-  visible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  fetchPrivilege(id).then(res => {
-    form.value = res.data
-  })
-}
-
-async function enableChange(id: number) {
-  enablePrivilege(id).then(() => { load() })
-}
-
-/**
- * 表单提交
- */
-async function onSubmit(formEl: FormInstance | undefined) {
-  if (!formEl) return
-
-  formEl.validate((valid) => {
-    if (valid) {
-      saveLoading.value = true
-      if (form.value.id) {
-        modifyPrivilege(form.value.id, form.value).then(res => {
-          load(res.data)
-          visible.value = false
-        }).finally(() => { saveLoading.value = false })
-      }
-    }
-  })
-}
-
-/**
  * 导入提交
  */
-async function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance | undefined) {
   if (!importEl) return
   importLoading.value = true
 
@@ -209,8 +229,6 @@ function onCheckChange(item: string) {
     }
   }
 }
-
-
 </script>
 
 <template>

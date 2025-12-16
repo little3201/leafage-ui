@@ -389,7 +389,7 @@ export const dictionariesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.DICTIONARY}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

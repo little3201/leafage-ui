@@ -238,14 +238,14 @@ export const schemasHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/:id/sync`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.SCHEMA}/:id/sync`, ({ params }) => {
     const id = params
     if (id) {
       return HttpResponse.json()
     }
     return HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

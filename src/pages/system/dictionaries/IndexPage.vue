@@ -48,15 +48,19 @@ const rules = reactive<FormRules<typeof form>>({
   ]
 })
 
+onMounted(async () => {
+  await load()
+})
+
 /**
  * 分页变化
  * @param currentPage 当前页码
  * @param pageSize 分页大小
  */
-function pageChange(currentPage: number, pageSize: number) {
+async function pageChange(currentPage: number, pageSize: number) {
   pagination.page = currentPage
   pagination.size = pageSize
-  load()
+  await load()
 }
 
 /**
@@ -64,7 +68,8 @@ function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  retrieveDictionaries(pagination, filters.value).then(res => {
+  try {
+    const res = await retrieveDictionaries(pagination, filters.value)
     const list = res.data.content
     list.forEach((element: Dictionary) => {
       if (element.count && element.count > 0) {
@@ -73,22 +78,22 @@ async function load() {
     })
     datas.value = list
     total.value = res.data.page.totalElements
-  }).finally(() => { loading.value = false })
+  } catch {
+    return Promise.resolve()
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
  * reset
  */
-function reset() {
+async function reset() {
   filters.value = {
     name: null
   }
-  load()
+  await load()
 }
-
-onMounted(() => {
-  load()
-})
 
 /**
  * 导入
@@ -114,10 +119,10 @@ function exportRows() {
  * 弹出框
  * @param id 主键
  */
-function saveRow(id?: number) {
+async function saveRow(id?: number) {
   form.value = { ...initialValues }
   if (id) {
-    loadOne(id)
+    await loadOne(id)
   }
   visible.value = true
 }
@@ -127,9 +132,12 @@ function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  fetchDictionary(id).then(res => {
+  try {
+    const res = await fetchDictionary(id)
     form.value = res.data
-  })
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
@@ -137,23 +145,34 @@ async function loadOne(id: number) {
  * @param id 主键
  */
 async function enableChange(id: number) {
-  enableDictionary(id).then(() => { load() })
+  try {
+    await enableDictionary(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 /**
  * 表单提交
  */
-function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  formEl.validate((valid) => {
+  await formEl.validate(async (valid) => {
     if (valid) {
       saveLoading.value = true
-      if (form.value.id) {
-        modifyDictionary(form.value.id, form.value).then(() => {
-          load()
+      try {
+        if (form.value.id) {
+          await modifyDictionary(form.value.id, form.value)
+
           visible.value = false
-        }).finally(() => { saveLoading.value = false })
+          await load()
+        }
+      } catch {
+        return Promise.resolve()
+      } finally {
+        loading.value = false
       }
     }
   })
@@ -162,7 +181,7 @@ function onSubmit(formEl: FormInstance | undefined) {
 /**
  * 导入提交
  */
-async function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance | undefined) {
   if (!importEl) return
   importLoading.value = true
 
@@ -175,8 +194,6 @@ async function onImportSubmit(importEl: UploadInstance | undefined) {
 function onUpload(options: UploadRequestOptions) {
   return importDictionaries(options.file)
 }
-
-
 </script>
 
 <template>

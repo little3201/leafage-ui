@@ -4,7 +4,8 @@
 export default {
   label: {
     no: 'NO.',
-    actions: 'Actions ',
+    action: 'Action',
+    actions: 'Actions',
     name: 'Name',
     id: 'ID',
     superior: 'Superior',
@@ -85,6 +86,9 @@ export default {
     oldPassword: 'Old Password',
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
+    samples: 'Samples',
+    comment: 'Comment',
+    userAgent: 'User Agent',
   },
 
   action: {

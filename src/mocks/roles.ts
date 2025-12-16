@@ -120,7 +120,7 @@ export const rolesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.ROLE}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.ROLE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -137,7 +137,7 @@ export const rolesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.ROLE}/:id/privileges/:privilegeId`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.ROLE}/:id/privileges/:privilegeId`, ({ params }) => {
     const { id, privilegeId } = params
     if (id && privilegeId) {
       return HttpResponse.json()
@@ -162,7 +162,7 @@ export const rolesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.ROLE}/:roleId/privileges/:privilegeId`, async ({ params }) => {
+  http.delete(`/api${SERVER_URL.ROLE}/:roleId/privileges/:privilegeId`, ({ params }) => {
     const { roleId, privilegeId } = params
     if (roleId && privilegeId) {
       return HttpResponse.json()

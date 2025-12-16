@@ -11,7 +11,7 @@ const userStore = useUserStore()
 const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const me = {
   username: userStore.username,
-  name: userStore.name
+  fullName: userStore.fullName
 }
 
 onMounted(() => {
@@ -26,7 +26,7 @@ onMounted(() => {
         <ElAvatar :size="80" :src="`${cdn_url}/${me.username}`" />
         <div class="ml-4 flex-1">
           <span class="text-lg my-1">
-            {{ me.name }}
+            {{ me.fullName }}
           </span>
 
           <div class="text-sm text-(--el-text-color-secondary)">
@@ -43,23 +43,23 @@ onMounted(() => {
         <ElMenu router :default-active="currentRoute.fullPath">
           <ElMenuItem index="/profile">
             <Icon icon="material-symbols:overview-outline-rounded" width="20" height="20" class="mr-2" />
-            {{ $t('overview') }}
+            {{ $t('label.overview') }}
           </ElMenuItem>
           <ElMenuItem index="/profile/notifications">
             <Icon icon="material-symbols:notification-settings-outline-rounded" width="20" height="20" class="mr-2" />
-            {{ $t('notifications') }}
+            {{ $t('label.notifications') }}
           </ElMenuItem>
           <ElMenuItem index="/profile/sessions">
             <Icon icon="material-symbols:bigtop-updates-rounded" width="20" height="20" class="mr-2" />
-            {{ $t('sessions') }}
+            {{ $t('label.sessions') }}
           </ElMenuItem>
           <ElMenuItem index="/profile/change-password">
             <Icon icon="material-symbols:key-outline-rounded" width="20" height="20" class="mr-2" />
-            {{ $t('changePassword') }}
+            {{ $t('label.changePassword') }}
           </ElMenuItem>
           <ElMenuItem index="/profile/activities">
             <Icon icon="material-symbols:browse-activity-outline-rounded" width="20" height="20" class="mr-2" />
-            {{ $t('activities') }}
+            {{ $t('label.activities') }}
           </ElMenuItem>
         </ElMenu>
       </ElCard>

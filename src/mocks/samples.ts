@@ -136,7 +136,7 @@ export const samplesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.MASTER_PLATE}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

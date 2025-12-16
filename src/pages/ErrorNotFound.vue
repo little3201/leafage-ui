@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import notFound from 'src/assets/404.svg'
 
-const { push } = useRouter()
+const router = useRouter()
 </script>
 
 <template>
@@ -12,7 +12,7 @@ const { push } = useRouter()
       <div class="text-center">
         <div class="text-2xl text-(--el-color-info)">Oops. Nothing here...</div>
         <div class="mt-8">
-          <ElButton size="large" type="primary" @click="push('/')">{{ $t('action.goHome') }}</ElButton>
+          <ElButton size="large" type="primary" @click="router.push('/')">{{ $t('action.goHome') }}</ElButton>
         </div>
       </div>
     </ElMain>

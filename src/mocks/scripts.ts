@@ -86,11 +86,11 @@ export const scriptsHandlers = [
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
-    
+
     if (!file) {
       return new HttpResponse('Missing document', { status: 400 })
     }
-  
+
     if (!(file instanceof File)) {
       return new HttpResponse('Uploaded document is not a File', {
         status: 400,
@@ -123,7 +123,7 @@ export const scriptsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, async({ params }) => {
+  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
