@@ -29,8 +29,7 @@ const initialValues: AuditLog = {
   id: undefined,
   operation: '',
   resource: '',
-  ip: '',
-  location: ''
+  ip: ''
 }
 const row = ref<AuditLog>({ ...initialValues })
 
@@ -144,11 +143,13 @@ async function confirmEvent(id: number) {
   <ElSpace size="large" fill>
     <ElCard shadow="never">
       <ElForm inline :model="filters">
-        <ElFormItem :label="$t('resource')" prop="resource">
-          <ElInput v-model="filters.resource" :placeholder="$t('placeholder.inputText', { field: $t('resource') })" />
+        <ElFormItem :label="$t('label.resource')" prop="resource">
+          <ElInput v-model="filters.resource"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.resource') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('operation')" prop="operation">
-          <ElInput v-model="filters.operation" :placeholder="$t('placeholder.inputText', { field: $t('operation') })" />
+        <ElFormItem :label="$t('label.operation')" prop="operation">
+          <ElInput v-model="filters.operation"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.operation') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load">
@@ -217,7 +218,7 @@ async function confirmEvent(id: number) {
           <template #default="scope">
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
                   <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
                   }}
                 </ElButton>
@@ -230,7 +231,7 @@ async function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center show-close width="600">
+  <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.resource')">{{ row.resource }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.operation')">

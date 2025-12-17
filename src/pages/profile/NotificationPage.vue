@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <h2 class="text-base/7 font-semibold text-gray-900">{{ $t('notifications') }}</h2>
+  <h2 class="text-base/7 font-semibold text-gray-900">{{ $t('label.notifications') }}</h2>
   <p class="mt-1 text-sm/6 text-gray-600">We'll always let you know about important changes, but you pick what else you
     want to hear about.</p>
 

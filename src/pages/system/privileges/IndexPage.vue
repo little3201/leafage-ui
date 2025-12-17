@@ -289,7 +289,7 @@ function onCheckChange(item: string) {
             <template v-if="scope.row.actions && scope.row.actions.length > 0">
               <ElTag v-for="(item, index) in visibleArray(scope.row.actions, 3)" :key="index" :type="actions[item]"
                 class="mr-2">
-                {{ $t(item as string) }}
+                {{ $t(`action.${item}`) }}
               </ElTag>
               <ElPopover v-if="scope.row.actions.length > 3" placement="top-start" trigger="hover">
                 <template #reference>
@@ -299,7 +299,7 @@ function onCheckChange(item: string) {
                 </template>
                 <ElTag v-for="(item, index) in scope.row.actions.slice(3)" :key="index" :type="actions[item]"
                   class="mb-2 mr-2">
-                  {{ $t(item) }}
+                  {{ $t(`action.${item}`) }}
                 </ElTag>
               </ElPopover>
             </template>
@@ -314,7 +314,7 @@ function onCheckChange(item: string) {
         <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" size="small" type="primary" link
+            <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
@@ -330,7 +330,7 @@ function onCheckChange(item: string) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="480">
+  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="12">
@@ -393,10 +393,10 @@ function onCheckChange(item: string) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/privileges.xlsx`" :download="$t('privileges') + '.xlsx'">
-        {{ $t('privileges') }}.xlsx
+      <a :href="`templates/privileges.xlsx`" :download="$t('page.privileges') + '.xlsx'">
+        {{ $t('page.privileges') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload"

@@ -295,11 +295,11 @@ async function handleBreadcrumbClick(index: number) {
             <ElTableColumn prop="name" :label="$t('label.name')" sortable>
               <template #default="scope">
                 <div class="flex items-center">
-                  <Icon v-if="scope.row.directory" icon="flat-color-icons:folder" width="26" height="26" />
+                  <Icon v-if="scope.row.directory" icon="flat-color-icons:folder" width="2em" height="2em" />
                   <template v-else-if="scope.row.regularFile && scope.row.contentType">
-                    <Icon v-if="scope.row.contentType.includes('image')" icon="flat-color-icons:image-file" width="26"
-                      height="26" />
-                    <Icon v-else icon="flat-color-icons:document" width="26" height="26" />
+                    <Icon v-if="scope.row.contentType.includes('image')" icon="flat-color-icons:image-file" width="2em"
+                      height="2em" />
+                    <Icon v-else icon="flat-color-icons:document" width="2em" height="2em" />
                   </template>
                   <span class="ml-2">{{ scope.row.name }}</span>
                 </div>
@@ -319,12 +319,12 @@ async function handleBreadcrumbClick(index: number) {
             <ElTableColumn :label="$t('label.actions')">
               <template #default="scope">
                 <ElButton v-if="scope.row.regularFile && hasAction($route.name, 'download')" title="download"
-                  size="small" type="success" link @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
+                  type="success" link @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
                   <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('action.download') }}
                 </ElButton>
                 <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
                   <template #reference>
-                    <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
+                    <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
                       <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{
                         $t('action.remove')
                       }}
@@ -358,13 +358,12 @@ async function handleBreadcrumbClick(index: number) {
   </ElSpace>
 
   <!-- details -->
-  <ElDialog v-model="visible" align-center show-close width="400">
-    <Icon v-if="row.directory" icon="flat-color-icons:folder" width="80" height="80" />
-    <template v-else-if="row.regularFile">
+  <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="400">
+    <div class="text-center">
       <ElImage v-if="row.contentType && row.contentType.includes('image')" :src="row.path"
         class="w-full h-52 overflow-hidden" />
       <Icon v-else icon="flat-color-icons:document" width="80" height="80" />
-    </template>
+    </div>
     <ElDescriptions v-loading="loading" :column="1" class="mt-4">
       <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
@@ -376,7 +375,7 @@ async function handleBreadcrumbClick(index: number) {
   </ElDialog>
 
   <!-- upload -->
-  <ElDialog v-model="uploadVisible" align-center width="480">
+  <ElDialog v-model="uploadVisible" :title="$t('action.upload')" align-center width="480">
     <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" :on-success="load">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />

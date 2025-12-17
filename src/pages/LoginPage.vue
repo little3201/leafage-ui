@@ -26,11 +26,11 @@ const form = reactive({
 
 const rules = reactive<FormRules<typeof form>>({
   username: [
-    { required: true, message: t('placeholder.inputText', { field: t('username') }), trigger: 'blur' },
+    { required: true, message: t('placeholder.inputText', { field: t('label.username') }), trigger: 'blur' },
     { min: 5, max: 12, message: t('placeholder.lengthRange', { min: 5, max: 12 }), trigger: 'blur' }
   ],
   password: [
-    { required: true, message: t('placeholder.inputText', { field: t('password') }), trigger: 'blur' },
+    { required: true, message: t('placeholder.inputText', { field: t('label.password') }), trigger: 'blur' },
     { min: 8, max: 32, message: t('placeholder.lengthRange', { min: 8, max: 32 }), trigger: 'blur' }
   ]
 })
@@ -99,14 +99,15 @@ async function onSubmit() {
                 <ElImage :src="logo" alt="logo" class="w-24 h-24" />
               </div>
               <div class="text-lg font-bold text-center mb-xs">
-                {{ $t('signinTo') }}
+                {{ $t('message.signinTo') }}
               </div>
               <ElForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit"
                 class="bg-transparent max-w-lg w-full my-6 space-y-4">
                 <ElRow>
                   <ElCol>
                     <ElFormItem prop="username">
-                      <ElInput size="large" :disable="loading" v-model="form.username" :placeholder="$t('username')">
+                      <ElInput size="large" :disable="loading" v-model="form.username"
+                        :placeholder="$t('label.username')">
                         <template #prefix>
                           <Icon icon="material-symbols:person-outline-rounded" width="18" height="18" />
                         </template>
@@ -118,7 +119,7 @@ async function onSubmit() {
                   <ElCol>
                     <ElFormItem prop="password">
                       <ElInput size="large" :disable="loading" type="password" v-model="form.password"
-                        :placeholder="$t('password')" show-password>
+                        :placeholder="$t('label.password')" show-password>
                         <template #prefix>
                           <Icon icon="material-symbols:key-vertical-outline-rounded" width="18" height="18" />
                         </template>
@@ -131,7 +132,7 @@ async function onSubmit() {
                     <ElFormItem>
                       <ElButton title="signin" size="large" type="primary" :loading="loading" class="w-full"
                         native-type="submit">
-                        {{ $t('signin') }}
+                        {{ $t('action.signin') }}
                       </ElButton>
                     </ElFormItem>
                   </ElCol>

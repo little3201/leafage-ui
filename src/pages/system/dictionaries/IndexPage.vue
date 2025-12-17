@@ -44,7 +44,7 @@ const form = ref<Dictionary>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('placeholder.inputText', { field: t('name') }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
   ]
 })
 
@@ -254,7 +254,7 @@ function onUpload(options: UploadRequestOptions) {
         <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" size="small" type="primary" link
+            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
@@ -270,7 +270,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="480">
+  <ElDialog v-model="visible" :title="$t('page.dictionaries')" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="24">
@@ -299,7 +299,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx

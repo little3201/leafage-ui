@@ -153,12 +153,11 @@ async function confirmEvent(id: number) {
   <ElSpace size="large" fill>
     <ElCard shadow="never">
       <ElForm inline :model="filters">
-        <ElFormItem :label="$t('module')" prop="module">
-          <ElInput v-model="filters.module" :placeholder="$t('placeholder.inputText', { field: $t('module') })" />
+        <ElFormItem :label="$t('label.module')" prop="module">
+          <ElInput v-model="filters.module" :placeholder="$t('placeholder.inputText', { field: $t('label.module') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('label.actions')" prop="action">
-          <ElInput v-model="filters.action"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.actions') })" />
+        <ElFormItem :label="$t('label.action')" prop="action">
+          <ElInput v-model="filters.action" :placeholder="$t('placeholder.inputText', { field: $t('label.action') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load">
@@ -202,7 +201,7 @@ async function confirmEvent(id: number) {
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="action" :label="$t('label.actions')" sortable>
+        <ElTableColumn prop="action" :label="$t('label.action')" sortable>
           <template #default="scope">
             {{ $t(scope.row.action) }}
           </template>
@@ -221,7 +220,7 @@ async function confirmEvent(id: number) {
           <template #default="scope">
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" size="small" type="danger" link>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
                   <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
                   }}
                 </ElButton>
@@ -238,10 +237,10 @@ async function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
-  <ElDialog v-model="visible" align-center show-close width="600">
+  <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.module')">{{ $t(row.module) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.actions')">{{ $t(row.action) }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.action')">{{ $t(row.action) }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.params')" span="3">{{ row.params }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.body')" span="3">{{ row.body }}</ElDescriptionsItem>

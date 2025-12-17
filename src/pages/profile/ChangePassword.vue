@@ -35,11 +35,11 @@ async function onSubmit(formEl: FormInstance | undefined) {
 </script>
 
 <template>
-  <h3>{{ $t('changePassword') }}</h3>
+  <h3>{{ $t('label.changePassword') }}</h3>
   <ElForm ref="formRef" :model="form" :rules="rules" label-width="auto">
     <ElRow class="items-baseline">
       <ElCol :span="14">
-        <ElFormItem :label="$t('oldPassword')" prop="oldPassword">
+        <ElFormItem :label="$t('label.oldPassword')" prop="oldPassword">
           <ElInput v-model="form.oldPassword" type="password" minlength="8" maxlength="32" show-password>
           </ElInput>
         </ElFormItem>
@@ -52,7 +52,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
     </ElRow>
     <ElRow class="items-baseline">
       <ElCol :span="14">
-        <ElFormItem :label="$t('newPassword')" prop="newPassword">
+        <ElFormItem :label="$t('label.newPassword')" prop="newPassword">
           <ElInput v-model="form.newPassword" type="password" minlength="8" maxlength="32" show-password />
         </ElFormItem>
       </ElCol>
@@ -64,7 +64,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
     </ElRow>
     <ElRow class="items-baseline">
       <ElCol :span="14">
-        <ElFormItem :label="$t('confirmPassword')" prop="confirmPassword">
+        <ElFormItem :label="$t('label.confirmPassword')" prop="confirmPassword">
           <ElInput v-model="form.confirmPassword" type="password" minlength="8" maxlength="32" show-password>
           </ElInput>
         </ElFormItem>
@@ -77,7 +77,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
     </ElRow>
 
     <ElFormItem>
-      <ElButton title="submit" type="primary" @click="onSubmit(formRef)">Submit</ElButton>
+      <ElButton title="submit" type="primary" @click="onSubmit(formRef)">{{ $t('action.submit') }}</ElButton>
     </ElFormItem>
   </ElForm>
 </template>

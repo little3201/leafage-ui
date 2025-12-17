@@ -32,7 +32,7 @@ export const SERVER_URL = {
   // exploiters
   SCRIPT: SERVER_PREFIX.HYPERVISOR.concat('/scripts'), // 脚本
   SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 表配置
-  MASTER_PLATE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 母板
+  SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 母板
   CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 库连接
 }
 
@@ -68,21 +68,21 @@ export const httpMethods: { [key: string]: 'success' | 'warning' | 'info' | 'pri
 }
 
 // 查询匹配方式
-export const queryTypes: { [key: string]: string } = {
-  eq: '=',
-  neq: '<>',
-  gt: '>',
-  egt: '>=',
-  lt: '<',
-  elt: '<=',
-  like: 'LIKE',
-  in: 'IN',
-  notIn: 'NOT IN',
-  between: 'BETWEEN',
-  notBetween: 'NOT BETWEEN',
-  isNull: 'IS NULL',
-  isNotNull: 'IS NOT NULL'
-}
+export const queryTypes = [
+  { label: '=', value: 'eq' },
+  { label: '<>', value: 'neq' },
+  { label: '>', value: 'gt' },
+  { label: '>=', value: 'egt' },
+  { label: '<', value: 'lt' },
+  { label: '<=', value: 'elt' },
+  { label: 'LIKE', value: 'like' },
+  { label: 'IN', value: 'in' },
+  { label: 'NOT IN', value: 'notIn' },
+  { label: 'BETWEEN', value: 'between' },
+  { label: 'NOT BETWEEN', value: 'notBetween' },
+  { label: 'IS NULL', value: 'isNull' },
+  { label: 'IS NOT NULL', value: 'isNotNull' }
+]
 
 export const shceduleStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
   PENDING: 'info',
@@ -98,4 +98,12 @@ export const shceduleStatusIcon: { [key: string]: string } = {
   SUCCESS: 'check-rounded',
   FAILED: 'error-outline-rounded',
   CANCELED: 'cancel-outline-rounded'
+}
+
+export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
+  ACTIVE: 'success',
+  RUNNING: 'primary',
+  SUCCESS: 'success',
+  FAILED: 'danger',
+  CANCELED: 'warning'
 }

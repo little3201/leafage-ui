@@ -13,7 +13,7 @@ const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const initialValues: User = {
   id: undefined,
   username: userStore.username,
-  name: userStore.name,
+  fullName: userStore.fullName,
   email: userStore.email
 }
 const form = ref<User>({ ...initialValues })
@@ -30,7 +30,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <h3>{{ t('overview') }}</h3>
+  <h3>{{ t('label.overview') }}</h3>
   <div class="flex flex-row">
     <div class="px-6 relative group">
       <ElAvatar :size="192" :src="`${cdn_url}/${form.username}`" />
@@ -49,9 +49,9 @@ onMounted(() => {
       <ElForm label-width="auto">
         <ElRow>
           <ElCol :span="20">
-            <ElFormItem :label="$t('username')" prop="username">
-              <ElInput v-model="form.username" :placeholder="$t('placeholder.inputText', { field: $t('username') })"
-                :maxLength="50" disabled />
+            <ElFormItem :label="$t('label.username')" prop="username">
+              <ElInput v-model="form.username"
+                :placeholder="$t('placeholder.inputText', { field: $t('label.username') })" :maxLength="50" disabled />
               <p class="my-0 text-xs text-gray-500">Your name may appear around GitHub where you contribute or are
                 mentioned.
               </p>
@@ -60,9 +60,10 @@ onMounted(() => {
         </ElRow>
         <ElRow>
           <ElCol :span="20">
-            <ElFormItem :label="$t('fullName')" prop="fullName">
-              <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('fullName') })"
-                :maxLength="50" :disabled="!state.name" />
+            <ElFormItem :label="$t('label.fullName')" prop="fullName">
+              <ElInput v-model="form.fullName"
+                :placeholder="$t('placeholder.inputText', { field: $t('label.fullName') })" :maxLength="50"
+                :disabled="!state.name" />
               <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
                 you've
                 missed.
@@ -71,14 +72,14 @@ onMounted(() => {
           </ElCol>
           <ElCol :span="4">
             <ElButton link type="primary" class="mt-2 ml-4" @click="state.name = !state.name">
-              {{ state.name ? $t('save') : $t('action.modify') }}</ElButton>
+              {{ state.name ? $t('action.save') : $t('action.modify') }}</ElButton>
           </ElCol>
         </ElRow>
         <ElRow>
           <ElCol :span="20">
-            <ElFormItem :label="$t('email')" prop="email">
+            <ElFormItem :label="$t('label.email')" prop="email">
               <ElInput type="email" v-model="form.email"
-                :placeholder="$t('placeholder.inputText', { field: $t('email') })" :maxLength="50"
+                :placeholder="$t('placeholder.inputText', { field: $t('label.email') })" :maxLength="50"
                 :disabled="!state.email" />
               <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
                 you've
@@ -88,7 +89,7 @@ onMounted(() => {
           </ElCol>
           <ElCol :span="4">
             <ElButton link type="primary" class="mt-2 ml-4" @click="state.email = !state.email">
-              {{ state.email ? $t('save') : $t('action.modify') }}
+              {{ state.email ? $t('action.save') : $t('action.modify') }}
             </ElButton>
           </ElCol>
         </ElRow>

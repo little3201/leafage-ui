@@ -13,7 +13,7 @@ export const retrieveSamples = (pagination: Pagination, filters?: object | strin
   if (filters) {
     filters = dealFilters(filters)
   }
-  return api.get(SERVER_URL.MASTER_PLATE, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.SAMPLE, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
@@ -22,7 +22,7 @@ export const retrieveSamples = (pagination: Pagination, filters?: object | strin
  * @returns Row data
  */
 export const fetchSample = (id: number) => {
-  return api.get(`${SERVER_URL.MASTER_PLATE}/${id}`)
+  return api.get(`${SERVER_URL.SAMPLE}/${id}`)
 }
 
 /**
@@ -31,7 +31,7 @@ export const fetchSample = (id: number) => {
  * @returns Created row
  */
 export const createSample = (row: Sample) => {
-  return api.post(SERVER_URL.MASTER_PLATE, row)
+  return api.post(SERVER_URL.SAMPLE, row)
 }
 
 /**
@@ -41,7 +41,7 @@ export const createSample = (row: Sample) => {
  * @returns Modified row
  */
 export const modifySample = (id: number, row: Sample) => {
-  return api.put(`${SERVER_URL.MASTER_PLATE}/${id}`, row)
+  return api.put(`${SERVER_URL.SAMPLE}/${id}`, row)
 }
 
 /**
@@ -50,7 +50,7 @@ export const modifySample = (id: number, row: Sample) => {
  * @returns Enable or Disable result
  */
 export const enableSample = (id: number) => {
-  return api.patch(`${SERVER_URL.MASTER_PLATE}/${id}`)
+  return api.patch(`${SERVER_URL.SAMPLE}/${id}`)
 }
 
 /**
@@ -59,7 +59,7 @@ export const enableSample = (id: number) => {
  * @returns Deletion status
  */
 export const removeSample = (id: number) => {
-  return api.delete(`${SERVER_URL.MASTER_PLATE}/${id}`)
+  return api.delete(`${SERVER_URL.SAMPLE}/${id}`)
 }
 
 /**
@@ -68,5 +68,5 @@ export const removeSample = (id: number) => {
  * @returns
  */
 export const importSamples = (file: File) => {
-  return api.postForm(`${SERVER_URL.MASTER_PLATE}/import`, {file: file})
+  return api.postForm(`${SERVER_URL.SAMPLE}/import`, { file: file })
 }

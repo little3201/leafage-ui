@@ -49,6 +49,15 @@ export const modifySchema = (id: number, row: Schema) => {
 }
 
 /**
+ * Enable or Disable an existing row
+ * @param id Row ID
+ * @returns Enable or Disable result
+ */
+export const enableSchema = (id: number) => {
+  return api.patch(`${SERVER_URL.SCHEMA}/${id}`)
+}
+
+/**
  * Sync a existing row
  * @param id Row ID
  * @returns Created row
@@ -91,5 +100,5 @@ export const configSchemaFields = (id: number, rows: Array<Field>) => {
  * @returns
  */
 export const importSchemas = (file: File) => {
-  return api.postForm(`${SERVER_URL.SCHEMA}/import`, {file: file})
+  return api.postForm(`${SERVER_URL.SCHEMA}/import`, { file: file })
 }

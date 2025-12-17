@@ -72,7 +72,7 @@ const datas: Sample[] = [
 ]
 
 export const samplesHandlers = [
-  http.get(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
@@ -80,7 +80,7 @@ export const samplesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.MASTER_PLATE}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.SAMPLE}`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
     const size = searchParams.get('size')
@@ -95,7 +95,7 @@ export const samplesHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.MASTER_PLATE}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SAMPLE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -111,7 +111,7 @@ export const samplesHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.MASTER_PLATE}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SAMPLE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const newData = await request.json() as Sample
 
@@ -122,7 +122,7 @@ export const samplesHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.put(`/api${SERVER_URL.MASTER_PLATE}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.SAMPLE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
     const newData = await request.json() as Sample
@@ -136,7 +136,7 @@ export const samplesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -144,7 +144,7 @@ export const samplesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.MASTER_PLATE}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

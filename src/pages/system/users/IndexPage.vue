@@ -8,6 +8,7 @@ import {
 import type { Pagination, User } from 'src/types'
 import { Icon } from '@iconify/vue'
 import { hasAction, exportToExcel } from 'src/utils'
+import { userStatus } from 'src/constants'
 
 
 const { t } = useI18n()
@@ -47,13 +48,13 @@ const form = ref<User>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   username: [
-    { required: true, message: t('placeholder.inputText', { field: t('username') }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('label.username') }), trigger: 'blur' }
   ],
   fullName: [
-    { required: true, message: t('placeholder.inputText', { field: t('fullName') }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('label.fullName') }), trigger: 'blur' }
   ],
   email: [
-    { required: true, message: t('placeholder.inputText', { field: t('email') }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('label.email') }), trigger: 'blur' }
   ]
 })
 
@@ -281,10 +282,11 @@ function onUpload(options: UploadRequestOptions) {
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="email" :label="$t('label.email')" />
-        <ElTableColumn show-overflow-tooltip prop="groups" :label="$t('label.groups')" />
-        <ElTableColumn show-overflow-tooltip prop="roles" :label="$t('label.roles')" />
+        <ElTableColumn prop="groups" :label="$t('label.groups')" />
+        <ElTableColumn prop="roles" :label="$t('label.roles')" />
         <ElTableColumn prop="status" :label="$t('label.status')" sortable>
           <template #default="scope">
+            <ElBadge is-dot :type="userStatus[scope.row.status]" class="mr-1" />
             {{ scope.row.status }}
           </template>
         </ElTableColumn>
@@ -296,13 +298,13 @@ function onUpload(options: UploadRequestOptions) {
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" size="small" type="primary" link
+            <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" size="small" type="danger" link>
+                <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
                   <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
                   }}
                 </ElButton>
@@ -320,7 +322,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="480">
+  <ElDialog v-model="visible" :title="$t('page.users')" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -350,10 +352,10 @@ function onUpload(options: UploadRequestOptions) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/users.xlsx`" :download="$t('users') + '.xlsx'">
-        {{ $t('users') }}.xlsx
+      <a :href="`templates/users.xlsx`" :download="$t('page.users') + '.xlsx'">
+        {{ $t('page.users') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"

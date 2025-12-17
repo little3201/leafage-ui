@@ -73,7 +73,7 @@ const form = ref<Group>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('placeholder.inputText', { field: t('name') }), trigger: 'blur' }
+    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
   ]
 })
 
@@ -516,6 +516,8 @@ async function tabChange(tab: string) {
           <ElTableColumn type="selection" />
           <ElTableColumn type="index" :label="$t('label.no')" width="55" />
           <ElTableColumn prop="name" :label="$t('label.name')" sortable />
+          <ElTableColumn prop="members" :label="$t('label.members')" />
+          <ElTableColumn prop="roles" :label="$t('label.roles')" />
           <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
             <template #default="scope">
               <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
@@ -525,15 +527,15 @@ async function tabChange(tab: string) {
           <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
-              <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" size="small" type="primary" link
+              <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
                 @click="saveRow(scope.row.id)">
                 <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
               </ElButton>
-              <ElButton v-if="hasAction($route.name, 'relation')" title=" relation" size="small" type="success" link
+              <ElButton v-if="hasAction($route.name, 'relation')" title=" relation" type="success" link
                 @click="relationRow(scope.row.id)">
                 <Icon icon="material-symbols:link-rounded" width="16" height="16" />{{ $t('action.relation') }}
               </ElButton>
-              <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" size="small" type="success" link
+              <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" type="success" link
                 @click="authorizeRow(scope.row.id)">
                 <Icon icon="material-symbols:privacy-tip-outline-rounded" width="16" height="16" />{{
                   $t('action.authorize')
@@ -542,7 +544,7 @@ async function tabChange(tab: string) {
               <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
                 @confirm="confirmEvent(scope.row.id)">
                 <template #reference>
-                  <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" size="small" type="danger" link>
+                  <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
                     <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
                     }}
                   </ElButton>
@@ -561,7 +563,7 @@ async function tabChange(tab: string) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" align-center width="480">
+  <ElDialog v-model="visible" :title="$t('page.groups')" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -590,36 +592,38 @@ async function tabChange(tab: string) {
   </ElDialog>
 
   <!-- relation -->
-  <ElDialog v-model="relationVisible" align-center show-close>
+  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center show-close width="640">
     <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
-      <ElTabPane :label="$t('users')" name="user" style="text-align: center">
+      <ElTabPane :label="$t('page.users')" name="user" style="text-align: center">
         <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
-          :titles="[$t('unselected'), $t('selected')]" filterable :data="members" @change="handleTransferUserChange" />
+          :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="members"
+          @change="handleTransferUserChange" />
       </ElTabPane>
 
-      <ElTabPane :label="$t('roles')" name="role" style="text-align: center">
+      <ElTabPane :label="$t('page.roles')" name="role" style="text-align: center">
         <ElTransfer v-model="relationRoles" :props="{ key: 'id', label: 'name' }"
-          :titles="[$t('unselected'), $t('selected')]" filterable :data="roles" @change="handleTransferRoleChange" />
+          :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="roles"
+          @change="handleTransferRoleChange" />
       </ElTabPane>
     </ElTabs>
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" align-center show-close width="65%" :max-height="500">
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center show-close width="65em">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
       :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
       @check-change="handleCheckChange">
       <template #default="{ node, data }">
         <div class="flex flex-1 ">
-          <Icon v-if="data.meta.icon" :icon="`material-symbols:${data.meta.icon}-rounded`" width="18" height="18"
-            class="mr-2" />
-          <span>{{ $t(node.label) }}</span>
+          <Icon v-if="data.meta.icon" :icon="`material-symbols:${data.meta.icon}-rounded`" width="1.25em"
+            height="1.25em" class="mr-2" />
+          <span>{{ $t(`page.${node.label}`) }}</span>
         </div>
         <div>
           <ElCheckTag v-for="item in data.meta.actions" :key="item"
             :checked="(authorities.find(a => a.privilegeId === data.id)?.actions || []).includes(item)"
             :type="actions[item]" class="mr-2" @change="handleActionCheck(data.id, item)">
-            {{ $t(item) }}
+            {{ $t(`action.${item}`) }}
           </ElCheckTag>
         </div>
       </template>
@@ -627,10 +631,10 @@ async function tabChange(tab: string) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/groups.xlsx`" :download="$t('groups') + '.xlsx'">
-        {{ $t('groups') }}.xlsx
+      <a :href="`templates/groups.xlsx`" :download="$t('page.groups') + '.xlsx'">
+        {{ $t('page.groups') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"

@@ -14,7 +14,7 @@ export interface User extends AudtiMetadata {
   username: string
   fullName: string
   email: string
-  status: string
+  status?: string
   enabled?: boolean
 }
 
@@ -130,7 +130,7 @@ export interface SampleNode {
 }
 
 export interface SampleTreeNode extends TreeNode {
-  content?: string
+  body?: string
   type?: string
   suffix?: string
   children?: SampleTreeNode[]
@@ -157,7 +157,6 @@ export interface AccessLog extends AudtiMetadata {
   params?: string
   body?: string
   ip: string
-  location: string
   responseTimes?: number
   statusCode?: number
   responseMessage?: string
@@ -169,7 +168,6 @@ export interface AuditLog extends AudtiMetadata {
   oldValue?: string
   newValue?: string
   ip: string
-  location: string
   statusCode?: number
   operatedTimes?: number
 }
@@ -212,6 +210,7 @@ export interface Field extends AudtiMetadata {
   formType: string
   tsType: string
   nullable: boolean
+  unique: boolean
   queryable: boolean
   queryType: string | undefined
   editable: boolean
@@ -222,7 +221,7 @@ export interface Field extends AudtiMetadata {
 export interface Sample extends AudtiMetadata {
   name: string
   suffix: string
-  content: string
+  body: string
   category: string | undefined
   type: string | undefined
   version?: number
@@ -234,7 +233,7 @@ export interface Script extends AudtiMetadata {
   type: string | undefined
   icon: string
   version: string
-  content: string
+  body: string
 }
 
 export interface Connection extends AudtiMetadata {

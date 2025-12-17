@@ -33,7 +33,7 @@ const form = ref<Dictionary>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('placeholder.inputText', { field: t('name') }), trigger: 'blur' },
+    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' },
   ]
 })
 
@@ -177,13 +177,12 @@ async function confirmEvent(id: number) {
       <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
-          <ElButton v-if="hasAction($route.name, 'modify')" size="small" type="primary" link
-            @click="saveRow(scope.row.id)">
+          <ElButton v-if="hasAction($route.name, 'modify')" type="primary" link @click="saveRow(scope.row.id)">
             <Icon icon="material-symbols:edit-outline-rounded" width="18" height="18" />{{ $t('action.modify') }}
           </ElButton>
           <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
             <template #reference>
-              <ElButton v-if="hasAction($route.name, 'remove')" size="small" type="danger" link>
+              <ElButton v-if="hasAction($route.name, 'remove')" type="danger" link>
                 <Icon icon="material-symbols:delete-outline-rounded" width="18" height="18" />{{ $t('action.remove') }}
               </ElButton>
             </template>
@@ -193,7 +192,7 @@ async function confirmEvent(id: number) {
     </ElTable>
   </ElCard>
 
-  <ElDialog v-model="visible" align-center append-to-body width="480">
+  <ElDialog v-model="visible" :title="$t('page.dictionaries')" align-center append-to-body width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="24">

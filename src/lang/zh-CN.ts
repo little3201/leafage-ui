@@ -17,6 +17,7 @@ export default {
     email: '邮箱',
     groups: '分组',
     roles: '角色',
+    members: '成员',
     principal: '负责人',
     component: '组件',
     order: '顺序',

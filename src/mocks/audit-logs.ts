@@ -13,7 +13,6 @@ for (let i = 1; i < 28; i++) {
     oldValue: '{"theme:"light"}',
     newValue: '{"theme:"dark"}',
     ip: '192.168.0.4',
-    location: 'Berlin',
     statusCode: 200,
     operatedTimes: 12121
   }

@@ -17,6 +17,7 @@ export default {
     email: 'Email',
     groups: 'Groups',
     roles: 'Roles',
+    members: 'Members',
     principal: 'Principal',
     component: 'Conponent',
     order: 'Order',
