@@ -127,7 +127,7 @@ function onSubmit(uploadEl: UploadInstance | undefined) {
 }
 
 function onUpload(options: UploadRequestOptions) {
-  return uploadFile(options.file)
+  return uploadFile(options.file, currentRow.value ? currentRow.value.id : null)
 }
 
 /**
@@ -256,12 +256,11 @@ async function handleBreadcrumbClick(index: number) {
       <ElCard shadow="never">
         <ElRow :gutter="20" justify="space-between" class="items-center">
           <ElCol :span="16" class="text-left">
-            <ElBreadcrumb separator=">">
-              <ElBreadcrumbItem :class="{ 'is-active': expandRows.length === 0 }" @click="handleBreadcrumbClick(-1)">
+            <ElBreadcrumb class="cursor-pointer font-bold">
+              <ElBreadcrumbItem @click="handleBreadcrumbClick(-1)">
                 全部文件夹
               </ElBreadcrumbItem>
-              <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="row.id"
-                :class="{ 'is-active': index === expandRows.length - 1 }" @click="handleBreadcrumbClick(index)">
+              <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="row.id" @click="handleBreadcrumbClick(index)">
                 {{ row.name }}
               </ElBreadcrumbItem>
             </ElBreadcrumb>
@@ -289,12 +288,11 @@ async function handleBreadcrumbClick(index: number) {
         </ElRow>
 
         <div v-show="showTable">
-          <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto"
-            @row-click="onRowClick">
+          <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
             <ElTableColumn type="index" :label="$t('label.no')" width="55" />
             <ElTableColumn prop="name" :label="$t('label.name')" sortable>
               <template #default="scope">
-                <div class="flex items-center">
+                <ElButton title="name" type="primary" link @click="onRowClick(scope.row)">
                   <Icon v-if="scope.row.directory" icon="flat-color-icons:folder" width="2em" height="2em" />
                   <template v-else-if="scope.row.regularFile && scope.row.contentType">
                     <Icon v-if="scope.row.contentType.includes('image')" icon="flat-color-icons:image-file" width="2em"
@@ -302,7 +300,7 @@ async function handleBreadcrumbClick(index: number) {
                     <Icon v-else icon="flat-color-icons:document" width="2em" height="2em" />
                   </template>
                   <span class="ml-2">{{ scope.row.name }}</span>
-                </div>
+                </ElButton>
               </template>
             </ElTableColumn>
             <ElTableColumn prop="size" :label="$t('label.size')" sortable>

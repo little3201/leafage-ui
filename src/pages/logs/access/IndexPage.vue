@@ -30,7 +30,6 @@ const initialValues: AccessLog = {
   url: '',
   httpMethod: '',
   ip: '',
-  responseMessage: ''
 }
 const row = ref<AccessLog>({ ...initialValues })
 
@@ -201,7 +200,7 @@ async function confirmEvent(id: number) {
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="url" :label="$t('label.url')" sortable>
           <template #default="scope">
-            <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
+            <ElButton title="url" type="primary" link @click="showRow(scope.row.id)">
               <ElTag :type="httpMethods[scope.row.httpMethod]" size="small" class="mr-2">
                 {{ scope.row.httpMethod }}
               </ElTag>
@@ -223,9 +222,9 @@ async function confirmEvent(id: number) {
             <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="responseTimes" :label="$t('label.responseTimes')" sortable>
+        <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
           <template #default="scope">
-            {{ scope.row.responseTimes ? formatDuration(scope.row.responseTimes) : '-' }}
+            {{ scope.row.duration ? formatDuration(scope.row.duration) : '-' }}
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
@@ -251,7 +250,7 @@ async function confirmEvent(id: number) {
 
   <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('label.url')" :span="2">
+      <ElDescriptionsItem :label="$t('label.url')">
         <ElTag :type="httpMethods[row.httpMethod]" size="small" class="mr-2">
           {{ row.httpMethod }}
         </ElTag>
@@ -266,13 +265,14 @@ async function confirmEvent(id: number) {
         </ElTag>
         <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ row.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem v-if="row.body" :label="$t('label.body')" :span="3">{{ row.body }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.responseTimes')">{{ row.responseTimes ? formatDuration(row.responseTimes) :
+      <ElDescriptionsItem :label="$t('label.duration')">{{ row.duration ? formatDuration(row.duration) :
         '-' }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.responseMessage')" :span=3>{{ row.responseMessage }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ row.params }}</ElDescriptionsItem>
+      <ElDescriptionsItem v-if="row.body" :label="$t('label.body')" :span="3">{{ row.body }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.ip')" :span="3">{{ row.ip }}</ElDescriptionsItem>
+
+      <ElDescriptionsItem :label="$t('label.response')" :span="3">{{ row.response }}</ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
 </template>

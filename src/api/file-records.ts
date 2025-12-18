@@ -30,8 +30,8 @@ export const fetchFile = (id: number) => {
  * @param file file
  * @returns Uploaded row
  */
-export const uploadFile = (file: File) => {
-  return api.postForm(`${SERVER_URL.FILE}`, {file: file})
+export const uploadFile = (file: File, superiorId?: number | null) => {
+  return api.postForm(`${SERVER_URL.FILE}`, { file, superiorId })
 }
 
 /**

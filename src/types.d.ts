@@ -139,16 +139,14 @@ export interface SampleTreeNode extends TreeNode {
 export interface OperationLog extends AudtiMetadata {
   module: string
   action: string
-  ip?: string
   params: string
   body?: string
-  referer?: string
+  ip?: string
   sessionId?: string
-  deviceType?: string
   userAgent?: string
-  browser?: string
+  statusCode?: number
   operator?: string
-  operatedAt?: string
+  operatedAt?: Date
 }
 
 export interface AccessLog extends AudtiMetadata {
@@ -157,25 +155,26 @@ export interface AccessLog extends AudtiMetadata {
   params?: string
   body?: string
   ip: string
-  responseTimes?: number
+  duration?: number
   statusCode?: number
-  responseMessage?: string
+  response?: string
 }
 
 export interface AuditLog extends AudtiMetadata {
-  operation: string
   resource: string
+  action: string
+  targetId?: number
   oldValue?: string
   newValue?: string
   ip: string
   statusCode?: number
-  operatedTimes?: number
+  duration?: number
 }
 
 export interface SchedulerLog extends AudtiMetadata {
   name: string
   startTime?: Date
-  executedTimes?: number
+  duration?: number
   nextExecuteTime?: Date
   status?: string
   record?: string

@@ -194,7 +194,7 @@ async function confirmEvent(id: number) {
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="name" :label="$t('label.name')" sortable>
           <template #default="scope">
-            <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
+            <ElButton title="name" type="primary" link @click="showRow(scope.row.id)">
               {{ scope.row.name }}
             </ElButton>
           </template>
@@ -213,9 +213,9 @@ async function confirmEvent(id: number) {
             </ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="executedTimes" :label="$t('label.executedTimes')" sortable>
+        <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
           <template #default="scope">
-            {{ scope.row.executedTimes ? formatDuration(scope.row.executedTimes) : '-' }}
+            {{ scope.row.duration ? formatDuration(scope.row.duration) : '-' }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="nextExecuteTime" :label="$t('label.nextExecuteTime')" sortable>
@@ -225,7 +225,8 @@ async function confirmEvent(id: number) {
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+            <ElPopconfirm v-if="scope.row.status != 'RUNNING' && scope.row.status != 'PENDING'"
+              :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
                   <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
@@ -257,8 +258,8 @@ async function confirmEvent(id: number) {
           {{ row.status }}
         </ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.executedTimes')">
-        {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
+      <ElDescriptionsItem :label="$t('label.duration')">
+        {{ row.duration ? formatDuration(row.duration) : '-' }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.nextExecuteTime')" :span="2">
         {{ dayjs(row.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}

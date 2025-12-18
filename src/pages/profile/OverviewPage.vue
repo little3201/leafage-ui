@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from 'stores/user-store'
 import { Icon } from '@iconify/vue'
@@ -20,13 +20,9 @@ const form = ref<User>({ ...initialValues })
 
 const state = reactive({
   email: false,
-  name: false
+  fullName: false
 })
 
-
-onMounted(() => {
-
-})
 </script>
 
 <template>
@@ -63,7 +59,7 @@ onMounted(() => {
             <ElFormItem :label="$t('label.fullName')" prop="fullName">
               <ElInput v-model="form.fullName"
                 :placeholder="$t('placeholder.inputText', { field: $t('label.fullName') })" :maxLength="50"
-                :disabled="!state.name" />
+                :disabled="!state.fullName" />
               <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
                 you've
                 missed.
@@ -71,8 +67,8 @@ onMounted(() => {
             </ElFormItem>
           </ElCol>
           <ElCol :span="4">
-            <ElButton link type="primary" class="mt-2 ml-4" @click="state.name = !state.name">
-              {{ state.name ? $t('action.save') : $t('action.modify') }}</ElButton>
+            <ElButton link type="primary" class="mt-2 ml-4" @click="state.fullName = !state.fullName">
+              {{ state.fullName ? $t('action.save') : $t('action.modify') }}</ElButton>
           </ElCol>
         </ElRow>
         <ElRow>

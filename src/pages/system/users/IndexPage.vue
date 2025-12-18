@@ -3,7 +3,7 @@ import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import {
-  retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, importUsers
+  retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, importUsers
 } from 'src/api/users'
 import type { Pagination, User } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -156,6 +156,19 @@ async function enableChange(id: number) {
 }
 
 /**
+ * unlock
+ * @param id 主键
+ */
+async function unlockRow(id: number) {
+  try {
+    await unlockUser(id)
+    await load()
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
  * 表单提交
  */
 async function onSubmit(formEl: FormInstance | undefined) {
@@ -274,7 +287,7 @@ function onUpload(options: UploadRequestOptions) {
               <ElAvatar alt="avatar" :size="30" :src="`${cdn_url}/${scope.row.username}`" />
               <div class="inline-flex flex-col">
                 <span class="text-sm">
-                  {{ scope.row.name }}
+                  {{ scope.row.fullName }}
                 </span>
                 <span class="text-xs text-(--el-text-color-secondary)">{{ scope.row.username }}</span>
               </div>
@@ -287,7 +300,7 @@ function onUpload(options: UploadRequestOptions) {
         <ElTableColumn prop="status" :label="$t('label.status')" sortable>
           <template #default="scope">
             <ElBadge is-dot :type="userStatus[scope.row.status]" class="mr-1" />
-            {{ scope.row.status }}
+            <ElText :type="userStatus[scope.row.status]">{{ scope.row.status }}</ElText>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
@@ -301,6 +314,10 @@ function onUpload(options: UploadRequestOptions) {
             <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
+            </ElButton>
+            <ElButton v-if="scope.row.status == 'LOCKED' && hasAction($route.name, 'unlock')" title=" unlock"
+              type="success" link @click="unlockRow(scope.row.id)">
+              <Icon icon="material-symbols:lock-open-outline-rounded" width="16" height="16" />{{ $t('action.unlock') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
@@ -325,18 +342,24 @@ function onUpload(options: UploadRequestOptions) {
   <ElDialog v-model="visible" :title="$t('page.users')" align-center width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('username')" prop="username">
-            <ElInput v-model="form.username" :placeholder="$t('placeholder.inputText', { field: $t('username') })"
+        <ElCol :span="12">
+          <ElFormItem :label="$t('label.username')" prop="username">
+            <ElInput v-model="form.username" :placeholder="$t('placeholder.inputText', { field: $t('label.username') })"
               :maxLength="50" :disabled="!!form.id" />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem :label="$t('label.fullName')" prop="fullName">
+            <ElInput v-model="form.fullName" :placeholder="$t('placeholder.inputText', { field: $t('label.fullName') })"
+              :maxLength="50" />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow>
         <ElCol>
-          <ElFormItem :label="$t('fullName')" prop="fullName">
-            <ElInput v-model="form.fullName" :placeholder="$t('placeholder.inputText', { field: $t('fullName') })"
-              :maxLength="50" />
+          <ElFormItem :label="$t('label.email')" prop="email">
+            <ElInput type="email" v-model="form.email"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.email') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>

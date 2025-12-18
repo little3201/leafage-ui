@@ -20,15 +20,15 @@ const pagination = reactive<Pagination>({
 
 const filters = ref({
   resource: null,
-  operation: null
+  action: null
 })
 
 const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: undefined,
-  operation: '',
   resource: '',
+  action: '',
   ip: ''
 }
 const row = ref<AuditLog>({ ...initialValues })
@@ -87,7 +87,7 @@ async function loadOne(id: number) {
 async function reset() {
   filters.value = {
     resource: null,
-    operation: null
+    action: null
   }
   await load()
 }
@@ -147,9 +147,8 @@ async function confirmEvent(id: number) {
           <ElInput v-model="filters.resource"
             :placeholder="$t('placeholder.inputText', { field: $t('label.resource') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('label.operation')" prop="operation">
-          <ElInput v-model="filters.operation"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.operation') })" />
+        <ElFormItem :label="$t('label.action')" prop="action">
+          <ElInput v-model="filters.action" :placeholder="$t('placeholder.inputText', { field: $t('label.action') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load">
@@ -184,17 +183,18 @@ async function confirmEvent(id: number) {
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="resource" :label="$t('label.resource')" sortable>
           <template #default="scope">
-            <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
+            <ElButton title="resource" type="primary" link @click="showRow(scope.row.id)">
               {{ scope.row.resource }}
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="operation" :label="$t('label.operation')" sortable>
+        <ElTableColumn prop="action" :label="$t('label.action')" sortable>
           <template #default="scope">
-            <ElBadge is-dot :type="actions[scope.row.operation.toLowerCase()]" class="mr-1" />
-            {{ scope.row.operation }}
+            <ElBadge is-dot :type="actions[scope.row.action]" class="mr-1" />
+            <ElText :type="actions[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
           </template>
         </ElTableColumn>
+        <ElTableColumn prop="targetId" :label="$t('label.targetId')" />
         <ElTableColumn show-overflow-tooltip prop="oldValue" :label="$t('label.oldValue')" />
         <ElTableColumn show-overflow-tooltip prop="newValue" :label="$t('label.newValue')" />
         <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
@@ -209,9 +209,9 @@ async function confirmEvent(id: number) {
             <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="operatedTimes" :label="$t('label.operatedTimes')" sortable>
+        <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
           <template #default="scope">
-            {{ formatDuration(scope.row.operatedTimes) }}
+            {{ formatDuration(scope.row.duration) }}
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
@@ -234,9 +234,9 @@ async function confirmEvent(id: number) {
   <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.resource')">{{ row.resource }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.operation')">
-        <ElBadge is-dot :type="actions[row.operation.toLowerCase()]" class="mr-1" />
-        {{ row.operation }}
+      <ElDescriptionsItem :label="$t('label.action')">
+        <ElBadge is-dot :type="actions[row.action]" class="mr-1" />
+        <ElText :type="actions[row.action]">{{ $t(`action.${row.action}`) }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.statusCode')">
         <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>
@@ -247,11 +247,12 @@ async function confirmEvent(id: number) {
         </ElTag>
         <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
       </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.targetId')" :span="3">{{ row.targetId }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.oldValue')" :span="3">{{ row.oldValue }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.newValue')" :span="3">{{ row.newValue }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.operatedTimes')">
-        {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
+      <ElDescriptionsItem :label="$t('label.ip')" :span="2">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.duration')">
+        {{ row.duration ? formatDuration(row.duration) : '' }}
       </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>

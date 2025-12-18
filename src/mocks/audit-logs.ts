@@ -8,13 +8,13 @@ const datas: AuditLog[] = []
 for (let i = 1; i < 28; i++) {
   const row: AuditLog = {
     id: i,
-    operation: 'Modify',
+    action: 'Modify',
     resource: 'Settings',
     oldValue: '{"theme:"light"}',
     newValue: '{"theme:"dark"}',
     ip: '192.168.0.4',
     statusCode: 200,
-    operatedTimes: 12121
+    duration: 12121
   }
   datas.push(row)
 }

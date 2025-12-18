@@ -38,24 +38,26 @@ export const SERVER_URL = {
 
 // 按钮对应tag类型
 export const actions: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
-  create: 'primary',
-  modify: 'primary',
-  upload: 'primary',
-  logout: 'primary',
+  preview: 'success',
+  retrieve: 'success',
+  fetch: 'success',
+  download: 'success',
 
+  create: 'warning',
   import: 'warning',
+  upload: 'warning',
+  export: 'warning',
+  login: 'warning',
+  logout: 'warning',
+
+  modify: 'primary',
 
   remove: 'danger',
   clear: 'danger',
 
-  relation: 'success',
-  authorize: 'success',
-  download: 'success',
-  config: 'success',
-  export: 'success',
-  login: 'success',
-
-  preview: 'info'
+  relation: 'info',
+  authorize: 'info',
+  config: 'info',
 }
 
 // http method对应tag类型
@@ -63,7 +65,7 @@ export const httpMethods: { [key: string]: 'success' | 'warning' | 'info' | 'pri
   GET: 'success',
   POST: 'warning',
   PUT: 'primary',
-  PATCH: 'primary',
+  PATCH: 'info',
   DELETE: 'danger'
 }
 
@@ -102,8 +104,8 @@ export const shceduleStatusIcon: { [key: string]: string } = {
 
 export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
   ACTIVE: 'success',
-  RUNNING: 'primary',
-  SUCCESS: 'success',
-  FAILED: 'danger',
-  CANCELED: 'warning'
+  LOCKED: 'primary',
+  EXPIRED: 'info',
+  CREDENTIALS_EXPIRED: 'warning',
+  DISABLED: 'danger'
 }

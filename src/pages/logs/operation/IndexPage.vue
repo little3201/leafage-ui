@@ -5,6 +5,7 @@ import { dayjs } from 'element-plus'
 import { retrieveOperationLogs, fetchOperationLog, removeOperationLog, clearOperationLogs } from 'src/api/operation-logs'
 import type { Pagination, OperationLog } from 'src/types'
 import { Icon } from '@iconify/vue'
+import { actions } from 'src/constants'
 import { hasAction, exportToCSV } from 'src/utils'
 
 
@@ -196,24 +197,36 @@ async function confirmEvent(id: number) {
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="module" :label="$t('label.module')" sortable>
           <template #default="scope">
-            <ElButton title="details" type="primary" link @click="showRow(scope.row.id)">
-              {{ $t(scope.row.module) }}
+            <ElButton title="module" type="primary" link @click="showRow(scope.row.id)">
+              {{ $t(`page.${scope.row.module}`) }}
             </ElButton>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="action" :label="$t('label.action')" sortable>
           <template #default="scope">
-            {{ $t(scope.row.action) }}
+            <ElBadge is-dot :type="actions[scope.row.action]" class="mr-1" />
+            <ElText :type="actions[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
         <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.body')" />
         <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
         <ElTableColumn show-overflow-tooltip prop="sessionId" :label="$t('label.sessionId')" />
+        <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
+          <template #default="scope">
+            <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
+              {{ scope.row.statusCode }}
+            </ElTag>
+            <ElTag v-else-if="scope.row.statusCode >= 500" type="warning" round>
+              {{ scope.row.statusCode }}
+            </ElTag>
+            <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
         <ElTableColumn prop="operatedAt" :label="$t('label.operatedAt')" sortable>
           <template #default="scope">
-            {{ dayjs(scope.row.operatedAt).format('YYYY-MM-DD HH:mm') }}
+            {{ scope.row.operatedAt ? dayjs(scope.row.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
@@ -239,13 +252,36 @@ async function confirmEvent(id: number) {
 
   <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('label.module')">{{ $t(row.module) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.action')">{{ $t(row.action) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.module')">{{ $t(`page.${row.module}`) }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.action')">
+        <ElBadge is-dot :type="actions[row.action]" class="mr-1" />
+        <ElText :type="actions[row.action]">{{ $t(`action.${row.action}`) }}</ElText>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.statusCode')">
+        <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>
+          {{ row.statusCode }}
+        </ElTag>
+        <ElTag v-else-if="row.statusCode && row.statusCode >= 500" type="warning" round>
+          {{ row.statusCode }}
+        </ElTag>
+        <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
+      </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.params')" span="3">{{ row.params }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.body')" span="3">{{ row.body }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.sessionId')">{{ row.sessionId }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.userAgent')" :span="2">{{ row.userAgent }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.sessionId')" :span="2">{{ row.sessionId }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.userAgent')" :span="3">{{ row.userAgent }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.operator')" :span="3">{{ row.operator }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.operatedAt')" :span="3">
+        {{ row.operatedAt ? dayjs(row.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}
+      </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
 </template>
+
+<style lang="scss" scoped>
+.el-badge {
+  display: inline-flex;
+  vertical-align: baseline;
+}
+</style>

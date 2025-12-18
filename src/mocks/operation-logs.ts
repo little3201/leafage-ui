@@ -13,8 +13,9 @@ for (let i = 1; i < 28; i++) {
     ip: '192.168.0.1',
     params: '',
     body: '{"username":"test"}',
-    browser: 'Edge 129.0.2792.89',
-    sessionId: 'sjfa2323jkljsladf'
+    sessionId: 'sjfa2323jkljsladf',
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    statusCode: 201
   }
   datas.push(row)
 }
