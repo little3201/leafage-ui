@@ -9,12 +9,11 @@ const databases: Connection[] = [
 for (let i = 1; i < 8; i++) {
   const row: Connection = {
     id: i,
-    name: 'db_name' + i,
+    database: 'db_name' + i,
     host: '127.0.0.1',
     port: 3306,
     username: 'admin',
-    enabled: i > 3,
-    tables: ['table_1', 'table_2', 'table_3', 'table_4', 'table_5']
+    params: ''
   }
   databases.push(row)
 }

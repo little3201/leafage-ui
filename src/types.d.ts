@@ -193,15 +193,18 @@ export interface FileRecord extends AudtiMetadata {
 }
 
 export interface Schema extends AudtiMetadata {
-  name: string
+  module: string
   connectionId: number | undefined
-  prefix?: string
   packageName: string
-  enabled?: boolean
+  tables: string[]
   samples: number[]
+  scope: string
+  enabled?: boolean
 }
 
 export interface Field extends AudtiMetadata {
+  schemaId: number
+  tableName: string
   name: string
   dataType: string
   length: number
@@ -219,9 +222,10 @@ export interface Field extends AudtiMetadata {
 
 export interface Sample extends AudtiMetadata {
   name: string
-  suffix: string
+  module: string
+  stack: string
   body: string
-  category: string | undefined
+  file_path?: string
   type: string | undefined
   version?: number
   enabled?: boolean
@@ -236,13 +240,12 @@ export interface Script extends AudtiMetadata {
 }
 
 export interface Connection extends AudtiMetadata {
-  name: string
+  database: string
   host: string
   port: number | undefined
   username: string
   password?: string
-  enabled?: boolean
-  tables?: string[]
+  params?: string
 }
 
 export interface Schedule extends AudtiMetadata {

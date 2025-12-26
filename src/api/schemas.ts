@@ -1,6 +1,7 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
 import type { Pagination, Schema, Field } from 'src/types'
+import { dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
@@ -8,15 +9,29 @@ import type { Pagination, Schema, Field } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSchemas = (pagination: Pagination, connectionId: number) => {
-  return api.get(SERVER_URL.SCHEMA, { params: { ...pagination, page: pagination.page - 1, filters: `connectionId:eq:${connectionId}` } })
+export const retrieveSchemas = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(SERVER_URL.SCHEMA, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
-export const retrieveSchemaFields = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/fields`)
+/**
+ * Retrieve fields
+ * @param id Row ID
+ * @param tableName Table name
+ * @returns Fields
+ */
+export const retrieveFields = (id: number, tableName: string) => {
+  return api.get(`${SERVER_URL.SCHEMA}/${id}/fields`, { params: { tableName } })
 }
 
-export const retrieveSchemaPreview = (id: number) => {
+/**
+ * preview
+ * @param id Row ID
+ * @returns Rendered code
+ */
+export const previewSchema = (id: number) => {
   return api.get(`${SERVER_URL.SCHEMA}/${id}/preview`)
 }
 
@@ -58,15 +73,6 @@ export const enableSchema = (id: number) => {
 }
 
 /**
- * Sync a existing row
- * @param id Row ID
- * @returns Created row
- */
-export const syncSchema = (id: number) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}/sync`)
-}
-
-/**
  * Generate
  * @param id Row ID
  * @returns Created row
@@ -85,20 +91,30 @@ export const removeSchema = (id: number) => {
 }
 
 /**
- * Config rows
- * @param id Row ID
- * @param row  rows data
- * @returns
- */
-export const configSchemaFields = (id: number, rows: Array<Field>) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}/fields`, rows)
-}
-
-/**
  * Import rows
  * @param file file
  * @returns
  */
 export const importSchemas = (file: File) => {
   return api.postForm(`${SERVER_URL.SCHEMA}/import`, { file: file })
+}
+
+/**
+ * Exeucte a row
+ * @param id Row ID
+ * @returns Execute result
+ */
+export const syncFields = (id: number) => {
+  return api.patch(`${SERVER_URL.SCHEMA}/${id}/sync`)
+}
+
+/**
+ * Config rows
+ * @param id Row ID
+ * @param tableName Table name
+ * @param rows  rows data
+ * @returns
+ */
+export const configFields = (id: number, tableName: string, rows: Array<Field>) => {
+  return api.patch(`${SERVER_URL.SCHEMA}/${id}/config/${tableName}`, rows)
 }

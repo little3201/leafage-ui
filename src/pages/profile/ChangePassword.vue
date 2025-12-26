@@ -23,13 +23,12 @@ const rules = ref({
 async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  await formEl.validate((valid) => {
-    if (valid) {
-      alert('success')
-    } else {
-      alert('error')
-    }
-  })
+  const valid = await formEl.validate()
+  if (valid) {
+    alert('success')
+  } else {
+    alert('error')
+  }
 }
 
 </script>

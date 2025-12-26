@@ -8,12 +8,13 @@ const datas: Schema[] = [
 for (let i = 1; i < 6; i++) {
   const row: Schema = {
     id: i,
-    name: 'table_name' + i,
+    module: 'module_name' + i,
     connectionId: 1,
-    prefix: i > 4 ? 'sys_' : '',
     packageName: 'com.example',
-    enabled: i > 2,
-    samples: i > 3 ? [1, 2, 3, 4, 5] : []
+    scope: 'PARTIAL',
+    tables: ['messages', 'users', 'roles'],
+    samples: i > 3 ? [1, 2, 3, 4, 5] : [],
+    enabled: i > 2
   }
   datas.push(row)
 }

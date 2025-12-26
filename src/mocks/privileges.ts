@@ -359,7 +359,7 @@ const treeNodes: PrivilegeTreeNode[] = [
           path: 'schemas',
           component: 'exploiters/schemas',
           icon: 'genetics',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'sync', 'config', 'execute', 'enable']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'execute', 'enable']
         }
       },
       {
@@ -381,7 +381,17 @@ const treeNodes: PrivilegeTreeNode[] = [
           icon: 'code',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
-      }
+      },
+      {
+        id: 15,
+        name: 'connections',
+        meta: {
+          path: 'connections',
+          component: 'exploiters/connections',
+          icon: 'database-outline',
+          actions: ['create', 'modify', 'remove', 'sync']
+        }
+      },
     ]
   }
 ]

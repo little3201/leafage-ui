@@ -162,20 +162,20 @@ async function enableChange(id: number) {
 async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  await formEl.validate(async (valid) => {
-    if (valid) {
-      saveLoading.value = true
-      if (form.value.id) {
-        try {
-          const res = await modifyPrivilege(form.value.id, form.value)
-          await load(res.data)
-          visible.value = false
-        } catch {
-          return Promise.resolve()
-        } finally { saveLoading.value = false }
-      }
+  const valid = await formEl.validate()
+  if (valid) {
+    saveLoading.value = true
+    if (form.value.id) {
+      try {
+        const res = await modifyPrivilege(form.value.id, form.value)
+
+        visible.value = false
+        await load(res.data)
+      } catch {
+        return Promise.resolve()
+      } finally { saveLoading.value = false }
     }
-  })
+  }
 }
 
 /**

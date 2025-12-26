@@ -109,3 +109,8 @@ export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warn
   CREDENTIALS_EXPIRED: 'warning',
   DISABLED: 'danger'
 }
+
+export const schemaScope: { [key: string]: 'primary' | 'success' } = {
+  ALL: 'success',
+  PARTIAL: 'primary'
+}

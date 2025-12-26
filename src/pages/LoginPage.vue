@@ -38,17 +38,16 @@ const rules = reactive<FormRules<typeof form>>({
 async function onSubmit() {
   if (!formRef.value) return
 
-  await formRef.value.validate(async (valid) => {
-    if (valid) {
-      loading.value = true
-      try {
-        await api.get(SERVER_URL.LOGIN)
-        await router.replace('/')
-      } finally {
-        loading.value = false
-      }
+  const valid = await formRef.value.validate()
+  if (valid) {
+    loading.value = true
+    try {
+      await api.get(SERVER_URL.LOGIN)
+      await router.replace('/')
+    } finally {
+      loading.value = false
     }
-  })
+  }
 }
 </script>
 

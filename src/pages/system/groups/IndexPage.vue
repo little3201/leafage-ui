@@ -272,26 +272,25 @@ async function enableChange(id: number) {
 async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  await formEl.validate(async (valid) => {
-    if (valid) {
-      saveLoading.value = true
-      try {
-        if (form.value.id) {
-          await modifyGroup(form.value.id, form.value)
-        } else {
-          form.value.superiorId = currentNodeKey.value
-          await createGroup(form.value)
-        }
-        visible.value = false
-        await load()
-        await loadTree()
-      } catch {
-        return Promise.resolve()
-      } finally {
-        saveLoading.value = false
+  const valid = await formEl.validate()
+  if (valid) {
+    saveLoading.value = true
+    try {
+      if (form.value.id) {
+        await modifyGroup(form.value.id, form.value)
+      } else {
+        form.value.superiorId = currentNodeKey.value
+        await createGroup(form.value)
       }
+      visible.value = false
+      await load()
+      await loadTree()
+    } catch {
+      return Promise.resolve()
+    } finally {
+      saveLoading.value = false
     }
-  })
+  }
 }
 
 /**

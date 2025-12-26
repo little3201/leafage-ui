@@ -5,7 +5,7 @@ import { useUserStore } from 'stores/user-store'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import EssentialList from 'components/EssentialList.vue'
-import { signOut } from 'src/api/authentication'
+import { signIn, signOut } from 'src/api/authentication'
 import { Icon } from '@iconify/vue'
 import logo from 'src/assets/logo.svg'
 
@@ -27,6 +27,7 @@ async function logout() {
   const res = await signOut()
   if (res && res.status === 200) {
     userStore.$reset()
+    signIn()
   }
 }
 </script>

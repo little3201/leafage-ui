@@ -159,23 +159,22 @@ async function enableChange(id: number) {
 async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  await formEl.validate(async (valid) => {
-    if (valid) {
-      saveLoading.value = true
-      try {
-        if (form.value.id) {
-          await modifyDictionary(form.value.id, form.value)
+  const valid = await formEl.validate()
+  if (valid) {
+    saveLoading.value = true
+    try {
+      if (form.value.id) {
+        await modifyDictionary(form.value.id, form.value)
 
-          visible.value = false
-          await load()
-        }
-      } catch {
-        return Promise.resolve()
-      } finally {
-        loading.value = false
+        visible.value = false
+        await load()
       }
+    } catch {
+      return Promise.resolve()
+    } finally {
+      loading.value = false
     }
-  })
+  }
 }
 
 /**

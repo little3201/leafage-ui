@@ -174,24 +174,23 @@ async function unlockRow(id: number) {
 async function onSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
 
-  await formEl.validate(async (valid) => {
-    if (valid) {
-      try {
-        saveLoading.value = true
-        if (form.value.id) {
-          await modifyUser(form.value.id, form.value)
-        } else {
-          await createUser(form.value)
-        }
-        visible.value = false
-        await load()
-      } catch {
-        return Promise.resolve()
-      } finally {
-        saveLoading.value = false
+  const valid = await formEl.validate()
+  if (valid) {
+    try {
+      saveLoading.value = true
+      if (form.value.id) {
+        await modifyUser(form.value.id, form.value)
+      } else {
+        await createUser(form.value)
       }
+      visible.value = false
+      await load()
+    } catch {
+      return Promise.resolve()
+    } finally {
+      saveLoading.value = false
     }
-  })
+  }
 }
 
 /**
