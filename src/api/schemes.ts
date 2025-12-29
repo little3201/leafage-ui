@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Schema, Field } from 'src/types'
+import type { Pagination, Scheme, Field } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,7 +9,7 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSchemas = (pagination: Pagination, filters?: object | string) => {
+export const retrieveSchemes = (pagination: Pagination, filters?: object | string) => {
   if (filters) {
     filters = dealFilters(filters)
   }
@@ -31,7 +31,7 @@ export const retrieveFields = (id: number, tableName: string) => {
  * @param id Row ID
  * @returns Rendered code
  */
-export const previewSchema = (id: number) => {
+export const previewScheme = (id: number) => {
   return api.get(`${SERVER_URL.SCHEMA}/${id}/preview`)
 }
 
@@ -40,7 +40,7 @@ export const previewSchema = (id: number) => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchSchema = (id: number) => {
+export const fetchScheme = (id: number) => {
   return api.get(`${SERVER_URL.SCHEMA}/${id}`)
 }
 
@@ -49,7 +49,7 @@ export const fetchSchema = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSchema = (row: Schema) => {
+export const createScheme = (row: Scheme) => {
   return api.post(SERVER_URL.SCHEMA, row)
 }
 
@@ -59,7 +59,7 @@ export const createSchema = (row: Schema) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySchema = (id: number, row: Schema) => {
+export const modifyScheme = (id: number, row: Scheme) => {
   return api.put(`${SERVER_URL.SCHEMA}/${id}`, row)
 }
 
@@ -68,7 +68,7 @@ export const modifySchema = (id: number, row: Schema) => {
  * @param id Row ID
  * @returns Enable or Disable result
  */
-export const enableSchema = (id: number) => {
+export const enableScheme = (id: number) => {
   return api.patch(`${SERVER_URL.SCHEMA}/${id}`)
 }
 
@@ -77,7 +77,7 @@ export const enableSchema = (id: number) => {
  * @param id Row ID
  * @returns Created row
  */
-export const executeSchema = (id: number) => {
+export const executeScheme = (id: number) => {
   return api.get(`${SERVER_URL.SCHEMA}/${id}/execute`, { responseType: 'blob' })
 }
 
@@ -86,7 +86,7 @@ export const executeSchema = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeSchema = (id: number) => {
+export const removeScheme = (id: number) => {
   return api.delete(`${SERVER_URL.SCHEMA}/${id}`)
 }
 
@@ -95,7 +95,7 @@ export const removeSchema = (id: number) => {
  * @param file file
  * @returns
  */
-export const importSchemas = (file: File) => {
+export const importSchemes = (file: File) => {
   return api.postForm(`${SERVER_URL.SCHEMA}/import`, { file: file })
 }
 

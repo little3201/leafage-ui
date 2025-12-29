@@ -270,7 +270,7 @@ function onUpload(options: UploadRequestOptions) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="view" plain circle @click="load">
+            <ElButton title="refresh" plain circle @click="load">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
           </ElTooltip>

@@ -38,6 +38,9 @@ export default {
     url: 'URL',
     params: 'Params',
     body: 'Body',
+    request: {
+      body: 'Request Body',
+    },
     operator: 'Operator',
     operatedAt: 'Operated At',
     module: 'Module',
@@ -90,6 +93,7 @@ export default {
     samples: 'Samples',
     comment: 'Comment',
     userAgent: 'User Agent',
+    language: 'Language',
   },
 
   action: {
@@ -106,6 +110,7 @@ export default {
     details: 'Detail',
     remove: 'Remove',
     refresh: 'Refresh',
+    children: 'Children',
     reset: 'Reset',
     clear: 'Clear',
     upload: 'Upload',
@@ -141,7 +146,10 @@ export default {
     profile: 'Profile',
     exploiters: 'Exploiters',
     connections: 'Connections',
-    schemas: 'Schemas',
+    templates: 'Templates',
+    schemes: 'Schemes',
+    modules: 'Modules',
+    fragments: 'Fragments',
     scripts: 'Scripts',
     samples: 'Samples',
     logs: 'Logs',

@@ -10,11 +10,11 @@ import { accessLogsHandlers } from './access-logs'
 import { auditLogsHandlers } from './audit-logs'
 import { schedulerLogsHandlers } from './scheduler-logs'
 import { fileRecordsHandlers } from './file-records'
-import { schemasHandlers } from './schemas'
+import { schemesHandlers } from './schemes'
 import { scriptsHandlers } from './scripts'
 import { samplesHandlers } from './samples'
 import { connectionsHandlers } from './connections'
-import { calendarEventHandlers} from './calendar-events'
+import { calendarEventHandlers } from './calendar-events'
 
 export const handlers = [
   ...authenticationHandlers,
@@ -29,7 +29,7 @@ export const handlers = [
   ...auditLogsHandlers,
   ...schedulerLogsHandlers,
   ...fileRecordsHandlers,
-  ...schemasHandlers,
+  ...schemesHandlers,
   ...scriptsHandlers,
   ...samplesHandlers,
   ...connectionsHandlers,

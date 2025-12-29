@@ -2,9 +2,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import SubPage from './SubPage.vue'
 import {
-  retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, importRegions
+  retrieveRegions, retrieveRegionSubset, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, importRegions
 } from 'src/api/regions'
 import type { Pagination, Region } from 'src/types'
 import { Icon } from '@iconify/vue'
@@ -66,16 +65,56 @@ async function pageChange(currentPage: number, pageSize: number) {
 /**
  * 加载列表
  */
-async function load() {
+async function load(row?: Region, treeNode?: unknown, resolve?: (date: Region[]) => void) {
   loading.value = true
   try {
-    const res = await retrieveRegions(pagination, filters.value)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
+    if (row && row.id && resolve) {
+      const res = await retrieveRegionSubset(row.id)
+      const list = res.data
+      // 处理子节点
+      list.forEach((element: Region) => {
+        if (element.count && element.count > 0) {
+          element.hasChildren = true
+        }
+      })
+      resolve(list)
+    } else {
+      const res = await retrieveRegions(pagination, filters.value)
+      const list = res.data.content
+      // 处理子节点
+      list.forEach((element: Region) => {
+        if (element.count && element.count > 0) {
+          element.hasChildren = true
+        }
+      })
+      datas.value = list
+      total.value = res.data.page.totalElements
+    }
   } catch {
     return Promise.resolve()
   } finally {
     loading.value = false
+  }
+}
+
+/**
+ * 刷新子节点
+ * @param rowKey row key
+ */
+const refreshChildren = async (rowKey: number) => {
+  try {
+    const res = await retrieveRegionSubset(rowKey)
+    const list = res.data
+    // 处理子节点
+    list.forEach((element: Region) => {
+      if (element.count && element.count > 0) {
+        element.hasChildren = true
+      }
+    })
+
+    tableRef.value?.updateKeyChildren(String(rowKey), list)
+  } catch {
+    return Promise.resolve()
   }
 }
 
@@ -97,6 +136,18 @@ async function saveRow(id?: number) {
   form.value = { ...initialValues }
   if (id) {
     await loadOne(id)
+  }
+  visible.value = true
+}
+
+/**
+ * 弹出框
+ * @param id 主键
+ */
+function saveChild(superiorId: number | undefined) {
+  form.value = { ...initialValues }
+  if (superiorId) {
+    form.value.superiorId = superiorId
   }
   visible.value = true
 }
@@ -144,6 +195,8 @@ async function onSubmit(formEl: FormInstance | undefined) {
       }
       visible.value = false
       await load()
+
+      await refreshChildren(form.value.superiorId!)
     } catch {
       return Promise.resolve()
     } finally {
@@ -209,8 +262,6 @@ async function removeRow(id: number) {
 async function confirmEvent(id: number) {
   await removeRow(id)
 }
-
-
 </script>
 
 <template>
@@ -249,20 +300,15 @@ async function confirmEvent(id: number) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="view" plain circle @click="load">
+            <ElButton title="refresh" plain circle @click="load">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
           </ElTooltip>
         </ElCol>
       </ElRow>
 
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
+      <ElTable ref="tableRef" v-loading="loading" :data="datas" lazy :load="load" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
-        <ElTableColumn type="expand" width="40">
-          <template #default="props">
-            <SubPage :superior-id="props.row.id" :title="props.row.name" />
-          </template>
-        </ElTableColumn>
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="name" :label="$t('label.name')" sortable />
         <ElTableColumn prop="areaCode" :label="$t('label.areaCode')" sortable />
@@ -279,6 +325,13 @@ async function confirmEvent(id: number) {
             <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
+            </ElButton>
+            <ElButton v-if="hasAction($route.name, 'create')" title="create" type="success" link
+              @click="saveChild(scope.row.id)">
+              <Icon icon="material-symbols:add-rounded" width="16" height="16" />{{ $t('action.children') }}
+            </ElButton>
+            <ElButton v-if="scope.row.count > 0" title="refresh" link @click="refreshChildren(scope.row.id)">
+              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />{{ $t('action.refresh') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>

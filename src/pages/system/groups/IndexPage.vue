@@ -33,8 +33,8 @@ const pagination = reactive<Pagination>({
 
 const treeEl = ref<TreeInstance>()
 const treeLoading = ref<boolean>(false)
-const currentNodeKey = ref<number>()
-const currentNode = ref('')
+const currentNodeKey = ref<string>('1')
+const filterText = ref('')
 
 const groupTree = ref<TreeNode[]>([])
 const saveLoading = ref<boolean>(false)
@@ -85,7 +85,7 @@ onMounted(async () => {
  * 监听tree
  */
 watch(
-  () => currentNode.value,
+  () => filterText.value,
   (val) => {
     treeEl.value!.filter(val)
   }
@@ -103,11 +103,11 @@ const filterNode = (value: string, data: { [key: string]: string }) => {
  * node 变化
  * @param data node节点
  */
-async function currentChange(data: TreeNode) {
-  if (currentNodeKey.value === data.id) {
+async function onCurrentChange(data: TreeNode) {
+  if (currentNodeKey.value === String(data.id)) {
     return
   }
-  currentNodeKey.value = data.id as number
+  currentNodeKey.value = String(data.id)
   pagination.page = 1
   await load()
 }
@@ -156,9 +156,7 @@ async function loadTree() {
   try {
     const res = await retrieveGroupTree()
     groupTree.value = res.data
-    if (!currentNodeKey.value) {
-      currentNodeKey.value = (res.data[0] && res.data[0]?.id) || ''
-    }
+    currentNodeKey.value = (res.data[0] && res.data[0]?.id) || 1
 
     treeEl.value!.setCurrentKey(currentNodeKey.value)
     await load()
@@ -279,7 +277,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
       if (form.value.id) {
         await modifyGroup(form.value.id, form.value)
       } else {
-        form.value.superiorId = currentNodeKey.value
+        form.value.superiorId = Number(currentNodeKey.value)
         await createGroup(form.value)
       }
       visible.value = false
@@ -453,8 +451,8 @@ async function tabChange(tab: string) {
 <template>
   <ElSpace size="large" alignment="flex-start">
     <ElCard class="w-64" shadow="never">
-      <ElFormItem prop="currentNode">
-        <ElInput v-model="currentNode" :placeholder="$t('action.search')" clearable>
+      <ElFormItem prop="filterText">
+        <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
           <template #prefix>
             <Icon icon="material-symbols:search-rounded" width="18" height="18" />
           </template>
@@ -462,8 +460,8 @@ async function tabChange(tab: string) {
       </ElFormItem>
       <ElDivider />
       <ElTree ref="treeEl" v-loading="treeLoading" :data="groupTree" default-expand-all :expand-on-click-node="false"
-        node-key="id" :current-node-key="currentNodeKey" :props="{ label: 'name' }" :filter-node-method="filterNode"
-        @current-change="currentChange">
+        node-key="id" :current-node-key="currentNodeKey" highlight-current :props="{ label: 'name' }"
+        :filter-node-method="filterNode" @current-change="onCurrentChange">
       </ElTree>
     </ElCard>
 
@@ -504,7 +502,7 @@ async function tabChange(tab: string) {
 
           <ElCol :span="8" class="text-right">
             <ElTooltip :content="$t('action.refresh')" placement="top">
-              <ElButton title="view" plain circle @click="load">
+              <ElButton title="refresh" plain circle @click="load">
                 <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
               </ElButton>
             </ElTooltip>

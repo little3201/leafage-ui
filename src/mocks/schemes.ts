@@ -1,12 +1,12 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Schema, Field, SampleNode, SampleTreeNode } from 'src/types'
+import type { Scheme, Field, SampleNode, SampleTreeNode } from 'src/types'
 
-const datas: Schema[] = [
+const datas: Scheme[] = [
 ]
 
 for (let i = 1; i < 6; i++) {
-  const row: Schema = {
+  const row: Scheme = {
     id: i,
     module: 'module_name' + i,
     connectionId: 1,
@@ -24,6 +24,8 @@ const fields: Field[] = []
 for (let i = 1; i < 28; i++) {
   const field: Field = {
     id: i,
+    schemeId: Math.floor(Math.random() * 5) + 1,
+    tableName: 'table_name' + i,
     name: 'column_name' + i,
     dataType: 'varchar',
     length: 255,
@@ -152,7 +154,7 @@ const masterPlateNodes: SampleNode = {
   resources: resources
 }
 
-export const schemasHandlers = [
+export const schemesHandlers = [
   http.get(`/api${SERVER_URL.SCHEMA}/:id/preview`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -210,7 +212,7 @@ export const schemasHandlers = [
   }),
   http.post(`/api${SERVER_URL.SCHEMA}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Schema
+    const newData = await request.json() as Scheme
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -230,7 +232,7 @@ export const schemasHandlers = [
   http.put(`/api${SERVER_URL.SCHEMA}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Schema
+    const newData = await request.json() as Scheme
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"

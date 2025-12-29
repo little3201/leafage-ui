@@ -106,6 +106,27 @@ async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privil
 }
 
 /**
+ * 刷新子节点
+ * @param rowKey row key
+ */
+const refreshChildren = async (rowKey: number) => {
+  try {
+    const res = await retrievePrivilegeSubset(rowKey)
+    const list = res.data
+    // 处理子节点
+    list.forEach((element: Dictionary) => {
+      if (element.count && element.count > 0) {
+        element.hasChildren = true
+      }
+    })
+
+    tableRef.value?.updateKeyChildren(String(rowKey), list)
+  } catch {
+    return Promise.resolve()
+  }
+}
+
+/**
  * reset
  */
 async function reset() {
@@ -167,10 +188,12 @@ async function onSubmit(formEl: FormInstance | undefined) {
     saveLoading.value = true
     if (form.value.id) {
       try {
-        const res = await modifyPrivilege(form.value.id, form.value)
+        await modifyPrivilege(form.value.id, form.value)
 
         visible.value = false
-        await load(res.data)
+        await load()
+
+        await refreshChildren(form.value.superiorId!)
       } catch {
         return Promise.resolve()
       } finally { saveLoading.value = false }
@@ -266,7 +289,7 @@ function onCheckChange(item: string) {
         </ElCol>
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="view" plain circle @click="load()">
+            <ElButton title="refresh" plain circle @click="load()">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
           </ElTooltip>
@@ -318,6 +341,9 @@ function onCheckChange(item: string) {
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
+            <ElButton v-if="scope.row.count > 0" title="refresh" link @click="refreshChildren(scope.row.id)">
+              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />{{ $t('action.refresh') }}
+            </ElButton>
           </template>
         </ElTableColumn>
       </ElTable>
@@ -359,7 +385,7 @@ function onCheckChange(item: string) {
         <ElCol :span="12">
           <ElFormItem :label="$t('label.redirect')" prop="redirect">
             <ElSelect v-model="form.redirect" :placeholder="$t('placeholder.selectText', { field: $t('redirect') })">
-              <ElOption v-for="item in subset" :key="item.id" :label="$t(item.name)" :value="item.path" />
+              <ElOption v-for="item in subset" :key="item.id" :label="$t(`page.${item.name}`)" :value="item.path" />
             </ElSelect>
           </ElFormItem>
         </ElCol>
@@ -369,7 +395,7 @@ function onCheckChange(item: string) {
           <ElFormItem :label="$t('label.actions')" prop="meta.actions">
             <ElCheckTag v-for="item in buttonOptions" :key="item.id" :checked="form.actions?.includes(item.name)"
               :type="actions[item.name]" class="mr-2 mb-2" @change="onCheckChange(item.name)">
-              {{ $t(item.name) }}
+              {{ $t(`action.${item.name}`) }}
             </ElCheckTag>
           </ElFormItem>
         </ElCol>
@@ -424,15 +450,6 @@ function onCheckChange(item: string) {
     </template>
   </ElDialog>
 </template>
-
-<style lang="scss">
-.name-cell {
-  .cell {
-    display: inline-flex;
-    align-items: center;
-  }
-}
-</style>
 
 <style lang="scss" scoped>
 .el-badge {

@@ -191,7 +191,7 @@ async function handleBreadcrumbClick(index: number) {
         <ul class="flex-col space-y-4 list-none px-0">
           <li index="images" class="flex items-center space-x-4">
             <ElButton title="images" circle type="success" size="large">
-              <Icon icon="material-symbols:imagesmode-outline-rounded" width="20" height="20" />
+              <Icon icon="material-symbols:image-outline-rounded" width="20" height="20" />
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Images</span>
@@ -227,7 +227,7 @@ async function handleBreadcrumbClick(index: number) {
         <ul class="flex-col list-none px-0">
           <li v-for="i in 5" :key="i" index="images"
             class="flex items-center space-x-2 py-2 rounded-md group hover:bg-neutral-100">
-            <Icon icon="material-symbols:imagesmode-outline-rounded" width="20" height="20" />
+            <Icon icon="material-symbols:image-outline-rounded" width="20" height="20" />
             <span class="flex-1">fullName{{ i }}.jpg</span>
             <Icon icon="material-symbols:close-small-outline-rounded" width="20" height="20"
               class="hidden group-hover:block" />
@@ -279,7 +279,7 @@ async function handleBreadcrumbClick(index: number) {
               </ElButton>
             </ElTooltip>
             <ElTooltip :content="$t('action.view')" placement="top">
-              <ElButton title="view" type="success" plain circle @click="showTable = !showTable">
+              <ElButton title="refresh" type="success" plain circle @click="showTable = !showTable">
                 <Icon :icon="`material-symbols:${showTable ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
                   width="18" height="18" />
               </ElButton>
@@ -293,11 +293,12 @@ async function handleBreadcrumbClick(index: number) {
             <ElTableColumn prop="name" :label="$t('label.name')" sortable>
               <template #default="scope">
                 <ElButton title="name" type="primary" link @click="onRowClick(scope.row)">
-                  <Icon v-if="scope.row.directory" icon="flat-color-icons:folder" width="2em" height="2em" />
+                  <Icon v-if="scope.row.directory" icon="material-symbols:folder-open-outline-rounded" width="2em"
+                    height="2em" />
                   <template v-else-if="scope.row.regularFile && scope.row.contentType">
-                    <Icon v-if="scope.row.contentType.includes('image')" icon="flat-color-icons:image-file" width="2em"
-                      height="2em" />
-                    <Icon v-else icon="flat-color-icons:document" width="2em" height="2em" />
+                    <Icon v-if="scope.row.contentType.includes('image')" icon="material-symbols:image-outline-rounded"
+                      width="2em" height="2em" />
+                    <Icon v-else icon="material-symbols:docs-outline-rounded" width="2em" height="2em" />
                   </template>
                   <span class="ml-2">{{ scope.row.name }}</span>
                 </ElButton>
@@ -338,11 +339,11 @@ async function handleBreadcrumbClick(index: number) {
         <div v-show="!showTable"
           class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-10">
           <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="onRowClick(data)">
-            <Icon v-if="data.directory" icon="flat-color-icons:folder" width="64" height="64" />
+            <Icon v-if="data.directory" icon="material-symbols:folder-open-outline-rounded" width="64" height="64" />
             <template v-else-if="data.regularFile && data.contentType">
-              <Icon v-if="data.contentType.includes('image')" icon="flat-color-icons:image-file" width="64"
+              <Icon v-if="data.contentType.includes('image')" icon="material-symbols:image-outline-rounded" width="64"
                 height="64" />
-              <Icon v-else icon="flat-color-icons:document" width="64" height="64" />
+              <Icon v-else icon="material-symbols:docs-outline-rounded" width="64" height="64" />
             </template>
             <div>
               <p class="my-1 text-sm text-(--el-text-color-regular)">
@@ -360,7 +361,7 @@ async function handleBreadcrumbClick(index: number) {
     <div class="text-center">
       <ElImage v-if="row.contentType && row.contentType.includes('image')" :src="row.path"
         class="w-full h-52 overflow-hidden" />
-      <Icon v-else icon="flat-color-icons:document" width="80" height="80" />
+      <Icon v-else icon="material-symbols:docs-outline-rounded" width="80" height="80" />
     </div>
     <ElDescriptions v-loading="loading" :column="1" class="mt-4">
       <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>

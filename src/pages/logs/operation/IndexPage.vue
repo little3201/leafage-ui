@@ -185,7 +185,7 @@ async function confirmEvent(id: number) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="view" plain circle @click="load">
+            <ElButton title="refresh" plain circle @click="load">
               <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
             </ElButton>
           </ElTooltip>
@@ -209,7 +209,7 @@ async function confirmEvent(id: number) {
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
-        <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.body')" />
+        <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.request.body')" />
         <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
         <ElTableColumn show-overflow-tooltip prop="sessionId" :label="$t('label.sessionId')" />
         <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
@@ -267,7 +267,7 @@ async function confirmEvent(id: number) {
         <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.params')" span="3">{{ row.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.body')" span="3">{{ row.body }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.request.body')" span="3">{{ row.body }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.sessionId')" :span="2">{{ row.sessionId }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.userAgent')" :span="3">{{ row.userAgent }}</ElDescriptionsItem>

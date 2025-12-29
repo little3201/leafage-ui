@@ -17,6 +17,15 @@ export const retrieveRegions = (pagination: Pagination, filters?: object | strin
 }
 
 /**
+ * Get row subset
+ * @param id Row ID
+ * @returns Subset data
+ */
+export const retrieveRegionSubset = (id: number) => {
+  return api.get(`${SERVER_URL.REGION}/${id}/subset`)
+}
+
+/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -68,5 +77,5 @@ export const removeRegion = (id: number) => {
  * @returns
  */
 export const importRegions = (file: File) => {
-  return api.postForm(`${SERVER_URL.REGION}/import`, {file: file})
+  return api.postForm(`${SERVER_URL.REGION}/import`, { file: file })
 }

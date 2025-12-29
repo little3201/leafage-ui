@@ -102,6 +102,11 @@ body {
   }
 }
 
+.cell {
+  display: inline-flex;
+  align-items: center;
+}
+
 .spin {
   animation: spin 2s linear infinite;
 }

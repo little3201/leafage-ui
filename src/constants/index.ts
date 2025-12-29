@@ -31,8 +31,10 @@ export const SERVER_URL = {
 
   // exploiters
   SCRIPT: SERVER_PREFIX.HYPERVISOR.concat('/scripts'), // 脚本
-  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 表配置
+  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemes'), // 表配置
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 母板
+  MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
+  FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
   CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 库连接
 }
 
@@ -57,7 +59,7 @@ export const actions: { [key: string]: 'primary' | 'success' | 'info' | 'warning
 
   relation: 'info',
   authorize: 'info',
-  config: 'info',
+  config: 'success',
 }
 
 // http method对应tag类型
@@ -70,21 +72,21 @@ export const httpMethods: { [key: string]: 'success' | 'warning' | 'info' | 'pri
 }
 
 // 查询匹配方式
-export const queryTypes = [
-  { label: '=', value: 'eq' },
-  { label: '<>', value: 'neq' },
-  { label: '>', value: 'gt' },
-  { label: '>=', value: 'egt' },
-  { label: '<', value: 'lt' },
-  { label: '<=', value: 'elt' },
-  { label: 'LIKE', value: 'like' },
-  { label: 'IN', value: 'in' },
-  { label: 'NOT IN', value: 'notIn' },
-  { label: 'BETWEEN', value: 'between' },
-  { label: 'NOT BETWEEN', value: 'notBetween' },
-  { label: 'IS NULL', value: 'isNull' },
-  { label: 'IS NOT NULL', value: 'isNotNull' }
-]
+export const queryTypes: { [key: string]: string } = {
+  '=': 'eq',
+  '<>': 'neq',
+  '>': 'gt',
+  '>=': 'egt',
+  '<': 'lt',
+  '<=': 'elt',
+  'LIKE': 'like',
+  'IN': 'in',
+  'NOT IN': 'notIn',
+  'BETWEEN': 'between',
+  'NOT BETWEEN': 'notBetween',
+  'IS NULL': 'isNull',
+  'IS NOT NULL': 'isNotNull'
+}
 
 export const shceduleStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
   PENDING: 'info',
@@ -110,7 +112,23 @@ export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warn
   DISABLED: 'danger'
 }
 
-export const schemaScope: { [key: string]: 'primary' | 'success' } = {
-  ALL: 'success',
-  PARTIAL: 'primary'
+export const schemeScope: { [key: string]: string } = {
+  ALL: 'all',
+  PARTIAL: 'partial'
+}
+
+export const databaseType: { [key: string]: string } = {
+  POSTGRESQL: 'postgresql',
+  MYSQL: 'mysql'
+}
+
+export const languages: { [key: string]: string } = {
+  JAVA: 'java',
+  YML: 'yml',
+  XML: 'xml',
+  SQL: 'sql',
+  TS: 'ts',
+  JS: 'js',
+  JSX: 'jsx',
+  VUE: 'vue'
 }

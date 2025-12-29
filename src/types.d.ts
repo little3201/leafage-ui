@@ -81,10 +81,10 @@ export interface Privilege extends AudtiMetadata {
   redirect?: string
   icon: string
   actions?: string[]
-  count?: number
-  hasChildren?: boolean
   enabled?: boolean
   description?: string
+  count?: number
+  hasChildren?: boolean
 }
 
 export interface Dictionary extends AudtiMetadata {
@@ -104,6 +104,8 @@ export interface Region extends AudtiMetadata {
   hasChildren?: boolean
   enabled?: boolean
   description?: string
+  count?: number
+  hasChildren?: boolean
 }
 
 export interface TreeNode {
@@ -192,7 +194,7 @@ export interface FileRecord extends AudtiMetadata {
   lastModifiedDate?: Date
 }
 
-export interface Schema extends AudtiMetadata {
+export interface Scheme extends AudtiMetadata {
   module: string
   connectionId: number | undefined
   packageName: string
@@ -203,7 +205,7 @@ export interface Schema extends AudtiMetadata {
 }
 
 export interface Field extends AudtiMetadata {
-  schemaId: number
+  schemeId: number
   tableName: string
   name: string
   dataType: string
@@ -231,6 +233,21 @@ export interface Sample extends AudtiMetadata {
   enabled?: boolean
 }
 
+export interface Module extends AudtiMetadata {
+  name: string
+  moduleConfig?: string
+  version?: number
+  enabled?: boolean
+}
+
+export interface Fragment extends AudtiMetadata {
+  name: string
+  language: string
+  body: string
+  version?: number
+  enabled?: boolean
+}
+
 export interface Script extends AudtiMetadata {
   name: string
   type: string | undefined
@@ -240,6 +257,7 @@ export interface Script extends AudtiMetadata {
 }
 
 export interface Connection extends AudtiMetadata {
+  type: string
   database: string
   host: string
   port: number | undefined
