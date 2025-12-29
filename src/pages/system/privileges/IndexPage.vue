@@ -39,6 +39,7 @@ const formRef = ref<FormInstance>()
 const initialValues: Privilege = {
   id: undefined,
   name: '',
+  superiorId: null,
   path: '',
   component: '',
   icon: ''

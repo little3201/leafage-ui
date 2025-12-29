@@ -4,36 +4,43 @@ import type { Dictionary } from 'src/types'
 
 const datas: Dictionary[] = [
   {
+    superiorId: null,
     'name': '操作按钮',
     'enabled': true,
     'id': 100
   },
   {
+    superiorId: null,
     'name': '属性类型',
     'enabled': true,
     'id': 200
   },
   {
+    superiorId: null,
     'name': '表单类型',
     'enabled': true,
     'id': 300
   },
   {
+    superiorId: null,
     'name': 'ts类型',
     'enabled': true,
     'id': 400
   },
   {
+    superiorId: null,
     'name': '文件类型',
     'enabled': true,
     'id': 500
   },
   {
+    superiorId: null,
     'name': '脚本类型',
     'enabled': true,
     'id': 600
   },
   {
+    superiorId: null,
     'name': '模板类别',
     'enabled': true,
     'id': 700

@@ -27,7 +27,7 @@ export interface UserPrivileges {
 
 export interface Group extends AudtiMetadata {
   name: string
-  superiorId?: number
+  superiorId: number | null
   principal?: string
   members?: string[]
   enabled?: boolean
@@ -75,7 +75,7 @@ export interface RolePrivileges {
 
 export interface Privilege extends AudtiMetadata {
   name: string
-  superiorId?: number
+  superiorId: number | null
   path: string
   component: string
   redirect?: string
@@ -89,7 +89,7 @@ export interface Privilege extends AudtiMetadata {
 
 export interface Dictionary extends AudtiMetadata {
   name: string
-  superiorId?: number
+  superiorId: number | null
   enabled?: boolean
   description?: string
   count?: number
@@ -98,7 +98,7 @@ export interface Dictionary extends AudtiMetadata {
 
 export interface Region extends AudtiMetadata {
   name: string
-  superiorId?: number
+  superiorId: number | null
   areaCode?: number
   postalCode?: number
   hasChildren?: boolean

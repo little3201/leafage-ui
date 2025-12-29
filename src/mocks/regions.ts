@@ -8,6 +8,7 @@ const subDatas: Region[] = []
 for (let i = 1; i < 34; i++) {
   const data: Region = {
     id: i,
+    superiorId: null,
     name: 'region_' + i,
     areaCode: Math.floor(Math.random() * 100),
     postalCode: Math.floor(Math.random() * 3000),

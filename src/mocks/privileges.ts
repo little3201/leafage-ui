@@ -5,6 +5,7 @@ import type { Privilege, PrivilegeTreeNode, RolePrivileges, GroupPrivileges, Use
 const datas: Privilege[] = [
   {
     id: 1,
+    superiorId: null,
     path: 'system',
     component: '#',
     redirect: 'users',
@@ -16,6 +17,7 @@ const datas: Privilege[] = [
   },
   {
     id: 7,
+    superiorId: null,
     path: 'logs',
     component: '#',
     redirect: 'operation',
@@ -27,6 +29,7 @@ const datas: Privilege[] = [
   },
   {
     id: 12,
+    superiorId: null,
     path: 'regions',
     component: 'regions',
     name: 'regions',
@@ -38,6 +41,7 @@ const datas: Privilege[] = [
   },
   {
     id: 13,
+    superiorId: null,
     path: 'files',
     component: 'files',
     name: 'files',
@@ -49,6 +53,7 @@ const datas: Privilege[] = [
   },
   {
     id: 14,
+    superiorId: null,
     path: 'exploiters',
     component: '#',
     name: 'exploiters',

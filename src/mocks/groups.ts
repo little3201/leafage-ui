@@ -5,9 +5,9 @@ import type { Group, TreeNode, GroupMembers, GroupRoles, GroupPrivileges } from 
 const datas: Group[] = []
 
 for (let i = 1; i < 28; i++) {
-  let superiorId: number | undefined
+  let superiorId: number | null
   if (i === 1) {
-    superiorId = undefined // 根节点
+    superiorId = null // 根节点
   } else if (i <= 3) {
     superiorId = 1 // 第二层
   } else {

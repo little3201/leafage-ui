@@ -38,7 +38,8 @@ const filters = ref({
 const formRef = ref<FormInstance>()
 const initialValues: Dictionary = {
   id: undefined,
-  name: ''
+  name: '',
+  superiorId: null
 }
 const form = ref<Dictionary>({ ...initialValues })
 
