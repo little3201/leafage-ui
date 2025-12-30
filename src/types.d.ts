@@ -235,17 +235,31 @@ export interface Sample extends AudtiMetadata {
 
 export interface Module extends AudtiMetadata {
   name: string
-  moduleConfig?: string
+  description?: string
   version?: number
   enabled?: boolean
 }
 
+export interface SampleModule {
+  id: number
+  sampleId: number
+  moduleId: number
+}
+
+
 export interface Fragment extends AudtiMetadata {
   name: string
   language: string
+  imports?: string
   body: string
   version?: number
   enabled?: boolean
+}
+
+export interface ModuleFragment {
+  id: number
+  moduleId: number
+  fragmentId: number
 }
 
 export interface Script extends AudtiMetadata {

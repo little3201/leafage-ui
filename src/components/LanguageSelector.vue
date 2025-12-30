@@ -26,7 +26,7 @@ function changeLang(lang: string) {
 <template>
   <ElDropdown trigger="click" @command="changeLang">
     <ElButton title="language" type="default" link>
-      <Icon icon="material-symbols:translate" class="text-white" width="22" height="22" />
+      <Icon icon="material-symbols:translate" class="text-white" width="1.5em" height="1.5em" />
     </ElButton>
     <template #dropdown>
       <ElDropdownMenu>

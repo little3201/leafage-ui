@@ -267,10 +267,10 @@ function onCheckChange(item: string) {
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">
-            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
+            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset">
-            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
+            <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -280,18 +280,19 @@ function onCheckChange(item: string) {
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
           <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
-            <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{
+            <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
               $t('action.import') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('action.export') }}
+            <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+              $t('action.export') }}
           </ElButton>
         </ElCol>
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load()">
-              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
         </ElCol>
@@ -302,7 +303,8 @@ function onCheckChange(item: string) {
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
         <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell" sortable>
           <template #default="scope">
-            <Icon :icon="`material-symbols:${scope.row.icon}-rounded`" width="18" height="18" class="mr-2" />
+            <Icon :icon="`material-symbols:${scope.row.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
+              height="1.25em" class="mr-2" />
             {{ $t(`page.${scope.row.name}`) }}
           </template>
         </ElTableColumn>
@@ -343,7 +345,7 @@ function onCheckChange(item: string) {
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
             <ElButton v-if="scope.row.count > 0" title="refresh" link @click="refreshChildren(scope.row.id)">
-              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />{{ $t('action.refresh') }}
+              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />{{ $t('action.refresh') }}
             </ElButton>
           </template>
         </ElTableColumn>
@@ -357,7 +359,7 @@ function onCheckChange(item: string) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center width="480">
+  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="12">
@@ -411,10 +413,11 @@ function onCheckChange(item: string) {
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>
@@ -443,10 +446,11 @@ function onCheckChange(item: string) {
     <p class="text-red-600">xxxx</p>
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>

@@ -244,10 +244,10 @@ async function handleBreadcrumbClick(index: number) {
           </ElFormItem>
           <ElFormItem>
             <ElButton title="search" type="primary" @click="load">
-              <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
+              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
             </ElButton>
             <ElButton title="reset" @click="reset">
-              <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
+              <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
             </ElButton>
           </ElFormItem>
         </ElForm>
@@ -270,18 +270,18 @@ async function handleBreadcrumbClick(index: number) {
             <ElTooltip :content="$t('action.upload')" placement="top">
               <ElButton v-if="hasAction($route.name, 'upload')" title="upload" plain circle type="primary"
                 @click="uploadRow">
-                <Icon icon="material-symbols:upload" width="18" height="18" />
+                <Icon icon="material-symbols:upload" width="1.25em" height="1.25em" />
               </ElButton>
             </ElTooltip>
             <ElTooltip :content="$t('action.refresh')" placement="top">
               <ElButton title="refresh" plain circle @click="load">
-                <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+                <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
               </ElButton>
             </ElTooltip>
             <ElTooltip :content="$t('action.view')" placement="top">
               <ElButton title="refresh" type="success" plain circle @click="showTable = !showTable">
                 <Icon :icon="`material-symbols:${showTable ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
-                  width="18" height="18" />
+                  width="1.25em" height="1.25em" />
               </ElButton>
             </ElTooltip>
           </ElCol>
@@ -390,10 +390,11 @@ async function handleBreadcrumbClick(index: number) {
     </ElUpload>
     <template #footer>
       <ElButton title="cancel" @click="uploadVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="uploadLoading" @click="onSubmit(uploadRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>

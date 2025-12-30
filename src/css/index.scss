@@ -32,12 +32,7 @@ body {
   background: radial-gradient(circle at center top, var(--el-color-warning), var(--el-color-warning-dark-2));
 }
 
-.el-main {
-  --el-main-padding: 16px !important;
-}
-
 .el-menu {
-  border-right: initial !important;
   .el-sub-menu.is-active {
     .el-sub-menu__title {
       background-color: var(--el-menu-hover-bg-color);
@@ -50,14 +45,6 @@ body {
     margin: 6px;
     border-radius: var(--el-border-radius-base);
   }
-}
-
-.el-dialog {
-  --el-dialog-border-radius: var(--el-border-radius-base) !important;
-}
-
-.el-divider--horizontal {
-  margin: 12px 0 !important;
 }
 
 .el-card {
@@ -80,35 +67,14 @@ body {
   width: 100% !important;
 }
 
-.el-icon {
-  width: 1.25em;
-  height: 1.25em;
-
-  svg {
-    width: 1.25em;
-    height: 1.25em;
-  }
-}
-
-.search {
-  .el-card__body {
-    padding-bottom: 0;
-  }
-}
-
 .apexcharts-theme-dark {
   foreignObject {
     background-color: var(--el-bg-color-overlay);
   }
 }
 
-.cell {
-  display: inline-flex;
-  align-items: center;
-}
-
 .spin {
-  animation: spin 2s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 

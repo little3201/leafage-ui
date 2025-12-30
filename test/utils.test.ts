@@ -1,5 +1,5 @@
 import { assert, describe, expect, it } from 'vitest'
-import { isNumber, formatDuration } from 'src/utils/index.ts'
+import { isNumber, formatDuration } from '../src/utils/index.ts'
 
 describe('utils', () => {
   it('isNumber', () => {

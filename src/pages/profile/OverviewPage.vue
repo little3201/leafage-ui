@@ -33,10 +33,10 @@ const state = reactive({
       <div
         class="absolute inset-0 w-48 h-48 ml-6 hidden group-hover:flex items-center justify-center rounded-full bg-(--el-overlay-color-lighter) group-hover:opacity-100 transition">
         <ElButton title="upload" type="primary" circle>
-          <Icon icon="material-symbols:upload-rounded" width="18" height="18" />
+          <Icon icon="material-symbols:upload-rounded" width="1.25em" height="1.25em" />
         </ElButton>
         <ElButton title="remove" circle>
-          <Icon icon="material-symbols:delete-outline-rounded" width="18" height="18" />
+          <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />
         </ElButton>
       </div>
     </div>

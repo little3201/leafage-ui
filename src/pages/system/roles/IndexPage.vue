@@ -32,7 +32,7 @@ const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
 const relationVisible = ref<boolean>(false)
-const members = ref([])
+const members = ref<Array<string>>([])
 const relations = ref<Array<string>>([])
 
 const authorizeVisible = ref<boolean>(false)
@@ -268,6 +268,11 @@ function onUpload(options: UploadRequestOptions) {
   return importRoles(options.file)
 }
 
+/**
+ * transfer事件
+ * @param value 数据
+ * @param direction 方向
+ */
 async function handleTransferChange(value: TransferKey[], direction: TransferDirection) {
   if (form.value.id) {
     try {
@@ -339,10 +344,10 @@ async function handleActionCheck(privilegeId: number, item: string) {
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load">
-            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
+            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset">
-            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
+            <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -352,23 +357,24 @@ async function handleActionCheck(privilegeId: number, item: string) {
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
           <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
-            <Icon icon="material-symbols:add-rounded" width="18" height="18" />{{ $t('action.create') }}
+            <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain @click="importRows">
-            <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{
+            <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
               $t('action.import')
             }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('action.export') }}
+            <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+              $t('action.export') }}
           </ElButton>
         </ElCol>
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load">
-              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
         </ElCol>
@@ -421,7 +427,7 @@ async function handleActionCheck(privilegeId: number, item: string) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.roles')" align-center width="480">
+  <ElDialog v-model="visible" :title="$t('page.roles')" align-center :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -441,10 +447,11 @@ async function handleActionCheck(privilegeId: number, item: string) {
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>
@@ -459,12 +466,12 @@ async function handleActionCheck(privilegeId: number, item: string) {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center show-close width="65em">
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center show-close width="58em">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
       :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
       @check-change="handleCheckChange">
       <template #default="{ node, data }">
-        <div class="flex flex-1 ">
+        <div class="flex flex-1">
           <Icon v-if="data.meta.icon" :icon="`material-symbols:${data.meta.icon}-rounded`" width="1.25em"
             height="1.25em" class="mr-2" />
           <span>{{ $t(`page.${node.label}`) }}</span>
@@ -504,10 +511,11 @@ async function handleActionCheck(privilegeId: number, item: string) {
     <p class="text-red">xxxx</p>
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>

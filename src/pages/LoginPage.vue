@@ -108,7 +108,7 @@ async function onSubmit() {
                       <ElInput size="large" :disable="loading" v-model="form.username"
                         :placeholder="$t('label.username')">
                         <template #prefix>
-                          <Icon icon="material-symbols:person-outline-rounded" width="18" height="18" />
+                          <Icon icon="material-symbols:person-outline-rounded" width="1.25em" height="1.25em" />
                         </template>
                       </ElInput>
                     </ElFormItem>
@@ -120,7 +120,7 @@ async function onSubmit() {
                       <ElInput size="large" :disable="loading" type="password" v-model="form.password"
                         :placeholder="$t('label.password')" show-password>
                         <template #prefix>
-                          <Icon icon="material-symbols:key-vertical-outline-rounded" width="18" height="18" />
+                          <Icon icon="material-symbols:key-vertical-outline-rounded" width="1.25em" height="1.25em" />
                         </template>
                       </ElInput>
                     </ElFormItem>

@@ -4,7 +4,7 @@
       <h2>常见问题解答（FAQ）</h2>
       <ElInput v-model="searchQuery" placeholder="搜索问题..." clearable style="max-width: 480px;">
         <template #prefix>
-          <Icon icon="material-symbols:search-rounded" width="18" height="18" />
+          <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
         </template>
       </ElInput>
     </div>

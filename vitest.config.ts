@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitest/config'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, URL } from 'node:url'
+import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
+  plugins: [vue()],
   test: {
     include: [
       'test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'

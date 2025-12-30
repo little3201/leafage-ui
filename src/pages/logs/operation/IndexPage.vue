@@ -162,10 +162,10 @@ async function confirmEvent(id: number) {
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load">
-            <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
+            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset">
-            <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
+            <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -175,18 +175,19 @@ async function confirmEvent(id: number) {
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
           <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
-            <Icon icon="material-symbols:clear-all-rounded" width="18" height="18" />{{ $t('action.clear') }}
+            <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('action.export') }}
+            <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+              $t('action.export') }}
           </ElButton>
         </ElCol>
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load">
-              <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
         </ElCol>
@@ -250,6 +251,7 @@ async function confirmEvent(id: number) {
     </ElCard>
   </ElSpace>
 
+  <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.module')">{{ $t(`page.${row.module}`) }}</ElDescriptionsItem>

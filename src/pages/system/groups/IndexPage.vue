@@ -455,11 +455,11 @@ async function tabChange(tab: string) {
       <ElFormItem prop="filterText">
         <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
           <template #prefix>
-            <Icon icon="material-symbols:search-rounded" width="18" height="18" />
+            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
           </template>
         </ElInput>
       </ElFormItem>
-      <ElDivider />
+
       <ElTree ref="treeEl" v-loading="treeLoading" :data="groupTree" default-expand-all :expand-on-click-node="false"
         node-key="id" :current-node-key="currentNodeKey" highlight-current :props="{ label: 'name' }"
         :filter-node-method="filterNode" @current-change="onCurrentChange">
@@ -474,10 +474,10 @@ async function tabChange(tab: string) {
           </ElFormItem>
           <ElFormItem>
             <ElButton title="search" type="primary" @click="load">
-              <Icon icon="material-symbols:search-rounded" width="18" height="18" />{{ $t('action.search') }}
+              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
             </ElButton>
             <ElButton title="reset" @click="reset">
-              <Icon icon="material-symbols:replay-rounded" width="18" height="18" />{{ $t('action.reset') }}
+              <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
             </ElButton>
           </ElFormItem>
         </ElForm>
@@ -487,16 +487,17 @@ async function tabChange(tab: string) {
         <ElRow :gutter="20" justify="space-between" class="mb-4">
           <ElCol :span="16" class="text-left">
             <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
-              <Icon icon="material-symbols:add-rounded" width="18" height="18" />{{ $t('action.create') }}
+              <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain @click="importRows">
-              <Icon icon="material-symbols:database-upload-outline-rounded" width="18" height="18" />{{
+              <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
                 $t('action.import')
               }}
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
               :loading="exportLoading">
-              <Icon icon="material-symbols:file-export-outline-rounded" width="18" height="18" />{{ $t('action.export')
+              <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+                $t('action.export')
               }}
             </ElButton>
           </ElCol>
@@ -504,7 +505,7 @@ async function tabChange(tab: string) {
           <ElCol :span="8" class="text-right">
             <ElTooltip :content="$t('action.refresh')" placement="top">
               <ElButton title="refresh" plain circle @click="load">
-                <Icon icon="material-symbols:refresh-rounded" width="18" height="18" />
+                <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
               </ElButton>
             </ElTooltip>
           </ElCol>
@@ -561,7 +562,7 @@ async function tabChange(tab: string) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.groups')" align-center width="480">
+  <ElDialog v-model="visible" :title="$t('page.groups')" align-center :show-close="false" width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -581,10 +582,11 @@ async function tabChange(tab: string) {
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>
@@ -652,10 +654,11 @@ async function tabChange(tab: string) {
     <p class="text-red">xxxx</p>
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
-        <Icon icon="material-symbols:close" width="18" height="18" />{{ $t('action.cancel') }}
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="18" height="18" /> {{ $t('action.submit') }}
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
       </ElButton>
     </template>
   </ElDialog>
