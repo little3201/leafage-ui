@@ -4,7 +4,7 @@
   "exclude": ["node_modules", "dist", "coverage"],
   "compilerOptions": {
     "composite": true,
-
+    "types": ["vitest/config"],
     "baseUrl": ".",
     "paths": {
       "src": ["./src"],
