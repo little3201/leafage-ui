@@ -17,12 +17,12 @@ export const retrieveModules = (pagination: Pagination, filters?: object | strin
 }
 
 /**
- * Retrieve fragments for a specific row
+ * Retrieve samples for a specific row
  * @param id Row ID
- * @returns Module fragments
+ * @returns Module samples
  */
-export const retrieveModuleFragments = (id: number) => {
-  return api.get(`${SERVER_URL.MODULE}/${id}/fragments`)
+export const retrieveModuleSamples = (id: number) => {
+  return api.get(`${SERVER_URL.MODULE}/${id}/samples`)
 }
 
 /**
@@ -32,6 +32,15 @@ export const retrieveModuleFragments = (id: number) => {
  */
 export const fetchModule = (id: number) => {
   return api.get(`${SERVER_URL.MODULE}/${id}`)
+}
+
+/**
+ * Preview a specific row
+ * @param id Row ID
+ * @returns Row data
+ */
+export const previewModule = (id: number) => {
+  return api.get(`${SERVER_URL.MODULE}/${id}/preview`)
 }
 
 /**
@@ -81,20 +90,20 @@ export const importModules = (file: File) => {
 }
 
 /**
- * Relation fragments for a specific row
+ * Relation sampleIds for a specific row
  * @param id Row ID
- * @param relations relations
+ * @param sampleIds relations
  */
-export const relationFragments = (id: number, relations: Array<string>) => {
-  return api.post(`${SERVER_URL.MODULE}/${id}/fragments`, { relations })
+export const relationSamples = (id: number, sampleIds: number[]) => {
+  return api.patch(`${SERVER_URL.MODULE}/${id}/samples`, sampleIds)
 }
 
 /**
- * Remove fragments for a specific row
+ * Remove samples for a specific row
  * @param id Row ID
- * @param relations relations
+ * @param sampleIds relations
  */
-export const removeModuleFragments = (id: number, relations: Array<string>) => {
-  const params = relations ? { relations: relations.join(',') } : {}
-  return api.delete(`${SERVER_URL.MODULE}/${id}/fragments`, { params })
+export const removeModuleSamples = (id: number, sampleIds: number[]) => {
+  const params = sampleIds ? { fragmentIds: sampleIds.join(',') } : {}
+  return api.delete(`${SERVER_URL.MODULE}/${id}/samples`, { params })
 }

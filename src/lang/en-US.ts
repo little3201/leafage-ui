@@ -94,6 +94,8 @@ export default {
     comment: 'Comment',
     userAgent: 'User Agent',
     language: 'Language',
+    filePath: 'File Path',
+    imports: 'Imports',
   },
 
   action: {

@@ -94,6 +94,8 @@ export default {
     comment: '註解',
     userAgent: 'User Agent',
     language: '語言',
+    filePath: '文件路徑',
+    imports: '引用',
   },
 
   action: {

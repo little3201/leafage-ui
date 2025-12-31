@@ -66,7 +66,7 @@ const filters = ref({
 
 const formRef = ref<FormInstance>()
 const initialValues: Group = {
-  id: undefined,
+  id: null,
   name: '',
   superiorId: null
 }

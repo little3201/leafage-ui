@@ -1,5 +1,5 @@
 interface AudtiMetadata {
-  id: number | undefined
+  id: number | null
   lastModifiedDate?: Date
 }
 
@@ -109,7 +109,7 @@ export interface Region extends AudtiMetadata {
 }
 
 export interface TreeNode {
-  id?: number
+  id: number | null
   name: string
   children?: TreeNode[]
 }
@@ -196,12 +196,18 @@ export interface FileRecord extends AudtiMetadata {
 
 export interface Scheme extends AudtiMetadata {
   module: string
-  connectionId: number | undefined
+  connectionId: number | null
   packageName: string
   tables: string[]
   samples: number[]
   scope: string
   enabled?: boolean
+}
+
+export interface SchemeModule {
+  id: number
+  schemeId: number
+  moduleId: number
 }
 
 export interface Field extends AudtiMetadata {
@@ -225,10 +231,11 @@ export interface Field extends AudtiMetadata {
 export interface Sample extends AudtiMetadata {
   name: string
   module: string
-  stack: string
+  language: string
   body: string
-  file_path?: string
-  type: string | undefined
+  filePath?: string
+  type: string
+  description?: string
   version?: number
   enabled?: boolean
 }
@@ -240,10 +247,10 @@ export interface Module extends AudtiMetadata {
   enabled?: boolean
 }
 
-export interface SampleModule {
+export interface ModuleSample {
   id: number
-  sampleId: number
   moduleId: number
+  sampleId: number
 }
 
 
@@ -256,9 +263,9 @@ export interface Fragment extends AudtiMetadata {
   enabled?: boolean
 }
 
-export interface ModuleFragment {
+export interface SampleFragment {
   id: number
-  moduleId: number
+  sampleId: number
   fragmentId: number
 }
 

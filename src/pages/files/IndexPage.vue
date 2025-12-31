@@ -22,7 +22,7 @@ const pagination = reactive<Pagination>({
 })
 
 const initialValues: FileRecord = {
-  id: undefined,
+  id: null,
   name: '',
   size: 0,
   path: ''
@@ -86,7 +86,7 @@ async function reset() {
   await load()
 }
 
-async function showRow(id: number | undefined) {
+async function showRow(id: number | null) {
   if (id) {
     await loadOne(id)
   }
@@ -338,7 +338,7 @@ async function handleBreadcrumbClick(index: number) {
 
         <div v-show="!showTable"
           class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-10">
-          <div v-for="data in datas" :key="data.id" class="text-center cursor-pointer" @click="onRowClick(data)">
+          <div v-for="(data, index) in datas" :key="index" class="text-center cursor-pointer" @click="onRowClick(data)">
             <Icon v-if="data.directory" icon="material-symbols:folder-open-outline-rounded" width="64" height="64" />
             <template v-else-if="data.regularFile && data.contentType">
               <Icon v-if="data.contentType.includes('image')" icon="material-symbols:image-outline-rounded" width="64"

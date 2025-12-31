@@ -37,7 +37,7 @@ const filters = ref({
 
 const formRef = ref<FormInstance>()
 const initialValues: Privilege = {
-  id: undefined,
+  id: null,
   name: '',
   superiorId: null,
   path: '',
@@ -455,10 +455,3 @@ function onCheckChange(item: string) {
     </template>
   </ElDialog>
 </template>
-
-<style lang="scss" scoped>
-.el-badge {
-  display: inline-flex;
-  vertical-align: baseline;
-}
-</style>

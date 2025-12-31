@@ -38,7 +38,7 @@ const filters = ref({
 
 const formRef = ref<FormInstance>()
 const initialValues: User = {
-  id: undefined,
+  id: null,
   username: '',
   fullName: '',
   email: '',
@@ -408,10 +408,3 @@ function onUpload(options: UploadRequestOptions) {
     </template>
   </ElDialog>
 </template>
-
-<style lang="scss" scoped>
-.el-badge {
-  display: inline-flex;
-  vertical-align: baseline;
-}
-</style>

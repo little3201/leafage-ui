@@ -27,7 +27,7 @@ const filters = ref({
 const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: OperationLog = {
-  id: undefined,
+  id: null,
   module: '',
   action: '',
   params: ''
@@ -280,10 +280,3 @@ async function confirmEvent(id: number) {
     </ElDescriptions>
   </ElDialog>
 </template>
-
-<style lang="scss" scoped>
-.el-badge {
-  display: inline-flex;
-  vertical-align: baseline;
-}
-</style>

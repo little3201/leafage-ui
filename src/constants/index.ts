@@ -122,12 +122,18 @@ export const databaseType: { [key: string]: string } = {
   MYSQL: 'mysql'
 }
 
+export const sampleType: { [key: string]: 'primary' | 'success' } = {
+  SINGLE: 'primary',
+  COMBINE: 'success'
+}
+
 export const languages: { [key: string]: string } = {
   JAVA: 'java',
   YML: 'yml',
   XML: 'xml',
   SQL: 'sql',
   TS: 'ts',
+  TSX: 'tsx',
   JS: 'js',
   JSX: 'jsx',
   VUE: 'vue'

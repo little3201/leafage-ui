@@ -36,7 +36,7 @@ const filters = ref({
 
 const formRef = ref<FormInstance>()
 const initialValues: Region = {
-  id: undefined,
+  id: null,
   name: '',
   superiorId: null
 }

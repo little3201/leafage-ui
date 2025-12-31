@@ -44,10 +44,3 @@ function more(id: number) {
     </ElCollapseItem>
   </ElCollapse>
 </template>
-
-<style lang="scss" scoped>
-.el-badge {
-  display: inline-flex;
-  vertical-align: baseline;
-}
-</style>

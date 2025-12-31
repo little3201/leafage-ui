@@ -26,7 +26,7 @@ const filters = ref({
 const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: AccessLog = {
-  id: undefined,
+  id: null,
   url: '',
   httpMethod: '',
   ip: '',
@@ -279,10 +279,3 @@ async function confirmEvent(id: number) {
     </ElDescriptions>
   </ElDialog>
 </template>
-
-<style lang="scss" scoped>
-.el-badge {
-  display: inline-flex;
-  vertical-align: baseline;
-}
-</style>

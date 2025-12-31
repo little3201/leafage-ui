@@ -11,7 +11,7 @@ const userStore = useUserStore()
 
 const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const initialValues: User = {
-  id: undefined,
+  id: null,
   username: userStore.username,
   fullName: userStore.fullName,
   email: userStore.email

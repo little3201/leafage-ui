@@ -59,6 +59,11 @@ body {
   }
 }
 
+.el-badge {
+  display: inline-flex !important;
+  vertical-align: baseline !important;
+}
+
 .el-transfer {
   --el-transfer-panel-body-height: 420px !important;
 }

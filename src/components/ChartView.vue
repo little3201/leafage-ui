@@ -62,16 +62,16 @@ watch(
   }
 )
 
-const resizeHandler = async () => {
+const resizeHandler = () => {
   if (chartRef) {
     chartRef.destroy()
-    await initChart()
+    void initChart()
   }
 }
 
 useEventListener(document, 'transitionend', (evt) => {
   if (elRef.value && evt.propertyName === 'width') {
-    setTimeout(async () => await resizeHandler())
+    resizeHandler()
   }
 })
 
@@ -85,9 +85,9 @@ onBeforeUnmount(() => {
   }
 })
 
-onActivated(async () => {
+onActivated(() => {
   if (chartRef) {
-    await resizeHandler()
+    void resizeHandler()
   }
 })
 </script>

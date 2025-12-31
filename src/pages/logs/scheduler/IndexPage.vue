@@ -27,7 +27,7 @@ const filters = ref({
 const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: SchedulerLog = {
-  id: undefined,
+  id: null,
   name: ''
 }
 const row = ref<SchedulerLog>({ ...initialValues })
