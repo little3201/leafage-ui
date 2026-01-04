@@ -273,13 +273,13 @@ function onUpload(options: UploadRequestOptions) {
  * @param value 数据
  * @param direction 方向
  */
-async function handleTransferChange(value: TransferKey[], direction: TransferDirection) {
+async function handleTransferChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
   if (form.value.id) {
     try {
       if (direction === 'right') {
         await relationRoleMembers(form.value.id, value as string[])
-      } else {
-        await removeRoleMembers(form.value.id, value as string[])
+      } else if (movedKeys.length) {
+        await removeRoleMembers(form.value.id, movedKeys as string[])
       }
     } catch {
       return Promise.resolve()

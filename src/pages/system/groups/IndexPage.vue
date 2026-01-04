@@ -317,13 +317,13 @@ async function confirmEvent(id: number) {
  * @param value 用户
  * @param direction 方向
  */
-async function handleTransferUserChange(value: TransferKey[], direction: TransferDirection) {
+async function handleTransferUserChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
   if (form.value.id) {
     try {
       if (direction === 'right') {
         await relationGroupMembers(form.value.id, value as string[])
-      } else {
-        await removeGroupMembers(form.value.id, value as string[])
+      } else if (movedKeys.length) {
+        await removeGroupMembers(form.value.id, movedKeys as string[])
       }
     } catch {
       return Promise.resolve()
@@ -336,13 +336,13 @@ async function handleTransferUserChange(value: TransferKey[], direction: Transfe
  * @param value 角色
  * @param direction 方向
  */
-async function handleTransferRoleChange(value: TransferKey[], direction: TransferDirection) {
+async function handleTransferRoleChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
   if (form.value.id) {
     try {
       if (direction === 'right') {
         await relationGroupRoles(form.value.id, value as number[])
-      } else {
-        await removeGroupRoles(form.value.id, value as number[])
+      } else if (movedKeys.length) {
+        await removeGroupRoles(form.value.id, movedKeys as number[])
       }
     } catch {
       return Promise.resolve()

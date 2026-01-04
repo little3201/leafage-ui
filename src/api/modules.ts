@@ -104,6 +104,6 @@ export const relationSamples = (id: number, sampleIds: number[]) => {
  * @param sampleIds relations
  */
 export const removeModuleSamples = (id: number, sampleIds: number[]) => {
-  const params = sampleIds ? { fragmentIds: sampleIds.join(',') } : {}
+  const params = sampleIds ? { sampleIds: sampleIds.join(',') } : {}
   return api.delete(`${SERVER_URL.MODULE}/${id}/samples`, { params })
 }

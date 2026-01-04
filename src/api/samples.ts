@@ -26,6 +26,15 @@ export const fetchSample = (id: number) => {
 }
 
 /**
+ * Preview a specific row
+ * @param id Row ID
+ * @returns Row data
+ */
+export const previewSample = (id: number) => {
+  return api.get(`${SERVER_URL.SAMPLE}/${id}/preview`)
+}
+
+/**
  * Retrieve fragments for a specific row
  * @param id Row ID
  * @returns Sample fragments

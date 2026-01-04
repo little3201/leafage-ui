@@ -136,5 +136,6 @@ export const languages: { [key: string]: string } = {
   TSX: 'tsx',
   JS: 'js',
   JSX: 'jsx',
-  VUE: 'vue'
+  VUE: 'vue',
+  REACT: 'react'
 }
