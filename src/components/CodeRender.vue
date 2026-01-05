@@ -22,7 +22,7 @@ onUnmounted(() => { highlightResult.value = null })
 </script>
 
 <template>
-  <pre v-if="content" class="relative my-0 whitespace-pre-line">
+  <pre v-if="content" class="relative my-0">
     <code class="hljs overflow-auto" v-html="highlightResult?.value"></code>
     <small class="absolute -top-1 right-2 text-white">
       {{ highlightResult?.language }}
