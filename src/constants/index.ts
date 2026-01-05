@@ -31,7 +31,7 @@ export const SERVER_URL = {
 
   // exploiters
   SCRIPT: SERVER_PREFIX.HYPERVISOR.concat('/scripts'), // 脚本
-  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemes'), // 表配置
+  SCHEME: SERVER_PREFIX.HYPERVISOR.concat('/schemes'), // 表配置
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 母板
   MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
   FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段

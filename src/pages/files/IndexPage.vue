@@ -357,7 +357,7 @@ async function handleBreadcrumbClick(index: number) {
   </ElSpace>
 
   <!-- details -->
-  <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="400">
+  <ElDialog v-model="visible" :title="$t('action.details')" align-center width="400">
     <div class="text-center">
       <ElImage v-if="row.contentType && row.contentType.includes('image')" :src="row.path"
         class="w-full h-52 overflow-hidden" />

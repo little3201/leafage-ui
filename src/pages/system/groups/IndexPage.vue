@@ -592,7 +592,7 @@ async function tabChange(tab: string) {
   </ElDialog>
 
   <!-- relation -->
-  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center show-close width="640">
+  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center width="640">
     <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
       <ElTabPane :label="$t('page.users')" name="user" style="text-align: center">
         <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
@@ -609,7 +609,7 @@ async function tabChange(tab: string) {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center show-close width="65em">
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="65em">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
       :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
       @check-change="handleCheckChange">

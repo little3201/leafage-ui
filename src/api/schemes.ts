@@ -13,7 +13,7 @@ export const retrieveSchemes = (pagination: Pagination, filters?: object | strin
   if (filters) {
     filters = dealFilters(filters)
   }
-  return api.get(SERVER_URL.SCHEMA, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.SCHEME, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
@@ -23,7 +23,7 @@ export const retrieveSchemes = (pagination: Pagination, filters?: object | strin
  * @returns Fields
  */
 export const retrieveFields = (id: number, tableName: string) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/fields`, { params: { tableName } })
+  return api.get(`${SERVER_URL.SCHEME}/${id}/fields`, { params: { tableName } })
 }
 
 /**
@@ -32,7 +32,7 @@ export const retrieveFields = (id: number, tableName: string) => {
  * @returns Scheme modules
  */
 export const retrieveSchemeModules = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/modules`)
+  return api.get(`${SERVER_URL.SCHEME}/${id}/modules`)
 }
 
 /**
@@ -41,7 +41,7 @@ export const retrieveSchemeModules = (id: number) => {
  * @returns Rendered code
  */
 export const previewScheme = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/preview`)
+  return api.get(`${SERVER_URL.SCHEME}/${id}/preview`)
 }
 
 /**
@@ -50,7 +50,7 @@ export const previewScheme = (id: number) => {
  * @returns Row data
  */
 export const fetchScheme = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.get(`${SERVER_URL.SCHEME}/${id}`)
 }
 
 /**
@@ -59,7 +59,7 @@ export const fetchScheme = (id: number) => {
  * @returns Created row
  */
 export const createScheme = (row: Scheme) => {
-  return api.post(SERVER_URL.SCHEMA, row)
+  return api.post(SERVER_URL.SCHEME, row)
 }
 
 /**
@@ -69,7 +69,7 @@ export const createScheme = (row: Scheme) => {
  * @returns Modified row
  */
 export const modifyScheme = (id: number, row: Scheme) => {
-  return api.put(`${SERVER_URL.SCHEMA}/${id}`, row)
+  return api.put(`${SERVER_URL.SCHEME}/${id}`, row)
 }
 
 /**
@@ -78,7 +78,7 @@ export const modifyScheme = (id: number, row: Scheme) => {
  * @returns Enable or Disable result
  */
 export const enableScheme = (id: number) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.patch(`${SERVER_URL.SCHEME}/${id}`)
 }
 
 /**
@@ -87,7 +87,7 @@ export const enableScheme = (id: number) => {
  * @returns Created row
  */
 export const executeScheme = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/execute`, { responseType: 'blob' })
+  return api.get(`${SERVER_URL.SCHEME}/${id}/execute`, { responseType: 'blob' })
 }
 
 /**
@@ -96,7 +96,7 @@ export const executeScheme = (id: number) => {
  * @returns Deletion status
  */
 export const removeScheme = (id: number) => {
-  return api.delete(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.delete(`${SERVER_URL.SCHEME}/${id}`)
 }
 
 /**
@@ -105,7 +105,7 @@ export const removeScheme = (id: number) => {
  * @returns
  */
 export const importSchemes = (file: File) => {
-  return api.postForm(`${SERVER_URL.SCHEMA}/import`, { file: file })
+  return api.postForm(`${SERVER_URL.SCHEME}/import`, { file: file })
 }
 
 /**
@@ -114,7 +114,7 @@ export const importSchemes = (file: File) => {
  * @returns Execute result
  */
 export const syncFields = (id: number) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}/sync`)
+  return api.patch(`${SERVER_URL.SCHEME}/${id}/sync`)
 }
 
 /**
@@ -125,7 +125,7 @@ export const syncFields = (id: number) => {
  * @returns
  */
 export const configFields = (id: number, tableName: string, rows: Array<Field>) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}/config/${tableName}`, rows)
+  return api.patch(`${SERVER_URL.SCHEME}/${id}/config/${tableName}`, rows)
 }
 
 /**
@@ -134,7 +134,7 @@ export const configFields = (id: number, tableName: string, rows: Array<Field>) 
  * @param moduleIds relations
  */
 export const relationModules = (id: number, moduleIds: number[]) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}/modules`, moduleIds)
+  return api.patch(`${SERVER_URL.SCHEME}/${id}/modules`, moduleIds)
 }
 
 /**
@@ -144,5 +144,5 @@ export const relationModules = (id: number, moduleIds: number[]) => {
  */
 export const removeSchemeModules = (id: number, moduleIds: number[]) => {
   const params = moduleIds ? { moduleIds: moduleIds.join(',') } : {}
-  return api.delete(`${SERVER_URL.SCHEMA}/${id}/modules`, { params })
+  return api.delete(`${SERVER_URL.SCHEME}/${id}/modules`, { params })
 }

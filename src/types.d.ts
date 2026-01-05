@@ -125,17 +125,20 @@ export interface PrivilegeTreeNode extends TreeNode {
   children?: PrivilegeTreeNode[]
 }
 
-export interface SampleNode {
-  frontend: SampleTreeNode[]
-  backend: SampleTreeNode[]
-  resources: SampleTreeNode[]
-}
+export namespace Sample {
+  export interface Rendered {
+    name: string
+    language: string
+    filePath: string
+    body: string
+  }
 
-export interface SampleTreeNode extends TreeNode {
-  body?: string
-  type?: string
-  suffix?: string
-  children?: SampleTreeNode[]
+  export interface TreeNode {
+    name: string
+    filePath: string
+    children?: Sample.TreeNode[]
+    file?: Sample.Rendered
+  }
 }
 
 export interface OperationLog extends AudtiMetadata {

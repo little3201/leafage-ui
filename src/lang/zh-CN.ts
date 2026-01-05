@@ -118,6 +118,7 @@ export default {
     upload: '上传',
     download: '下载',
     config: '配置',
+    fields: '属性',
     execute: '执行',
     sync: '同步',
     preview: '预览',

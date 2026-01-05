@@ -457,7 +457,7 @@ async function handleActionCheck(privilegeId: number, item: string) {
   </ElDialog>
 
   <!-- relation -->
-  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center show-close width="640">
+  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center width="640">
     <div style="text-align: center">
       <ElTransfer v-model="relations" :props="{ key: 'username', label: 'fullName' }"
         :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="members"
@@ -466,7 +466,7 @@ async function handleActionCheck(privilegeId: number, item: string) {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center show-close width="58em">
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="58em">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
       :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
       @check-change="handleCheckChange">

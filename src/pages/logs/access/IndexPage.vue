@@ -250,7 +250,7 @@ async function confirmEvent(id: number) {
   </ElSpace>
 
   <!-- detail -->
-  <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
+  <ElDialog v-model="visible" :title="$t('action.details')" align-center width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.url')">
         <ElTag :type="httpMethods[row.httpMethod]" size="small" class="mr-2">

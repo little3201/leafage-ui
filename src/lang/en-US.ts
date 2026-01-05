@@ -118,6 +118,7 @@ export default {
     upload: 'Upload',
     download: 'Download',
     config: 'Config',
+    fields: 'Fields',
     execute: 'Execute',
     sync: 'Sync',
     preview: 'Preview',

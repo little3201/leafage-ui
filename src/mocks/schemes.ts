@@ -155,7 +155,7 @@ const masterPlateNodes: SampleNode = {
 }
 
 export const schemesHandlers = [
-  http.get(`/api${SERVER_URL.SCHEMA}/:id/preview`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SCHEME}/:id/preview`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(masterPlateNodes)
@@ -163,7 +163,7 @@ export const schemesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}/:id/fields`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SCHEME}/:id/fields`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(fields)
@@ -171,7 +171,7 @@ export const schemesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
@@ -179,7 +179,7 @@ export const schemesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.SCHEME}`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
     const size = searchParams.get('size')
@@ -194,7 +194,7 @@ export const schemesHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SCHEME}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -210,7 +210,7 @@ export const schemesHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SCHEME}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const newData = await request.json() as Scheme
 
@@ -221,7 +221,7 @@ export const schemesHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}/:id/execute`, ({ params }) => {
+  http.post(`/api${SERVER_URL.SCHEME}/:id/execute`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -229,7 +229,7 @@ export const schemesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.put(`/api${SERVER_URL.SCHEMA}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.SCHEME}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
     const newData = await request.json() as Scheme
@@ -242,14 +242,14 @@ export const schemesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/:id/sync`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.SCHEME}/:id/sync`, ({ params }) => {
     const id = params
     if (id) {
       return HttpResponse.json()
     }
     return HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -257,7 +257,7 @@ export const schemesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

@@ -247,7 +247,7 @@ async function confirmEvent(id: number) {
   </ElSpace>
 
   <!-- detail -->
-  <ElDialog v-model="visible" :title="$t('action.details')" align-center show-close width="600">
+  <ElDialog v-model="visible" :title="$t('action.details')" align-center width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.startTime')">
