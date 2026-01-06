@@ -68,16 +68,9 @@ body {
   width: 100% !important;
 }
 
-.apexcharts-theme-dark {
-  foreignObject {
-    background-color: var(--el-bg-color-overlay);
-  }
-}
-
 .spin {
   animation: spin 1s linear infinite;
 }
-
 
 /* keyframes */
 @keyframes spin {

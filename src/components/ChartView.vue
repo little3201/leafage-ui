@@ -13,12 +13,10 @@ const props = withDefaults(defineProps<{
   height: '400px'
 })
 
-const isDark = useDark()
-
 const options = computed(() => {
   return Object.assign({}, props.options, {
     theme: {
-      mode: isDark.value ? 'dark' : 'light'
+      mode: useDark().value ? 'dark' : 'light'
     }
   })
 })
