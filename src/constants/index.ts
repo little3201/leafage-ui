@@ -112,9 +112,9 @@ export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warn
   DISABLED: 'danger'
 }
 
-export const schemeScope: { [key: string]: string } = {
-  ALL: 'all',
-  PARTIAL: 'partial'
+export const schemeScope: { [key: string]: 'primary' | 'success' } = {
+  ALL: 'success',
+  PARTIAL: 'primary'
 }
 
 export const databaseType: { [key: string]: string } = {
