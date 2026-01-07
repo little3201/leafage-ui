@@ -76,14 +76,6 @@ export const scriptsHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCRIPT}/:id/exists`, ({ params }) => {
-    const { id, name } = params
-    let filtered = datas.filter(item => item.name === name)
-    if (id) {
-      filtered = datas.filter(item => item.name === name && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
-  }),
   http.get(`/api${SERVER_URL.SCRIPT}`, () => {
     // Construct a JSON response with the list of all Row
     // as the response body.
@@ -131,7 +123,7 @@ export const scriptsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

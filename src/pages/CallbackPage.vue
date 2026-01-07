@@ -12,28 +12,23 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from 'stores/user-store'
-import { Cookies } from 'quasar'
 import { signIn, handleCallback } from 'src/api/authentication'
 
 
-const { replace } = useRouter()
+const router = useRouter()
 const userStore = useUserStore()
 
-onMounted(() => {
-  handleCallback().then(res => {
-    if (res) {
-      // 回调成功，删除code_verifier
-      localStorage.removeItem('code_verifier')
-      userStore.$patch({
-        accessToken: res.data.access_token,
-        idToken: res.data.id_token
-      })
-      // 路由跳转
-      replace(Cookies.get('current_page') || '/')
-    }
-  }).catch(() => {
-    // 回调失败，登录
-    signIn()
-  })
+onMounted(async () => {
+  const res = await handleCallback()
+  if (res && res.status === 200) {
+    userStore.$patch({
+      accessToken: res.data.access_token,
+      idToken: res.data.id_token
+    })
+    // 路由跳转
+    await router.replace('/')
+  } else {
+    await signIn()
+  }
 })
 </script>

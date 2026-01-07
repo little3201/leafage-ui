@@ -20,22 +20,22 @@
         </div>
         <div class="cursor-pointer">
           <q-avatar size="md">
-            <img :src="userStore.avatar" alt="avatar" />
+            <img :src="`${cdn_url}/${user.username}.jpg`" alt="avatar" />
           </q-avatar>
-          <span class="q-ml-sm">{{ userStore.username }}</span>
+          <span class="q-ml-sm">{{ user.username }}</span>
           <q-menu>
             <q-list separator>
               <q-item to="/profile">
                 <q-item-section avatar>
                   <q-icon name="sym_r_manage_accounts" />
                 </q-item-section>
-                <q-item-section>{{ $t('profile') }}</q-item-section>
+                <q-item-section>{{ $t('page.profile') }}</q-item-section>
               </q-item>
               <q-item clickable v-close-popup @click="signOut(userStore.idToken)">
                 <q-item-section avatar>
                   <q-icon name="sym_r_logout" />
                 </q-item-section>
-                <q-item-section>{{ $t('signout') }}</q-item-section>
+                <q-item-section>{{ $t('action.signout') }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -46,13 +46,11 @@
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered :width="220">
       <q-list>
-        <!-- home -->
         <EssentialLink v-bind="{
           name: 'home',
           icon: 'home',
           path: '/'
         }" />
-        <!-- privileges -->
         <template v-for="link in userStore.privileges" :key="link.id">
           <EssentialList v-if="link.children && link.children.length > 0" :essentialLink="link"
             :parent-path="`/${link.meta.path}`" />
@@ -95,4 +93,9 @@ import logo from 'src/assets/logo.svg'
 const userStore = useUserStore()
 
 const leftDrawerOpen = ref<boolean>(false)
+const cdn_url = process.env.CDN_URL
+const user = {
+  username: userStore.username,
+  privileges: userStore.privileges
+}
 </script>

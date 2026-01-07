@@ -1,5 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import { dealFilters } from 'src/utils'
 import type { Pagination, User } from 'src/types'
 
 /**
@@ -10,9 +11,7 @@ import type { Pagination, User } from 'src/types'
  */
 export const retrieveUsers = (pagination: Pagination, filters?: object | string) => {
   if (filters) {
-    filters = Object.entries(filters).map(([key, value]) => {
-      return `${key}:${value}`
-    }).join(',')
+    filters = dealFilters(filters)
   }
   return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
@@ -32,16 +31,6 @@ export const fetchUser = (id: number) => {
  */
 export const fetchMe = () => {
   return api.get(`${SERVER_URL.USER}/me`)
-}
-
-/**
- * Check if a specific row exists by username
- * @param username Row username
- * @param id Row ID
- * @returns Row data
- */
-export const checkUserExists = (username: string, id?: number) => {
-  return api.get(`${SERVER_URL.USER}/exists`, { params: { username, id } })
 }
 
 /**

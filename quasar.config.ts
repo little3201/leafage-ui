@@ -61,7 +61,8 @@ export default defineConfig((ctx) => {
       // analyze: true,
       env: {
         API: ctx.dev ? '/api' : '/api',
-        CLIENT_ID: 'pkce-client'
+        CLIENT_ID: 'pkce-client',
+        CDN_URL: ctx.dev ? '/images' : 'http://cdn.leafage.top'
       },
       // rawDefine: {},
       // ignorePublicFolder: true,
@@ -73,13 +74,17 @@ export default defineConfig((ctx) => {
       // viteVuePluginOptions: {},
 
       vitePlugins: [
-        ['vite-plugin-checker', {
-          vueTsc: true,
-          eslint: {
-            lintCommand: 'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
-            useFlatConfig: true
-          }
-        }, { server: false }]
+        ['vite-plugin-checker',
+          {
+            vueTsc: true,
+            typescript: true,
+            eslint: {
+              lintCommand: 'eslint -c ./eslint.config.js "./src*/**/*.{js,mjs,cjs,ts,mts,vue}"',
+              useFlatConfig: true
+            }
+          },
+          { server: false }
+        ]
       ]
     },
 
@@ -101,7 +106,8 @@ export default defineConfig((ctx) => {
       config: {
         dark: 'auto',
         notify: {
-          progress: true
+          position: 'top',
+          timeout: 3000
         }
       },
 

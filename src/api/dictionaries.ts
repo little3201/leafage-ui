@@ -1,5 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import { dealFilters } from 'src/utils'
 import type { Pagination, Dictionary } from 'src/types'
 
 /**
@@ -8,8 +9,11 @@ import type { Pagination, Dictionary } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveDictionaries = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.DICTIONARY, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveDictionaries = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(SERVER_URL.DICTIONARY, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
@@ -36,16 +40,6 @@ export const retrieveDictionaryTree = () => {
  */
 export const fetchDictionary = (id: number) => {
   return api.get(`${SERVER_URL.DICTIONARY}/${id}`)
-}
-
-/**
- * Check if a specific row exists by name
- * @param superiorId Row ID
- * @param name Row name
- * @returns Row data
- */
-export const checkDictionaryExists = (superiorId: number, name: string, id?: number) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/${superiorId}/exists`, { params: { name, id } })
 }
 
 /**

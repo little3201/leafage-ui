@@ -8,8 +8,8 @@
           Oops. Nothing here...
         </div>
 
-        <q-btn type="button" title="go_home" color="primary" class="q-mt-xl" unelevated to="/" :label="$t('goHome')"
-          no-caps />
+        <q-btn type="button" title="go_home" color="primary" class="q-mt-xl" unelevated to="/"
+          :label="$t('action.goHome')" no-caps />
       </q-page>
     </q-page-container>
   </q-layout>

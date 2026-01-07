@@ -9,8 +9,8 @@ for (let i = 1; i < 34; i++) {
   const data: Region = {
     id: i,
     name: 'region_' + i,
-    areaCode: Math.floor(Math.random() * 100),
-    postalCode: Math.floor(Math.random() * 3000),
+    areaCode: Math.floor(Math.random() * 100).toString(),
+    postalCode: Math.floor(Math.random() * 3000).toString(),
     enabled: i % 3 > 0,
     description: 'This is region description about xxx'
   }
@@ -19,8 +19,8 @@ for (let i = 1; i < 34; i++) {
       id: 100 + j,
       name: 'region_' + i + '_' + j,
       superiorId: i,
-      areaCode: Math.floor(Math.random() * 1000),
-      postalCode: Math.floor(Math.random() * 3000) + j * 100,
+      areaCode: Math.floor(Math.random() * 1000).toString(),
+      postalCode: Math.floor(Math.random() * 3000) + j * 100 + '',
       enabled: j % 2 > 0,
       description: 'This is region description about xxx'
     }
@@ -41,14 +41,6 @@ export const regionsHandlers = [
     } else {
       return HttpResponse.json()
     }
-  }),
-  http.get(`/api${SERVER_URL.REGION}/:id/exists`, ({ params }) => {
-    const { id, name } = params
-    let filtered = datas.filter(item => item.name === name)
-    if (id) {
-      filtered = datas.filter(item => item.name === name && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
   }),
   http.get(`/api${SERVER_URL.REGION}`, ({ request }) => {
     const url = new URL(request.url)
@@ -111,7 +103,7 @@ export const regionsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.REGION}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

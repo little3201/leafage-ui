@@ -1,5 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import { dealFilters } from 'src/utils'
 import type { Pagination, Schema, Field } from 'src/types'
 
 /**
@@ -8,8 +9,11 @@ import type { Pagination, Schema, Field } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSchemas = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.SCHEMA, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveSchemas = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(SERVER_URL.SCHEMA, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 export const retrieveSchemaFields = (id: number) => {
@@ -39,16 +43,6 @@ export const createSchema = (row: Schema) => {
 }
 
 /**
- * Check if a specific row exists by name
- * @param name Row name
- * @param id Row ID
- * @returns Row data
- */
-export const checkSchemaExists = (name: string, id?: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/exists`, { params: { name, id } })
-}
-
-/**
  * Modify an existing row
  * @param id Row ID
  * @param row Updated row data
@@ -63,9 +57,8 @@ export const modifySchema = (id: number, row: Schema) => {
  * @param id Row ID
  * @returns Created row
  */
-export const syncSchema = (ids: number[]) => {
-  const params = { ids: ids.join(',') }
-  return api.patch(`${SERVER_URL.SCHEMA}/sync`, { params })
+export const syncSchema = (id: number) => {
+  return api.patch(`${SERVER_URL.SCHEMA}/${id}/sync`)
 }
 
 /**

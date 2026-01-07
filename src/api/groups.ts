@@ -1,5 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import { dealFilters } from 'src/utils'
 import type { Pagination, Group } from 'src/types'
 
 /**
@@ -8,8 +9,11 @@ import type { Pagination, Group } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveGroups = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.GROUP, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveGroups = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(SERVER_URL.GROUP, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
@@ -35,16 +39,6 @@ export const retrieveGroupMembers = (id: number) => {
  */
 export const fetchGroup = (id: number) => {
   return api.get(`${SERVER_URL.GROUP}/${id}`)
-}
-
-/**
- * Check if a specific row exists by name
- * @param name Row name
- * @param id Row ID
- * @returns Row data
- */
-export const checkGroupExists = (name: string, id?: number) => {
-  return api.get(`${SERVER_URL.GROUP}/exists`, { params: { name, id } })
 }
 
 /**

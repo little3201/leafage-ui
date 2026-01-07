@@ -114,7 +114,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'operation',
     component: 'logs/operation',
-    name: 'operation_logs',
+    name: 'operationLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -126,7 +126,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'access',
     component: 'logs/access',
-    name: 'access_logs',
+    name: 'accessLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -138,7 +138,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'audit',
     component: 'logs/audit',
-    name: 'audit_logs',
+    name: 'auditLogs',
     actions: ['remove', 'export'],
     count: 0,
     enabled: true,
@@ -150,7 +150,7 @@ const subDatas: Privilege[] = [
     superiorId: 7,
     path: 'scheduler',
     component: 'logs/scheduler',
-    name: 'scheduler_logs',
+    name: 'schedulerLogs',
     actions: ['clear', 'export', 'remove'],
     count: 0,
     enabled: true,
@@ -261,7 +261,7 @@ const treeNodes: PrivilegeTreeNode[] = [
     children: [
       {
         id: 8,
-        name: 'operation_logs',
+        name: 'operationLogs',
         meta: {
           path: 'operation',
           component: 'logs/operation',
@@ -271,7 +271,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 9,
-        name: 'access_logs',
+        name: 'accessLogs',
         meta: {
           path: 'access',
           component: 'logs/access',
@@ -281,7 +281,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 10,
-        name: 'audit_logs',
+        name: 'auditLogs',
         meta: {
           path: 'audit',
           component: 'logs/audit',
@@ -291,7 +291,7 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 11,
-        name: 'scheduler_logs',
+        name: 'schedulerLogs',
         meta: {
           path: 'scheduler',
           component: 'logs/scheduler',
@@ -423,14 +423,6 @@ export const privilegesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/exists`, ({ params }) => {
-    const { id, name } = params
-    let filtered = datas.filter(item => item.name === name)
-    if (id) {
-      filtered = datas.filter(item => item.name === name && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
-  }),
   http.get(`/api${SERVER_URL.PRIVILEGE}/:id/subset`, ({ params }) => {
     const { id } = params
     return HttpResponse.json(subDatas.filter(item => item.superiorId === Number(id)))
@@ -490,7 +482,7 @@ export const privilegesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.PRIVILEGE}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.PRIVILEGE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()

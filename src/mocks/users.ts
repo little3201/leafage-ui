@@ -8,16 +8,10 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    firstname: '三' + i,
-    middleName: i % 3 > 0 ? '五' : '',
-    lastname: '张',
-    avatar: '/svgs/logo.svg',
+    fullName: 'name_' + i,
     email: 'usexxx' + '@test.com',
-    enabled: i % 2 > 0,
-    accountNonLocked: i % 3 > 0,
-    accountExpiresAt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 28).toISOString(),
-    credentialsExpiresAt: new Date(new Date().getFullYear() + 1, 12, 30).toISOString(),
-    lastModifiedDate: new Date()
+    status: i % 2 > 0 ? 'ACTIVE' : 'INACTIVE',
+    enabled: i % 2 > 0
   }
   datas.push(row)
 }
@@ -34,9 +28,7 @@ export const usersHandlers = [
       enabled: true,
       lastModifiedDate: null,
       username: 'admin',
-      firstname: '勒布朗',
-      lastname: '詹姆斯',
-      middleName: '雷蒙',
+      fullname: '勒布朗 詹姆斯 雷蒙',
       avatar: '/svgs/logo.svg',
       email: 'test@test.com',
       accountExpiresAt: null,
@@ -51,14 +43,6 @@ export const usersHandlers = [
     } else {
       return HttpResponse.json()
     }
-  }),
-  http.get(`/api${SERVER_URL.USER}/:id/exists`, ({ params }) => {
-    const { id, username } = params
-    let filtered = datas.filter(item => item.username === username)
-    if (id) {
-      filtered = datas.filter(item => item.username === username && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
   }),
   http.get(`/api${SERVER_URL.USER}`, ({ request }) => {
     const url = new URL(request.url)
@@ -113,7 +97,7 @@ export const usersHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.USER}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -130,7 +114,7 @@ export const usersHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, async ({ params }) => {
+  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, ({ params }) => {
     const { username, privilegeId } = params
     if (username && privilegeId) {
       return HttpResponse.json()

@@ -67,6 +67,39 @@ export const httpMethods: { [key: string]: string } = {
   GET: 'positive',
   POST: 'warning',
   PUT: 'primary',
-  PATCH: 'primary',
+  PATCH: 'info',
   DELETE: 'negative'
+}
+
+// 查询匹配方式
+export const queryTypes = [
+  { label: '=', value: 'eq' },
+  { label: '<>', value: 'neq' },
+  { label: '>', value: 'gt' },
+  { label: '>=', value: 'egt' },
+  { label: '<', value: 'lt' },
+  { label: '<=', value: 'elt' },
+  { label: 'LIKE', value: 'like' },
+  { label: 'IN', value: 'in' },
+  { label: 'NOT IN', value: 'notIn' },
+  { label: 'BETWEEN', value: 'between' },
+  { label: 'NOT BETWEEN', value: 'notBetween' },
+  { label: 'IS NULL', value: 'isNull' },
+  { label: 'IS NOT NULL', value: 'isNotNull' }
+]
+
+export const shceduleStatus: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
+  PENDING: 'info',
+  RUNNING: 'primary',
+  SUCCESS: 'positive',
+  FAILED: 'negative',
+  CANCELED: 'warning'
+}
+
+export const shceduleStatusIcon: { [key: string]: string } = {
+  PENDING: 'pending',
+  RUNNING: 'progress_activity',
+  SUCCESS: 'check',
+  FAILED: 'error',
+  CANCELED: 'cancel'
 }

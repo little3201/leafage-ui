@@ -1,5 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import { dealFilters } from 'src/utils'
 import type { Pagination, Privilege } from 'src/types'
 
 /**
@@ -8,8 +9,11 @@ import type { Pagination, Privilege } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrievePrivileges = (pagination: Pagination, filters?: object) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}`, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrievePrivileges = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(`${SERVER_URL.PRIVILEGE}`, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**

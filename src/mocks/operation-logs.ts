@@ -7,15 +7,13 @@ const datas: OperationLog[] = []
 for (let i = 1; i < 28; i++) {
   const row: OperationLog = {
     id: i,
-    operation: 'Create User',
-    content: 'Create User: username: test',
+    module: 'users',
+    action: 'create',
     ip: '192.168.0.1',
-    location: 'New York',
-    os: 'Windows 11',
-    browser: 'Edge 129.0.2792.89',
+    params: '',
+    body: '{"username":"test"}',
     sessionId: 'sjfa2323jkljsladf',
-    statusCode: 200,
-    operatedTimes: 12121
+    statusCode: i % 2 === 0 ? 200 : 500,
   }
   datas.push(row)
 }

@@ -1,5 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import { dealFilters } from 'src/utils'
 import type { Pagination, Region } from 'src/types'
 
 /**
@@ -8,8 +9,11 @@ import type { Pagination, Region } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveRegions = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.REGION, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveRegions = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(SERVER_URL.REGION, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
@@ -28,17 +32,6 @@ export const retrieveRegionSubset = (id: number) => {
  */
 export const fetchRegion = (id: number) => {
   return api.get(`${SERVER_URL.REGION}/${id}`)
-}
-
-/**
- * Check if a specific row exists by name
- * @param superiorId Superior ID
- * @param name Row name
- * @param id Row ID
- * @returns Row data
- */
-export const checkRegionExists = (superiorId: number, name: string, id?: number) => {
-  return api.get(`${SERVER_URL.REGION}/${superiorId}/exists`, { params: { name, id } })
 }
 
 /**

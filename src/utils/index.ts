@@ -1,4 +1,5 @@
-import { date } from 'quasar'
+import { Notify, exportFile } from 'quasar'
+import type { QTableProps } from 'quasar'
 import type { Dictionary } from 'src/types'
 
 /**
@@ -16,49 +17,46 @@ export function pathResolve(parentPath: string | undefined, path: string | undef
 }
 
 /**
- * Compare the target date with the current date and return a status
- * @param {string} target - The target date
- * @returns {string} - The status ('success', 'warning', 'danger')
- */
-export function calculate(target: string) {
-  const now = new Date()
-  const targetDate = new Date(target)
-  // 失效时间是否小于7天
-  const diff = date.getDateDiff(targetDate, now, 'days')
-  if (diff > 7) {
-    return 'positive'
-  } else {
-    // 是否失效
-    const diffSec = date.getDateDiff(targetDate, now, 'seconds')
-    if (diffSec > 0) {
-      return 'warning'
-    } else {
-      return 'negative'
-    }
-  }
-}
-
-/**
  * Format a duration given in milliseconds into a human-readable string
  * @param {number} milliseconds - The duration in milliseconds
  * @returns {string} - The formatted duration
  */
-export const formatDuration = (milliseconds: number) => {
-  const timeUnits = [
-    { unit: 'h', factor: 3600000 }, // 1小时 = 3600000毫秒
-    { unit: 'min', factor: 60000 }, // 1分钟 = 60000毫秒
-    { unit: 's', factor: 1000 }, // 1秒 = 1000毫秒
-    { unit: 'ms', factor: 1 } // 毫秒
-  ]
+export const formatDuration = (ms: number): string => {
+  if (ms === 0) return '0ms'
 
-  for (const { unit, factor } of timeUnits) {
-    if (milliseconds >= factor) {
-      const value = Math.floor(milliseconds / factor)
-      return `${value}${unit}`
+  const sign = ms < 0 ? '-' : ''
+  const abs = Math.abs(ms)
+
+  const h = Math.floor(abs / 3600000)
+  const m = Math.floor((abs % 3600000) / 60000)
+  const s = (abs % 60000) / 1000
+  const msPart = abs % 1000
+
+  const parts: string[] = []
+
+  if (h > 0) parts.push(`${h}h`)
+  if (m > 0) parts.push(`${m}min`)
+
+  // 只有当秒 >= 1 时才显示秒
+  if (s >= 1) {
+    let secStr: string
+    if (s >= 10) {
+      secStr = s.toFixed(1).replace(/\.0$/, '')
+    } else {
+      secStr = s.toFixed(2).replace(/\.?0+$/, '')
     }
+    parts.push(`${secStr}s`)
+  }
+  // 小于 1 秒且前面没有更高单位，才显示毫秒
+  else if (parts.length === 0) {
+    if (msPart === 0) return '0ms'
+    const msStr = msPart < 10
+      ? msPart.toFixed(1).replace(/\.0$/, '')
+      : Math.round(msPart).toString()
+    parts.push(msStr + 'ms')
   }
 
-  return '0ms' // 处理0毫秒的情况
+  return sign + (parts.length > 0 ? parts.join('') : '0ms')
 }
 
 /**
@@ -92,7 +90,10 @@ export function formatDictionary(value: number, rows: Dictionary[]): string {
 }
 
 export function visibleArray<T extends string | number>(array: T[], count: number): T[] {
-  return array.length > count ? array.slice(0, count) : array
+  if (array && array.length) {
+    return array.length > count ? array.slice(0, count) : array
+  }
+  return []
 }
 
 export function download(data: Blob, filename: string, mimeType?: string): void {
@@ -135,29 +136,83 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
   }, {} as { [key: string]: T[] })
 }
 
-export function getRandomString(length: number): string {
-  const a = new Uint8Array(Math.ceil(length / 2));
-  window.crypto.getRandomValues(a);
-  const str = Array.from(a, (dec) => ('0' + dec.toString(16)).slice(-2)).join('');
-  return str.slice(0, length);
+function base64UrlEncode(array: Uint8Array) {
+  return btoa(String.fromCharCode(...array))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 }
 
-export function generateVerifier(prefix?: string): string {
-  let verifier = prefix || ''
-  if (verifier.length < 43) {
-    verifier = verifier + getRandomString(43 - verifier.length)
+export function generateVerifier(): string {
+  const array = new Uint8Array(32)
+  window.crypto.getRandomValues(array)
+  return base64UrlEncode(array)
+}
+
+export async function generateCodeChallenge(codeVerifier: string) {
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
+    .then(buffer => base64UrlEncode(new Uint8Array(buffer)))
+}
+
+export function dealFilters(filters?: object | string) {
+  if (filters && typeof filters === 'object') {
+    filters = Object.entries(filters)
+      .filter(([, value]) => value != null && value !== '')
+      .map(([key, value]) => {
+        return `${key}:${value}`
+      })
+      .join(',')
   }
-  return window.encodeURIComponent(verifier).slice(0, 128)
+  return filters?.length ? filters : undefined
 }
 
-export async function computeChallenge(codeVerifier: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(codeVerifier);
+/**
+ * wrap csv value
+ * @param val value
+ * @param formatFn format function
+ * @param row data row
+ * @returns result
+ */
+function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
+  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
 
-  return window.crypto.subtle.digest('SHA-256', data).then(digest => {
-    return window.btoa(String.fromCharCode(...new Uint8Array(digest)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-  });
+  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
+
+  formatted = formatted.split('"').join('""')
+
+  return `"${formatted}"`
+}
+
+/**
+ * export table data to csv file
+ * @param columns columns
+ * @param rows rows
+ * @returns result
+ */
+export function exportTable(columns: QTableProps['columns'], rows: QTableProps['rows']) {
+  if (!columns || !rows || columns.length === 0 || rows.length === 0) {
+    // Handle the case where columns or rows are undefined or empty
+    console.error('Columns or rows are undefined or empty.')
+    return
+  }
+  // naive encoding to csv format
+  const content = [columns.map(col => wrapCsvValue(col.label))]
+    .concat(rows.map(row => columns.map(col =>
+      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
+        col.format,
+        row
+      )).join(','))
+    ).join('\r\n')
+
+  const status = exportFile(
+    'table-export.csv',
+    content,
+    'text/csv'
+  )
+
+  if (status !== true) {
+    Notify.create({
+      message: 'Browser denied file download...',
+      color: 'negative',
+      icon: 'warning'
+    })
+  }
 }

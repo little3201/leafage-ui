@@ -11,7 +11,6 @@ for (let i = 1; i < 28; i++) {
     httpMethod: 'POST',
     body: '{"role:"admin"}',
     ip: '192.168.0.1',
-    location: 'New York',
     responseTimes: 120,
     statusCode: 404,
     responseMessage: 'Non Content'

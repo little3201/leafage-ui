@@ -1,5 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import { dealFilters } from 'src/utils'
 import type { Pagination } from 'src/types'
 
 /**
@@ -8,8 +9,11 @@ import type { Pagination } from 'src/types'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveAuditLogs = (pagination: Pagination, filters?: object) => {
-  return api.get(SERVER_URL.AUDIT_LOG, { params: { ...pagination, page: pagination.page - 1, ...filters } })
+export const retrieveAuditLogs = (pagination: Pagination, filters?: object | string) => {
+  if (filters) {
+    filters = dealFilters(filters)
+  }
+  return api.get(SERVER_URL.AUDIT_LOG, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**

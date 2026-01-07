@@ -1,78 +1,72 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import { getRandomString, generateVerifier, computeChallenge } from 'src/utils'
+import { generateVerifier, generateCodeChallenge } from 'src/utils'
 
 
-const client_id = process.env.CLIENT_ID
+const CLIENT_ID = process.env.CLIENT_ID || ''
+const REDIRECT_URI = `${window.location.origin}/callback`
 
 export async function signIn() {
-  const state = getRandomString(16)
   const codeVerifier = generateVerifier()
-  // 存储code_verifier
   localStorage.setItem('code_verifier', codeVerifier)
-  const codeChallenge = await computeChallenge(codeVerifier)
+  const state = Math.random().toString(36).substring(2)
+  localStorage.setItem('state', state)
 
+  const challenge = await generateCodeChallenge(codeVerifier)
   const params = new URLSearchParams({
-    client_id: `${client_id}`,
-    redirect_uri: `${window.location.origin}/callback`,
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
     state: state,
     scope: 'openid profile',
     response_type: 'code',
-    code_challenge: codeChallenge,
+    code_challenge: challenge,
     code_challenge_method: 'S256'
   })
 
-  api.get(SERVER_URL.AUTHORIZE, { params }).then(res => {
+  const res = await api.get(SERVER_URL.AUTHORIZE, { params })
+  if (res && res.status === 200) {
     window.location.replace(res.request.responseURL)
-  }).catch(error => {
-    if (error) {
-      window.location.replace('/login')
-    }
-  })
+  }
 }
 
-export function handleCallback() {
-  const urlParams = new URLSearchParams(window.location.search)
-  const code = urlParams.get('code')
-  if (!code) {
-    signIn()
-    throw Error('cannot get code!')
-  }
-  const state = urlParams.get('state')
-  if (!state) {
-    throw Error('cannot get state!')
-  }
+export async function handleCallback() {
+  const searchParams = new URLSearchParams(window.location.search)
+  const code = searchParams.get('code')
+  const state = searchParams.get('state')
+  const storedState = localStorage.getItem('state')
 
-  const codeVerifier = localStorage.getItem('code_verifier')
-  if (!codeVerifier) {
-    signIn()
-    throw Error('code_verifier not getted!')
-  }
+  if (code && state === storedState) {
+    const codeVerifier = localStorage.getItem('code_verifier')
 
-  const params = new URLSearchParams({
-    client_id: `${client_id}`,
-    redirect_uri: `${window.location.origin}/callback`,
-    state: state,
-    code: code,
-    code_verifier: codeVerifier,
-    grant_type: 'authorization_code'
-  })
-  // Exchange authorization code for access token
-  return api.post(SERVER_URL.TOKEN, params)
+    // Exchange authorization code for access token
+    const res = await api.post(SERVER_URL.TOKEN, new URLSearchParams({
+      client_id: CLIENT_ID,
+      redirect_uri: REDIRECT_URI,
+      code: code,
+      code_verifier: codeVerifier || '',
+      grant_type: 'authorization_code'
+    }))
+
+    localStorage.removeItem('code_verifier')
+    localStorage.removeItem('state')
+    return res
+  }
+  return null
 }
 
-export function getSub() {
+export function getUserInfo() {
   return api.get(SERVER_URL.USERINFO)
 }
 
-export function signOut(idToken: string) {
+export async function signOut(idToken: string) {
   const params = new URLSearchParams({
     id_token_hint: idToken,
-    client_id: `${client_id}`,
+    client_id: CLIENT_ID,
     post_logout_redirect_uri: `${window.location.origin}`
   })
 
-  api.post(SERVER_URL.LOGOUT, params).then(res => {
+  const res = await api.post(SERVER_URL.LOGOUT, params)
+  if (res && res.status === 200) {
     window.location.replace(res.request.responseURL)
-  })
+  }
 }

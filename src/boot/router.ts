@@ -1,65 +1,70 @@
 import { defineBoot } from '#q-app/wrappers'
-import { Cookies } from 'quasar'
 import { useUserStore } from 'stores/user-store'
 import { retrievePrivilegeTree } from 'src/api/privileges'
-import { signIn, getSub } from 'src/api/authentication'
-import { fetchMe } from 'src/api/users'
+import { signIn, getUserInfo } from 'src/api/authentication'
 import type { RouteRecordRaw } from 'vue-router'
 import type { PrivilegeTreeNode } from 'src/types'
 
-// 生成路由
+
 const BlankLayout = () => import('src/layouts/BlankLayout.vue')
 
 const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
 
-export default defineBoot(async ({ router, store }) => {
-  router.beforeEach(async (to, from, next) => {
-    // Now you need to add your authentication logic here, like calling an API endpoint
-    if (to.path === '/callback') {
-      next()
-    } else if (to.fullPath === '/login') {
-      next()
-    } else {
-      const userStore = useUserStore(store)
-      if (userStore.accessToken) {
-        // load user info
-        if (!userStore.username) {
-          const [subRes, userRes] = await Promise.all([getSub(), fetchMe()])
-          userStore.$patch({
-            username: subRes.data.sub,
-            avatar: userRes.data.avatar
-          })
+export default defineBoot(({ router, store }) => {
+  router.beforeEach(async (to, from) => {
+    if (['/callback', '/login'].includes(to.path)) return true
 
-        }
-        // load privileges
-        if (!userStore.privileges.length) {
-          const privilegesResp = await retrievePrivilegeTree();
-          const privileges = privilegesResp.data;
-          userStore.$patch({ privileges });
-        }
-        if (!to.name || !router.hasRoute(to.name)) {
-          const routes = generateRoutes(userStore.privileges)
-          routes.forEach((route) => {
-            router.addRoute('home', route as RouteRecordRaw)
-          })
-          router.addRoute({
-            path: '/:cacheAll(.*)*',
-            name: 'ErrorNotFound',
-            component: () => import('pages/ErrorNotFound.vue')
-          })
-          const redirectPath = from.query.redirect || to.path
-          const redirect = decodeURIComponent(redirectPath as string)
-          const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect }
-          Cookies.set('current_page', nextData.path)
-          next(nextData)
-        } else {
-          Cookies.set('current_page', decodeURIComponent(to.fullPath as string))
-          next()
-        }
-      } else {
+    const userStore = useUserStore(store)
+    if (!userStore.accessToken) {
+      await signIn()
+      return false
+    }
+
+    if (!userStore.username) {
+      try {
+        const res = await getUserInfo()
+        userStore.$patch({
+          username: res.data.sub,
+          fullName: res.data.name,
+        })
+      } catch {
+        userStore.$reset()
         await signIn()
+        return false
       }
     }
+
+    if (!userStore.privileges.length) {
+      try {
+        const privilegesResp = await retrievePrivilegeTree()
+        userStore.$patch({ privileges: privilegesResp.data })
+      } catch {
+        userStore.$reset()
+        await signIn()
+        return false
+      }
+    }
+
+    if (!userStore.routesAdded) {
+      generateRoutes(userStore.privileges).forEach((route) => {
+        router.addRoute('home', route)
+      })
+
+      if (!router.hasRoute('ErrorNotFound')) {
+        router.addRoute({
+          path: '/:pathMatch(.*)*',
+          name: 'ErrorNotFound',
+          component: () => import('pages/ErrorNotFound.vue'),
+        })
+      }
+
+      userStore.routesAdded = true
+    }
+
+    if (!from.name && to.matched.length === 0) {
+      return { path: to.fullPath, replace: true, query: to.query, hash: to.hash }
+    }
+    return true
   })
 })
 
@@ -75,7 +80,7 @@ export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] =>
     }
     if (route.meta.component) {
       const comModule = modules[`../pages/${route.meta.component}/IndexPage.vue`]
-      const component = route.meta.component as string
+      const component = route.meta.component
       if (comModule) {
         // 动态加载路由文件
         item.component = comModule

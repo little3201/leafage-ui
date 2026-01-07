@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Group, TreeNode, GroupMembers } from 'src/types'
+import type { Group, GroupMembers } from 'src/types'
 
 const datas: Group[] = []
 
@@ -14,33 +14,6 @@ for (let i = 1; i < 28; i++) {
   datas.push(row)
 }
 
-const treeNodes: TreeNode[] = [
-  {
-    id: 1,
-    name: 'group_1',
-    children: [
-      {
-        id: 2,
-        name: 'group_2',
-        children: [
-        ]
-      },
-      {
-        id: 3,
-        name: 'group_3',
-        children: [
-          {
-            id: 4,
-            name: 'group_4',
-            children: [
-            ]
-          }
-        ]
-      }
-    ]
-  }
-]
-
 const members: GroupMembers[] = []
 
 for (let i = 1; i < 14; i++) {
@@ -53,9 +26,6 @@ for (let i = 1; i < 14; i++) {
 }
 
 export const groupsHandlers = [
-  http.get(`/api${SERVER_URL.GROUP}/tree`, () => {
-    return HttpResponse.json(treeNodes)
-  }),
   http.get(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -72,14 +42,6 @@ export const groupsHandlers = [
     } else {
       return HttpResponse.json()
     }
-  }),
-  http.get(`/api${SERVER_URL.GROUP}/:id/exists`, ({ params }) => {
-    const { id, name } = params
-    let filtered = datas.filter(item => item.name === name)
-    if (id) {
-      filtered = datas.filter(item => item.name === name && item.id !== Number(id))
-    }
-    return HttpResponse.json(filtered.length > 0)
   }),
   http.get(`/api${SERVER_URL.GROUP}`, ({ request }) => {
     const url = new URL(request.url)
@@ -133,7 +95,7 @@ export const groupsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id`, async ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -158,7 +120,7 @@ export const groupsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`, async ({ params }) => {
+  http.delete(`/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`, ({ params }) => {
     const { groupId, privilegeId } = params
     if (groupId && privilegeId) {
       return HttpResponse.json()

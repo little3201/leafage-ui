@@ -1,5 +1,5 @@
 <template>
-  <q-expansion-item :icon="`sym_r_${essentialLink.meta.icon}`" :label="$t(essentialLink.name)">
+  <q-expansion-item :icon="`sym_r_${essentialLink.meta.icon}`" :label="$t(`page.${essentialLink.name}`)">
     <q-card>
       <q-card-section>
         <template v-for="link in essentialLink.children" :key="link.id">

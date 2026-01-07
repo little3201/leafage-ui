@@ -4,37 +4,19 @@
     <q-dialog v-model="visible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('audit_logs') }}</div>
+          <div class="text-h6">{{ $t('page.auditLogs') }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('resource') }}</strong>
+            <p><strong>{{ $t('label.resource') }}</strong>
               {{ row.resource }}
             </p>
-            <p><strong>{{ $t('operation') }}</strong>{{ row.operation }}</p>
-            <p><strong>{{ $t('ip') }}</strong>
-              {{ row.ip }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
-            <p><strong>{{ $t('oldValue') }}</strong>
-              {{ row.oldValue }}
-            </p>
-            <p><strong>{{ $t('newValue') }}</strong>
-              {{ row.newValue }}
-            </p>
-          </div>
-
-          <div class="row q-gutter-md">
-            <p><strong>{{ $t('location') }}</strong>
-              {{ row.location }}
-            </p>
+            <p><strong>{{ $t('label.operation') }}</strong>{{ row.operation }}</p>
             <p>
-              <strong>{{ $t('statusCode') }}</strong>
+              <strong>{{ $t('label.statusCode') }}</strong>
               <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
                 text-color="white">{{ row.statusCode }}</q-chip>
               <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning"
@@ -42,7 +24,22 @@
                   row.statusCode }}</q-chip>
               <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
             </p>
-            <p><strong>{{ $t('operatedTimes') }}</strong>
+          </div>
+
+          <div class="q-gutter-md">
+            <p><strong>{{ $t('label.oldValue') }}</strong>
+              {{ row.oldValue }}
+            </p>
+            <p><strong>{{ $t('label.newValue') }}</strong>
+              {{ row.newValue }}
+            </p>
+          </div>
+
+          <div class="row q-gutter-md">
+            <p><strong>{{ $t('label.ip') }}</strong>
+              {{ row.ip }}
+            </p>
+            <p><strong>{{ $t('label.operatedTimes') }}</strong>
               {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
             </p>
           </div>
@@ -50,8 +47,8 @@
       </q-card>
     </q-dialog>
 
-    <q-table flat ref="tableRef" :title="$t('audit_logs')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
+    <q-table ref="tableRef" flat :title="$t('page.page.auditLogs')" selection="multiple" v-model:selected="selected"
+      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
         <q-input dense debounce="300" v-model="filter" placeholder="Search">
@@ -61,14 +58,15 @@
         </q-input>
         <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
           icon="sym_r_refresh" @click="refresh" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export" @click="exportTable" />
+        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
+          @click="exportTable(columns, rows)" />
       </template>
 
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(col.label) }}
+            {{ $t(`label.${col.label}`) }}
           </q-th>
         </q-tr>
       </template>
@@ -97,7 +95,7 @@
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
           <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+            @click="removeRow(props.row.id)" />
         </q-td>
       </template>
     </q-table>
@@ -107,13 +105,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { QTableProps } from 'quasar'
-import { useQuasar, exportFile } from 'quasar'
-import { retrieveAuditLogs, fetchAuditLog } from 'src/api/audit-logs'
+import { retrieveAuditLogs, fetchAuditLog, removeAuditLog } from 'src/api/audit-logs'
+import { formatDuration, exportTable } from 'src/utils'
 import type { AuditLog } from 'src/types'
-import { formatDuration } from 'src/utils'
 
-
-const $q = useQuasar()
 
 const visible = ref<boolean>(false)
 
@@ -126,8 +121,7 @@ const initialValues: AuditLog = {
   id: undefined,
   operation: '',
   resource: '',
-  ip: '',
-  location: ''
+  ip: ''
 }
 const row = ref<AuditLog>({ ...initialValues })
 
@@ -147,14 +141,13 @@ const columns: QTableProps['columns'] = [
   { name: 'oldValue', label: 'oldValue', align: 'left', field: 'oldValue' },
   { name: 'newValue', label: 'newValue', align: 'center', field: 'newValue' },
   { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
-  { name: 'location', label: 'location', align: 'center', field: 'location' },
   { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
   { name: 'operatedTimes', label: 'operatedTimes', align: 'center', field: 'operatedTimes' },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -168,7 +161,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const params = { page, size: rowsPerPage, sortBy, descending }
 
-  retrieveAuditLogs({ ...params }, filter).then(res => {
+  try {
+    const res = await retrieveAuditLogs({ ...params }, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -176,67 +170,33 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  }).finally(() => {
+  } catch {
+    return Promise.resolve()
+  } finally {
     loading.value = false
-  })
+  }
 }
 
 function refresh() {
   tableRef.value.requestServerInteraction()
 }
 
-function showRow(id: number) {
+async function showRow(id: number) {
+  try {
+    const res = await fetchAuditLog(id)
+    row.value = res.data
+  } catch {
+    return Promise.resolve()
+  }
   visible.value = true
-  if (id) {
-    fetchAuditLog(id).then(res => { row.value = res.data })
-  }
 }
 
-function removeRow(id: number) {
-  console.log('id: ', id)
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false
-  }, 500)
-}
-
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
-}
-
-function exportTable() {
-  if (!columns || !rows.value || columns.length === 0 || rows.value.length === 0) {
-    // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
-    return
-  }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.value.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
-
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
-
-  if (status !== true) {
-    $q.notify({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
+async function removeRow(id: number) {
+  try {
+    await removeAuditLog(id)
+    refresh()
+  } catch {
+    return Promise.resolve()
   }
 }
 </script>
