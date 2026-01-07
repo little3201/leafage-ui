@@ -1,74 +1,40 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Script } from 'src/types'
+import type { Module } from 'src/types'
 
-const datas: Script[] = [
+const datas: Module[] = [
   {
     id: 1,
-    name: 'MySQL',
-    icon: '/svgs/mysql.svg',
-    version: '8.0.34',
-    type: 'Connection',
-    body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
+    name: 'IndexPage',
+    version: 1,
+    enabled: true,
     lastModifiedDate: new Date()
-  }, {
+  },
+  {
     id: 2,
-    name: 'Nginx',
-    icon: '/svgs/nginx.svg',
-    version: '1.8.12',
-    type: 'Middleware',
-    body: '#!/bin/bash\necho \\"Starting Nginx...\\"\nservice nginx start\necho \\"Nginx is now running.\\"\n',
+    name: 'users',
+    version: 1,
+    enabled: true,
     lastModifiedDate: new Date()
   },
   {
     id: 3,
-    name: 'Nodejs',
-    icon: '/svgs/nodejs.svg',
-    version: '20.5.6',
-    type: 'Middleware',
-    body: 'npm install',
+    name: 'entity',
+    version: 1,
+    enabled: true,
     lastModifiedDate: new Date()
   },
   {
     id: 4,
-    name: 'PostgreSql',
-    icon: '/svgs/postgresql.svg',
-    version: '16.2.3',
-    type: 'Connection',
-    body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 5,
-    name: 'Redis',
-    icon: '/svgs/redis.svg',
-    version: '6.0.1',
-    type: 'Middleware',
-    body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 6,
-    name: 'Redis',
-    icon: '/svgs/redis.svg',
-    version: '7.0.1',
-    type: 'Middleware',
-    body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 7,
-    name: 'Redis',
-    icon: '/svgs/redis.svg',
-    version: '3.0.1',
-    type: 'Middleware',
-    body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
+    name: 'repository',
+    version: 1,
+    enabled: true,
     lastModifiedDate: new Date()
   }
 ]
 
-export const scriptsHandlers = [
-  http.get(`/api${SERVER_URL.SCRIPT}/:id`, ({ params }) => {
+export const modulesHandlers = [
+  http.get(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
@@ -76,13 +42,22 @@ export const scriptsHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCRIPT}`, () => {
+  http.get(`/api${SERVER_URL.MODULE}`, ({ request }) => {
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
+    const data = {
+      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      page: {
+        totalElements: datas.length
+      }
+    }
 
-    return HttpResponse.json(datas)
+    return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.SCRIPT}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.MODULE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -98,9 +73,9 @@ export const scriptsHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.SCRIPT}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.MODULE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Script
+    const newData = await request.json() as Module
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -109,10 +84,10 @@ export const scriptsHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.put(`/api${SERVER_URL.SCRIPT}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.MODULE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Script
+    const newData = await request.json() as Module
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
@@ -123,7 +98,7 @@ export const scriptsHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.SCRIPT}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -131,7 +106,7 @@ export const scriptsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.SCRIPT}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

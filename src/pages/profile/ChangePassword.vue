@@ -20,7 +20,7 @@ const rules = ref({
 })
 
 // 提交密码修改
-async function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance) {
   if (!formEl) return
 
   const valid = await formEl.validate()
@@ -76,7 +76,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
     </ElRow>
 
     <ElFormItem>
-      <ElButton title="submit" type="primary" @click="onSubmit(formRef)">{{ $t('action.submit') }}</ElButton>
+      <ElButton title="submit" type="primary" @click="onSubmit(formRef!)">{{ $t('action.submit') }}</ElButton>
     </ElFormItem>
   </ElForm>
 </template>

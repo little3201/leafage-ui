@@ -17,7 +17,7 @@ function more(id: number) {
 <template>
   <h3>Login Information</h3>
   <ElCollapse accordion>
-    <ElCollapseItem v-for="item in sessions" :key="item.id" :name="item.id">
+    <ElCollapseItem v-for="item in sessions" :key="item.id!" :name="item.id">
       <template #icon="{ isActive }">
         <ElButton link type="primary" class="icon-ele" @click="more(item.id)">
           {{ isActive ? 'Less' : 'More' }}

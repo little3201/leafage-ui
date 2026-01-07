@@ -8,7 +8,7 @@ const datas: AuditLog[] = []
 for (let i = 1; i < 28; i++) {
   const row: AuditLog = {
     id: i,
-    action: 'Modify',
+    action: 'modify',
     resource: 'Settings',
     oldValue: '{"theme:"light"}',
     newValue: '{"theme:"dark"}',

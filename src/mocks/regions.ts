@@ -13,6 +13,7 @@ for (let i = 1; i < 34; i++) {
     areaCode: Math.floor(Math.random() * 100),
     postalCode: Math.floor(Math.random() * 3000),
     enabled: i % 3 > 0,
+    count: 1,
     description: 'This is region description about xxx'
   }
   for (let j = 1; j < i; j++) {

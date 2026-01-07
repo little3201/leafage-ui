@@ -13,7 +13,7 @@ const uploadLoading = ref<boolean>(false)
 const datas = ref<Array<FileRecord>>([])
 const total = ref<number>(0)
 const expandRows = ref<Array<FileRecord>>([])
-const currentRow = ref<FileRecord | null>(null)
+const currentRow = ref<FileRecord>()
 
 const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
@@ -116,7 +116,7 @@ async function downloadRow(id: number, name: string, type: string) {
 /**
  * 提交
  */
-function onSubmit(uploadEl: UploadInstance | undefined) {
+function onSubmit(uploadEl: UploadInstance) {
   if (!uploadEl) return
   uploadLoading.value = true
 
@@ -148,7 +148,7 @@ function confirmEvent(id: number) {
   }
 }
 
-async function onRowClick(row: FileRecord | null) {
+async function onRowClick(row: FileRecord) {
   if (row?.directory) {
     currentRow.value = row
     if (row) {
@@ -164,12 +164,12 @@ async function handleBreadcrumbClick(index: number) {
   if (index === -1) {
     // 点击"全部文件夹"，回到根目录
     expandRows.value = []
-    currentRow.value = null
+    currentRow.value = undefined
   } else {
     // 点击中间层级的面包屑
     // 截断面包屑数组，保留点击位置及之前的部分
     expandRows.value = expandRows.value.slice(0, index + 1)
-    currentRow.value = expandRows.value[index] ?? null
+    currentRow.value = expandRows.value[index]
   }
   await load()
 }
@@ -260,7 +260,7 @@ async function handleBreadcrumbClick(index: number) {
               <ElBreadcrumbItem @click="handleBreadcrumbClick(-1)">
                 全部文件夹
               </ElBreadcrumbItem>
-              <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="row.id" @click="handleBreadcrumbClick(index)">
+              <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="row.id!" @click="handleBreadcrumbClick(index)">
                 {{ row.name }}
               </ElBreadcrumbItem>
             </ElBreadcrumb>
@@ -392,7 +392,7 @@ async function handleBreadcrumbClick(index: number) {
       <ElButton title="cancel" @click="uploadVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="uploadLoading" @click="onSubmit(uploadRef)">
+      <ElButton title="submit" type="primary" :loading="uploadLoading" @click="onSubmit(uploadRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

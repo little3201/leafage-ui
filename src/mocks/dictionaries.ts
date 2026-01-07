@@ -5,320 +5,327 @@ import type { Dictionary } from 'src/types'
 const datas: Dictionary[] = [
   {
     superiorId: null,
-    'name': '操作按钮',
-    'enabled': true,
-    'id': 100
+    name: '操作按钮',
+    enabled: true,
+    id: 100,
+    count: 1
   },
   {
     superiorId: null,
-    'name': '属性类型',
-    'enabled': true,
-    'id': 200
+    name: '属性类型',
+    enabled: true,
+    id: 200,
+    count: 1
   },
   {
     superiorId: null,
-    'name': '表单类型',
-    'enabled': true,
-    'id': 300
+    name: '表单类型',
+    enabled: true,
+    id: 300,
+    count: 1
   },
   {
     superiorId: null,
-    'name': 'ts类型',
-    'enabled': true,
-    'id': 400
+    name: 'ts类型',
+    enabled: true,
+    id: 400,
+    count: 1
   },
   {
     superiorId: null,
-    'name': '文件类型',
-    'enabled': true,
-    'id': 500
+    name: '文件类型',
+    enabled: true,
+    id: 500,
+    count: 1
   },
   {
     superiorId: null,
-    'name': '脚本类型',
-    'enabled': true,
-    'id': 600
+    name: '脚本类型',
+    enabled: true,
+    id: 600,
+    count: 1
   },
   {
     superiorId: null,
-    'name': '模板类别',
-    'enabled': true,
-    'id': 700
+    name: '模板类别',
+    enabled: true,
+    id: 700,
+    count: 1
   }
 ]
 
 const subDatas: Dictionary[] = [
   {
-    'name': 'create',
+    name: 'create',
     'superiorId': 100,
     'description': '新增',
-    'enabled': true,
-    'id': 101
+    enabled: true,
+    id: 101
   },
   {
-    'name': 'modify',
+    name: 'modify',
     'superiorId': 100,
     'description': '修改',
-    'enabled': true,
-    'id': 102
+    enabled: true,
+    id: 102
   },
   {
-    'name': 'remove',
+    name: 'remove',
     'superiorId': 100,
     'description': '删除',
-    'enabled': true,
-    'id': 103
+    enabled: true,
+    id: 103
   },
   {
-    'name': 'import',
+    name: 'import',
     'superiorId': 100,
     'description': '导入',
-    'enabled': true,
-    'id': 104
+    enabled: true,
+    id: 104
   },
   {
-    'name': 'export',
+    name: 'export',
     'superiorId': 100,
     'description': '导出',
-    'enabled': true,
-    'id': 105
+    enabled: true,
+    id: 105
   },
   {
-    'name': 'upload',
+    name: 'upload',
     'superiorId': 100,
     'description': '上传',
-    'enabled': true,
-    'id': 106
+    enabled: true,
+    id: 106
   },
   {
-    'name': 'download',
+    name: 'download',
     'superiorId': 100,
     'description': '下载',
-    'enabled': true,
-    'id': 107
+    enabled: true,
+    id: 107
   },
   {
-    'name': 'relation',
+    name: 'relation',
     'superiorId': 100,
     'description': '关联',
-    'enabled': true,
-    'id': 108
+    enabled: true,
+    id: 108
   },
   {
-    'name': 'enable',
+    name: 'enable',
     'superiorId': 100,
     'description': '启用',
-    'enabled': true,
-    'id': 109
+    enabled: true,
+    id: 109
   },
   {
-    'name': 'config',
+    name: 'config',
     'superiorId': 100,
     'description': '配置',
-    'enabled': true,
-    'id': 110
+    enabled: true,
+    id: 110
   },
   {
-    'name': 'execute',
+    name: 'execute',
     'superiorId': 100,
     'description': '执行',
-    'enabled': true,
-    'id': 111
+    enabled: true,
+    id: 111
   },
   {
-    'name': 'clear',
+    name: 'clear',
     'superiorId': 100,
     'description': '清空',
-    'enabled': true,
-    'id': 112
+    enabled: true,
+    id: 112
   },
   {
-    'name': 'unlock',
+    name: 'unlock',
     'superiorId': 100,
     'description': '解锁',
-    'enabled': true,
-    'id': 113
+    enabled: true,
+    id: 113
   },
   {
-    'name': 'authorize',
+    name: 'authorize',
     'superiorId': 100,
     'description': '授权',
-    'enabled': true,
-    'id': 114
+    enabled: true,
+    id: 114
   },
   {
-    'name': 'sync',
+    name: 'sync',
     'superiorId': 100,
     'description': '同步',
-    'enabled': true,
-    'id': 115
+    enabled: true,
+    id: 115
   },
   {
-    'name': 'String',
+    name: 'String',
     'superiorId': 200,
-    'enabled': true,
-    'id': 201
+    enabled: true,
+    id: 201
   },
   {
-    'name': 'Long',
+    name: 'Long',
     'superiorId': 200,
-    'enabled': true,
-    'id': 202
+    enabled: true,
+    id: 202
   },
   {
-    'name': 'Instant',
+    name: 'Instant',
     'superiorId': 200,
-    'enabled': true,
-    'id': 203
+    enabled: true,
+    id: 203
   },
   {
-    'name': 'Integer',
+    name: 'Integer',
     'superiorId': 200,
-    'enabled': true,
-    'id': 204
+    enabled: true,
+    id: 204
   },
   {
-    'name': 'boolean',
+    name: 'boolean',
     'superiorId': 200,
-    'enabled': true,
-    'id': 205
+    enabled: true,
+    id: 205
   },
   {
-    'name': 'BigDecimal',
+    name: 'BigDecimal',
     'superiorId': 200,
-    'enabled': true,
-    'id': 206
+    enabled: true,
+    id: 206
   },
   {
-    'name': 'input',
+    name: 'input',
     'superiorId': 300,
-    'enabled': true,
-    'id': 301
+    enabled: true,
+    id: 301
   },
   {
-    'name': 'select',
+    name: 'select',
     'superiorId': 300,
-    'enabled': true,
-    'id': 302
+    enabled: true,
+    id: 302
   },
   {
-    'name': 'input-number',
+    name: 'input-number',
     'superiorId': 300,
-    'enabled': true,
-    'id': 303
+    enabled: true,
+    id: 303
   },
   {
-    'name': 'date-picker',
+    name: 'date-picker',
     'superiorId': 300,
-    'enabled': true,
-    'id': 304
+    enabled: true,
+    id: 304
   },
   {
-    'name': 'number',
+    name: 'number',
     'superiorId': 400,
-    'enabled': true,
-    'id': 401
+    enabled: true,
+    id: 401
   },
   {
-    'name': 'string',
+    name: 'string',
     'superiorId': 400,
-    'enabled': true,
-    'id': 402
+    enabled: true,
+    id: 402
   },
   {
-    'name': 'boolean',
+    name: 'boolean',
     'superiorId': 400,
-    'enabled': true,
-    'id': 403
+    enabled: true,
+    id: 403
   },
   {
-    'name': '.java',
+    name: '.java',
     'superiorId': 500,
     'description': '数据库',
-    'enabled': true,
-    'id': 501
+    enabled: true,
+    id: 501
   },
   {
-    'name': '.ts',
+    name: '.ts',
     'superiorId': 500,
     'description': '中间件',
-    'enabled': true,
-    'id': 502
+    enabled: true,
+    id: 502
   },
   {
-    'name': '.vue',
+    name: '.vue',
     'superiorId': 500,
     'description': '中间件',
-    'enabled': true,
-    'id': 503
+    enabled: true,
+    id: 503
   },
   {
-    'name': 'Database',
+    name: 'Database',
     'superiorId': 600,
     'description': '数据库',
-    'enabled': true,
-    'id': 601
+    enabled: true,
+    id: 601
   },
   {
-    'name': 'Middleware',
+    name: 'Middleware',
     'superiorId': 600,
     'description': '中间件',
-    'enabled': true,
-    'id': 602
+    enabled: true,
+    id: 602
   },
   {
-    'name': 'frontend',
+    name: 'frontend',
     'superiorId': 700,
-    'enabled': false,
-    'id': 710
+    enabled: false,
+    id: 710
   },
   {
-    'name': 'backend',
+    name: 'backend',
     'superiorId': 700,
-    'enabled': false,
-    'id': 720
+    enabled: false,
+    id: 720
   },
   {
-    'name': 'resources',
+    name: 'resources',
     'superiorId': 700,
-    'enabled': false,
-    'id': 730
+    enabled: false,
+    id: 730
   },
   {
-    'name': 'api',
+    name: 'api',
     'superiorId': 710,
-    'enabled': true,
-    'id': 711
+    enabled: true,
+    id: 711
   },
   {
-    'name': 'types',
+    name: 'types',
     'superiorId': 710,
-    'enabled': true,
-    'id': 712
+    enabled: true,
+    id: 712
   },
   {
-    'name': 'service',
+    name: 'service',
     'superiorId': 720,
-    'enabled': true,
-    'id': 721
+    enabled: true,
+    id: 721
   },
   {
-    'name': 'repository',
+    name: 'repository',
     'superiorId': 720,
-    'enabled': true,
-    'id': 723
+    enabled: true,
+    id: 723
   },
   {
-    'name': 'controller',
+    name: 'controller',
     'superiorId': 720,
-    'enabled': true,
-    'id': 723
+    enabled: true,
+    id: 723
   },
   {
-    'name': 'model',
+    name: 'model',
     'superiorId': 720,
-    'enabled': true,
-    'id': 724
+    enabled: true,
+    id: 724
   }
 ]
 

@@ -12,7 +12,7 @@ import router from './router'
 import pinia from './stores'
 
 async function prepareApp() {
-  if (!import.meta.env.DEV) {
+  if (import.meta.env.DEV) {
     const { worker } = await import('boot/msw-browser')
 
     router.addRoute({

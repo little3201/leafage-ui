@@ -1,37 +1,41 @@
-import { dictionariesHandlers } from './dictionaries'
-import { authenticationHandlers } from './authentication'
-import { groupsHandlers } from './groups'
-import { regionsHandlers } from './regions'
-import { rolesHandlers } from './roles'
-import { usersHandlers } from './users'
-import { privilegesHandlers } from './privileges'
-import { operationLogsHandlers } from './operation-logs'
 import { accessLogsHandlers } from './access-logs'
 import { auditLogsHandlers } from './audit-logs'
-import { schedulerLogsHandlers } from './scheduler-logs'
+import { authenticationHandlers } from './authentication'
+import { calendarEventHandlers } from './calendar-events'
+import { connectionsHandlers } from './connections'
+import { dictionariesHandlers } from './dictionaries'
 import { fileRecordsHandlers } from './file-records'
+import { fragmentsHandlers } from './fragments'
+import { groupsHandlers } from './groups'
+import { modulesHandlers } from './modules'
+import { operationLogsHandlers } from './operation-logs'
+import { privilegesHandlers } from './privileges'
+import { regionsHandlers } from './regions'
+import { rolesHandlers } from './roles'
+import { samplesHandlers } from './samples'
+import { schedulerLogsHandlers } from './scheduler-logs'
 import { schemesHandlers } from './schemes'
 import { scriptsHandlers } from './scripts'
-import { samplesHandlers } from './samples'
-import { connectionsHandlers } from './connections'
-import { calendarEventHandlers } from './calendar-events'
+import { usersHandlers } from './users'
 
 export const handlers = [
-  ...authenticationHandlers,
-  ...dictionariesHandlers,
-  ...groupsHandlers,
-  ...regionsHandlers,
-  ...rolesHandlers,
-  ...usersHandlers,
-  ...privilegesHandlers,
-  ...operationLogsHandlers,
   ...accessLogsHandlers,
   ...auditLogsHandlers,
-  ...schedulerLogsHandlers,
+  ...authenticationHandlers,
+  ...calendarEventHandlers,
+  ...connectionsHandlers,
+  ...dictionariesHandlers,
   ...fileRecordsHandlers,
+  ...fragmentsHandlers,
+  ...groupsHandlers,
+  ...modulesHandlers,
+  ...operationLogsHandlers,
+  ...privilegesHandlers,
+  ...regionsHandlers,
+  ...rolesHandlers,
+  ...samplesHandlers,
+  ...schedulerLogsHandlers,
   ...schemesHandlers,
   ...scriptsHandlers,
-  ...samplesHandlers,
-  ...connectionsHandlers,
-  ...calendarEventHandlers
+  ...usersHandlers
 ]

@@ -12,10 +12,10 @@ export function authorize() {
   window.location.href = BASE_URL + '/oauth2/authorization/web-client-authorization-code'
 }
 
-export async function getUserInfo() {
+export function getUserInfo() {
   return api.get(SERVER_URL.USERINFO)
 }
 
-export async function signOut() {
+export function signOut() {
   return api.post(SERVER_URL.LOGOUT, null)
 }

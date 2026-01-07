@@ -177,7 +177,7 @@ async function unlockRow(id: number) {
 /**
  * 表单提交
  */
-async function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance) {
   if (!formEl) return
 
   const valid = await formEl.validate()
@@ -223,7 +223,7 @@ async function confirmEvent(id: number) {
 /**
  * 导入提交
  */
-function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance) {
   if (!importEl) return
   importLoading.value = true
 
@@ -374,7 +374,7 @@ function onUpload(options: UploadRequestOptions) {
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
@@ -407,7 +407,7 @@ function onUpload(options: UploadRequestOptions) {
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
+      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

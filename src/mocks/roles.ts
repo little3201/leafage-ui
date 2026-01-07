@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Role, RolePrivileges, RoleMembers } from 'src/types'
+import type { Role, RoleMembers, RolePrivileges } from 'src/types'
 
 const datas: Role[] = []
 

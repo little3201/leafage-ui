@@ -13,7 +13,8 @@ for (let i = 1; i < 8; i++) {
     host: '127.0.0.1',
     port: 3306,
     username: 'admin',
-    params: ''
+    params: '',
+    type: 'MYSQL'
   }
   databases.push(row)
 }

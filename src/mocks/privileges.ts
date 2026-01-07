@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Privilege, PrivilegeTreeNode, RolePrivileges, GroupPrivileges, UserPrivileges } from 'src/types'
+import type { GroupPrivileges, Privilege, PrivilegeTreeNode, RolePrivileges, UserPrivileges } from 'src/types'
 
 const datas: Privilege[] = [
   {
@@ -379,13 +379,44 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 17,
-        name: 'samples',
+        name: 'templates',
         meta: {
-          path: 'samples',
-          component: 'exploiters/samples',
-          icon: 'code',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
-        }
+          path: 'templates',
+          component: 'exploiters/templates',
+          icon: 'folder-code-outline',
+        },
+        children: [
+          {
+            id: 18,
+            name: 'samples',
+            meta: {
+              path: 'samples',
+              component: 'exploiters/templates/samples',
+              icon: 'code-blocks-outline',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'execute', 'enable']
+            }
+          },
+          {
+            id: 19,
+            name: 'modules',
+            meta: {
+              path: 'modules',
+              component: 'exploiters/templates/modules',
+              icon: 'modeling-outline',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          },
+          {
+            id: 20,
+            name: 'fragments',
+            meta: {
+              path: 'fragments',
+              component: 'exploiters/templates/fragments',
+              icon: 'code',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          },
+        ]
       },
       {
         id: 15,
@@ -393,7 +424,7 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'connections',
           component: 'exploiters/connections',
-          icon: 'database-outline',
+          icon: 'database-search',
           actions: ['create', 'modify', 'remove', 'sync']
         }
       },

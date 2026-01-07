@@ -185,7 +185,7 @@ async function enableChange(id: number) {
 /**
  * 表单提交
  */
-async function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance) {
   if (!formEl) return
 
   const valid = await formEl.validate()
@@ -198,7 +198,9 @@ async function onSubmit(formEl: FormInstance | undefined) {
         visible.value = false
         await load()
 
-        await refreshChildren(form.value.superiorId!)
+        if (form.value.superiorId) {
+          await refreshChildren(form.value.superiorId)
+        }
       } catch {
         return Promise.resolve()
       } finally { saveLoading.value = false }
@@ -229,7 +231,7 @@ function exportRows() {
 /**
  * 导入提交
  */
-function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance) {
   if (!importEl) return
   importLoading.value = true
 
@@ -309,7 +311,7 @@ function onCheckChange(item: string) {
           <template #default="scope">
             <Icon :icon="`material-symbols:${scope.row.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
               height="1.25em" class="mr-2" />
-            {{ $t(`page.${scope.row.name}`) }}
+            {{ scope.row.name ? $t(`page.${scope.row.name}`) : '' }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="path" :label="$t('label.path')" sortable />
@@ -392,7 +394,7 @@ function onCheckChange(item: string) {
         <ElCol :span="12">
           <ElFormItem :label="$t('label.redirect')" prop="redirect">
             <ElSelect v-model="form.redirect" :placeholder="$t('placeholder.selectText', { field: $t('redirect') })">
-              <ElOption v-for="item in subset" :key="item.id" :label="$t(`page.${item.name}`)" :value="item.path" />
+              <ElOption v-for="item in subset" :key="item.id!" :label="$t(`page.${item.name}`)" :value="item.path" />
             </ElSelect>
           </ElFormItem>
         </ElCol>
@@ -400,7 +402,7 @@ function onCheckChange(item: string) {
       <ElRow :gutter="20" v-if="!form.redirect">
         <ElCol>
           <ElFormItem :label="$t('label.actions')" prop="meta.actions">
-            <ElCheckTag v-for="item in buttonOptions" :key="item.id" :checked="form.actions?.includes(item.name)"
+            <ElCheckTag v-for="item in buttonOptions" :key="item.id!" :checked="form.actions?.includes(item.name)"
               :type="actions[item.name]" class="mr-2 mb-2" @change="onCheckChange(item.name)">
               {{ $t(`action.${item.name}`) }}
             </ElCheckTag>
@@ -419,7 +421,7 @@ function onCheckChange(item: string) {
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
@@ -452,7 +454,7 @@ function onCheckChange(item: string) {
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
+      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { FormInstance, FormRules, TableInstance, TransferDirection, TransferKey, TreeInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
+import type { FormInstance, FormRules, TableInstance, TabPaneName, TransferDirection, TransferKey, TreeInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
 import {
   createGroup,
   enableGroup, fetchGroup, importGroups,
@@ -107,7 +107,7 @@ watch(
  */
 const filterNode = (value: string, data: { [key: string]: string }) => {
   if (!value) return true
-  return data.name!.includes(value)
+  return data.name?.includes(value) ?? false
 }
 
 /**
@@ -278,7 +278,7 @@ async function enableChange(id: number) {
 /**
  * 表单提交
  */
-async function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance) {
   if (!formEl) return
 
   const valid = await formEl.validate()
@@ -383,7 +383,7 @@ function exportRows() {
 /**
  * 导入提交
  */
-function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance) {
   if (!importEl) return
   importLoading.value = true
 
@@ -447,8 +447,8 @@ async function handleActionCheck(privilegeId: number, item: string) {
   }
 }
 
-async function tabChange(tab: string) {
-  activeTabName.value = tab
+async function tabChange(tab: TabPaneName) {
+  activeTabName.value = tab.toString()
 
   if (tab === 'role') {
     await loadRoles()
@@ -594,7 +594,7 @@ async function tabChange(tab: string) {
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
@@ -666,7 +666,7 @@ async function tabChange(tab: string) {
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
+      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

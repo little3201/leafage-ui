@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Group, TreeNode, GroupMembers, GroupRoles, GroupPrivileges } from 'src/types'
+import type { Group, GroupMembers, GroupPrivileges, GroupRoles, TreeNode } from 'src/types'
 
 const datas: Group[] = []
 
@@ -65,7 +65,7 @@ function buildTree(groups: Group[]): TreeNode[] {
 
   // 第一步：创建映射，只处理有 id 的节点
   groups.forEach(group => {
-    if (group.id !== undefined) {
+    if (group.id) {
       map.set(group.id, {
         ...group,
         children: []
@@ -76,7 +76,7 @@ function buildTree(groups: Group[]): TreeNode[] {
   // 第二步：构建层级关系
   groups.forEach(group => {
     // 跳过没有 id 的节点
-    if (group.id === undefined) return
+    if (!group.id) return
 
     const currentNode = map.get(group.id)
     // 确保当前节点存在
@@ -146,7 +146,6 @@ export const groupsHandlers = [
     const filters = searchParams.get('filters')
     const superiorId = filters?.split(':')[2]
 
-    console.log('filters', filters)
     const filtered = datas.filter(item => { return item.superiorId === Number(superiorId) })
     let data = {
       content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),

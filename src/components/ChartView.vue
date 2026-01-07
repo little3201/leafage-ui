@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, onBeforeUnmount, onActivated } from 'vue'
 import { useDark, useEventListener } from '@vueuse/core'
+import type { ApexOptions } from 'apexcharts'
 import ApexCharts from 'apexcharts'
 import { isNumber } from 'src/utils'
+import { computed, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
-  options: ApexCharts.ApexOptions // 使用 ApexCharts 的配置类型
+  options: ApexOptions
   width?: number | string
   height?: number | string
 }>(), {
@@ -23,7 +24,7 @@ const options = computed(() => {
 
 const elRef = ref<HTMLElement | null>(null)
 
-let chartRef: ApexCharts | null = null
+let chartRef: ApexCharts
 
 const styles = computed(() => {
   const width = isNumber(props.width) ? `${props.width}px` : props.width

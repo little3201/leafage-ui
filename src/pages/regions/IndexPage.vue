@@ -187,7 +187,7 @@ async function enableChange(id: number) {
 /**
  * 表单提交
  */
-async function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance) {
   if (!formEl) return
 
   const valid = await formEl.validate()
@@ -202,7 +202,9 @@ async function onSubmit(formEl: FormInstance | undefined) {
       visible.value = false
       await load()
 
-      await refreshChildren(form.value.superiorId!)
+      if (form.value.superiorId) {
+        await refreshChildren(form.value.superiorId)
+      }
     } catch {
       return Promise.resolve()
     } finally {
@@ -234,7 +236,7 @@ function exportRows() {
 /**
  * 导入提交
  */
-function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance) {
   if (!importEl) return
   importLoading.value = true
 
@@ -278,7 +280,7 @@ async function confirmEvent(id: number) {
           <ElInput v-model="filters.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" type="primary" @click="load">
+          <ElButton title="search" type="primary" @click="load()">
             <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset">
@@ -307,7 +309,7 @@ async function confirmEvent(id: number) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="refresh" plain circle @click="load">
+            <ElButton title="refresh" plain circle @click="load()">
               <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
@@ -396,7 +398,7 @@ async function confirmEvent(id: number) {
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
@@ -410,7 +412,7 @@ async function confirmEvent(id: number) {
         {{ $t('page.regions') }}.xlsx
       </a>
     </p>
-    <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
+    <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="() => load()"
       accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
@@ -429,7 +431,7 @@ async function confirmEvent(id: number) {
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
+      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

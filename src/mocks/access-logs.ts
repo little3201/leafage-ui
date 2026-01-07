@@ -10,6 +10,7 @@ for (let i = 1; i < 28; i++) {
     id: i,
     url: '/users',
     httpMethod: 'POST',
+    params: 'page=1',
     body: '{"role:"admin"}',
     ip: '192.168.0.1',
     duration: 120,

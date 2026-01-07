@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { FormInstance, FormRules, TableInstance, TransferDirection, TransferKey, UploadInstance, UploadRequestOptions } from 'element-plus'
+import type {
+  FormInstance, FormRules, TableInstance, TransferDataItem,
+  TransferDirection, TransferKey, UploadInstance, UploadRequestOptions
+} from 'element-plus'
 import {
   createRole,
   enableRole,
@@ -42,7 +45,7 @@ const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
 const relationVisible = ref<boolean>(false)
-const members = ref<Array<string>>([])
+const members = ref<Array<TransferDataItem>>([])
 const relations = ref<Array<string>>([])
 
 const authorizeVisible = ref<boolean>(false)
@@ -198,7 +201,7 @@ async function enableChange(id: number) {
 /**
  * 表单提交
  */
-async function onSubmit(formEl: FormInstance | undefined) {
+async function onSubmit(formEl: FormInstance) {
   if (!formEl) return
 
   const valid = await formEl.validate()
@@ -264,7 +267,7 @@ function exportRows() {
 /**
  * 导入提交
  */
-function onImportSubmit(importEl: UploadInstance | undefined) {
+function onImportSubmit(importEl: UploadInstance) {
   if (!importEl) return
   importLoading.value = true
 
@@ -459,7 +462,7 @@ async function handleActionCheck(privilegeId: number, item: string) {
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef)">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
@@ -523,7 +526,7 @@ async function handleActionCheck(privilegeId: number, item: string) {
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef)">
+      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

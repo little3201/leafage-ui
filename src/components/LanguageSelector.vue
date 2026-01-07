@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import Cookies from 'universal-cookie'
 import { Icon } from '@iconify/vue'
 import { langOptions } from 'boot/i18n'
+import Cookies from 'universal-cookie'
+import { useI18n } from 'vue-i18n'
 
 
 const { locale } = useI18n({ useScope: 'global' })
