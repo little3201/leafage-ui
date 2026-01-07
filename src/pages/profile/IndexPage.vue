@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
+import { useUserStore } from 'stores/user-store'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from 'stores/user-store'
-import { Icon } from '@iconify/vue'
 
 
 const { currentRoute } = useRouter()

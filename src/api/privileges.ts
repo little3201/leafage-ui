@@ -67,5 +67,5 @@ export const enablePrivilege = (id: number) => {
  * @returns
  */
 export const importPrivileges = (file: File) => {
-  return api.postForm(`${SERVER_URL.PRIVILEGE}/import`, {file: file})
+  return api.postForm(`${SERVER_URL.PRIVILEGE}/import`, { file: file })
 }

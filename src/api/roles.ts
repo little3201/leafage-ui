@@ -124,5 +124,5 @@ export const removeRolePrivileges = (id: number, privilegeId: number, action?: s
  * @returns
  */
 export const importRoles = (file: File) => {
-  return api.patchForm(`${SERVER_URL.ROLE}/import`, {file: file})
+  return api.patchForm(`${SERVER_URL.ROLE}/import`, { file: file })
 }

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { ElFormItem, ElImage } from 'element-plus'
-import type { FormInstance, FormRules } from 'element-plus'
 import { Icon } from '@iconify/vue'
-import { useRouter } from 'vue-router'
 import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import ThemeToogle from 'components/ThemeToogle.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
-import logo from 'src/assets/logo.svg'
+import ThemeToogle from 'components/ThemeToogle.vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import { ElFormItem, ElImage } from 'element-plus'
 import hello from 'src/assets/hello_ccwj.svg'
+import logo from 'src/assets/logo.svg'
+import { SERVER_URL } from 'src/constants'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 
 const { t } = useI18n()

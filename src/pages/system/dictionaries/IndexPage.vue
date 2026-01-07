@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
-import { useI18n } from 'vue-i18n'
-import {
-  retrieveDictionaries, retrieveDictionarySubset, fetchDictionary, createDictionary, modifyDictionary,
-  enableDictionary, importDictionaries
-} from 'src/api/dictionaries'
-import type { Pagination, Dictionary } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { hasAction, exportToCSV } from 'src/utils'
+import type { FormInstance, FormRules, TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
+import {
+  createDictionary,
+  enableDictionary,
+  fetchDictionary,
+  importDictionaries,
+  modifyDictionary,
+  retrieveDictionaries, retrieveDictionarySubset
+} from 'src/api/dictionaries'
+import type { Dictionary, Pagination } from 'src/types'
+import { exportToCSV, hasAction } from 'src/utils'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()

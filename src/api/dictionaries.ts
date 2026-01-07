@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Dictionary } from 'src/types'
+import type { Dictionary, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -85,5 +85,5 @@ export const removeDictionary = (id: number) => {
  * @returns
  */
 export const importDictionaries = (file: File) => {
-  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, {file: file})
+  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, { file: file })
 }

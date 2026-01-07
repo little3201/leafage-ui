@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
-import type { TableInstance } from 'element-plus'
-import { retrieveAuditLogs, fetchAuditLog, removeAuditLog } from 'src/api/audit-logs'
-import type { Pagination, AuditLog } from 'src/types'
 import { Icon } from '@iconify/vue'
+import type { TableInstance } from 'element-plus'
+import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/audit-logs'
 import { actions } from 'src/constants'
-import { formatDuration, hasAction, exportToCSV } from 'src/utils'
+import type { AuditLog, Pagination } from 'src/types'
+import { exportToCSV, formatDuration, hasAction } from 'src/utils'
+import { onMounted, reactive, ref } from 'vue'
 
 
 const loading = ref<boolean>(false)

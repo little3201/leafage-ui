@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
-import { useI18n } from 'vue-i18n'
+import { Icon } from '@iconify/vue'
+import type { FormInstance, FormRules, TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
 import {
-  retrieveRegions, retrieveRegionSubset, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, importRegions
+  createRegion,
+  enableRegion,
+  fetchRegion,
+  importRegions,
+  modifyRegion, removeRegion,
+  retrieveRegions, retrieveRegionSubset
 } from 'src/api/regions'
 import type { Pagination, Region } from 'src/types'
-import { Icon } from '@iconify/vue'
-import { hasAction, exportToCSV } from 'src/utils'
+import { exportToCSV, hasAction } from 'src/utils'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()

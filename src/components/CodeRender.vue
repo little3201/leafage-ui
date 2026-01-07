@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import hljs from 'boot/hljs'
 import type { HighlightResult } from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
+import { computed } from 'vue'
 
 const props = defineProps<{
   content: string | undefined,

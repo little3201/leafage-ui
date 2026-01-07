@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { PrivilegeTreeNode } from 'src/types'
 
 
@@ -13,5 +13,5 @@ export const useUserStore = defineStore('user', {
 })
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useUserStore, import.meta.hot))
 }

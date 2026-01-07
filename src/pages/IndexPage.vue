@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
 import type { ApexOptions } from 'apexcharts'
 import ChartView from 'components/ChartView.vue'
 import { retrieveCalendarEvents } from 'src/api/calendar-events'
-import type { Schedule } from 'src/types'
 import { lineOptions } from 'src/mocks/charts-data'
+import type { Schedule } from 'src/types'
+import { onMounted, reactive, ref } from 'vue'
 
 
 const today = ref(new Date())

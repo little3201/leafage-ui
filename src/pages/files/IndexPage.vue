@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
-import { dayjs } from 'element-plus'
-import type { TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
-import { retrieveFiles, fetchFile, uploadFile, downloadFile } from 'src/api/file-records'
-import type { Pagination, FileRecord } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { formatFileSize, download, hasAction } from 'src/utils'
+import type { TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
+import { dayjs } from 'element-plus'
+import { downloadFile, fetchFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import type { FileRecord, Pagination } from 'src/types'
+import { download, formatFileSize, hasAction } from 'src/utils'
+import { onMounted, reactive, ref } from 'vue'
 
 
 const loading = ref<boolean>(false)

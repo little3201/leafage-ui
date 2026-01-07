@@ -1,9 +1,9 @@
-import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
 import { i18n } from 'boot/i18n'
-import type { ComposerTranslation } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import { signIn } from 'src/api/authentication'
+import type { ComposerTranslation } from 'vue-i18n'
 
 
 const { t } = i18n.global as { t: ComposerTranslation }
@@ -70,13 +70,13 @@ api.interceptors.response.use(
 )
 
 // 构建 uniqueKey 的辅助函数
-function generateUniqueKey (config: InternalAxiosRequestConfig): string {
+function generateUniqueKey(config: InternalAxiosRequestConfig): string {
   const { method, url, params } = config
   const paramString = params ? JSON.stringify(params) : ''
   return `${method}:${url}:${paramString}`
 }
 
-function cancelAllRequest () {
+function cancelAllRequest() {
   abortControllerMap.forEach(controller => {
     controller.abort()
   })

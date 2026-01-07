@@ -1,10 +1,10 @@
 import js from '@eslint/js'
-import globals from 'globals'
-import pluginVue from 'eslint-plugin-vue'
 import {
   defineConfigWithVueTs,
   vueTsConfigs,
 } from '@vue/eslint-config-typescript'
+import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
 
 
 export default defineConfigWithVueTs(
@@ -60,6 +60,8 @@ export default defineConfigWithVueTs(
     // add your custom rules here
     rules: {
       'semi': ['error', 'never'],
+      'no-extra-semi': 'error',
+
       'prefer-promise-reject-errors': 'off',
 
       quotes: ['warn', 'single', { avoidEscape: true }],
@@ -67,7 +69,8 @@ export default defineConfigWithVueTs(
       // this rule, if on, would require explicit return type on the `render` function
       '@typescript-eslint/explicit-function-return-type': 'off',
 
-      // allow debugger during development only
+      // allow console, debugger during development only
+      'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
     }
   }

@@ -22,14 +22,14 @@
       </div>
       <ElRow :gutter="20">
         <ElCol :span="12">
-          <div class="bg-[var(--el-bg-color-page)] rounded-xl p-6">
+          <div class="bg-(--el-bg-color-page) rounded-xl p-6">
             <Icon icon="material-symbols:phone-in-talk-rounded" width="48" height="48" />
             <p><strong>电话：</strong> +86 123 4567 8901</p>
             <p>We are always happy to help!</p>
           </div>
         </ElCol>
         <ElCol :span="12">
-          <div class="bg-[var(--el-bg-color-page)] rounded-xl p-6">
+          <div class="bg-(--el-bg-color-page) rounded-xl p-6">
             <Icon icon="material-symbols:mail-outline-rounded" width="48" height="48" />
             <p><strong>邮箱：</strong> hello@help.com</p>
             <p>Best way to get answer faster!</p>
@@ -41,8 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
 
 const searchQuery = ref('')
 const faqList = [

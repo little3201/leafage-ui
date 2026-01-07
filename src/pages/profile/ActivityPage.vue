@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { actions } from 'src/constants'
+import { ref } from 'vue'
 
 
 // 仓库数据模拟

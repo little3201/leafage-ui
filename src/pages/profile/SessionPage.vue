@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
 
 const sessions = ref([
   { id: 1, device: 'Chrome on Windows', location: 'New York', country: 'US', ip: '192.168.0.112', status: 'online' },
@@ -9,7 +9,8 @@ const sessions = ref([
 ])
 
 function more(id: number) {
-  console.log(id)
+  // id
+  alert(id)
 }
 </script>
 

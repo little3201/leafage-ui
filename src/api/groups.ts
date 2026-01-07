@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Group } from 'src/types'
+import type { Group, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -158,5 +158,5 @@ export const removeGroupPrivileges = (id: number, privilegeId: number, action?: 
  * @returns
  */
 export const importGroups = (file: File) => {
-  return api.postForm(`${SERVER_URL.GROUP}/import`, {file: file})
+  return api.postForm(`${SERVER_URL.GROUP}/import`, { file: file })
 }

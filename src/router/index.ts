@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
-import { constantRouterMap } from './routes'
-import { useUserStore } from 'stores/user-store'
+import { getUserInfo, signIn } from 'src/api/authentication'
 import { retrievePrivilegeTree } from 'src/api/privileges'
-import { signIn, getUserInfo } from 'src/api/authentication'
 import type { PrivilegeTreeNode } from 'src/types'
+import { useUserStore } from 'stores/user-store'
+import type { RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import { constantRouterMap } from './routes'
 // Lazy load layout
 const BlankLayout = () => import('layouts/BlankLayout.vue')
 

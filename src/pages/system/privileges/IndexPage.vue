@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import type { TableInstance, FormInstance, FormRules, UploadInstance, UploadRequestOptions } from 'element-plus'
-import {
-  retrievePrivileges, retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege, importPrivileges
-} from 'src/api/privileges'
-import { retrieveDictionarySubset } from 'src/api/dictionaries'
-import { visibleArray, hasAction, exportToCSV } from 'src/utils'
-import { actions } from 'src/constants'
-import type { Pagination, Privilege, Dictionary } from 'src/types'
 import { Icon } from '@iconify/vue'
+import type { FormInstance, FormRules, TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
+import { retrieveDictionarySubset } from 'src/api/dictionaries'
+import {
+  enablePrivilege,
+  fetchPrivilege,
+  importPrivileges,
+  modifyPrivilege,
+  retrievePrivileges, retrievePrivilegeSubset
+} from 'src/api/privileges'
+import { actions } from 'src/constants'
+import type { Dictionary, Pagination, Privilege } from 'src/types'
+import { exportToCSV, hasAction, visibleArray } from 'src/utils'
+import { onMounted, reactive, ref } from 'vue'
 
 
 const loading = ref<boolean>(false)

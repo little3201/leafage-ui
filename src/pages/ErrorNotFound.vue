@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import notFound from 'src/assets/404.svg'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 </script>

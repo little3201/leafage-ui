@@ -1,9 +1,9 @@
-import { createI18n } from 'vue-i18n'
-import Cookies from 'universal-cookie'
-import type { I18n } from 'vue-i18n'
+import zhTW from 'src//lang/zh-TW'
 import enUS from 'src/lang/en-US'
 import zhCN from 'src/lang/zh-CN'
-import zhTW from 'src//lang/zh-TW'
+import Cookies from 'universal-cookie'
+import type { I18n } from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
 
 
 const cookies = new Cookies(null, { path: '/' })

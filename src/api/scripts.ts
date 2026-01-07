@@ -45,5 +45,5 @@ export const modifyScript = (id: number, row: Script) => {
  * @returns
  */
 export const importScripts = (file: File) => {
-  return api.postForm(`${SERVER_URL.SCRIPT}/import`, {file: file})
+  return api.postForm(`${SERVER_URL.SCRIPT}/import`, { file: file })
 }

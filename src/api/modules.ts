@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Module } from 'src/types'
+import type { Module, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**

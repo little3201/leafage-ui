@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
-import type { TableInstance } from 'element-plus'
-import { retrieveAccessLogs, fetchAccessLog, removeAccessLog, clearAccessLogs } from 'src/api/access-logs'
-import type { Pagination, AccessLog } from 'src/types'
 import { Icon } from '@iconify/vue'
-import { formatDuration, hasAction, exportToCSV } from 'src/utils'
+import type { TableInstance } from 'element-plus'
+import { clearAccessLogs, fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/access-logs'
 import { httpMethods } from 'src/constants'
+import type { AccessLog, Pagination } from 'src/types'
+import { exportToCSV, formatDuration, hasAction } from 'src/utils'
+import { onMounted, reactive, ref } from 'vue'
 
 
 const loading = ref<boolean>(false)
