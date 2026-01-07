@@ -62,7 +62,7 @@
               + {{ props.row.members.length - 5 }}
               <q-tooltip>
                 <q-avatar v-for="(item, index) in props.row.members.slice(5)" :key="index" size="3em"
-                  :style="{ left: `${index * -2}px`, border: '2px solid white' }">
+                  :style="{ left: `${(index as number) * -2}px`, border: '2px solid white' }">
                   <img :src="`${cdn_url}/${item}`" :alt="`avater_${index}`" />
                 </q-avatar>
               </q-tooltip>
@@ -191,7 +191,8 @@ function refresh() {
 }
 
 function relationRow(id: number) {
-  console.log(id)
+  // id
+  alert(id)
 }
 
 async function enableRow(id: number) {

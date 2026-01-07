@@ -1,7 +1,7 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
+import type { Field, Pagination, Schema } from 'src/types'
 import { dealFilters } from 'src/utils'
-import type { Pagination, Schema, Field } from 'src/types'
 
 /**
  * Retrieve rows

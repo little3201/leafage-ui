@@ -12,11 +12,11 @@
 </template>
 
 <script setup lang="ts">
+import type { QuasarLanguage } from 'quasar'
+import { Cookies, useQuasar } from 'quasar'
+import languages from 'quasar/lang/index.json'
 import { watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useQuasar, Cookies } from 'quasar'
-import languages from 'quasar/lang/index.json'
-import type { QuasarLanguage } from 'quasar'
 
 const $q = useQuasar()
 

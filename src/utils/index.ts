@@ -190,7 +190,6 @@ function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => str
 export function exportTable(columns: QTableProps['columns'], rows: QTableProps['rows']) {
   if (!columns || !rows || columns.length === 0 || rows.length === 0) {
     // Handle the case where columns or rows are undefined or empty
-    console.error('Columns or rows are undefined or empty.')
     return
   }
   // naive encoding to csv format

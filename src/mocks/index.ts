@@ -1,33 +1,33 @@
-import { dictionariesHandlers } from './dictionaries'
-import { authenticationHandlers } from './authentication'
-import { groupsHandlers } from './groups'
-import { regionsHandlers } from './regions'
-import { usersHandlers } from './users'
-import { privilegesHandlers } from './privileges'
-import { operationLogsHandlers } from './operation-logs'
 import { accessLogsHandlers } from './access-logs'
 import { auditLogsHandlers } from './audit-logs'
-import { schedulerLogsHandlers } from './scheduler-logs'
+import { authenticationHandlers } from './authentication'
+import { connectionsHandlers } from './connections'
+import { dictionariesHandlers } from './dictionaries'
 import { fileRecordsHandlers } from './file-records'
+import { groupsHandlers } from './groups'
+import { operationLogsHandlers } from './operation-logs'
+import { privilegesHandlers } from './privileges'
+import { regionsHandlers } from './regions'
+import { samplesHandlers } from './samples'
+import { schedulerLogsHandlers } from './scheduler-logs'
 import { schemasHandlers } from './schemas'
 import { scriptsHandlers } from './scripts'
-import { samplesHandlers } from './samples'
-import { connectionsHandlers } from './connections'
+import { usersHandlers } from './users'
 
 export const handlers = [
-  ...authenticationHandlers,
-  ...dictionariesHandlers,
-  ...groupsHandlers,
-  ...regionsHandlers,
-  ...usersHandlers,
-  ...privilegesHandlers,
-  ...operationLogsHandlers,
   ...accessLogsHandlers,
   ...auditLogsHandlers,
-  ...schedulerLogsHandlers,
+  ...authenticationHandlers,
+  ...connectionsHandlers,
+  ...dictionariesHandlers,
   ...fileRecordsHandlers,
+  ...groupsHandlers,
+  ...operationLogsHandlers,
+  ...privilegesHandlers,
+  ...regionsHandlers,
+  ...samplesHandlers,
+  ...schedulerLogsHandlers,
   ...schemasHandlers,
   ...scriptsHandlers,
-  ...samplesHandlers,
-  ...connectionsHandlers
+  ...usersHandlers
 ]

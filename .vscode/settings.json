@@ -2,16 +2,20 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint"
-  ],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
-    "vue"
+    "vue",
+    "html"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.format.semicolons": "remove",
+  "javascript.format.semicolons": "remove",
   "eslint.format.enable": true,
   "editor.formatOnSave": true,
   "[typescript]": {

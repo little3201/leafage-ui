@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import type { User } from 'src/types'
 import { SERVER_URL } from 'src/constants'
+import type { User } from 'src/types'
 
 const datas: User[] = []
 
