@@ -59,6 +59,7 @@ export default defineConfigWithVueTs(
 
     // add your custom rules here
     rules: {
+      'semi': ['error', 'never'],
       'prefer-promise-reject-errors': 'off',
 
       quotes: ['warn', 'single', { avoidEscape: true }],

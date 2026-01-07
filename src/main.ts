@@ -7,9 +7,9 @@ import 'src/css/main.css'
 // If you want to use ElMessage, import it.
 import 'element-plus/theme-chalk/src/message.scss'
 
-import pinia from './stores'
-import router from './router'
 import { i18n } from 'boot/i18n'
+import router from './router'
+import pinia from './stores'
 
 async function prepareApp() {
   if (!import.meta.env.DEV) {

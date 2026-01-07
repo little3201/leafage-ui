@@ -2,14 +2,16 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint"
-  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit", 
+    "source.organizeImports": "explicit"
+  },
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
-    "vue"
+    "vue",
+    "html"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.format.enable": true,
