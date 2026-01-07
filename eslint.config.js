@@ -1,8 +1,8 @@
 import js from '@eslint/js'
-import globals from 'globals'
-import pluginVue from 'eslint-plugin-vue'
 import pluginQuasar from '@quasar/app-vite/eslint'
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
 
 export default defineConfigWithVueTs(
   {
@@ -65,8 +65,15 @@ export default defineConfigWithVueTs(
 
     // add your custom rules here
     rules: {
+      'semi': ['error', 'never'],
+      'no-extra-semi': 'error',
+
+      quotes: ['warn', 'single', { avoidEscape: true }],
+
       'prefer-promise-reject-errors': 'off',
-      // allow debugger during development only
+
+      // allow console, debugger during development only
+      'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
       'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
     }
   },

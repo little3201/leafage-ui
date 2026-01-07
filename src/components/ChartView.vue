@@ -3,15 +3,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, onBeforeUnmount, onActivated } from 'vue'
-import { useQuasar, debounce, is } from 'quasar'
+import type { ApexOptions } from 'apexcharts'
 import ApexCharts from 'apexcharts'
+import { debounce, is, useQuasar } from 'quasar'
+import { computed, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 
 const $q = useQuasar()
 
 const props = withDefaults(defineProps<{
-  options: ApexCharts.ApexOptions
+  options: ApexOptions
   width?: number | string
   height?: number | string
 }>(), {
@@ -27,7 +28,7 @@ const options = computed(() => ({
 }))
 
 const elRef = ref<HTMLElement | null>(null)
-let chartRef: ApexCharts | null = null
+let chart: ApexCharts
 
 const styles = computed(() => {
   const width = is.number(props.width) ? `${props.width}px` : props.width
@@ -42,20 +43,20 @@ const styles = computed(() => {
 const initChart = async () => {
   if (elRef.value && props.options) {
     // 销毁旧图表，防止重复渲染
-    if (chartRef) {
-      chartRef.destroy()
+    if (chart) {
+      chart.destroy()
     }
-    chartRef = new ApexCharts(elRef.value, options.value)
-    await chartRef?.render()
+    chart = new ApexCharts(elRef.value, options.value)
+    await chart?.render()
   }
 }
 
 watch(
   () => options.value,
   async (options) => {
-    if (chartRef) {
+    if (chart) {
       // 第二个参数 true 表示对图表强制更新
-      await chartRef?.updateOptions(options, true, false)
+      await chart?.updateOptions(options, true, false)
     }
   },
   {
@@ -64,8 +65,8 @@ watch(
 )
 
 const resizeHandler = debounce(async () => {
-  if (chartRef) {
-    await chartRef.updateOptions(options.value, true, false)
+  if (chart) {
+    await chart.updateOptions(options.value, true, false)
   }
 }, 100)
 
@@ -90,13 +91,13 @@ onBeforeUnmount(() => {
     (elRef.value as Element).removeEventListener('transitionend', contentResizeHandler as (event: Event) => void)
   }
 
-  if (chartRef) {
-    chartRef.destroy()
+  if (chart) {
+    chart.destroy()
   }
 })
 
 onActivated(() => {
-  if (chartRef) {
+  if (chart) {
     resizeHandler()
   }
 })

@@ -12,7 +12,7 @@ export const authenticationHandlers = [
   http.get(`/api${SERVER_URL.AUTHORIZE}`, ({ request }) => {
     const url = new URL(request.url)
     const state = url.searchParams.get('state')
-    const code = 'Y0nE-MYHtJ2qwAV0oOCrqAP9AGCxRyEjfjtJUgZB1odj18MpIG1LjvC9la5wrr1DV5GlvEHYqpBkr2igSJJWrGx_9pOiddOzeM8D4Lmkk0IQIrvnsf-U14I3e_IRAs8T'
+    const code = 'Y0n'
 
     return new HttpResponse(null, {
       status: 302,
@@ -24,9 +24,9 @@ export const authenticationHandlers = [
 
   http.post(`/api${SERVER_URL.TOKEN}`, () => {
     return HttpResponse.json({
-      access_token: 'eyJraWQiOiI5MGQ4ZWNhYy1iOGNhLTRiNTItYjc4Zi1lZjEzOWQ0ZTQyMzQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZFlMSJ9.bUGGupnt_1qYJxEseovj6KjA',
+      access_token: 'eyJraWQi',
       expires_in: 300,
-      id_token: 'eyJraWQiOiI5MGQ4ZWNhYy1iOGNhLTRiNTItYjc4Zi1lZjEzOWQ0ZTQyMzQiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhZFlMSJ9.bUGGupnt_1qYJxEseovj6KjA',
+      id_token: 'eyJraWQiOi',
       scope: 'openid profile',
       token_type: 'Bearer'
     })

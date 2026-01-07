@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import { generateVerifier, generateCodeChallenge } from 'src/utils'
+import { generateCodeChallenge, generateVerifier } from 'src/utils'
 
 
 const CLIENT_ID = process.env.CLIENT_ID || ''
