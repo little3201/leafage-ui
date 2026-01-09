@@ -196,7 +196,7 @@ export interface Field extends AudtiMetadata {
 export interface Sample extends AudtiMetadata {
   name: string
   module: string
-  stack: string
+  language: string
   type: 'SINGLE' | 'TREE'
   body: string | undefined
   filePath?: number

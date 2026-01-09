@@ -7,7 +7,7 @@ const datas: Sample[] = [
     id: 1,
     name: 'IndexPage',
     module: 'frontend',
-    stack: '.vue',
+    language: 'vue',
     type: 'SINGLE',
     enabled: true,
     body: '<template>\n  <div class="app-container">\n </div>\n</template>',
@@ -17,7 +17,7 @@ const datas: Sample[] = [
     id: 2,
     name: 'users',
     module: 'frontend',
-    stack: '.ts',
+    language: 'ts',
     type: 'SINGLE',
     enabled: true,
     body: 'import { api } from \'boot/axios\'\nimport { SERVER_URL } from \'src/constants\'\nimport type { Pagination, User } from \'src/types\'\n\n/**\n * Retrieve rows\n * @param pagination Pagination and sort parameters\n * @param filters Optional filter or sort parameters\n * @returns Rows data\n */\nexport const retrieveUsers = (pagination: Pagination, filters?: object) => {\n  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, ...filters } })\n}\n\n',
@@ -27,7 +27,7 @@ const datas: Sample[] = [
     id: 3,
     name: 'entity',
     module: 'backend',
-    stack: '.java',
+    language: 'java',
     type: 'SINGLE',
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -37,7 +37,7 @@ const datas: Sample[] = [
     id: 4,
     name: 'repository',
     module: 'backend',
-    stack: '.java',
+    language: 'java',
     type: 'SINGLE',
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -47,7 +47,7 @@ const datas: Sample[] = [
     id: 5,
     name: 'mapper',
     module: 'backend',
-    stack: '.java',
+    language: 'java',
     type: 'SINGLE',
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -57,7 +57,7 @@ const datas: Sample[] = [
     id: 6,
     name: 'controller',
     module: 'backend',
-    stack: '.java',
+    language: 'java',
     type: 'SINGLE',
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -81,7 +81,7 @@ export const samplesHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      body: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
       totalElements: datas.length
     }
 

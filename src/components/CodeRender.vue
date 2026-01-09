@@ -1,5 +1,5 @@
 <template>
-  <pre v-if="content" class="relative-position q-my-none" style="height: 600px;">
+  <pre v-if="content" class="relative-position q-my-none">
     <code class="hljs" v-html="highlightResult?.value"></code>
     <small class="absolute absolute-top-right text-white q-pr-sm q-pt-sm">
       {{ highlightResult?.language }}
