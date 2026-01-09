@@ -48,7 +48,7 @@
   },
   "msw": {
     "workerDirectory": [
-      "src/mocks"
+      "public"
     ]
   },
   "packageManager": "pnpm@10.8.0"
