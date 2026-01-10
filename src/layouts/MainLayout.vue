@@ -27,7 +27,7 @@ async function logout() {
   const res = await signOut()
   if (res && res.status === 200) {
     userStore.$reset()
-    signIn()
+    void signIn()
   }
 }
 </script>

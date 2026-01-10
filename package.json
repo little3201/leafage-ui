@@ -16,10 +16,10 @@
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
-    "@vueuse/core": "^13.9.0",
-    "apexcharts": "^4.7.0",
+    "@vueuse/core": "^14.1.0",
+    "apexcharts": "^5.3.6",
     "axios": "^1.13.2",
-    "element-plus": "^2.13.0",
+    "element-plus": "^2.13.1",
     "highlight.js": "^11.11.1",
     "pinia": "^3.0.4",
     "universal-cookie": "^8.0.1",
@@ -29,18 +29,18 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.3.0",
-    "@commitlint/config-conventional": "^20.3.0",
+    "@commitlint/cli": "^20.3.1",
+    "@commitlint/config-conventional": "^20.3.1",
     "@eslint/js": "^9.39.2",
     "@tailwindcss/vite": "^4.1.18",
-    "@types/node": "^22.19.3",
+    "@types/node": "^24.10.6",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vitest/coverage-v8": "4.0.16",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.8.1",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "^10.6.2",
-    "globals": "^16.5.0",
+    "globals": "^17.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "msw": "^2.12.7",
@@ -59,5 +59,5 @@
       "public"
     ]
   },
-  "packageManager": "pnpm@10.8.0"
+  "packageManager": "pnpm@10.28.0"
 }
