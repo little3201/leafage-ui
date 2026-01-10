@@ -10,7 +10,7 @@ import { privilegesHandlers } from './privileges'
 import { regionsHandlers } from './regions'
 import { samplesHandlers } from './samples'
 import { schedulerLogsHandlers } from './scheduler-logs'
-import { schemasHandlers } from './schemas'
+import { schemesHandlers } from './schemes'
 import { scriptsHandlers } from './scripts'
 import { usersHandlers } from './users'
 
@@ -27,7 +27,7 @@ export const handlers = [
   ...regionsHandlers,
   ...samplesHandlers,
   ...schedulerLogsHandlers,
-  ...schemasHandlers,
+  ...schemesHandlers,
   ...scriptsHandlers,
   ...usersHandlers
 ]

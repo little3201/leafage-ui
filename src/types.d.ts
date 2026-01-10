@@ -170,7 +170,7 @@ export interface FileRecord extends AudtiMetadata {
   lastModifiedDate?: Date
 }
 
-export interface Schema extends AudtiMetadata {
+export interface Scheme extends AudtiMetadata {
   name: string
   connectionId: number | undefined
   prefix?: string

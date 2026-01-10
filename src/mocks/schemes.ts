@@ -1,12 +1,12 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Field, SampleNode, SampleTreeNode, Schema } from 'src/types'
+import type { Field, SampleNode, SampleTreeNode, Scheme } from 'src/types'
 
-const datas: Schema[] = [
+const datas: Scheme[] = [
 ]
 
 for (let i = 1; i < 6; i++) {
-  const row: Schema = {
+  const row: Scheme = {
     id: i,
     name: 'table_name' + i,
     connectionId: 1,
@@ -129,8 +129,8 @@ const sampleNodes: SampleNode = {
   resources: resources
 }
 
-export const schemasHandlers = [
-  http.get(`/api${SERVER_URL.SCHEMA}/:id/preview`, ({ params }) => {
+export const schemesHandlers = [
+  http.get(`/api${SERVER_URL.SCHEME}/:id/preview`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(sampleNodes)
@@ -138,7 +138,7 @@ export const schemasHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}/:id/fields`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SCHEME}/:id/fields`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(fields)
@@ -146,7 +146,7 @@ export const schemasHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
@@ -154,7 +154,7 @@ export const schemasHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}/:id/exists`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SCHEME}/:id/exists`, ({ params }) => {
     const { id, name } = params
     let filtered = datas.filter(item => item.name === name)
     if (id) {
@@ -162,7 +162,7 @@ export const schemasHandlers = [
     }
     return HttpResponse.json(filtered.length > 0)
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.SCHEME}`, ({ request }) => {
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
@@ -175,7 +175,7 @@ export const schemasHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SCHEME}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -191,9 +191,9 @@ export const schemasHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.SCHEME}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Schema
+    const newData = await request.json() as Scheme
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -202,7 +202,7 @@ export const schemasHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}/:id/download`, ({ params }) => {
+  http.post(`/api${SERVER_URL.SCHEME}/:id/download`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -210,10 +210,10 @@ export const schemasHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.put(`/api${SERVER_URL.SCHEMA}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.SCHEME}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Schema
+    const newData = await request.json() as Scheme
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
@@ -223,7 +223,7 @@ export const schemasHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -231,14 +231,14 @@ export const schemasHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/sync`, async ({ request }) => {
+  http.patch(`/api${SERVER_URL.SCHEME}/sync`, async ({ request }) => {
     const data = await request.json()
     if (data) {
       return HttpResponse.json()
     }
     return HttpResponse.error()
   }),
-  http.delete(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

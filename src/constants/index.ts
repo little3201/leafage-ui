@@ -36,7 +36,7 @@ export const SERVER_URL = {
 
   // exploiters
   SCRIPT: SERVER_PREFIX.HYPERVISOR.concat('/scripts'), // 脚本
-  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 计划
+  SCHEME: SERVER_PREFIX.HYPERVISOR.concat('/schemes'), // 计划
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 样板
   CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 连接
 }
@@ -100,4 +100,40 @@ export const shceduleStatusIcon: { [key: string]: string } = {
   SUCCESS: 'check',
   FAILED: 'error',
   CANCELED: 'cancel'
+}
+
+export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
+  ACTIVE: 'success',
+  LOCKED: 'primary',
+  EXPIRED: 'info',
+  CREDENTIALS_EXPIRED: 'warning',
+  DISABLED: 'danger'
+}
+
+export const schemeScope: { [key: string]: 'primary' | 'success' } = {
+  ALL: 'success',
+  PARTIAL: 'primary'
+}
+
+export const databaseType: { [key: string]: string } = {
+  POSTGRESQL: 'postgresql',
+  MYSQL: 'mysql'
+}
+
+export const sampleType: { [key: string]: 'primary' | 'success' } = {
+  SINGLE: 'primary',
+  COMBINE: 'success'
+}
+
+export const languages: { [key: string]: string } = {
+  JAVA: 'java',
+  YML: 'yml',
+  XML: 'xml',
+  SQL: 'sql',
+  TS: 'ts',
+  TSX: 'tsx',
+  JS: 'js',
+  JSX: 'jsx',
+  VUE: 'vue',
+  REACT: 'react'
 }

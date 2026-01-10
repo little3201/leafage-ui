@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Field, Pagination, Schema } from 'src/types'
+import type { Field, Pagination, Scheme } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -13,15 +13,15 @@ export const retrieveSchemas = (pagination: Pagination, filters?: object | strin
   if (filters) {
     filters = dealFilters(filters)
   }
-  return api.get(SERVER_URL.SCHEMA, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.SCHEME, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 export const retrieveSchemaFields = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/fields`)
+  return api.get(`${SERVER_URL.SCHEME}/${id}/fields`)
 }
 
 export const retrieveSchemaPreview = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/preview`)
+  return api.get(`${SERVER_URL.SCHEME}/${id}/preview`)
 }
 
 /**
@@ -30,7 +30,7 @@ export const retrieveSchemaPreview = (id: number) => {
  * @returns Row data
  */
 export const fetchSchema = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.get(`${SERVER_URL.SCHEME}/${id}`)
 }
 
 /**
@@ -38,8 +38,8 @@ export const fetchSchema = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSchema = (row: Schema) => {
-  return api.post(SERVER_URL.SCHEMA, row)
+export const createSchema = (row: Scheme) => {
+  return api.post(SERVER_URL.SCHEME, row)
 }
 
 /**
@@ -48,8 +48,8 @@ export const createSchema = (row: Schema) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySchema = (id: number, row: Schema) => {
-  return api.put(`${SERVER_URL.SCHEMA}/${id}`, row)
+export const modifySchema = (id: number, row: Scheme) => {
+  return api.put(`${SERVER_URL.SCHEME}/${id}`, row)
 }
 
 /**
@@ -58,7 +58,7 @@ export const modifySchema = (id: number, row: Schema) => {
  * @returns Created row
  */
 export const syncSchema = (id: number) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}/sync`)
+  return api.patch(`${SERVER_URL.SCHEME}/${id}/sync`)
 }
 
 /**
@@ -67,7 +67,7 @@ export const syncSchema = (id: number) => {
  * @returns Created row
  */
 export const generateSchema = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/download`, { responseType: 'blob' })
+  return api.get(`${SERVER_URL.SCHEME}/${id}/download`, { responseType: 'blob' })
 }
 
 /**
@@ -76,7 +76,7 @@ export const generateSchema = (id: number) => {
  * @returns Deletion status
  */
 export const removeSchema = (id: number) => {
-  return api.delete(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.delete(`${SERVER_URL.SCHEME}/${id}`)
 }
 
 /**
@@ -86,7 +86,7 @@ export const removeSchema = (id: number) => {
  * @returns
  */
 export const configSchemaFields = (id: number, rows: Array<Field>) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}/fields`, rows)
+  return api.patch(`${SERVER_URL.SCHEME}/${id}/fields`, rows)
 }
 
 /**
@@ -97,5 +97,5 @@ export const configSchemaFields = (id: number, rows: Array<Field>) => {
 export const importSchemas = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
-  return api.post(`${SERVER_URL.SCHEMA}/import`, formData)
+  return api.post(`${SERVER_URL.SCHEME}/import`, formData)
 }

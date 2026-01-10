@@ -52,7 +52,7 @@ const datas: Privilege[] = [
     path: 'exploiters',
     component: '#',
     name: 'exploiters',
-    redirect: 'schemas',
+    redirect: 'schemes',
     icon: 'build',
     count: 1,
     enabled: true,
@@ -160,9 +160,9 @@ const subDatas: Privilege[] = [
   {
     id: 17,
     superiorId: 16,
-    path: 'schemas',
-    name: 'schemas',
-    component: 'exploiters/schemas',
+    path: 'schemes',
+    name: 'schemes',
+    component: 'exploiters/schemes',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'preview', 'enable'],
     count: 0,
     enabled: true,
@@ -327,16 +327,16 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'exploiters',
       component: '#',
-      redirect: 'schemas',
+      redirect: 'schemes',
       icon: 'build'
     },
     children: [
       {
         id: 17,
-        name: 'schemas',
+        name: 'schemes',
         meta: {
-          path: 'schemas',
-          component: 'exploiters/schemas',
+          path: 'schemes',
+          component: 'exploiters/schemes',
           icon: 'genetics',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'sync', 'config', 'execute', 'enable']
         }
@@ -353,13 +353,44 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 19,
-        name: 'samples',
+        name: 'templates',
         meta: {
-          path: 'samples',
-          component: 'exploiters/samples',
+          path: 'templates',
+          component: 'exploiters/templates',
           icon: 'code',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
-        }
+        },
+        children: [
+          {
+            id: 20,
+            name: 'samples',
+            meta: {
+              path: 'samples',
+              component: 'exploiters/templates/samples',
+              icon: 'code',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          },
+          {
+            id: 21,
+            name: 'modules',
+            meta: {
+              path: 'modules',
+              component: 'exploiters/templates/modules',
+              icon: 'code',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          },
+          {
+            id: 22,
+            name: 'fragments',
+            meta: {
+              path: 'fragments',
+              component: 'exploiters/templates/fragments',
+              icon: 'code',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          }
+        ]
       }
     ]
   }

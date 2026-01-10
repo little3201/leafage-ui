@@ -8,9 +8,6 @@ export default defineBoot(async ({ router }) => {
     const worker = setupWorker(...handlers)
     await worker.start({
       onUnhandledRequest: 'bypass',
-      serviceWorker: {
-        url: '/src/mocks/mockServiceWorker.js',
-      },
     })
 
     router.addRoute({
