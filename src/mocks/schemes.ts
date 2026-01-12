@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Field, Module, Sample, Scheme } from 'src/types'
+import type { Field, Sample, Scheme, SchemeModule } from 'src/types'
 
 const datas: Scheme[] = [
 ]
@@ -18,16 +18,16 @@ for (let i = 1; i < 16; i++) {
   datas.push(row)
 }
 
-const modules: Module[] = []
-for (let i = 1; i < 16; i++) {
-  const row: Module = {
+const schemeModules: SchemeModule[] = []
+for (let i = 1; i < 6; i++) {
+  const row: SchemeModule = {
     id: i,
-    name: 'module_name' + i,
-    description: 'this is description.',
-    enabled: i > 2
+    schemeId: Math.floor(Math.random() * 6),
+    moduleId: i
   }
-  modules.push(row)
+  schemeModules.push(row)
 }
+
 
 const fields: Field[] = []
 
@@ -73,7 +73,8 @@ export const schemesHandlers = [
   http.get(`/api${SERVER_URL.SCHEME}/:id/modules`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(modules)
+      const filtered = schemeModules.filter(item => item.schemeId === Number(id))
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
@@ -109,7 +110,7 @@ export const schemesHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
 

@@ -129,7 +129,6 @@ const loading = ref<boolean>(false)
 const initialValues: Group = {
   id: null,
   name: '',
-  superiorId: null,
   enabled: true
 }
 const form = ref<Group>({ ...initialValues })

@@ -171,7 +171,7 @@ const subDatas: Privilege[] = [
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
-    icon: 'genetics',
+    icon: 'database_search',
     description: 'this is description for this row'
   },
   {
@@ -206,7 +206,7 @@ const subDatas: Privilege[] = [
     component: '#',
     count: 1,
     enabled: true,
-    icon: 'code',
+    icon: 'folder_code',
     description: 'this is description for this row'
   },
   {
@@ -218,7 +218,7 @@ const subDatas: Privilege[] = [
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
-    icon: 'code',
+    icon: 'modeling',
     description: 'this is description for this row'
   },
   {
@@ -230,7 +230,7 @@ const subDatas: Privilege[] = [
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
-    icon: 'code',
+    icon: 'code_blocks',
     description: 'this is description for this row'
   },
   {
@@ -389,7 +389,7 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'connections',
           component: 'exploiters/connections',
-          icon: 'genetics',
+          icon: 'database_search',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
         }
       },
@@ -420,7 +420,7 @@ const treeNodes: PrivilegeTreeNode[] = [
           path: 'templates',
           component: '#',
           redirect: 'schemes',
-          icon: 'code',
+          icon: 'folder_code',
         },
         children: [
           {
@@ -429,7 +429,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             meta: {
               path: 'modules',
               component: 'exploiters/templates/modules',
-              icon: 'code',
+              icon: 'modeling',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
             }
           },
@@ -439,7 +439,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             meta: {
               path: 'samples',
               component: 'exploiters/templates/samples',
-              icon: 'code',
+              icon: 'code_blocks',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
             }
           },
@@ -540,7 +540,7 @@ export const privilegesHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
 

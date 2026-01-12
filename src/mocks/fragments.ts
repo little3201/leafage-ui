@@ -3,16 +3,20 @@ import { SERVER_URL } from 'src/constants'
 import type { Fragment } from 'src/types'
 
 const datas: Fragment[] = [
-  {
-    id: 1,
-    name: 'IndexPage',
-    language: 'java',
-    body: '',
+]
+
+for (let i = 1; i < 29; i++) {
+  const row: Fragment = {
+    id: i,
+    name: 'name_' + i,
+    language: ['java', 'vue', 'ts'][Math.floor(Math.random() * 3)] || '',
+    body: 'body',
     version: 1,
     enabled: true,
     lastModifiedDate: new Date()
   }
-]
+  datas.push(row)
+}
 
 export const fragmentsHandlers = [
   http.get(`/api${SERVER_URL.FRAGMENT}/:id`, ({ params }) => {
@@ -30,7 +34,7 @@ export const fragmentsHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
 

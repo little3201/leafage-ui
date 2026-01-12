@@ -32,7 +32,7 @@ export const schedulerLogsHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
 
