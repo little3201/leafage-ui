@@ -5,7 +5,6 @@
   "compilerOptions": {
     "composite": true,
     "types": ["vitest/config"],
-    "module": "ESNext",
     "baseUrl": ".",
     "paths": {
       "src": ["./src"],

@@ -201,10 +201,56 @@ const subDatas: Privilege[] = [
   {
     id: 17,
     superiorId: 14,
+    path: 'templates',
+    name: 'templates',
+    component: 'exploiters/templates',
+    count: 3,
+    enabled: true,
+    icon: 'folder-code-outline',
+    description: 'this is description for this row'
+  },
+  {
+    id: 18,
+    superiorId: 14,
+    path: 'connections',
+    name: 'connections',
+    component: 'exploiters/connections',
+    count: 0,
+    enabled: true,
+    icon: 'database-search',
+    description: 'this is description for this row'
+  },
+  {
+    id: 19,
+    superiorId: 17,
+    path: 'modules',
+    name: 'modules',
+    component: 'exploiters/templates/modules',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'modeling-outline',
+    description: 'this is description for this row'
+  },
+  {
+    id: 20,
+    superiorId: 17,
     path: 'samples',
     name: 'samples',
-    component: 'exploiters/samples',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    component: 'exploiters/templates/samples',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'code-blocks-outline',
+    description: 'this is description for this row'
+  },
+  {
+    id: 21,
+    superiorId: 17,
+    path: 'fragments',
+    name: 'fragments',
+    component: 'exploiters/templates/fragments',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable'],
     count: 0,
     enabled: true,
     icon: 'code',
@@ -353,7 +399,7 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'exploiters',
       component: '#',
-      redirect: 'schemes',
+      redirect: '/exploiters/schemes',
       icon: 'build-outline'
     },
     children: [
@@ -378,24 +424,25 @@ const treeNodes: PrivilegeTreeNode[] = [
         }
       },
       {
+        id: 18,
+        name: 'connections',
+        meta: {
+          path: 'connections',
+          component: 'exploiters/connections',
+          icon: 'database-search',
+          actions: ['create', 'modify', 'remove', 'sync']
+        }
+      },
+      {
         id: 17,
         name: 'templates',
         meta: {
           path: 'templates',
-          component: 'exploiters/templates',
+          component: '#',
+          redirect: '/exploiter/templates/samples',
           icon: 'folder-code-outline',
         },
         children: [
-          {
-            id: 18,
-            name: 'samples',
-            meta: {
-              path: 'samples',
-              component: 'exploiters/templates/samples',
-              icon: 'code-blocks-outline',
-              actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'execute', 'enable']
-            }
-          },
           {
             id: 19,
             name: 'modules',
@@ -403,11 +450,21 @@ const treeNodes: PrivilegeTreeNode[] = [
               path: 'modules',
               component: 'exploiters/templates/modules',
               icon: 'modeling-outline',
-              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable']
             }
           },
           {
             id: 20,
+            name: 'samples',
+            meta: {
+              path: 'samples',
+              component: 'exploiters/templates/samples',
+              icon: 'code-blocks-outline',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable']
+            }
+          },
+          {
+            id: 21,
             name: 'fragments',
             meta: {
               path: 'fragments',
@@ -417,17 +474,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             }
           },
         ]
-      },
-      {
-        id: 15,
-        name: 'connections',
-        meta: {
-          path: 'connections',
-          component: 'exploiters/connections',
-          icon: 'database-search',
-          actions: ['create', 'modify', 'remove', 'sync']
-        }
-      },
+      }
     ]
   }
 ]
@@ -510,7 +557,7 @@ export const privilegesHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
         totalElements: datas.length
       }

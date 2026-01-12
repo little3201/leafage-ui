@@ -6,27 +6,16 @@ const datas: Region[] = []
 const subDatas: Region[] = []
 
 for (let i = 1; i < 34; i++) {
+  const superiorId: number | null = Math.floor(Math.random() * 12) || null
   const data: Region = {
     id: i,
-    superiorId: null,
+    superiorId: superiorId,
     name: 'region_' + i,
     areaCode: Math.floor(Math.random() * 100),
     postalCode: Math.floor(Math.random() * 3000),
     enabled: i % 3 > 0,
     count: 1,
     description: 'This is region description about xxx'
-  }
-  for (let j = 1; j < i; j++) {
-    const subData: Region = {
-      id: 100 + j,
-      name: 'region_' + i + '_' + j,
-      superiorId: i,
-      areaCode: Math.floor(Math.random() * 1000),
-      postalCode: Math.floor(Math.random() * 3000) + j * 100,
-      enabled: j % 2 > 0,
-      description: 'This is region description about xxx'
-    }
-    subDatas.push(subData)
   }
   datas.push(data)
 }

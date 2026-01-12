@@ -1,24 +1,29 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Fragment } from 'src/types'
+import { dealFilters } from 'src/utils'
 
-const datas: Fragment[] = [
-  {
-    id: 1,
-    name: 'IndexPage',
-    language: 'java',
-    body: '',
+const datas: Fragment[] = []
+
+for (let i = 1; i < 29; i++) {
+  const row: Fragment = {
+    id: i,
+    name: 'name_' + i,
+    language: ['java', 'vue', 'ts'][Math.floor(Math.random() * 3)] || '',
+    body: 'body',
     version: 1,
     enabled: true,
     lastModifiedDate: new Date()
   }
-]
+  datas.push(row)
+}
 
 export const fragmentsHandlers = [
   http.get(`/api${SERVER_URL.FRAGMENT}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
+      const filtered = datas.filter(item => item.id === Number(id))[0]
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
@@ -27,12 +32,23 @@ export const fragmentsHandlers = [
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
     const size = searchParams.get('size')
+    const filters = searchParams.get('filters')
     // Construct a JSON response with the list of all Row
     // as the response body.
+    let language: string | null = null
+    let filtered = datas
+    if (filters) {
+      const filter = dealFilters(filters) as { language?: string } | null
+      // 更好的类型检查方式
+      if (filter?.language) {
+        language = filter.language
+        filtered = datas.filter(item => item.language === language?.substring(language.lastIndexOf(':') + 1))
+      }
+    }
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
 

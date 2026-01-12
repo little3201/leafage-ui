@@ -1,18 +1,12 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Group, GroupMembers, GroupPrivileges, GroupRoles, TreeNode } from 'src/types'
+import { dealFilters } from 'src/utils'
 
 const datas: Group[] = []
 
 for (let i = 1; i < 28; i++) {
-  let superiorId: number | null
-  if (i === 1) {
-    superiorId = null // 根节点
-  } else if (i <= 3) {
-    superiorId = 1 // 第二层
-  } else {
-    superiorId = (i % 2 === 0) ? 2 : 3 // 第三层，交替归属到2或3
-  }
+  const superiorId: number | null = Math.floor(Math.random() * 12) || null
   const row: Group = {
     id: i,
     superiorId: superiorId,
@@ -109,7 +103,8 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(members.filter(item => item.groupId === Number(id)))
+      const filtered = members.filter(item => item.groupId === Number(id))
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json([])
     }
@@ -117,7 +112,8 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/roles`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(roles.filter(item => item.groupId === Number(id)))
+      const filtered = roles.filter(item => item.groupId === Number(id))
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json([])
     }
@@ -125,7 +121,8 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/privileges`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(privileges.filter(item => item.groupId === Number(id)))
+      const filtered = privileges.filter(item => item.groupId === Number(id))
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json([])
     }
@@ -133,8 +130,8 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      const array = datas.filter(item => item.id === Number(id))
-      return HttpResponse.json(array[0])
+      const filtered = datas.filter(item => item.id === Number(id))
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
@@ -144,22 +141,22 @@ export const groupsHandlers = [
     const page = searchParams.get('page')
     const size = searchParams.get('size')
     const filters = searchParams.get('filters')
-    const superiorId = filters?.split(':')[2]
 
-    const filtered = datas.filter(item => { return item.superiorId === Number(superiorId) })
-    let data = {
-      content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-      page: {
-        totalElements: filtered.length
+    let superiorId: number | null = null
+    let filtered = datas
+    if (filters) {
+      const filter = dealFilters(filters) as { superiorId?: number } | null
+      // 更好的类型检查方式
+      if (filter?.superiorId) {
+        superiorId = filter.superiorId
+        filtered = datas.filter(item => { return item.superiorId === superiorId })
       }
     }
 
-    if (superiorId) {
-      data = {
-        content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-        page: {
-          totalElements: filtered.length
-        }
+    const data = {
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      page: {
+        totalElements: filtered.length
       }
     }
     return HttpResponse.json(data)

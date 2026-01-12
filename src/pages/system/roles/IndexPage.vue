@@ -479,7 +479,7 @@ async function handleActionCheck(privilegeId: number, item: string) {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="58em">
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="56em">
     <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
       :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
       @check-change="handleCheckChange">
@@ -489,10 +489,10 @@ async function handleActionCheck(privilegeId: number, item: string) {
             height="1.25em" class="mr-2" />
           <span>{{ $t(`page.${node.label}`) }}</span>
         </div>
-        <div>
+        <div class="space-x-2">
           <ElCheckTag v-for="item in data.meta.actions" :key="item"
             :checked="(authorities.find(a => a.privilegeId === data.id)?.actions || []).includes(item)"
-            :type="actions[item]" class="mr-2" @change="handleActionCheck(data.id, item)">
+            :type="actions[item]" @change="handleActionCheck(data.id, item)">
             {{ $t(`action.${item}`) }}
           </ElCheckTag>
         </div>

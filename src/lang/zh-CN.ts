@@ -133,6 +133,8 @@ export default {
     signin: '登 录',
     signup: '注 册',
     signout: '退出登录',
+    back: '返回',
+    continue: '继续'
   },
 
   page: {

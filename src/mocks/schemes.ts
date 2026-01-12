@@ -1,14 +1,14 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Field, Sample, Scheme } from 'src/types'
+import type { Field, Sample, Scheme, SchemeModule } from 'src/types'
 
 const datas: Scheme[] = [
 ]
 
-for (let i = 1; i < 6; i++) {
+for (let i = 1; i < 16; i++) {
   const row: Scheme = {
     id: i,
-    module: 'module_name' + i,
+    module: 'name' + i,
     connectionId: 1,
     packageName: 'com.example',
     scope: 'PARTIAL',
@@ -17,6 +17,16 @@ for (let i = 1; i < 6; i++) {
     enabled: i > 2
   }
   datas.push(row)
+}
+
+const schemeModules: SchemeModule[] = []
+for (let i = 1; i < 6; i++) {
+  const row: SchemeModule = {
+    id: i,
+    schemeId: Math.floor(Math.random() * 6),
+    moduleId: i
+  }
+  schemeModules.push(row)
 }
 
 const fields: Field[] = []
@@ -59,6 +69,15 @@ const treeData: Sample.Rendered[] = [
 ]
 
 export const schemesHandlers = [
+  http.get(`/api${SERVER_URL.SCHEME}/:id/modules`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      const filtered = schemeModules.filter(item => item.schemeId === Number(id))
+      return HttpResponse.json(filtered)
+    } else {
+      return HttpResponse.json()
+    }
+  }),
   http.get(`/api${SERVER_URL.SCHEME}/:id/preview`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -78,7 +97,8 @@ export const schemesHandlers = [
   http.get(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
+      const filtered = datas.filter(item => item.id === Number(id))[0]
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
@@ -90,7 +110,7 @@ export const schemesHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
         totalElements: datas.length
       }

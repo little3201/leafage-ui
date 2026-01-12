@@ -1,43 +1,47 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Module } from 'src/types'
+import type { Module, ModuleSample } from 'src/types'
 
-const datas: Module[] = [
-  {
-    id: 1,
-    name: 'IndexPage',
-    version: 1,
-    enabled: true,
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 2,
-    name: 'users',
-    version: 1,
-    enabled: true,
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 3,
-    name: 'entity',
-    version: 1,
-    enabled: true,
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 4,
-    name: 'repository',
+const datas: Module[] = []
+
+for (let i = 1; i < 20; i++) {
+  const row: Module = {
+    id: i,
+    name: 'name_' + i,
     version: 1,
     enabled: true,
     lastModifiedDate: new Date()
   }
-]
+  datas.push(row)
+}
+
+
+const moduleSamples: ModuleSample[] = []
+for (let i = 1; i < 6; i++) {
+  const row: ModuleSample = {
+    id: i,
+    sampleId: i,
+    moduleId: Math.floor(Math.random() * 6)
+  }
+  moduleSamples.push(row)
+}
+
 
 export const modulesHandlers = [
+  http.get(`/api${SERVER_URL.MODULE}/:id/samples`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      const filtered = moduleSamples.filter(item => item.moduleId === Number(id))
+      return HttpResponse.json(filtered)
+    } else {
+      return HttpResponse.json()
+    }
+  }),
   http.get(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
+      const filtered = datas.filter(item => item.id === Number(id))[0]
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
@@ -49,7 +53,7 @@ export const modulesHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
         totalElements: datas.length
       }

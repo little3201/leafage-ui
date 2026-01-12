@@ -24,7 +24,8 @@ export const accessLogsHandlers = [
   http.get(`/api${SERVER_URL.ACCESS_LOG}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
+      const filtered = datas.filter(item => item.id === Number(id))[0]
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
@@ -36,7 +37,7 @@ export const accessLogsHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
         totalElements: datas.length
       }

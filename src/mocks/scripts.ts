@@ -71,7 +71,8 @@ export const scriptsHandlers = [
   http.get(`/api${SERVER_URL.SCRIPT}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
+      const filtered = datas.filter(item => item.id === Number(id))[0]
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }

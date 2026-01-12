@@ -133,6 +133,8 @@ export default {
     signin: 'Sign In',
     signup: 'Sign Up',
     signout: 'Sign Out',
+    back: 'Back',
+    continue: 'Continue'
   },
 
   page: {
