@@ -30,7 +30,7 @@
             <p><strong>{{ $t('label.params') }}</strong>
               {{ row.params }}
             </p>
-            <p><strong>{{ $t('label.body') }}</strong>
+            <p><strong>{{ $t('label.request.body') }}</strong>
               {{ row.body }}
             </p>
           </div>
@@ -41,11 +41,11 @@
             </p>
           </div>
           <div class="q-gutter-md">
-            <p><strong>{{ $t('label.responseTimes') }}</strong>
-              {{ row.responseTimes ? formatDuration(row.responseTimes) : '' }}
+            <p><strong>{{ $t('label.duration') }}</strong>
+              {{ row.duration ? formatDuration(row.duration) : '' }}
             </p>
-            <p><strong>{{ $t('label.responseMessage') }}</strong>
-              {{ row.responseMessage }}
+            <p><strong>{{ $t('label.response') }}</strong>
+              {{ row.response }}
             </p>
           </div>
         </q-card-section>
@@ -72,7 +72,8 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(`label.${col.label}`) }}
+            <span v-if="col.label === 'body'">{{ $t('label.request.body') }}</span>
+            <span v-else>{{ $t(`label.${col.label}`) }}</span>
           </q-th>
         </q-tr>
       </template>
@@ -112,27 +113,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { retrieveAccessLogs, fetchAccessLog, removeAccessLog } from 'src/api/access-logs'
-import { formatDuration, exportTable } from 'src/utils'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/access-logs'
 import { httpMethods } from 'src/constants'
 import type { AccessLog } from 'src/types'
+import { exportTable, formatDuration } from 'src/utils'
+import { onMounted, ref } from 'vue'
 
 
 const visible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<AccessLog>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: AccessLog = {
-  id: undefined,
+  id: null,
   url: '',
   httpMethod: '',
-  ip: '',
-  responseMessage: ''
+  ip: ''
 }
 const row = ref<AccessLog>({ ...initialValues })
 
@@ -146,15 +146,14 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<AccessLog>[] = [
   { name: 'url', label: 'url', align: 'left', field: 'url' },
   { name: 'params', label: 'params', align: 'left', field: 'params' },
   { name: 'body', label: 'body', align: 'left', field: 'body' },
   { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
-  { name: 'operator', label: 'operator', align: 'center', field: 'operator' },
   { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
-  { name: 'responseTimes', label: 'responseTimes', align: 'center', field: 'responseTimes' },
-  { name: 'responseMessage', label: 'responseMessage', align: 'center', field: 'responseMessage' },
+  { name: 'duration', label: 'duration', align: 'center', field: 'duration' },
+  { name: 'response', label: 'response', align: 'center', field: 'response' },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
@@ -190,7 +189,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 async function showRow(id: number) {

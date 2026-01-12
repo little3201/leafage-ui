@@ -6,6 +6,7 @@ const datas: Privilege[] = [
   {
     id: 1,
     path: 'system',
+    superiorId: null,
     component: '#',
     redirect: 'users',
     name: 'system',
@@ -17,6 +18,7 @@ const datas: Privilege[] = [
   {
     id: 7,
     path: 'logs',
+    superiorId: null,
     component: '#',
     redirect: 'operation',
     name: 'logs',
@@ -28,6 +30,7 @@ const datas: Privilege[] = [
   {
     id: 12,
     path: 'regions',
+    superiorId: null,
     component: 'regions',
     name: 'regions',
     icon: 'location_on',
@@ -39,6 +42,7 @@ const datas: Privilege[] = [
   {
     id: 14,
     path: 'files',
+    superiorId: null,
     component: 'files',
     name: 'files',
     icon: 'folder_open',
@@ -50,6 +54,7 @@ const datas: Privilege[] = [
   {
     id: 16,
     path: 'exploiters',
+    superiorId: null,
     component: '#',
     name: 'exploiters',
     redirect: 'schemes',
@@ -160,10 +165,10 @@ const subDatas: Privilege[] = [
   {
     id: 17,
     superiorId: 16,
-    path: 'schemes',
-    name: 'schemes',
-    component: 'exploiters/schemes',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'preview', 'enable'],
+    path: 'connections',
+    name: 'connections',
+    component: 'exploiters/connections',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
     icon: 'genetics',
@@ -171,6 +176,18 @@ const subDatas: Privilege[] = [
   },
   {
     id: 18,
+    superiorId: 16,
+    path: 'samples',
+    name: 'samples',
+    component: 'exploiters/samples',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'code',
+    description: 'this is description for this row'
+  },
+  {
+    id: 19,
     superiorId: 16,
     path: 'scripts',
     name: 'scripts',
@@ -182,11 +199,46 @@ const subDatas: Privilege[] = [
     description: 'this is description for this row'
   },
   {
-    id: 19,
+    id: 20,
     superiorId: 16,
+    path: 'templates',
+    name: 'templates',
+    component: '#',
+    count: 1,
+    enabled: true,
+    icon: 'code',
+    description: 'this is description for this row'
+  },
+  {
+    id: 21,
+    superiorId: 20,
+    path: 'modules',
+    name: 'modules',
+    component: 'exploiters/templates/modules',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'code',
+    description: 'this is description for this row'
+  },
+  {
+    id: 21,
+    superiorId: 20,
     path: 'samples',
     name: 'samples',
     component: 'exploiters/samples',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'code',
+    description: 'this is description for this row'
+  },
+  {
+    id: 21,
+    superiorId: 20,
+    path: 'fragments',
+    name: 'fragments',
+    component: 'exploiters/templates/fragments',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
@@ -333,6 +385,16 @@ const treeNodes: PrivilegeTreeNode[] = [
     children: [
       {
         id: 17,
+        name: 'connections',
+        meta: {
+          path: 'connections',
+          component: 'exploiters/connections',
+          icon: 'genetics',
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+        }
+      },
+      {
+        id: 18,
         name: 'schemes',
         meta: {
           path: 'schemes',
@@ -342,7 +404,7 @@ const treeNodes: PrivilegeTreeNode[] = [
         }
       },
       {
-        id: 18,
+        id: 19,
         name: 'scripts',
         meta: {
           path: 'scripts',
@@ -352,24 +414,15 @@ const treeNodes: PrivilegeTreeNode[] = [
         }
       },
       {
-        id: 19,
+        id: 20,
         name: 'templates',
         meta: {
           path: 'templates',
-          component: 'exploiters/templates',
+          component: '#',
+          redirect: 'schemes',
           icon: 'code',
         },
         children: [
-          {
-            id: 20,
-            name: 'samples',
-            meta: {
-              path: 'samples',
-              component: 'exploiters/templates/samples',
-              icon: 'code',
-              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
-            }
-          },
           {
             id: 21,
             name: 'modules',
@@ -382,6 +435,16 @@ const treeNodes: PrivilegeTreeNode[] = [
           },
           {
             id: 22,
+            name: 'samples',
+            meta: {
+              path: 'samples',
+              component: 'exploiters/templates/samples',
+              icon: 'code',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          },
+          {
+            id: 23,
             name: 'fragments',
             meta: {
               path: 'fragments',

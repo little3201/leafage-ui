@@ -19,20 +19,22 @@
           <q-btn flat round dense title="faq" icon="sym_r_help" to="/faq" />
         </div>
         <div class="cursor-pointer">
-          <q-avatar size="md">
-            <img :src="`${cdn_url}/${user.username}.jpg`" alt="avatar" />
-          </q-avatar>
-          <span class="q-ml-sm">{{ user.username }}</span>
+          <q-btn flat rounded>
+            <q-avatar size="md">
+              <img :src="`${cdn_url}/${user.username}.jpg`" alt="avatar" />
+            </q-avatar>
+            <span class="q-ml-sm">{{ user.username }}</span>
+          </q-btn>
           <q-menu>
             <q-list separator>
               <q-item to="/profile">
-                <q-item-section avatar>
+                <q-item-section side>
                   <q-icon name="sym_r_manage_accounts" />
                 </q-item-section>
                 <q-item-section>{{ $t('page.profile') }}</q-item-section>
               </q-item>
               <q-item clickable v-close-popup @click="signOut(userStore.idToken)">
-                <q-item-section avatar>
+                <q-item-section side>
                   <q-icon name="sym_r_logout" />
                 </q-item-section>
                 <q-item-section>{{ $t('action.signout') }}</q-item-section>

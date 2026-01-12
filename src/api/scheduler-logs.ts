@@ -33,3 +33,11 @@ export const fetchSchedulerLog = (id: number) => {
 export const removeSchedulerLog = (id: number) => {
   return api.delete(`${SERVER_URL.SCHEDULER_LOG}/${id}`)
 }
+
+/**
+ * Remove all rows
+ * @returns Deletion status
+ */
+export const clearSchedulerLogs = () => {
+  return api.delete(`${SERVER_URL.SCHEDULER_LOG}`)
+}

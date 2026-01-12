@@ -33,3 +33,11 @@ export const fetchAccessLog = (id: number) => {
 export const removeAccessLog = (id: number) => {
   return api.delete(`${SERVER_URL.ACCESS_LOG}/${id}`)
 }
+
+/**
+ * Remove all rows
+ * @returns Deletion status
+ */
+export const clearAccessLogs = () => {
+  return api.delete(`${SERVER_URL.ACCESS_LOG}`)
+}

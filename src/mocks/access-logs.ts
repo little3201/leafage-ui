@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { AccessLog } from 'src/types'
 
+
 const datas: AccessLog[] = []
 
 for (let i = 1; i < 28; i++) {
@@ -9,11 +10,12 @@ for (let i = 1; i < 28; i++) {
     id: i,
     url: '/users',
     httpMethod: 'POST',
+    params: 'page=1',
     body: '{"role:"admin"}',
     ip: '192.168.0.1',
-    responseTimes: 120,
+    duration: 120,
     statusCode: 404,
-    responseMessage: 'Non Content'
+    response: 'Non Content'
   }
   datas.push(row)
 }
@@ -28,9 +30,9 @@ export const accessLogsHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.ACCESS_LOG}`, ({ request }) => {
-    const url = new URL(request.url)
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
@@ -58,6 +60,6 @@ export const accessLogsHandlers = [
     datas.pop()
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData)
+    return HttpResponse.json()
   })
 ]

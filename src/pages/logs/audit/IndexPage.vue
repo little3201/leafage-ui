@@ -14,7 +14,7 @@
             <p><strong>{{ $t('label.resource') }}</strong>
               {{ row.resource }}
             </p>
-            <p><strong>{{ $t('label.operation') }}</strong>{{ row.operation }}</p>
+            <p><strong>{{ $t('label.action') }}</strong>{{ row.action }}</p>
             <p>
               <strong>{{ $t('label.statusCode') }}</strong>
               <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
@@ -39,8 +39,8 @@
             <p><strong>{{ $t('label.ip') }}</strong>
               {{ row.ip }}
             </p>
-            <p><strong>{{ $t('label.operatedTimes') }}</strong>
-              {{ row.operatedTimes ? formatDuration(row.operatedTimes) : '' }}
+            <p><strong>{{ $t('label.duration') }}</strong>
+              {{ row.duration ? formatDuration(row.duration) : '' }}
             </p>
           </div>
         </q-card-section>
@@ -103,23 +103,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { retrieveAuditLogs, fetchAuditLog, removeAuditLog } from 'src/api/audit-logs'
-import { formatDuration, exportTable } from 'src/utils'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/audit-logs'
 import type { AuditLog } from 'src/types'
+import { exportTable, formatDuration } from 'src/utils'
+import { onMounted, ref } from 'vue'
 
 
 const visible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<AuditLog>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: AuditLog = {
-  id: undefined,
-  operation: '',
+  id: null,
+  action: '',
   resource: '',
   ip: ''
 }
@@ -135,14 +135,14 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<AuditLog>[] = [
   { name: 'resource', label: 'resource', align: 'left', field: 'resource' },
-  { name: 'operation', label: 'operation', align: 'left', field: 'operation' },
+  { name: 'action', label: 'action', align: 'left', field: 'action' },
   { name: 'oldValue', label: 'oldValue', align: 'left', field: 'oldValue' },
   { name: 'newValue', label: 'newValue', align: 'center', field: 'newValue' },
   { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
   { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
-  { name: 'operatedTimes', label: 'operatedTimes', align: 'center', field: 'operatedTimes' },
+  { name: 'duration', label: 'duration', align: 'center', field: 'duration' },
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
@@ -178,7 +178,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 async function showRow(id: number) {

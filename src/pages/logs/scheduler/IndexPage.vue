@@ -26,8 +26,8 @@
           </div>
 
           <div class="q-gutter-md">
-            <p><strong>{{ $t('label.executedTimes') }}</strong>
-              {{ row.executedTimes ? formatDuration(row.executedTimes) : '-' }}
+            <p><strong>{{ $t('label.duration') }}</strong>
+              {{ row.duration ? formatDuration(row.duration) : '-' }}
             </p>
             <p><strong>{{ $t('label.nextExecuteTime') }}</strong>
               {{ row.nextExecuteTime ? date.formatDate(row.nextExecuteTime, 'YYYY-MM-DD HH:mm') : '-' }}
@@ -107,24 +107,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { date } from 'quasar'
-import { retrieveSchedulerLogs, fetchSchedulerLog, removeSchedulerLog } from 'src/api/scheduler-logs'
-import { formatDuration, exportTable } from 'src/utils'
+import { fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/scheduler-logs'
 import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { SchedulerLog } from 'src/types'
+import { exportTable, formatDuration } from 'src/utils'
+import { onMounted, ref } from 'vue'
 
 
 const visible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<SchedulerLog>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: SchedulerLog = {
-  id: undefined,
+  id: null,
   name: ''
 }
 const row = ref<SchedulerLog>({ ...initialValues })
@@ -139,11 +139,11 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<SchedulerLog>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name' },
   { name: 'startTime', label: 'startTime', align: 'center', field: 'startTime' },
   { name: 'status', label: 'status', align: 'center', field: 'status' },
-  { name: 'executedTimes', label: 'executedTimes', align: 'center', field: 'executedTimes' },
+  { name: 'duration', label: 'duration', align: 'center', field: 'duration' },
   { name: 'nextExecuteTime', label: 'nextExecuteTime', align: 'center', field: 'nextExecuteTime' },
   { name: 'record', label: 'record', align: 'center', field: 'record' },
   { name: 'id', label: 'actions', field: 'id' }
@@ -181,7 +181,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 async function showRow(id: number) {

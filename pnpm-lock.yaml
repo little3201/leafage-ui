@@ -532,7 +532,7 @@ packages:
     resolution: {integrity: sha512-q1mjIoW1VX4IvSocvM/vbTiveKC4k9eLrajNEuSsmjymSDEbpGddtpfOoN7YGAqBK3NG+uqo8ia4PDTt8buCYA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/object-scheme@2.1.7':
+  '@eslint/object-schema@2.1.7':
     resolution: {integrity: sha512-VtAOaymWVfZcmZbp6E2mympDIHvyjXs/12LqWYjVw6qjrfF+VK+fyG33kChz3nnK+SU5/NeHOqrTEHS8sXO3OA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
@@ -919,7 +919,7 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@standard-scheme/spec@1.1.0':
+  '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
   '@svgdotjs/svg.draggable.js@3.0.6':
@@ -992,7 +992,7 @@ packages:
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
 
-  '@types/json-scheme@7.0.15':
+  '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
   '@types/mime@1.3.5':
@@ -2223,10 +2223,10 @@ packages:
   json-parse-even-better-errors@2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
 
-  json-scheme-traverse@0.4.1:
+  json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
 
-  json-scheme-traverse@1.0.0:
+  json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
 
   json-stable-stringify-without-jsonify@1.0.1:
@@ -3741,7 +3741,7 @@ snapshots:
 
   '@eslint/config-array@0.21.1':
     dependencies:
-      '@eslint/object-scheme': 2.1.7
+      '@eslint/object-schema': 2.1.7
       debug: 4.4.3
       minimatch: 3.1.2
     transitivePeerDependencies:
@@ -3753,7 +3753,7 @@ snapshots:
 
   '@eslint/core@0.17.0':
     dependencies:
-      '@types/json-scheme': 7.0.15
+      '@types/json-schema': 7.0.15
 
   '@eslint/eslintrc@3.3.3':
     dependencies:
@@ -3771,7 +3771,7 @@ snapshots:
 
   '@eslint/js@9.39.2': {}
 
-  '@eslint/object-scheme@2.1.7': {}
+  '@eslint/object-schema@2.1.7': {}
 
   '@eslint/plugin-kit@0.4.1':
     dependencies:
@@ -4116,7 +4116,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.55.1':
     optional: true
 
-  '@standard-scheme/spec@1.1.0': {}
+  '@standard-schema/spec@1.1.0': {}
 
   '@svgdotjs/svg.draggable.js@3.0.6(@svgdotjs/svg.js@3.2.5)':
     dependencies:
@@ -4195,7 +4195,7 @@ snapshots:
 
   '@types/http-errors@2.0.5': {}
 
-  '@types/json-scheme@7.0.15': {}
+  '@types/json-schema@7.0.15': {}
 
   '@types/mime@1.3.5': {}
 
@@ -4344,7 +4344,7 @@ snapshots:
 
   '@vitest/expect@4.0.16':
     dependencies:
-      '@standard-scheme/spec': 1.1.0
+      '@standard-schema/spec': 1.1.0
       '@types/chai': 5.2.3
       '@vitest/spy': 4.0.16
       '@vitest/utils': 4.0.16
@@ -4517,14 +4517,14 @@ snapshots:
     dependencies:
       fast-deep-equal: 3.1.3
       fast-json-stable-stringify: 2.1.0
-      json-scheme-traverse: 0.4.1
+      json-schema-traverse: 0.4.1
       uri-js: 4.4.1
 
   ajv@8.17.1:
     dependencies:
       fast-deep-equal: 3.1.3
       fast-uri: 3.1.0
-      json-scheme-traverse: 1.0.0
+      json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
   alien-signals@3.1.2: {}
@@ -5564,9 +5564,9 @@ snapshots:
 
   json-parse-even-better-errors@2.3.1: {}
 
-  json-scheme-traverse@0.4.1: {}
+  json-schema-traverse@0.4.1: {}
 
-  json-scheme-traverse@1.0.0: {}
+  json-schema-traverse@1.0.0: {}
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 

@@ -1,17 +1,14 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import { dealFilters } from 'src/utils'
+import type { Script } from 'src/types'
 
 /**
  * Retrieve rows
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveScripts = (filters?: object | string) => {
-  if (filters) {
-    filters = dealFilters(filters)
-  }
-  return api.get(SERVER_URL.SCRIPT, { params: { filters } })
+export const retrieveScripts = () => {
+  return api.get(SERVER_URL.SCRIPT)
 }
 
 /**
@@ -24,12 +21,29 @@ export const fetchScript = (id: number) => {
 }
 
 /**
+ * Create a new row
+ * @param row Row data
+ * @returns Created row
+ */
+export const createScript = (row: Script) => {
+  return api.post(SERVER_URL.SCRIPT, row)
+}
+
+/**
+ * Modify an existing row
+ * @param id Row ID
+ * @param row Updated row data
+ * @returns Modified row
+ */
+export const modifyScript = (id: number, row: Script) => {
+  return api.put(`${SERVER_URL.SCRIPT}/${id}`, row)
+}
+
+/**
  * Import rows
  * @param file file
  * @returns
  */
 export const importScripts = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.SCRIPT}/import`, formData)
+  return api.postForm(`${SERVER_URL.SCRIPT}/import`, { file: file })
 }

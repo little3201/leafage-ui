@@ -26,14 +26,6 @@ export const fetchUser = (id: number) => {
 }
 
 /**
- * Fetch me
- * @returns Row data
- */
-export const fetchMe = () => {
-  return api.get(`${SERVER_URL.USER}/me`)
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row
@@ -64,7 +56,7 @@ export const enableUser = (id: number) => {
 /**
  * Unlock an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Unlock result
  */
 export const unlockUser = (id: number) => {
   return api.patch(`${SERVER_URL.USER}/${id}/unlock`)
@@ -111,7 +103,5 @@ export const removeUsersPrivileges = (username: string, privilegeId: number, act
  * @returns
  */
 export const importUsers = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.USER}/import`, formData)
+  return api.postForm(`${SERVER_URL.USER}/import`, { file: file })
 }

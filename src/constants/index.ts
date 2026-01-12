@@ -24,6 +24,7 @@ export const SERVER_URL = {
   AUDIT_LOG: SERVER_PREFIX.HYPERVISOR.concat('/audit-logs'), // 审计日志
   OPERATION_LOG: SERVER_PREFIX.HYPERVISOR.concat('/operation-logs'), // 操作日志
   SCHEDULER_LOG: SERVER_PREFIX.HYPERVISOR.concat('/scheduler-logs'), // 调度日志
+  CALENDAR_EVENT: SERVER_PREFIX.HYPERVISOR.concat('/calendar-events'), // 日历事件
 
   // assets
   POST: SERVER_PREFIX.HYPERVISOR.concat('/posts'), // 帖子
@@ -36,8 +37,10 @@ export const SERVER_URL = {
 
   // exploiters
   SCRIPT: SERVER_PREFIX.HYPERVISOR.concat('/scripts'), // 脚本
-  SCHEME: SERVER_PREFIX.HYPERVISOR.concat('/schemes'), // 计划
+  SCHEME: SERVER_PREFIX.HYPERVISOR.concat('/schemes'), // 方案
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 样板
+  MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
+  FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
   CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 连接
 }
 
@@ -125,15 +128,15 @@ export const sampleType: { [key: string]: 'primary' | 'success' } = {
   COMBINE: 'success'
 }
 
-export const languages: { [key: string]: string } = {
-  JAVA: 'java',
-  YML: 'yml',
-  XML: 'xml',
-  SQL: 'sql',
-  TS: 'ts',
-  TSX: 'tsx',
-  JS: 'js',
-  JSX: 'jsx',
-  VUE: 'vue',
-  REACT: 'react'
-}
+export const languages = [
+  { label: 'java', value: 'JAVA' },
+  { label: 'yml', value: 'YML' },
+  { label: 'xml', value: 'XML' },
+  { label: 'sql', value: 'SQL' },
+  { label: 'ts', value: 'TS' },
+  { label: 'tsx', value: 'TSX' },
+  { label: 'js', value: 'JS' },
+  { label: 'jsx', value: 'JSX' },
+  { label: 'vue', value: 'VUE' },
+  { label: 'react', value: 'REACT' }
+]

@@ -33,3 +33,11 @@ export const fetchOperationLog = (id: number) => {
 export const removeOperationLog = (id: number) => {
   return api.delete(`${SERVER_URL.OPERATION_LOG}/${id}`)
 }
+
+/**
+ * Remove all rows
+ * @returns Deletion status
+ */
+export const clearOperationLogs = () => {
+  return api.delete(`${SERVER_URL.OPERATION_LOG}`)
+}

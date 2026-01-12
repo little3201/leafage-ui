@@ -66,7 +66,7 @@
           <div v-else-if="col.name === 'name'">
             <q-icon :name="`sym_r_${props.row.icon}`" size="sm" class="q-pr-sm" />{{ $t(`page.${col.value}`) }}
           </div>
-          <!-- <div v-else-if="col.name === 'actions' && props.row.actions && props.row.actions.length > 0">
+          <div v-else-if="col.name === 'actions' && props.row.actions && props.row.actions.length > 0">
             <q-chip v-for="(item, index) in visibleArray(props.row.actions, 3)" :key="index"
               :label="$t(`action.${item}`)" :color="actions[item]" text-color="white" class="q-mr-sm" size="sm" />
             <template v-if="props.row.actions.length > 3">
@@ -78,7 +78,7 @@
                 </q-tooltip>
               </q-chip>
             </template>
-</div> -->
+          </div>
           <div v-else-if="col.name === 'enabled'">
             <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
               color="positive" />
@@ -96,17 +96,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege } from 'src/api/privileges'
-// import { visibleArray } from 'src/utils'
+import type { QTable, QTableColumn } from 'quasar'
+import { enablePrivilege, fetchPrivilege, modifyPrivilege, retrievePrivilegeSubset } from 'src/api/privileges'
 import { actions } from 'src/constants'
-import type { Privilege, Dictionary } from 'src/types'
+import type { Dictionary, Privilege } from 'src/types'
+import { visibleArray } from 'src/utils'
+import { onMounted, ref } from 'vue'
 
 
 const props = withDefaults(defineProps<{
   title: string
-  superiorId?: number
+  superiorId: number | null
   options: Array<Dictionary>
 }>(), {
   title: ''
@@ -114,14 +114,15 @@ const props = withDefaults(defineProps<{
 
 const visible = ref<boolean>(false)
 
-const subTableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const subTableRef = ref<QTable>()
+const rows = ref<Array<Privilege>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: Privilege = {
-  id: undefined,
+  id: null,
   name: '',
+  superiorId: props.superiorId,
   path: '',
   component: '',
   icon: '',
@@ -130,7 +131,7 @@ const initialValues: Privilege = {
 }
 const form = ref<Privilege>({ ...initialValues })
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<Privilege>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'path', label: 'path', align: 'left', field: 'path', sortable: true },
   { name: 'actions', label: 'actions', align: 'left', field: 'actions' },
@@ -142,7 +143,7 @@ const columns: QTableProps['columns'] = [
 const subset = ref<Array<Privilege>>()
 
 onMounted(() => {
-  subTableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -164,7 +165,7 @@ async function onRequest() {
 }
 
 function refresh() {
-  subTableRef.value.requestServerInteraction()
+  subTableRef.value?.requestServerInteraction()
 }
 
 async function enableRow(id: number) {

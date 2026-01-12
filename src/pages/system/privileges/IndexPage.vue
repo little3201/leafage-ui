@@ -82,7 +82,7 @@
             <div v-else-if="col.name === 'name'">
               <q-icon :name="`sym_r_${props.row.icon}`" size="sm" class="q-pr-sm" />{{ $t(`page.${col.value}`) }}
             </div>
-            <!-- <div v-else-if="col.name === 'actions' && props.row.actions && props.row.actions.length > 0">
+            <div v-else-if="col.name === 'actions' && props.row.actions && props.row.actions.length > 0">
               <q-chip v-for="(item, index) in visibleArray(props.row.actions, 3)" :key="index"
                 :label="$t(`action.${item}`)" :color="actions[item]" text-color="white" class="q-mr-sm" size="sm" />
               <template v-if="props.row.actions.length > 3">
@@ -95,7 +95,7 @@
                   </q-tooltip>
                 </q-chip>
               </template>
-</div> -->
+            </div>
             <div v-else-if="col.name === 'enabled'" class="text-center">
               <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
                 color="positive" />
@@ -132,15 +132,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useUserStore } from 'stores/user-store'
-import { retrievePrivileges, retrievePrivilegeSubset, fetchPrivilege, modifyPrivilege, enablePrivilege, importPrivileges } from 'src/api/privileges'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { retrieveDictionarySubset } from 'src/api/dictionaries'
-import SubPage from './SubPage.vue'
-import { exportTable } from 'src/utils'
+import { enablePrivilege, fetchPrivilege, importPrivileges, modifyPrivilege, retrievePrivileges, retrievePrivilegeSubset } from 'src/api/privileges'
 import { actions } from 'src/constants'
-import type { Privilege, Dictionary } from 'src/types'
+import type { Dictionary, Privilege } from 'src/types'
+import { exportTable, visibleArray } from 'src/utils'
+import { useUserStore } from 'stores/user-store'
+import { onMounted, ref } from 'vue'
+import SubPage from './SubPage.vue'
 
 
 const userStore = useUserStore()
@@ -148,15 +148,16 @@ const userStore = useUserStore()
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<Privilege>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 const buttonOptions = ref<Array<Dictionary>>([])
 
 const initialValues: Privilege = {
-  id: undefined,
+  id: null,
   name: '',
+  superiorId: null,
   path: '',
   component: '',
   icon: '',
@@ -173,7 +174,7 @@ const pagination = ref({
   rowsNumber: 0
 })
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<Privilege>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'path', label: 'path', align: 'left', field: 'path', sortable: true },
   { name: 'actions', label: 'actions', align: 'left', field: 'actions' },
@@ -223,7 +224,7 @@ function importRow() {
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 async function enableRow(id: number) {

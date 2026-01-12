@@ -54,34 +54,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { retrieveDictionarySubset, fetchDictionary, createDictionary, modifyDictionary, enableDictionary, removeDictionary } from 'src/api/dictionaries'
+import type { QTable, QTableColumn } from 'quasar'
+import { createDictionary, enableDictionary, fetchDictionary, modifyDictionary, removeDictionary, retrieveDictionarySubset } from 'src/api/dictionaries'
 import type { Dictionary } from 'src/types'
+import { onMounted, ref } from 'vue'
 
 
 const props = withDefaults(defineProps<{
   title: string
-  superiorId?: number
+  superiorId: number | null
 }>(), {
   title: ''
 })
 
 const visible = ref<boolean>(false)
 
-const subtableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const subtableRef = ref<QTable>()
+const rows = ref<Array<Dictionary>>([])
 const loading = ref<boolean>(false)
 
 const initialValues: Dictionary = {
-  id: undefined,
+  id: null,
   superiorId: props.superiorId,
   name: '',
   enabled: true
 }
 const form = ref<Dictionary>({ ...initialValues })
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<Dictionary>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'enabled', label: 'enabled', align: 'center', field: 'enabled' },
   { name: 'description', label: 'description', align: 'left', field: 'description' },
@@ -89,7 +89,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  subtableRef.value.requestServerInteraction()
+  refresh()
 })
 
 /**
@@ -110,7 +110,7 @@ async function onRequest() {
 }
 
 function refresh() {
-  subtableRef.value.requestServerInteraction()
+  subtableRef.value?.requestServerInteraction()
 }
 
 async function enableRow(id: number) {

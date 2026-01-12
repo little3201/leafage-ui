@@ -9,6 +9,7 @@ for (let i = 1; i < 34; i++) {
   const data: Region = {
     id: i,
     name: 'region_' + i,
+    superiorId: null,
     areaCode: Math.floor(Math.random() * 100).toString(),
     postalCode: Math.floor(Math.random() * 3000).toString(),
     enabled: i % 3 > 0,

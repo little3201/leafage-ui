@@ -78,29 +78,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { retrieveRegionSubset, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion } from 'src/api/regions'
-import { exportTable } from 'src/utils'
+import type { QTable, QTableColumn } from 'quasar'
+import { createRegion, enableRegion, fetchRegion, modifyRegion, removeRegion, retrieveRegionSubset } from 'src/api/regions'
 import type { Region } from 'src/types'
+import { exportTable } from 'src/utils'
+import { onMounted, ref } from 'vue'
 
 
 const props = withDefaults(defineProps<{
   title: string
-  superiorId?: number
+  superiorId: number | null
 }>(), {
   title: ''
 })
 
 const visible = ref<boolean>(false)
 
-const subtableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const subtableRef = ref<QTable>()
+const rows = ref<Array<Region>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: Region = {
-  id: undefined,
+  id: null,
   superiorId: props.superiorId,
   name: '',
   description: ''
@@ -113,7 +113,7 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<Region>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'postalCode', label: 'postalCode', align: 'left', field: 'postalCode', sortable: true },
   { name: 'areaCode', label: 'areaCode', align: 'left', field: 'areaCode', sortable: true },
@@ -145,7 +145,7 @@ async function onRequest() {
 }
 
 function refresh() {
-  subtableRef.value.requestServerInteraction()
+  subtableRef.value?.requestServerInteraction()
 }
 
 async function enableRow(id: number) {

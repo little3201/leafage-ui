@@ -1,14 +1,45 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Sample } from 'src/types'
+import type { Module, Sample } from 'src/types'
 
-const datas: Sample[] = [
+const datas: Module[] = [
+  {
+    id: 1,
+    name: 'IndexPage',
+    version: 1,
+    enabled: true,
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 2,
+    name: 'users',
+    version: 1,
+    enabled: true,
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 3,
+    name: 'entity',
+    version: 1,
+    enabled: true,
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 4,
+    name: 'repository',
+    version: 1,
+    enabled: true,
+    lastModifiedDate: new Date()
+  }
+]
+
+const previewSamples: Sample[] = [
   {
     id: 1,
     name: 'IndexPage',
     language: 'vue',
     module: '',
-    type: 'COMBINE',
+    type: 'UI',
     version: 1,
     enabled: true,
     body: '<template>\n  <div class="app-container">\n </div>\n</template>',
@@ -19,7 +50,7 @@ const datas: Sample[] = [
     name: 'users',
     language: 'ts',
     module: '',
-    type: 'COMBINE',
+    type: 'TS',
     version: 1,
     enabled: true,
     body: 'import { api } from \'boot/axios\'\nimport { SERVER_URL } from \'src/constants\'\nimport type { Pagination, User } from \'src/types\'\n\n/**\n * Retrieve rows\n * @param pagination Pagination and sort parameters\n * @param filters Optional filter or sort parameters\n * @returns Rows data\n */\nexport const retrieveUsers = (pagination: Pagination, filters?: object) => {\n  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, ...filters } })\n}\n\n',
@@ -30,7 +61,7 @@ const datas: Sample[] = [
     name: 'entity',
     language: 'java',
     module: '',
-    type: 'SINGLE',
+    type: 'Model',
     version: 1,
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -41,7 +72,7 @@ const datas: Sample[] = [
     name: 'repository',
     language: 'java',
     module: '',
-    type: 'COMBINE',
+    type: 'Repository',
     version: 1,
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -52,7 +83,7 @@ const datas: Sample[] = [
     name: 'mapper',
     language: 'java',
     module: '',
-    type: 'SINGLE',
+    type: 'Repository',
     version: 1,
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -63,7 +94,7 @@ const datas: Sample[] = [
     name: 'controller',
     language: 'java',
     module: '',
-    type: 'COMBINE',
+    type: 'Controller',
     version: 1,
     enabled: true,
     body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
@@ -71,8 +102,17 @@ const datas: Sample[] = [
   }
 ]
 
-export const samplesHandlers = [
-  http.get(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
+
+export const modulesHandlers = [
+  http.get(`/api${SERVER_URL.MODULE}/:id/preview`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json(previewSamples)
+    } else {
+      return HttpResponse.json()
+    }
+  }),
+  http.get(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
@@ -80,7 +120,7 @@ export const samplesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SAMPLE}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.MODULE}`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
     const size = searchParams.get('size')
@@ -93,7 +133,7 @@ export const samplesHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.SAMPLE}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.MODULE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -109,9 +149,9 @@ export const samplesHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.SAMPLE}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.MODULE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Sample
+    const newData = await request.json() as Module
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -120,10 +160,10 @@ export const samplesHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.put(`/api${SERVER_URL.SAMPLE}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.MODULE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Sample
+    const newData = await request.json() as Module
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
@@ -134,7 +174,7 @@ export const samplesHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -142,7 +182,7 @@ export const samplesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

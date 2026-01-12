@@ -8,6 +8,7 @@ for (let i = 1; i < 28; i++) {
   const row: Group = {
     id: i,
     name: 'group_' + i,
+    superiorId: null,
     enabled: true,
     description: 'This is region description about xxx'
   }
