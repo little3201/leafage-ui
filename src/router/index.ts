@@ -16,7 +16,7 @@ import routes from './routes'
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
-export default defineRouter(function (/* { store, ssrContext } */) {
+export default defineRouter(function () {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)

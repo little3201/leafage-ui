@@ -265,7 +265,7 @@ async function onSubmit() {
 
 async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
-    return Promise.reject(new Error('No file provided'))
+    throw new Error('No file provided')
   }
   try {
     const res = await importPrivileges(files[0])
