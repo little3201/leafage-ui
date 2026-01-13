@@ -21,7 +21,7 @@
         <div class="cursor-pointer">
           <q-btn flat rounded>
             <q-avatar size="md">
-              <img :src="`${cdn_url}/${user.username}.jpg`" alt="avatar" />
+              <img :src="`https://cdn.leafage.top/${user.username}`" alt="avatar" />
             </q-avatar>
             <span class="q-ml-sm">{{ user.username }}</span>
           </q-btn>
@@ -102,7 +102,7 @@ import logo from 'src/assets/logo.svg'
 const userStore = useUserStore()
 
 const leftDrawerOpen = ref<boolean>(false)
-const cdn_url = process.env.CDN_URL
+
 const user = {
   username: userStore.username,
   privileges: userStore.privileges

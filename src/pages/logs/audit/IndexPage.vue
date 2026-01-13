@@ -47,7 +47,7 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.page.auditLogs')" selection="multiple" v-model:selected="selected"
+    <q-table ref="tableRef" flat :title="$t('page.auditLogs')" selection="multiple" v-model:selected="selected"
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>

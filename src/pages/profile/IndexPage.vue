@@ -5,7 +5,7 @@
         <q-card flat>
           <q-card-section class="flex items-center">
             <q-avatar size="80px">
-              <img :src="`${cdn_url}/${me.username}`" alt="avatar" />
+              <img :src="`https://cdn.leafage.top/${me.username}`" alt="avatar" />
             </q-avatar>
 
             <div class="q-ml-md">
@@ -50,13 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useUserStore } from 'src/stores/user-store'
+import { ref } from 'vue'
 
 
 const userStore = useUserStore()
 
-const cdn_url = process.env.CDN_URL
 const me = {
   username: userStore.username,
   fullName: userStore.fullName

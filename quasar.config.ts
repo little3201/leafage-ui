@@ -3,7 +3,7 @@
 
 import { defineConfig } from '#q-app/wrappers'
 
-export default defineConfig((ctx) => {
+export default defineConfig(() => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -61,8 +61,7 @@ export default defineConfig((ctx) => {
       // analyze: true,
       env: {
         API: '/api',
-        CLIENT_ID: 'pkce-client',
-        CDN_URL: ctx.dev ? '/images' : 'https://cdn.leafage.top'
+        CLIENT_ID: 'pkce-client'
       },
       // rawDefine: {},
       // ignorePublicFolder: true,
