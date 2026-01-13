@@ -183,8 +183,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   } finally {
     loading.value = false
   }
@@ -202,8 +202,8 @@ async function enableRow(id: number) {
   try {
     await enableUser(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -211,8 +211,8 @@ async function unlockRow(id: number) {
   try {
     await unlockUser(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -222,8 +222,8 @@ async function saveRow(id?: number) {
     try {
       const res = await fetchUser(id)
       form.value = res.data
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return Promise.resolve(error)
     }
   }
   visible.value = true
@@ -234,8 +234,8 @@ async function removeRow(id: number) {
   try {
     await removeUser(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   } finally {
     loading.value = false
   }
@@ -249,8 +249,8 @@ async function onSubmit() {
       await createUser(form.value)
     }
     visible.value = false
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -263,8 +263,8 @@ async function onUpload(files: readonly File[]) {
     importVisible.value = false
     refresh()
     return res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 </script>

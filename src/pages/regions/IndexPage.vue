@@ -170,8 +170,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   } finally {
     loading.value = false
   }
@@ -189,8 +189,8 @@ async function enableRow(id: number) {
   try {
     await enableRegion(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -202,8 +202,8 @@ async function saveRow(id?: number) {
       const res = await fetchRegion(id)
       form.value = res.data
     }
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
   visible.value = true
 }
@@ -213,8 +213,8 @@ async function removeRow(id: number) {
   try {
     await removeRegion(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   } finally {
     loading.value = false
   }
@@ -228,8 +228,8 @@ async function onSubmit() {
       await createRegion(form.value)
     }
     visible.value = false
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -242,8 +242,8 @@ async function onUpload(files: readonly File[]) {
     importVisible.value = false
     refresh()
     return res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 </script>

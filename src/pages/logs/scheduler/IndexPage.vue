@@ -173,8 +173,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   } finally {
     loading.value = false
   }
@@ -189,8 +189,8 @@ async function showRow(id: number) {
   try {
     const res = await fetchSchedulerLog(id)
     row.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
   visible.value = true
 }
@@ -199,8 +199,8 @@ async function removeRow(id: number) {
   try {
     await removeSchedulerLog(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 </script>
