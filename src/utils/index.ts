@@ -101,7 +101,7 @@ export function download(data: Blob, filename: string, mimeType?: string): void 
   const blob = new Blob([data], { type: mimeType || 'application/octet-stream' })
 
   // 创建一个临时的下载链接
-  const url = window.URL.createObjectURL(blob)
+  const url = globalThis.URL.createObjectURL(blob)
 
   // 创建一个 <a> 元素并触发点击事件来启动下载
   const link = document.createElement('a')
@@ -109,10 +109,10 @@ export function download(data: Blob, filename: string, mimeType?: string): void 
   link.setAttribute('download', filename) // 设置下载的文件名
   document.body.appendChild(link)
   link.click() // 执行点击，触发下载
-  document.body.removeChild(link) // 清除临时元素
+  link.remove() // 清除临时元素
 
   // 释放创建的 URL 对象
-  window.URL.revokeObjectURL(url)
+  globalThis.URL.revokeObjectURL(url)
 }
 
 /**
@@ -138,12 +138,12 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
 
 function base64UrlEncode(array: Uint8Array) {
   return btoa(String.fromCodePoint(...array))
-    .replaceAll(/\+/g, '-').replaceAll(/\//g, '_').replaceAll(/=+$/, '')
+    .replaceAll(/\+/g, '-').replaceAll(/\//g, '_').replace(/=+$/, '')
 }
 
 export function generateVerifier(): string {
   const array = new Uint8Array(32)
-  window.crypto.getRandomValues(array)
+  globalThis.crypto.getRandomValues(array)
   return base64UrlEncode(array)
 }
 
@@ -172,7 +172,7 @@ export function dealFilters(filters?: object | string) {
  * @returns result
  */
 function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
+  let formatted = formatFn ? formatFn(val, row) : val ?? ''
 
   formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
 
@@ -188,24 +188,29 @@ function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => str
  * @returns result
  */
 export function exportTable(columns: QTableProps['columns'], rows: QTableProps['rows']) {
-  if (!columns || !rows || columns.length === 0 || rows.length === 0) {
+  if (!columns?.length || !rows?.length) {
     // Handle the case where columns or rows are undefined or empty
     return
   }
-  // naive encoding to csv format
-  const content = [columns.map(col => wrapCsvValue(col.label))]
-    .concat(rows.map(row => columns.map(col =>
-      wrapCsvValue(typeof col.field === 'function' ? col.field(row) : row[col.field === void 0 ? col.name : col.field],
-        col.format,
-        row
-      )).join(','))
-    ).join('\r\n')
+  // 生成表头的 CSV 内容
+  const header = columns.map(col => wrapCsvValue(col.label))
 
-  const status = exportFile(
-    'table-export.csv',
-    content,
-    'text/csv'
-  )
+  // 生成表格内容的 CSV 行
+  const rowsContent = rows.map(row => {
+    return columns.map(col => {
+      // 处理 col.field 可能是函数的情况
+      const value = typeof col.field === 'function'
+        ? col.field(row)
+        : row[col.field ?? col.name]
+
+      return wrapCsvValue(value, col.format, row)
+    }).join(',')
+  }).join('\r\n')
+
+  // 合并表头和表格内容
+  const content = [header.join(','), rowsContent].join('\r\n')
+
+  const status = exportFile('table-export.csv', content, 'text/csv')
 
   if (status !== true) {
     Notify.create({
