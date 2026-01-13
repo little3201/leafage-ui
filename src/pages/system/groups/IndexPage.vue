@@ -238,10 +238,10 @@ async function onSubmit() {
       await createGroup(form.value)
     }
     refresh()
+    visible.value = false
   } catch {
     return Promise.resolve()
   }
-  visible.value = false
 }
 
 async function onUpload(files: readonly File[]) {

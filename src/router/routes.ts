@@ -1,5 +1,5 @@
-import type { RouteRecordRaw } from 'vue-router'
 import MainLayout from 'layouts/MainLayout.vue'
+import type { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -51,6 +51,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/faq/IndexPage.vue')
       }
     ]
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('pages/LoginPage.vue')
   },
   {
     path: '/callback',

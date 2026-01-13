@@ -189,10 +189,10 @@ async function onSubmit() {
     } else {
       await createRegion(form.value)
     }
+    visible.value = false
     refresh()
   } catch {
     return Promise.resolve()
   }
-  visible.value = false
 }
 </script>

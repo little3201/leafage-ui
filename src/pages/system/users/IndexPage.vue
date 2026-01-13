@@ -248,10 +248,10 @@ async function onSubmit() {
     } else {
       await createUser(form.value)
     }
+    visible.value = false
   } catch {
     return Promise.resolve()
   }
-  visible.value = false
 }
 
 async function onUpload(files: readonly File[]) {

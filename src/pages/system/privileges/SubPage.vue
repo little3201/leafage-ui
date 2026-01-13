@@ -196,10 +196,10 @@ async function onSubmit() {
     try {
       await modifyPrivilege(form.value.id, form.value)
       refresh()
+      visible.value = false
     } catch {
       return Promise.resolve()
     }
   }
-  visible.value = false
 }
 </script>
