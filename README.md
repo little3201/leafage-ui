@@ -31,6 +31,14 @@
 测试框架：Vitest
 代码规范：Eslint、Husky、Lint-staged、commitlint
 
+## 页面预览
+
+**light模式**
+<img src="https://cdn.leafage.top/preview-light.jpeg?e=1768291499&token=8dU5qN6888NJXQTTgWJVA_VR3MM1z6RlGPQdlsnX:OhEqoGXUhMj_-DbNvB_eOo9god0=" />
+
+**dark模式**
+<img src="https://cdn.leafage.top/preview-dark.jpeg?e=1768291533&token=8dU5qN6888NJXQTTgWJVA_VR3MM1z6RlGPQdlsnX:s9vaTrnVIbbH4YJbfu_yO6NJgNo=" />
+
 ### 目录结构
 
 ```
