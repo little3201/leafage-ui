@@ -34,10 +34,10 @@
 ## 页面预览
 
 **light模式**
-<img src="https://cdn.leafage.top/preview-light.jpeg" />
+<img src="https://cdn.leafage.top/preview-light.jpeg" alt="light" />
 
 **dark模式**
-<img src="https://cdn.leafage.top/preview-dark.jpeg" />
+<img src="https://cdn.leafage.top/preview-dark.jpeg" alt="dark" />
 
 ### 目录结构
 
