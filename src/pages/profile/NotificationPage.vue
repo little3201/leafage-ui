@@ -18,8 +18,8 @@ import { ref } from 'vue'
 
 // 登录历史数据模拟
 const loginHistory = ref([
-  { id: 1, device: 'Chrome on Windows', location: 'New York, USA', ip: '192.168.0.112', status: 'online' },
-  { id: 2, device: 'Safari on iPhone', location: 'Los Angeles, USA', ip: '172.168.0.112', status: 'offline' },
-  { id: 3, device: 'Edge on Windows', location: 'Chicago, USA', ip: '127.0.0.112', status: 'offline' }
+  { id: 1, device: 'Chrome on Windows', location: 'New York, USA', ip: '127.0.0.1', status: 'online' },
+  { id: 2, device: 'Safari on iPhone', location: 'Los Angeles, USA', ip: '127.0.0.2', status: 'offline' },
+  { id: 3, device: 'Edge on Windows', location: 'Chicago, USA', ip: '127.0.0.3', status: 'offline' }
 ])
 </script>
