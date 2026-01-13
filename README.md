@@ -34,10 +34,10 @@
 ## 页面预览
 
 **light模式**
-<img src="https://cdn.leafage.top/preview-light.jpeg?e=1768291499&token=8dU5qN6888NJXQTTgWJVA_VR3MM1z6RlGPQdlsnX:OhEqoGXUhMj_-DbNvB_eOo9god0=" />
+<img src="https://cdn.leafage.top/preview-light.jpeg" />
 
 **dark模式**
-<img src="https://cdn.leafage.top/preview-dark.jpeg?e=1768291533&token=8dU5qN6888NJXQTTgWJVA_VR3MM1z6RlGPQdlsnX:s9vaTrnVIbbH4YJbfu_yO6NJgNo=" />
+<img src="https://cdn.leafage.top/preview-dark.jpeg" />
 
 ### 目录结构
 
