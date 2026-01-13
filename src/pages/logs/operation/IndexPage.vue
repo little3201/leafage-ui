@@ -28,7 +28,7 @@
             <p><strong>{{ $t('label.params') }}</strong>
               {{ row.params }}
             </p>
-            <p><strong>{{ $t('label.body') }}</strong>
+            <p><strong>{{ $t('label.request.body') }}</strong>
               {{ row.body }}
             </p>
             <p><strong>{{ $t('label.userAgent') }}</strong>
@@ -68,7 +68,8 @@
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(`label.${col.label}`) }}
+            <span v-if="col.label === 'body'">{{ $t('label.request.body') }}</span>
+            <span v-else>{{ $t(`label.${col.label}`) }}</span>
           </q-th>
         </q-tr>
       </template>
@@ -105,22 +106,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { retrieveOperationLogs, fetchOperationLog, removeOperationLog } from 'src/api/operation-logs'
-import { formatDuration, exportTable } from 'src/utils'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/operation-logs'
 import type { OperationLog } from 'src/types'
+import { exportTable, formatDuration } from 'src/utils'
+import { onMounted, ref } from 'vue'
 
 
 const visible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<OperationLog>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: OperationLog = {
-  id: undefined,
+  id: null,
   module: '',
   action: '',
   params: ''
@@ -137,7 +138,7 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<OperationLog>[] = [
   { name: 'module', label: 'module', align: 'left', field: 'module' },
   { name: 'action', label: 'action', align: 'left', field: 'action' },
   { name: 'params', label: 'params', align: 'left', field: 'params' },
@@ -149,7 +150,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 })
 
 /**
@@ -180,7 +181,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 async function showRow(id: number) {

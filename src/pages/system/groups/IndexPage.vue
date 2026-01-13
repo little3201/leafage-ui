@@ -108,12 +108,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useUserStore } from 'stores/user-store'
-import { retrieveGroups, fetchGroup, createGroup, modifyGroup, removeGroup, enableGroup, importGroups } from 'src/api/groups'
-import { visibleArray, exportTable } from 'src/utils'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { createGroup, enableGroup, fetchGroup, importGroups, modifyGroup, removeGroup, retrieveGroups } from 'src/api/groups'
 import type { Group } from 'src/types'
+import { exportTable, visibleArray } from 'src/utils'
+import { useUserStore } from 'stores/user-store'
+import { onMounted, ref } from 'vue'
 
 
 const userStore = useUserStore()
@@ -121,13 +121,13 @@ const cdn_url = process.env.CDN_URL
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<Group>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: Group = {
-  id: undefined,
+  id: null,
   name: '',
   enabled: true
 }
@@ -143,7 +143,7 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<Group>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'members', label: 'members', align: 'center', field: 'members' },
   { name: 'enabled', label: 'enabled', align: 'center', field: 'enabled' },
@@ -187,7 +187,7 @@ function importRow() {
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 function relationRow(id: number) {
@@ -238,10 +238,10 @@ async function onSubmit() {
       await createGroup(form.value)
     }
     refresh()
+    visible.value = false
   } catch {
     return Promise.resolve()
   }
-  visible.value = false
 }
 
 async function onUpload(files: readonly File[]) {

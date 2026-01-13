@@ -26,6 +26,24 @@ export const fetchSample = (id: number) => {
 }
 
 /**
+ * Preview a specific row
+ * @param id Row ID
+ * @returns Row data
+ */
+export const previewSample = (id: number) => {
+  return api.get(`${SERVER_URL.SAMPLE}/${id}/preview`)
+}
+
+/**
+ * Retrieve fragments for a specific row
+ * @param id Row ID
+ * @returns Sample fragments
+ */
+export const retrieveSampleFragments = (id: number) => {
+  return api.get(`${SERVER_URL.SAMPLE}/${id}/fragments`)
+}
+
+/**
  * Create a new row
  * @param row Row data
  * @returns Created row
@@ -68,7 +86,24 @@ export const removeSample = (id: number) => {
  * @returns
  */
 export const importSamples = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.SAMPLE}/import`, formData)
+  return api.postForm(`${SERVER_URL.SAMPLE}/import`, { file: file })
+}
+
+/**
+ * Relation modules for a specific row
+ * @param id Row ID
+ * @param fragmentIds relations
+ */
+export const relationFragments = (id: number, fragmentIds: number[]) => {
+  return api.patch(`${SERVER_URL.SAMPLE}/${id}/fragments`, fragmentIds)
+}
+
+/**
+ * Remove fragments for a specific row
+ * @param id Row ID
+ * @param fragmentIds relations
+ */
+export const removeSampleFragments = (id: number, fragmentIds: number[]) => {
+  const params = fragmentIds ? { fragmentIds: fragmentIds.join(',') } : {}
+  return api.delete(`${SERVER_URL.SAMPLE}/${id}/fragments`, { params })
 }

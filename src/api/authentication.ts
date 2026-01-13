@@ -23,10 +23,13 @@ export async function signIn() {
     code_challenge_method: 'S256'
   })
 
-  const res = await api.get(SERVER_URL.AUTHORIZE, { params })
-  if (res && res.status === 200) {
+  try {
+    const res = await api.get(SERVER_URL.AUTHORIZE, { params })
     window.location.replace(res.request.responseURL)
+  } catch {
+    window.location.replace('/login')
   }
+
 }
 
 export async function handleCallback() {
@@ -38,18 +41,22 @@ export async function handleCallback() {
   if (code && state === storedState) {
     const codeVerifier = localStorage.getItem('code_verifier')
 
-    // Exchange authorization code for access token
-    const res = await api.post(SERVER_URL.TOKEN, new URLSearchParams({
-      client_id: CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
-      code: code,
-      code_verifier: codeVerifier || '',
-      grant_type: 'authorization_code'
-    }))
+    try {
+      const res = await api.post(SERVER_URL.TOKEN, new URLSearchParams({
+        client_id: CLIENT_ID,
+        redirect_uri: REDIRECT_URI,
+        code: code,
+        code_verifier: codeVerifier || '',
+        grant_type: 'authorization_code'
+      }))
 
-    localStorage.removeItem('code_verifier')
-    localStorage.removeItem('state')
-    return res
+      return res
+    } catch {
+      window.location.replace('/login')
+    } finally {
+      localStorage.removeItem('code_verifier')
+      localStorage.removeItem('state')
+    }
   }
   return null
 }
@@ -65,8 +72,10 @@ export async function signOut(idToken: string) {
     post_logout_redirect_uri: `${window.location.origin}`
   })
 
-  const res = await api.post(SERVER_URL.LOGOUT, params)
-  if (res && res.status === 200) {
+  try {
+    const res = await api.post(SERVER_URL.LOGOUT, params)
     window.location.replace(res.request.responseURL)
+  } catch {
+    window.location.replace('/login')
   }
 }

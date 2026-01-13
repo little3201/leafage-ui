@@ -29,7 +29,8 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(members.filter(item => item.groupId === Number(id)))
+      const filtered = members.filter(item => item.groupId === Number(id))
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json([])
     }
@@ -37,8 +38,8 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      const array = datas.filter(item => item.id === Number(id))
-      return HttpResponse.json(array[0])
+      const filtered = datas.filter(item => item.id === Number(id))
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
@@ -49,7 +50,7 @@ export const groupsHandlers = [
     const size = url.searchParams.get('size')
 
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
     return HttpResponse.json(data)

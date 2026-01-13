@@ -100,13 +100,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useUserStore } from 'stores/user-store'
-import { retrieveRegions, fetchRegion, createRegion, modifyRegion, removeRegion, enableRegion, importRegions } from 'src/api/regions'
-import SubPage from './SubPage.vue'
-import { exportTable } from 'src/utils'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { createRegion, enableRegion, fetchRegion, importRegions, modifyRegion, removeRegion, retrieveRegions } from 'src/api/regions'
 import type { Region } from 'src/types'
+import { exportTable } from 'src/utils'
+import { useUserStore } from 'stores/user-store'
+import { onMounted, ref } from 'vue'
+import SubPage from './SubPage.vue'
 
 
 const userStore = useUserStore()
@@ -114,14 +114,15 @@ const userStore = useUserStore()
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<Region>>([])
 const filter = ref('')
 const loading = ref<boolean>(false)
 
 const initialValues: Region = {
-  id: undefined,
+  id: null,
   name: '',
+  superiorId: null,
   description: ''
 }
 const form = ref<Region>({ ...initialValues })
@@ -136,7 +137,7 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<Region>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'postalCode', label: 'postalCode', align: 'left', field: 'postalCode', sortable: true },
   { name: 'areaCode', label: 'areaCode', align: 'left', field: 'areaCode', sortable: true },
@@ -181,7 +182,7 @@ function importRow() {
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 async function enableRow(id: number) {
@@ -226,10 +227,10 @@ async function onSubmit() {
     } else {
       await createRegion(form.value)
     }
+    visible.value = false
   } catch {
     return Promise.resolve()
   }
-  visible.value = false
 }
 
 async function onUpload(files: readonly File[]) {

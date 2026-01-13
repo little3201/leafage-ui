@@ -1,5 +1,5 @@
-import { Notify, exportFile } from 'quasar'
 import type { QTableProps } from 'quasar'
+import { Notify, exportFile } from 'quasar'
 import type { Dictionary } from 'src/types'
 
 /**

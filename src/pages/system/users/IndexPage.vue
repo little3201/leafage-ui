@@ -114,12 +114,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
-import { useUserStore } from 'stores/user-store'
-import { retrieveUsers, fetchUser, createUser, modifyUser, removeUser, enableUser, unlockUser, importUsers } from 'src/api/users'
-import { exportTable } from 'src/utils'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/users'
 import type { User } from 'src/types'
+import { exportTable } from 'src/utils'
+import { useUserStore } from 'stores/user-store'
+import { onMounted, ref } from 'vue'
 
 
 const userStore = useUserStore()
@@ -128,15 +128,15 @@ const cdn_url = process.env.CDN_URL
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<User>>([])
 const filter = ref({
   username: ''
 })
 const loading = ref<boolean>(false)
 
 const initialValues: User = {
-  id: undefined,
+  id: null,
   username: '',
   fullName: '',
   email: '',
@@ -154,7 +154,7 @@ const pagination = ref({
 
 const selected = ref([])
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<User>[] = [
   { name: 'username', label: 'username', align: 'left', field: 'username', sortable: true },
   { name: 'email', label: 'email', align: 'center', field: 'email', sortable: true },
   { name: 'status', label: 'status', align: 'center', field: 'status', sortable: true },
@@ -195,7 +195,7 @@ function importRow() {
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 async function enableRow(id: number) {
@@ -248,10 +248,10 @@ async function onSubmit() {
     } else {
       await createUser(form.value)
     }
+    visible.value = false
   } catch {
     return Promise.resolve()
   }
-  visible.value = false
 }
 
 async function onUpload(files: readonly File[]) {

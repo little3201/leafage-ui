@@ -1,12 +1,12 @@
 import { defineBoot } from '#q-app/wrappers'
+import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
-import { Notify } from 'quasar'
 import { i18n } from 'boot/i18n'
-import type { ComposerTranslation } from 'vue-i18n'
-import { useUserStore } from 'src/stores/user-store'
+import { Notify } from 'quasar'
 import { signIn } from 'src/api/authentication'
 import { SERVER_URL } from 'src/constants'
+import { useUserStore } from 'src/stores/user-store'
+import type { ComposerTranslation } from 'vue-i18n'
 
 
 const { t } = i18n.global as { t: ComposerTranslation }

@@ -1,8 +1,6 @@
 // 服务匹配前缀
 const SERVER_PREFIX = {
   HYPERVISOR: '/hypervisor', // 系统
-  ASSETS: '/assets', // 资源
-  EXPLOITER: '/exploiter', // 开发者
   OAUTH2: '/oauth2' // oauth2认证
 }
 
@@ -19,28 +17,31 @@ export const SERVER_URL = {
   GROUP: SERVER_PREFIX.HYPERVISOR.concat('/groups'), // 分组
   DICTIONARY: SERVER_PREFIX.HYPERVISOR.concat('/dictionaries'), // 字典
 
-  REGION: SERVER_PREFIX.ASSETS.concat('/regions'), // 行政区划
-  FILE: SERVER_PREFIX.ASSETS.concat('/files'), // 文件
+  REGION: SERVER_PREFIX.HYPERVISOR.concat('/regions'), // 行政区划
+  FILE: SERVER_PREFIX.HYPERVISOR.concat('/files'), // 文件
 
   ACCESS_LOG: SERVER_PREFIX.HYPERVISOR.concat('/access-logs'), // 访问日志
   AUDIT_LOG: SERVER_PREFIX.HYPERVISOR.concat('/audit-logs'), // 审计日志
   OPERATION_LOG: SERVER_PREFIX.HYPERVISOR.concat('/operation-logs'), // 操作日志
   SCHEDULER_LOG: SERVER_PREFIX.HYPERVISOR.concat('/scheduler-logs'), // 调度日志
+  CALENDAR_EVENT: SERVER_PREFIX.HYPERVISOR.concat('/calendar-events'), // 日历事件
 
   // assets
-  POST: SERVER_PREFIX.ASSETS.concat('/posts'), // 帖子
-  CATEGORY: SERVER_PREFIX.ASSETS.concat('/categories'), // 类别
-  STATISTICS: SERVER_PREFIX.ASSETS.concat('/statistics'), // 统计
-  COMMENT: SERVER_PREFIX.ASSETS.concat('/comments'), // 评论
+  POST: SERVER_PREFIX.HYPERVISOR.concat('/posts'), // 帖子
+  CATEGORY: SERVER_PREFIX.HYPERVISOR.concat('/categories'), // 类别
+  STATISTICS: SERVER_PREFIX.HYPERVISOR.concat('/statistics'), // 统计
+  COMMENT: SERVER_PREFIX.HYPERVISOR.concat('/comments'), // 评论
 
-  SIGNIN: SERVER_PREFIX.ASSETS.concat('/signin'), // 登录
-  SIGNOUT: SERVER_PREFIX.ASSETS.concat('/signout'), // 退出
+  SIGNIN: SERVER_PREFIX.HYPERVISOR.concat('/signin'), // 登录
+  SIGNOUT: SERVER_PREFIX.HYPERVISOR.concat('/signout'), // 退出
 
   // exploiters
-  SCRIPT: SERVER_PREFIX.EXPLOITER.concat('/scripts'), // 脚本
-  SCHEMA: SERVER_PREFIX.EXPLOITER.concat('/schemas'), // 计划
-  SAMPLE: SERVER_PREFIX.EXPLOITER.concat('/samples'), // 样板
-  CONNECTION: SERVER_PREFIX.EXPLOITER.concat('/connections') // 连接
+  SCRIPT: SERVER_PREFIX.HYPERVISOR.concat('/scripts'), // 脚本
+  SCHEME: SERVER_PREFIX.HYPERVISOR.concat('/schemes'), // 方案
+  SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 样板
+  MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
+  FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
+  CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 连接
 }
 
 export const actions: { [key: string]: string } = {
@@ -103,3 +104,39 @@ export const shceduleStatusIcon: { [key: string]: string } = {
   FAILED: 'error',
   CANCELED: 'cancel'
 }
+
+export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
+  ACTIVE: 'success',
+  LOCKED: 'primary',
+  EXPIRED: 'info',
+  CREDENTIALS_EXPIRED: 'warning',
+  DISABLED: 'danger'
+}
+
+export const schemeScope: { [key: string]: 'primary' | 'success' } = {
+  ALL: 'success',
+  PARTIAL: 'primary'
+}
+
+export const databaseType: { [key: string]: string } = {
+  POSTGRESQL: 'postgresql',
+  MYSQL: 'mysql'
+}
+
+export const sampleType: { [key: string]: 'primary' | 'success' } = {
+  SINGLE: 'primary',
+  COMBINE: 'success'
+}
+
+export const languages = [
+  { label: 'java', value: 'JAVA' },
+  { label: 'yml', value: 'YML' },
+  { label: 'xml', value: 'XML' },
+  { label: 'sql', value: 'SQL' },
+  { label: 'ts', value: 'TS' },
+  { label: 'tsx', value: 'TSX' },
+  { label: 'js', value: 'JS' },
+  { label: 'jsx', value: 'JSX' },
+  { label: 'vue', value: 'VUE' },
+  { label: 'react', value: 'REACT' }
+]

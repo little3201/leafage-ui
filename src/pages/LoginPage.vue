@@ -20,14 +20,14 @@
         <figure class="absolute bg-negative-gradient"
           style="height: 21em;  width: 21em; bottom: -16em; left: 14em; border-radius: 50%;" />
 
-        <q-card bordered class="column justify-center items-center shadow-12 overflow-hidden"
-          style="height: 70vh; border-radius: 20px;" :style="{ width: $q.screen.lt.sm ? '100%' : '65vw' }">
-          <q-card-section horizontal :class="['full-height', $q.screen.lt.md ? 'hidden' : '']" style="width: 50%;">
+        <q-card bordered class="row justify-center items-center q-col-gutter-x-xl shadow-12 overflow-hidden"
+          style="height: 60vh; border-radius: 20px;" :style="{ width: $q.screen.lt.sm ? '100%' : '60vw' }">
+          <q-card-section horizontal :class="[$q.screen.lt.md ? 'hidden' : 'col-6']">
             <transition appear enter-active-class="animated slideInLeft" leave-active-class="animated slideOutLeft">
-              <div class="column inline justify-center items-center" style="margin-top: -60px">
-                <q-img :src="hello" alt="hello" />
-                <div class="column q-gutter-y-xs">
-                  <span class="text-weight-bold text-h5" style="margin-top: -20px">
+              <div class="column inline justify-center items-center full-width q-px-xl">
+                <q-img :src="hello" alt="hello" width="100%" height="auto" />
+                <div class="column q-mt-md">
+                  <span class="text-weight-bold text-h5">
                     {{ $t('tips.welcome') }}
                   </span>
                   <span class="text-subtitle1">
@@ -37,9 +37,9 @@
               </div>
             </transition>
           </q-card-section>
-          <q-separator vertical />
+
           <q-card-section horizontal class="full-height no-border-radius"
-            :style="{ width: $q.screen.lt.md ? '100%' : '50%' }" :class="$q.dark.isActive ? '' : 'bg-light-blue-1'">
+            :class="[$q.screen.lt.md ? 'col-12' : 'col-6', $q.dark.isActive ? '' : 'bg-light-blue-1']">
             <transition appear enter-active-class="animated slideInRight" leave-active-class="animated slideOutRight">
               <div class="column justify-center items-center full-width">
                 <div class="text-center">
@@ -48,7 +48,7 @@
                 <div class="text-h6 text-center q-mb-xs">
                   {{ $t('message.signinTo') }}
                 </div>
-                <q-form @submit="onSubmit" class="q-mt-md full-width q-px-xl">
+                <q-form @submit="onSubmit" class="q-mt-md q-px-xl" style="width: 600px;">
                   <q-input :disable="loading" dense no-error-icon v-model.trim="form.username"
                     :placeholder="$t('label.username')"
                     :rules="[(val) => (val && val.length >= 5 && val.length <= 12) || $t('label.username')]">
@@ -67,10 +67,8 @@
                         class="cursor-pointer" @click="showPwd = !showPwd" />
                     </template>
                   </q-input>
-                  <q-checkbox :disable="loading" v-model="rememberMe" :label="$t('label.rememberMe')" dense
-                    @update:model-value="changeRememberMe" class="q-my-md" />
                   <q-btn title="signin" no-caps rounded glossy :label="$t('action.signin')" type="submit"
-                    color="primary" :loading="loading" class="full-width" />
+                    color="primary" :loading="loading" class="full-width q-mt-md" />
                 </q-form>
               </div>
             </transition>
@@ -86,29 +84,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useQuasar } from 'quasar'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
+import { useQuasar } from 'quasar'
 import { signIn } from 'src/api/authentication'
-import logo from 'src/assets/logo.svg'
 import hello from 'src/assets/hello_ccwj.svg'
+import logo from 'src/assets/logo.svg'
+import { ref } from 'vue'
 
 
 const $q = useQuasar()
 
 const showPwd = ref<boolean>(true)
-const rememberMe = ref<boolean>(false)
 const loading = ref<boolean>(false)
 
 const form = ref({
   username: '',
   password: ''
 })
-
-function changeRememberMe(value: boolean) {
-  return value
-}
 
 async function onSubmit() {
   loading.value = true

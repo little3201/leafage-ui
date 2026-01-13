@@ -26,10 +26,26 @@ export const retrieveGroupTree = () => {
 
 /**
  * Retrieve members for a specific row
- * @returns tree data
+ * @returns realtion data
  */
 export const retrieveGroupMembers = (id: number) => {
   return api.get(`${SERVER_URL.GROUP}/${id}/members`)
+}
+
+/**
+ * Retrieve privileges for a specific row
+ * @returns realtion data
+ */
+export const retrieveGroupRoles = (id: number) => {
+  return api.get(`${SERVER_URL.GROUP}/${id}/roles`)
+}
+
+/**
+ * Retrieve privileges for a specific row
+ * @returns realtion data
+ */
+export const retrieveGroupPrivileges = (id: number) => {
+  return api.get(`${SERVER_URL.GROUP}/${id}/privileges`)
 }
 
 /**
@@ -118,27 +134,22 @@ export const removeGroupRoles = (id: number, roleIds: number[]) => {
 
 /**
  * Relation privileges for a specific row
- * @param ids Row IDs
- * @param relations Actions
+ * @param id Row ID
+ * @param privilegeId Privilege id
+ * @param action Action
  */
-export const relationGroupsPrivileges = (privilegeId: number, relations: { key: number | string, actions: string[] }[]) => {
-  const datas = relations.map(item => { return { id: item.key, actions: item.actions } })
-  return api.patch(`${SERVER_URL.GROUP}/privileges/${privilegeId}`, datas)
+export const relationGroupPrivileges = (id: number, privilegeId: number, action?: string) => {
+  return api.patch(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, {}, { params: { action } })
 }
 
 /**
  * Remove privileges for a specific row
  * @param id Row ID
- * @param privilegeIds Privilege id
- * @param actions Actions
+ * @param privilegeId Privilege id
+ * @param action Action
  */
-export const removeGroupsPrivileges = (id: number, privilegeId: number, actions?: string[]) => {
-  if (actions && actions.length > 0) {
-    const params = { actions: actions.join(',') }
-    return api.delete(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, { params })
-  } else {
-    return api.delete(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`)
-  }
+export const removeGroupPrivileges = (id: number, privilegeId: number, action?: string) => {
+  return api.delete(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, { params: { action } })
 }
 
 /**
@@ -147,7 +158,5 @@ export const removeGroupsPrivileges = (id: number, privilegeId: number, actions?
  * @returns
  */
 export const importGroups = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.GROUP}/import`, formData)
+  return api.postForm(`${SERVER_URL.GROUP}/import`, { file: file })
 }

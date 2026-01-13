@@ -1,71 +1,47 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Sample } from 'src/types'
+import type { Sample, SampleFragment } from 'src/types'
 
-const datas: Sample[] = [
-  {
-    id: 1,
-    name: 'IndexPage',
-    module: 'frontend',
-    stack: '.vue',
-    type: 'SINGLE',
+const datas: Sample[] = []
+
+for (let i = 1; i < 16; i++) {
+  const row: Sample = {
+    id: i,
+    name: 'name_' + i,
+    language: ['java', 'vue', 'ts'][Math.floor(Math.random() * 3)] || '',
+    filePath: 'src/${packageName}/${module}',
+    module: '',
+    type: ['SINGLE', 'COMBINE'][Math.floor(Math.random() * 2)] || '',
+    version: 1,
     enabled: true,
     body: '<template>\n  <div class="app-container">\n </div>\n</template>',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 2,
-    name: 'users',
-    module: 'frontend',
-    stack: '.ts',
-    type: 'SINGLE',
-    enabled: true,
-    body: 'import { api } from \'boot/axios\'\nimport { SERVER_URL } from \'src/constants\'\nimport type { Pagination, User } from \'src/types\'\n\n/**\n * Retrieve rows\n * @param pagination Pagination and sort parameters\n * @param filters Optional filter or sort parameters\n * @returns Rows data\n */\nexport const retrieveUsers = (pagination: Pagination, filters?: object) => {\n  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, ...filters } })\n}\n\n',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 3,
-    name: 'entity',
-    module: 'backend',
-    stack: '.java',
-    type: 'SINGLE',
-    enabled: true,
-    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 4,
-    name: 'repository',
-    module: 'backend',
-    stack: '.java',
-    type: 'SINGLE',
-    enabled: true,
-    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 5,
-    name: 'mapper',
-    module: 'backend',
-    stack: '.java',
-    type: 'SINGLE',
-    enabled: true,
-    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
-    lastModifiedDate: new Date()
-  },
-  {
-    id: 6,
-    name: 'controller',
-    module: 'backend',
-    stack: '.java',
-    type: 'SINGLE',
-    enabled: true,
-    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String stack;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
-    lastModifiedDate: new Date()
+    description: 'this is the description'
   }
-]
+
+  datas.push(row)
+}
+
+const sampleFragments: SampleFragment[] = []
+for (let i = 1; i < 99; i++) {
+  const row: SampleFragment = {
+    id: i,
+    sampleId: Math.floor(Math.random() * 16),
+    fragmentId: i
+  }
+  sampleFragments.push(row)
+}
+
 
 export const samplesHandlers = [
+  http.get(`/api${SERVER_URL.SAMPLE}/:id/fragments`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      const filtered = sampleFragments.filter(item => item.sampleId === Number(id))
+      return HttpResponse.json(filtered)
+    } else {
+      return HttpResponse.json()
+    }
+  }),
   http.get(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -75,13 +51,13 @@ export const samplesHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.SAMPLE}`, ({ request }) => {
-    const url = new URL(request.url)
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      body: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
 
@@ -154,6 +130,6 @@ export const samplesHandlers = [
     datas.pop()
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData)
+    return HttpResponse.json()
   })
 ]

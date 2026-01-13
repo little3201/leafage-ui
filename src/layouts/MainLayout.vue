@@ -19,20 +19,22 @@
           <q-btn flat round dense title="faq" icon="sym_r_help" to="/faq" />
         </div>
         <div class="cursor-pointer">
-          <q-avatar size="md">
-            <img :src="`${cdn_url}/${user.username}.jpg`" alt="avatar" />
-          </q-avatar>
-          <span class="q-ml-sm">{{ user.username }}</span>
+          <q-btn flat rounded>
+            <q-avatar size="md">
+              <img :src="`${cdn_url}/${user.username}.jpg`" alt="avatar" />
+            </q-avatar>
+            <span class="q-ml-sm">{{ user.username }}</span>
+          </q-btn>
           <q-menu>
             <q-list separator>
               <q-item to="/profile">
-                <q-item-section avatar>
+                <q-item-section side>
                   <q-icon name="sym_r_manage_accounts" />
                 </q-item-section>
                 <q-item-section>{{ $t('page.profile') }}</q-item-section>
               </q-item>
               <q-item clickable v-close-popup @click="signOut(userStore.idToken)">
-                <q-item-section avatar>
+                <q-item-section side>
                   <q-icon name="sym_r_logout" />
                 </q-item-section>
                 <q-item-section>{{ $t('action.signout') }}</q-item-section>
@@ -46,19 +48,27 @@
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered :width="220">
       <q-list>
-        <EssentialLink v-bind="{
-          name: 'home',
-          icon: 'home',
-          path: '/'
-        }" />
+        <q-item exact to="/">
+          <q-item-section side>
+            <q-icon name="sym_r_home" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('page.home') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <template v-for="link in userStore.privileges" :key="link.id">
           <EssentialList v-if="link.children && link.children.length > 0" :essentialLink="link"
             :parent-path="`/${link.meta.path}`" />
-          <EssentialLink v-else v-bind="{
-            name: link.name,
-            icon: link.meta.icon,
-            path: link.meta.path
-          }" />
+
+          <q-item v-else :to="`/${link.meta.path}`">
+            <q-item-section side>
+              <q-icon :name="`sym_r_${link.meta.icon}`" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t(`page.${link.name}`) }}</q-item-label>
+            </q-item-section>
+          </q-item>
         </template>
       </q-list>
     </q-drawer>
@@ -82,7 +92,6 @@
 import { useUserStore } from 'stores/user-store'
 import { ref } from 'vue'
 
-import EssentialLink from 'components/EssentialLink.vue'
 import EssentialList from 'components/EssentialList.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'

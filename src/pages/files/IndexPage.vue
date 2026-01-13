@@ -169,21 +169,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { QTableProps } from 'quasar'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { date } from 'quasar'
-import { useUserStore } from 'stores/user-store'
-import { retrieveFiles, fetchFile, uploadFile, download, removeFile } from 'src/api/files'
-import { formatFileSize } from 'src/utils'
+import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/files'
 import type { FileRecord } from 'src/types'
+import { formatFileSize } from 'src/utils'
+import { useUserStore } from 'stores/user-store'
+import { onMounted, ref } from 'vue'
 
 
 const userStore = useUserStore()
 const visible = ref<boolean>(false)
 const uploadVisible = ref<boolean>(false)
 
-const tableRef = ref()
-const rows = ref<QTableProps['rows']>([])
+const tableRef = ref<QTable>()
+const rows = ref<Array<FileRecord>>([])
 const filter = ref({
   superiorId: null as string | null,
   name: null
@@ -191,7 +191,7 @@ const filter = ref({
 const loading = ref<boolean>(false)
 
 const initialValues: FileRecord = {
-  id: undefined,
+  id: null,
   name: '',
   size: 0,
   path: ''
@@ -209,7 +209,7 @@ const pagination = ref({
 const expandRows = ref<Array<FileRecord>>([])
 const currentRow = ref<FileRecord | null>(null)
 
-const columns: QTableProps['columns'] = [
+const columns: QTableColumn<FileRecord>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
   { name: 'contentType', label: 'contentType', align: 'left', field: 'contentType', sortable: true },
   { name: 'size', label: 'size', align: 'left', field: 'size', sortable: true },
@@ -218,7 +218,7 @@ const columns: QTableProps['columns'] = [
 ]
 
 onMounted(() => {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 })
 
 /**
@@ -250,7 +250,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 }
 
 function refresh() {
-  tableRef.value.requestServerInteraction()
+  tableRef.value?.requestServerInteraction()
 }
 
 function showRow(id: number | undefined) {
@@ -309,7 +309,7 @@ function onRowClick(evt: Event, row: FileRecord) {
     }
     refresh()
   } else if (row?.regularFile) {
-    showRow(row.id)
+    showRow(row.id!)
   }
 }
 

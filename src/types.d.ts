@@ -1,5 +1,5 @@
 interface AudtiMetadata {
-  id: number | undefined
+  id: number | null
   lastModifiedDate?: Date
 }
 
@@ -14,7 +14,7 @@ export interface User extends AudtiMetadata {
   username: string
   fullName: string
   email: string
-  status: string
+  status?: string
   enabled?: boolean
 }
 
@@ -54,21 +54,21 @@ export interface GroupPrivileges {
 
 export interface Privilege extends AudtiMetadata {
   name: string
-  superiorId?: number
+  superiorId: number | null
   path: string
   component: string
   redirect?: string
   icon: string
   actions?: string[]
-  count?: number
-  hasChildren?: boolean
   enabled?: boolean
   description?: string
+  count?: number
+  hasChildren?: boolean
 }
 
 export interface Dictionary extends AudtiMetadata {
   name: string
-  superiorId?: number | undefined
+  superiorId: number | null
   enabled?: boolean
   description?: string
   count?: number
@@ -77,16 +77,18 @@ export interface Dictionary extends AudtiMetadata {
 
 export interface Region extends AudtiMetadata {
   name: string
-  superiorId?: number | undefined
+  superiorId: number | null
   areaCode?: string
   postalCode?: string
   hasChildren?: boolean
   enabled?: boolean
   description?: string
+  count?: number
+  hasChildren?: boolean
 }
 
 export interface TreeNode {
-  id?: number
+  id: number | null
   name: string
   children?: TreeNode[]
 }
@@ -102,30 +104,33 @@ export interface PrivilegeTreeNode extends TreeNode {
   children?: PrivilegeTreeNode[]
 }
 
-export interface SampleNode {
-  frontend: SampleTreeNode[]
-  backend: SampleTreeNode[]
-  resources: SampleTreeNode[]
-}
+export namespace Sample {
+  export interface Rendered {
+    name: string
+    language?: string
+    filePath: string
+    body?: string
+  }
 
-export interface SampleTreeNode extends TreeNode {
-  content?: string
-  type?: string
-  suffix?: string
-  children?: SampleTreeNode[]
+  export interface TreeNode {
+    name: string
+    filePath: string
+    children?: Sample.TreeNode[]
+    file?: Sample.Rendered
+  }
 }
 
 export interface OperationLog extends AudtiMetadata {
   module: string
   action: string
-  ip?: string
   params: string
   body?: string
-  referer?: string
+  ip?: string
   sessionId?: string
-  deviceType?: string
   userAgent?: string
   statusCode?: number
+  operator?: string
+  operatedAt?: Date
 }
 
 export interface AccessLog extends AudtiMetadata {
@@ -134,25 +139,26 @@ export interface AccessLog extends AudtiMetadata {
   params?: string
   body?: string
   ip: string
-  responseTimes?: number
+  duration?: number
   statusCode?: number
-  responseMessage?: string
+  response?: string
 }
 
 export interface AuditLog extends AudtiMetadata {
-  operation: string
   resource: string
+  action: string
+  targetId?: number
   oldValue?: string
   newValue?: string
   ip: string
   statusCode?: number
-  operatedTimes?: number
+  duration?: number
 }
 
 export interface SchedulerLog extends AudtiMetadata {
   name: string
   startTime?: Date
-  executedTimes?: number
+  duration?: number
   nextExecuteTime?: Date
   status?: string
   record?: string
@@ -170,22 +176,33 @@ export interface FileRecord extends AudtiMetadata {
   lastModifiedDate?: Date
 }
 
-export interface Schema extends AudtiMetadata {
-  name: string
-  connectionId: number | undefined
-  prefix?: string
+export interface Scheme extends AudtiMetadata {
+  module: string
+  connectionId: number | null
   packageName: string
+  tables: string[]
+  scope: string
   enabled?: boolean
-  samples: number[]
+}
+
+export interface SchemeModule {
+  id: number
+  schemeId: number
+  moduleId: number
 }
 
 export interface Field extends AudtiMetadata {
+  schemeId: number
+  tableName: string
   name: string
   dataType: string
   length: number
+  comment: string
   fieldType: string
   formType: string
+  tsType: string
   nullable: boolean
+  unique: boolean
   queryable: boolean
   queryType: string | undefined
   editable: boolean
@@ -196,27 +213,67 @@ export interface Field extends AudtiMetadata {
 export interface Sample extends AudtiMetadata {
   name: string
   module: string
-  stack: string
-  type: 'SINGLE' | 'TREE'
-  body: string | undefined
-  filePath?: number
+  language: string
+  body: string
+  filePath?: string
+  type: string
+  description?: string
+  version?: number
   enabled?: boolean
+}
+
+export interface Module extends AudtiMetadata {
+  name: string
+  description?: string
+  samples?: string[]
+  version?: number
+  enabled?: boolean
+}
+
+export interface ModuleSample {
+  id: number
+  moduleId: number
+  sampleId: number
+}
+
+
+export interface Fragment extends AudtiMetadata {
+  name: string
+  language: string
+  imports?: string
+  body: string
+  version?: number
+  enabled?: boolean
+}
+
+export interface SampleFragment {
+  id: number
+  sampleId: number
+  fragmentId: number
 }
 
 export interface Script extends AudtiMetadata {
   name: string
   type: string | undefined
   icon: string
-  version: string | undefined
-  content: string
+  version: string
+  body: string
 }
 
 export interface Connection extends AudtiMetadata {
-  name: string
+  type: string
+  database: string
   host: string
   port: number | undefined
   username: string
   password?: string
-  enabled?: boolean
-  tables?: string[]
+  params?: string
+}
+
+export interface Schedule extends AudtiMetadata {
+  title: string
+  location?: string
+  startDate: string
+  endDate: string
+  type?: string
 }

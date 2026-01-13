@@ -2,18 +2,19 @@ import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { AuditLog } from 'src/types'
 
+
 const datas: AuditLog[] = []
 
 for (let i = 1; i < 28; i++) {
   const row: AuditLog = {
     id: i,
-    operation: 'Modify',
+    action: 'modify',
     resource: 'Settings',
     oldValue: '{"theme:"light"}',
     newValue: '{"theme:"dark"}',
     ip: '192.168.0.4',
     statusCode: 200,
-    operatedTimes: 12121
+    duration: 12121
   }
   datas.push(row)
 }
@@ -28,13 +29,13 @@ export const auditLogsHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.AUDIT_LOG}`, ({ request }) => {
-    const url = new URL(request.url)
-    const page = url.searchParams.get('page')
-    const size = url.searchParams.get('size')
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
 
@@ -58,6 +59,6 @@ export const auditLogsHandlers = [
     datas.pop()
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData)
+    return HttpResponse.json()
   })
 ]

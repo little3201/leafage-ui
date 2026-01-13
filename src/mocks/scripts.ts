@@ -9,7 +9,7 @@ const datas: Script[] = [
     icon: '/svgs/mysql.svg',
     version: '8.0.34',
     type: 'Connection',
-    content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
+    body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   }, {
     id: 2,
@@ -17,7 +17,7 @@ const datas: Script[] = [
     icon: '/svgs/nginx.svg',
     version: '1.8.12',
     type: 'Middleware',
-    content: '#!/bin/bash\necho \\"Starting Nginx...\\"\nservice nginx start\necho \\"Nginx is now running.\\"\n',
+    body: '#!/bin/bash\necho \\"Starting Nginx...\\"\nservice nginx start\necho \\"Nginx is now running.\\"\n',
     lastModifiedDate: new Date()
   },
   {
@@ -26,7 +26,7 @@ const datas: Script[] = [
     icon: '/svgs/nodejs.svg',
     version: '20.5.6',
     type: 'Middleware',
-    content: 'npm install',
+    body: 'npm install',
     lastModifiedDate: new Date()
   },
   {
@@ -35,7 +35,7 @@ const datas: Script[] = [
     icon: '/svgs/postgresql.svg',
     version: '16.2.3',
     type: 'Connection',
-    content: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
+    body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   },
   {
@@ -44,7 +44,7 @@ const datas: Script[] = [
     icon: '/svgs/redis.svg',
     version: '6.0.1',
     type: 'Middleware',
-    content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
+    body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     lastModifiedDate: new Date()
   },
   {
@@ -53,7 +53,7 @@ const datas: Script[] = [
     icon: '/svgs/redis.svg',
     version: '7.0.1',
     type: 'Middleware',
-    content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
+    body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     lastModifiedDate: new Date()
   },
   {
@@ -62,7 +62,7 @@ const datas: Script[] = [
     icon: '/svgs/redis.svg',
     version: '3.0.1',
     type: 'Middleware',
-    content: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
+    body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     lastModifiedDate: new Date()
   }
 ]

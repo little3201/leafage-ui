@@ -6,6 +6,7 @@ const datas: Privilege[] = [
   {
     id: 1,
     path: 'system',
+    superiorId: null,
     component: '#',
     redirect: 'users',
     name: 'system',
@@ -17,6 +18,7 @@ const datas: Privilege[] = [
   {
     id: 7,
     path: 'logs',
+    superiorId: null,
     component: '#',
     redirect: 'operation',
     name: 'logs',
@@ -28,6 +30,7 @@ const datas: Privilege[] = [
   {
     id: 12,
     path: 'regions',
+    superiorId: null,
     component: 'regions',
     name: 'regions',
     icon: 'location_on',
@@ -39,6 +42,7 @@ const datas: Privilege[] = [
   {
     id: 14,
     path: 'files',
+    superiorId: null,
     component: 'files',
     name: 'files',
     icon: 'folder_open',
@@ -50,9 +54,10 @@ const datas: Privilege[] = [
   {
     id: 16,
     path: 'exploiters',
+    superiorId: null,
     component: '#',
     name: 'exploiters',
-    redirect: 'schemas',
+    redirect: 'schemes',
     icon: 'build',
     count: 1,
     enabled: true,
@@ -160,17 +165,29 @@ const subDatas: Privilege[] = [
   {
     id: 17,
     superiorId: 16,
-    path: 'schemas',
-    name: 'schemas',
-    component: 'exploiters/schemas',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'preview', 'enable'],
+    path: 'connections',
+    name: 'connections',
+    component: 'exploiters/connections',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
-    icon: 'genetics',
+    icon: 'database_search',
     description: 'this is description for this row'
   },
   {
     id: 18,
+    superiorId: 16,
+    path: 'samples',
+    name: 'samples',
+    component: 'exploiters/samples',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'code',
+    description: 'this is description for this row'
+  },
+  {
+    id: 19,
     superiorId: 16,
     path: 'scripts',
     name: 'scripts',
@@ -182,11 +199,46 @@ const subDatas: Privilege[] = [
     description: 'this is description for this row'
   },
   {
-    id: 19,
+    id: 20,
     superiorId: 16,
+    path: 'templates',
+    name: 'templates',
+    component: '#',
+    count: 1,
+    enabled: true,
+    icon: 'folder_code',
+    description: 'this is description for this row'
+  },
+  {
+    id: 21,
+    superiorId: 20,
+    path: 'modules',
+    name: 'modules',
+    component: 'exploiters/templates/modules',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'modeling',
+    description: 'this is description for this row'
+  },
+  {
+    id: 21,
+    superiorId: 20,
     path: 'samples',
     name: 'samples',
     component: 'exploiters/samples',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
+    count: 0,
+    enabled: true,
+    icon: 'code_blocks',
+    description: 'this is description for this row'
+  },
+  {
+    id: 21,
+    superiorId: 20,
+    path: 'fragments',
+    name: 'fragments',
+    component: 'exploiters/templates/fragments',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
@@ -327,22 +379,32 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'exploiters',
       component: '#',
-      redirect: 'schemas',
+      redirect: 'schemes',
       icon: 'build'
     },
     children: [
       {
         id: 17,
-        name: 'schemas',
+        name: 'connections',
         meta: {
-          path: 'schemas',
-          component: 'exploiters/schemas',
+          path: 'connections',
+          component: 'exploiters/connections',
+          icon: 'database_search',
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+        }
+      },
+      {
+        id: 18,
+        name: 'schemes',
+        meta: {
+          path: 'schemes',
+          component: 'exploiters/schemes',
           icon: 'genetics',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'sync', 'config', 'execute', 'enable']
         }
       },
       {
-        id: 18,
+        id: 19,
         name: 'scripts',
         meta: {
           path: 'scripts',
@@ -352,14 +414,46 @@ const treeNodes: PrivilegeTreeNode[] = [
         }
       },
       {
-        id: 19,
-        name: 'samples',
+        id: 20,
+        name: 'templates',
         meta: {
-          path: 'samples',
-          component: 'exploiters/samples',
-          icon: 'code',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
-        }
+          path: 'templates',
+          component: '#',
+          redirect: 'schemes',
+          icon: 'folder_code',
+        },
+        children: [
+          {
+            id: 21,
+            name: 'modules',
+            meta: {
+              path: 'modules',
+              component: 'exploiters/templates/modules',
+              icon: 'modeling',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          },
+          {
+            id: 22,
+            name: 'samples',
+            meta: {
+              path: 'samples',
+              component: 'exploiters/templates/samples',
+              icon: 'code_blocks',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          },
+          {
+            id: 23,
+            name: 'fragments',
+            meta: {
+              path: 'fragments',
+              component: 'exploiters/templates/fragments',
+              icon: 'code',
+              actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
+            }
+          }
+        ]
       }
     ]
   }
@@ -446,7 +540,7 @@ export const privilegesHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       totalElements: datas.length
     }
 

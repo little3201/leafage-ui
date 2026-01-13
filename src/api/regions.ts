@@ -77,7 +77,5 @@ export const removeRegion = (id: number) => {
  * @returns
  */
 export const importRegions = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.REGION}/import`, formData)
+  return api.postForm(`${SERVER_URL.REGION}/import`, { file: file })
 }

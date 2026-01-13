@@ -62,39 +62,10 @@ export const enablePrivilege = (id: number) => {
 }
 
 /**
- * Retrieve roles for a specific row
- * @param id Row ID
- * @returns Role privileges
- */
-export const retrievePrivilegeRoles = (id: number) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/roles`)
-}
-
-/**
- * Retrieve groups for a specific row
- * @param id Row ID
- * @returns Group privileges
- */
-export const retrievePrivilegeGroups = (id: number) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/groups`)
-}
-
-/**
- * Retrieve users for a specific row
- * @param id Row ID
- * @returns User privileges
- */
-export const retrievePrivilegeUsers = (id: number) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/users`)
-}
-
-/**
  * Import rows
  * @param file file
  * @returns
  */
 export const importPrivileges = (file: File) => {
-  const formData = new FormData()
-  formData.append('file', file)
-  return api.post(`${SERVER_URL.PRIVILEGE}/import`, formData)
+  return api.postForm(`${SERVER_URL.PRIVILEGE}/import`, { file: file })
 }
