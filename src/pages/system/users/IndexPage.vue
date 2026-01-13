@@ -59,7 +59,7 @@
         <q-td :props="props">
           <div class="row items-center">
             <q-avatar size="32px">
-              <img alt="avatar" :src="`${cdn_url}/${props.row.username}.jpg`" />
+              <img alt="avatar" :src="`https://cdn.leafage.top//${props.row.username}`" />
             </q-avatar>
             <div class="column q-ml-sm">
               <span class="text-subtitle">
@@ -124,7 +124,6 @@ import { onMounted, ref } from 'vue'
 
 const userStore = useUserStore()
 
-const cdn_url = process.env.CDN_URL
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
