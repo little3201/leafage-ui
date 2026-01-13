@@ -137,7 +137,7 @@ async function onRequest() {
       const res = await retrieveRegionSubset(props.superiorId)
       rows.value = res.data
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     } finally {
       loading.value = false
     }
@@ -153,7 +153,7 @@ async function enableRow(id: number) {
     await enableRegion(id)
     refresh()
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 
@@ -164,7 +164,7 @@ async function saveRow(id?: number) {
       const res = await fetchRegion(id)
       form.value = res.data
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
   visible.value = true
@@ -176,7 +176,7 @@ async function removeRow(id: number) {
     await removeRegion(id)
     refresh()
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   } finally {
     loading.value = false
   }
@@ -192,7 +192,7 @@ async function onSubmit() {
     visible.value = false
     refresh()
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 </script>

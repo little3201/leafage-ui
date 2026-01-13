@@ -162,7 +162,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   } finally {
     loading.value = false
   }
@@ -181,7 +181,7 @@ async function enableRow(id: number) {
     await enableDictionary(id)
     refresh()
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 
@@ -192,7 +192,7 @@ async function saveRow(id: number) {
       const res = await fetchDictionary(id)
       form.value = res.data
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
   visible.value = true
@@ -205,7 +205,7 @@ async function onSubmit() {
       refresh()
       visible.value = false
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
 }

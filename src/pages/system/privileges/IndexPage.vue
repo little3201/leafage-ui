@@ -213,7 +213,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   } finally {
     loading.value = false
   }
@@ -232,7 +232,7 @@ async function enableRow(id: number) {
     await enablePrivilege(id)
     refresh()
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 
@@ -245,7 +245,7 @@ async function saveRow(id: number) {
       form.value = res.data
       subset.value = subRes.data
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
   visible.value = true
@@ -258,7 +258,7 @@ async function onSubmit() {
       refresh()
       visible.value = false
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
 }
@@ -273,7 +273,7 @@ async function onUpload(files: readonly File[]) {
     refresh()
     return res.data
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 </script>
