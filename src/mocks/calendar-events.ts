@@ -30,7 +30,7 @@ export const calendarEventHandlers = [
       const res = {
         title: '法定假期',
         startDate: new Date().toISOString().split('T')[0] || '',
-        endDate: new Date(new Date().getTime() + Math.random() * 7 * 86400000).toISOString().split('T')[0] || '',
+        endDate: new Date(Date.now() + Math.random() * 7 * 86400000).toISOString().split('T')[0] || '',
         type: 'primary'
       }
       return HttpResponse.json(res)

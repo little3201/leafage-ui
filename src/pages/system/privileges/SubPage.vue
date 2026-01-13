@@ -157,7 +157,7 @@ async function onRequest() {
       const res = await retrievePrivilegeSubset(props.superiorId)
       rows.value = res.data
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     } finally {
       loading.value = false
     }
@@ -173,7 +173,7 @@ async function enableRow(id: number) {
     await enablePrivilege(id)
     refresh()
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 
@@ -185,7 +185,7 @@ async function saveRow(id: number) {
       const res = await fetchPrivilege(id)
       form.value = res.data
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
   visible.value = true
@@ -198,7 +198,7 @@ async function onSubmit() {
       refresh()
       visible.value = false
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
 }

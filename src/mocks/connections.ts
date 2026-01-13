@@ -3,7 +3,7 @@ import { SERVER_URL } from 'src/constants'
 import type { Connection } from 'src/types'
 
 
-const databases: Connection[] = [
+const datas: Connection[] = [
 ]
 
 for (let i = 1; i < 18; i++) {
@@ -16,15 +16,15 @@ for (let i = 1; i < 18; i++) {
     params: '',
     type: 'MYSQL'
   }
-  databases.push(row)
+  datas.push(row)
 }
 
-const datas: string[] = [
+const tables: string[] = [
 ]
 
 for (let i = 1; i < 8; i++) {
   const row: string = 'table_name' + i
-  datas.push(row)
+  tables.push(row)
 }
 
 export const connectionsHandlers = [
@@ -35,8 +35,8 @@ export const connectionsHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(databases.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
-      totalElements: databases.length
+      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      totalElements: datas.length
     }
 
     return HttpResponse.json(data)
@@ -44,15 +44,14 @@ export const connectionsHandlers = [
   http.get(`/api${SERVER_URL.CONNECTION}/:id/tables`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas)
+      return HttpResponse.json(tables)
     }
     return Response.error()
   }),
   http.get(`/api${SERVER_URL.CONNECTION}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      const array = databases.filter(item => item.id === Number(id))
-      return HttpResponse.json(array[0])
+      return HttpResponse.json(datas.find(item => item.id === Number(id)))
     } else {
       return HttpResponse.json()
     }
@@ -62,7 +61,7 @@ export const connectionsHandlers = [
     const newData = await request.json() as Connection
 
     // Push the new Row to the map of all Row.
-    databases.push(newData)
+    datas.push(newData)
 
     // Don't forget to declare a semantic "201 Created"
     // response and send back the newly created Row!
@@ -89,7 +88,7 @@ export const connectionsHandlers = [
     const { id } = params
 
     // Let's attempt to grab the Row by its ID.
-    const deletedData = databases.filter(item => item.id === Number(id))
+    const deletedData = datas.filter(item => item.id === Number(id))
 
     // Respond with a "404 Not Found" response if the given
     // Row ID does not exist.

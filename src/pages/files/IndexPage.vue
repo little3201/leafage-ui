@@ -243,7 +243,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   } finally {
     loading.value = false
   }
@@ -259,7 +259,7 @@ async function showRow(id: number | undefined) {
       const res = await fetchFile(id)
       row.value = res.data
     } catch (error) {
-      return Promise.resolve(error)
+      return error
     }
   }
   visible.value = true
@@ -284,7 +284,7 @@ async function downloadRow(id: number) {
   try {
     await download(id)
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 
@@ -293,7 +293,7 @@ async function removeRow(id: number) {
     await removeFile(id)
     refresh()
   } catch (error) {
-    return Promise.resolve(error)
+    return error
   }
 }
 
