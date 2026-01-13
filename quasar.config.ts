@@ -60,7 +60,7 @@ export default defineConfig((ctx) => {
       // publicPath: '/',
       // analyze: true,
       env: {
-        API: ctx.dev ? '/api' : '/api',
+        API: '/api',
         CLIENT_ID: 'pkce-client',
         CDN_URL: ctx.dev ? '/images' : 'http://cdn.leafage.top'
       },

@@ -242,8 +242,8 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   } finally {
     loading.value = false
   }
@@ -253,13 +253,14 @@ function refresh() {
   tableRef.value?.requestServerInteraction()
 }
 
-function showRow(id: number | undefined) {
+async function showRow(id: number | undefined) {
   if (id) {
-    fetchFile(id).then(res => {
+    try {
+      const res = await fetchFile(id)
       row.value = res.data
-    }).catch(() => {
-      return Promise.resolve()
-    })
+    } catch (error) {
+      return Promise.resolve(error)
+    }
   }
   visible.value = true
 }
@@ -282,8 +283,8 @@ async function onUpload(files: readonly File[]) {
 async function downloadRow(id: number) {
   try {
     await download(id)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -291,8 +292,8 @@ async function removeRow(id: number) {
   try {
     await removeFile(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -309,7 +310,7 @@ function onRowClick(evt: Event, row: FileRecord) {
     }
     refresh()
   } else if (row?.regularFile) {
-    showRow(row.id!)
+    void showRow(row.id!)
   }
 }
 

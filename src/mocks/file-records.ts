@@ -25,7 +25,7 @@ export const fileRecordsHandlers = [
   http.get(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.filter(item => item.id === Number(id))[0])
+      return HttpResponse.json(datas.find(item => item.id === Number(id)))
     } else {
       return HttpResponse.json()
     }

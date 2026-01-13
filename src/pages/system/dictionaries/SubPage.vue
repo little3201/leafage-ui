@@ -101,8 +101,8 @@ async function onRequest() {
     try {
       const res = await retrieveDictionarySubset(props.superiorId)
       rows.value = res.data
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return Promise.resolve(error)
     } finally {
       loading.value = false
     }
@@ -117,8 +117,8 @@ async function enableRow(id: number) {
   try {
     await enableDictionary(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 
@@ -128,8 +128,8 @@ async function saveRow(id?: number) {
     try {
       const res = await fetchDictionary(id)
       form.value = res.data
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return Promise.resolve(error)
     }
   }
   visible.value = true
@@ -140,8 +140,8 @@ async function removeRow(id: number) {
   try {
     await removeDictionary(id)
     refresh()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   } finally {
     loading.value = false
   }
@@ -156,8 +156,8 @@ async function onSubmit() {
     }
     refresh()
     visible.value = false
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return Promise.resolve(error)
   }
 }
 </script>

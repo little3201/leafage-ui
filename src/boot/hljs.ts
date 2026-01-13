@@ -34,4 +34,4 @@ hljs.registerLanguage('css', css)
 hljs.registerLanguage('scss', scss)
 
 
-export default hljs
+export { hljs }

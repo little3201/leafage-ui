@@ -13,7 +13,7 @@ export function pathResolve(parentPath: string | undefined, path: string | undef
     return ''
   }
   const childPath = path.startsWith('/') ? path : `/${path}`
-  return `${parentPath}${childPath}`.replace(/\/\//g, '/').trim()
+  return `${parentPath}${childPath}`.replaceAll(/\/\//g, '/').trim()
 }
 
 /**
@@ -65,7 +65,7 @@ export const formatDuration = (ms: number): string => {
  * @returns {string} - The formatted file size
  */
 export const formatFileSize = (size: number) => {
-  if (isNaN(size) || size <= 0) return '-'
+  if (Number.isNaN(size) || size <= 0) return '-'
 
   const units = ['B', 'KB', 'MB', 'GB', 'TB']
   let index = 0
@@ -137,8 +137,8 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
 }
 
 function base64UrlEncode(array: Uint8Array) {
-  return btoa(String.fromCharCode(...array))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return btoa(String.fromCodePoint(...array))
+    .replaceAll(/\+/g, '-').replaceAll(/\//g, '_').replaceAll(/=+$/, '')
 }
 
 export function generateVerifier(): string {

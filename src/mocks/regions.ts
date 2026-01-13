@@ -34,9 +34,9 @@ export const regionsHandlers = [
   http.get(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      let res = datas.filter(item => item.id === Number(id))[0]
+      let res = datas.find(item => item.id === Number(id))
       if (!res) {
-        res = subDatas.filter(item => item.id === Number(id))[0]
+        res = subDatas.find(item => item.id === Number(id))
       }
       return HttpResponse.json(res)
     } else {
