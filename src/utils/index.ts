@@ -107,7 +107,7 @@ export function download(data: Blob, filename: string, type?: string): void {
   const blob = new Blob([data], { type: type || 'application/octet-stream' })
 
   // 创建一个临时的下载链接
-  const url = window.URL.createObjectURL(blob)
+  const url = globalThis.URL.createObjectURL(blob)
 
   // 创建一个 <a> 元素并触发点击事件来启动下载
   const link = document.createElement('a')
@@ -115,10 +115,10 @@ export function download(data: Blob, filename: string, type?: string): void {
   link.setAttribute('download', filename) // 设置下载的文件名
   document.body.appendChild(link)
   link.click() // 执行点击，触发下载
-  document.body.removeChild(link) // 清除临时元素
+  link.remove() // 清除临时元素
 
   // 释放创建的 URL 对象
-  window.URL.revokeObjectURL(url)
+  globalThis.URL.revokeObjectURL(url)
 }
 
 /**

@@ -51,5 +51,10 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
         component: () => import('pages/faq/IndexPage.vue')
       }
     ]
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('pages/LoginPage.vue')
   }
 ]

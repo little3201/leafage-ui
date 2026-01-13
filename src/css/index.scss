@@ -40,6 +40,10 @@ body {
   }
 }
 
+.el-menu {
+  border-right: none !important;
+}
+
 .el-menu--inline {
   li {
     margin: 6px;

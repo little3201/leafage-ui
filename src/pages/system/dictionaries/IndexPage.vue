@@ -96,8 +96,8 @@ async function load(row?: Dictionary, treeNode?: unknown, resolve?: (date: Dicti
       datas.value = list
       total.value = res.data.page.totalElements
     }
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     loading.value = false
   }
@@ -119,8 +119,8 @@ const refreshChildren = async (rowKey: number) => {
     })
 
     tableRef.value?.updateKeyChildren(String(rowKey), list)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -185,8 +185,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchDictionary(id)
     form.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -198,8 +198,8 @@ async function enableChange(id: number) {
   try {
     await enableDictionary(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

@@ -9,11 +9,12 @@ for (let i = 1; i < 28; i++) {
   const randomIndex = Math.floor(Math.random() * 6)
   const data: FileRecord = {
     id: i,
-    name: 'test' + i + ['.jpg', '.png', '.pdf', '.zip', '.docx', 'xlsx'][randomIndex] || '',
-    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || 'unknown',
+    superiorId: Math.floor(Math.random() * 6) || null,
+    name: 'test' + i + ['', '.jpg', '.png', '.pdf', '.zip', '.docx', 'xlsx'][randomIndex] || '',
+    contentType: ['', 'image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || '',
     size: Math.floor(Math.random() * 100000),
     path: '/path/to/test' + i,
-    directory: false,
+    directory: randomIndex == 0 ? true : false,
     regularFile: true,
     symbolicLink: false,
     lastModifiedDate: new Date()
@@ -25,7 +26,7 @@ export const fileRecordsHandlers = [
   http.get(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      const filtered = datas.filter(item => item.id === Number(id))[0]
+      const filtered = datas.find(item => item.id === Number(id))
       return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
@@ -35,12 +36,26 @@ export const fileRecordsHandlers = [
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
     const size = searchParams.get('size')
-    // Construct a JSON response with the list of all Row
-    // as the response body.
+    const filters = searchParams.get('filters')
+
+    let filtered = datas.filter(item => item.superiorId === null)
+    if (filters) {
+      const filterPairs = filters.split('&')
+      let superiorId: number | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'superiorId' && value) {
+          superiorId = Number(value)
+          if (operator == 'eq') {
+            filtered = datas.filter(item => { return item.superiorId === superiorId })
+          }
+        }
+      })
+    }
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
 

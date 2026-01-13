@@ -84,8 +84,8 @@ async function loadUsers() {
   try {
     const res = await retrieveUsers({ page: 1, size: 99 })
     members.value = res.data.content
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -93,8 +93,8 @@ async function loadRoleUsers(id: number) {
   try {
     const res = await retrieveRoleMembers(id)
     relations.value = res.data.map((item: RoleMembers) => item.username)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -118,8 +118,8 @@ async function load() {
     const res = await retrieveRoles(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     loading.value = false
   }
@@ -143,8 +143,8 @@ async function relationRow(id: number) {
   relationVisible.value = true
   try {
     await Promise.all([loadRoleUsers(id), loadUsers()])
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -154,8 +154,8 @@ async function authorizeRow(id: number) {
   try {
     const res = await retrieveRolePrivileges(id)
     authorities.value = res.data.map((row: RolePrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
   authorizeVisible.value = true
 }
@@ -180,8 +180,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchRole(id)
     form.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -193,8 +193,8 @@ async function enableChange(id: number) {
   try {
     await enableRole(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -231,8 +231,8 @@ async function removeRow(id: number) {
   try {
     await removeRole(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

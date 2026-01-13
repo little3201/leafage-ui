@@ -11,7 +11,7 @@ const { t } = i18n.global as { t: ComposerTranslation }
 const abortControllerMap: Map<string, AbortController> = new Map()
 
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API || '/api',
+  baseURL: '/api',
   timeout: 15000,
   withCredentials: true
 })
@@ -84,3 +84,4 @@ function cancelAllRequest() {
 }
 
 export { api }
+

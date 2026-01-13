@@ -15,12 +15,6 @@ async function prepareApp() {
   if (import.meta.env.DEV) {
     const { worker } = await import('boot/msw-browser')
 
-    router.addRoute({
-      path: '/login',
-      name: 'login',
-      component: () => import('pages/LoginPage.vue')
-    })
-
     return worker.start({
       onUnhandledRequest: 'bypass'
     })

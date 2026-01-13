@@ -5,11 +5,11 @@ import { SERVER_URL } from 'src/constants'
 const BASE_URL = import.meta.env.VITE_BASE_URL || ''
 
 export function signIn() {
-  window.location.href = BASE_URL
+  globalThis.location.href = BASE_URL
 }
 
 export function authorize() {
-  window.location.href = BASE_URL + '/oauth2/authorization/web-client-authorization-code'
+  globalThis.location.href = BASE_URL + '/oauth2/authorization/web-client-authorization-code'
 }
 
 export function getUserInfo() {

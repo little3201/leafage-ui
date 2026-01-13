@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
+import type { UploadInstance, UploadRequestOptions } from 'element-plus'
 import { dayjs } from 'element-plus'
 import { downloadFile, fetchFile, retrieveFiles, uploadFile } from 'src/api/file-records'
 import type { FileRecord, Pagination } from 'src/types'
@@ -15,7 +15,6 @@ const total = ref<number>(0)
 const expandRows = ref<Array<FileRecord>>([])
 const currentRow = ref<FileRecord>()
 
-const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
   page: 1,
   size: 10
@@ -23,6 +22,7 @@ const pagination = reactive<Pagination>({
 
 const initialValues: FileRecord = {
   id: null,
+  superiorId: null,
   name: '',
   size: 0,
   path: ''
@@ -62,8 +62,8 @@ async function load() {
     const res = await retrieveFiles(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     loading.value = false
   }
@@ -73,8 +73,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchFile(id)
     row.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -108,8 +108,8 @@ async function downloadRow(id: number, name: string, type: string) {
   try {
     const res = await downloadFile(id)
     download(res.data, name, type)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

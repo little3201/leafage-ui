@@ -96,8 +96,8 @@ async function load(row?: Region, treeNode?: unknown, resolve?: (date: Region[])
       datas.value = list
       total.value = res.data.page.totalElements
     }
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     loading.value = false
   }
@@ -119,8 +119,8 @@ const refreshChildren = async (rowKey: number) => {
     })
 
     tableRef.value?.updateKeyChildren(String(rowKey), list)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -166,8 +166,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchRegion(id)
     form.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -179,8 +179,8 @@ async function enableChange(id: number) {
   try {
     await enableRegion(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -258,8 +258,8 @@ async function removeRow(id: number) {
   try {
     await removeRegion(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

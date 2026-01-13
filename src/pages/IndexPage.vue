@@ -16,8 +16,8 @@ async function load(month: number) {
   try {
     const res = await retrieveCalendarEvents(month)
     datas.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

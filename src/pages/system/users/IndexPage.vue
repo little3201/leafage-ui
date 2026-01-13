@@ -19,7 +19,6 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const loading = ref<boolean>(false)
 const datas = ref<Array<User>>([])
 const total = ref<number>(0)
@@ -88,8 +87,8 @@ async function load() {
     const res = await retrieveUsers(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally { loading.value = false }
 }
 
@@ -143,8 +142,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchUser(id)
     form.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -156,8 +155,8 @@ async function enableChange(id: number) {
   try {
     await enableUser(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -169,8 +168,8 @@ async function unlockRow(id: number) {
   try {
     await unlockUser(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -207,8 +206,8 @@ async function removeRow(id: number) {
   try {
     await removeUser(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -290,7 +289,7 @@ function onUpload(options: UploadRequestOptions) {
         <ElTableColumn prop="username" :label="$t('label.username')" sortable>
           <template #default="scope">
             <div class="flex items-center space-x-2">
-              <ElAvatar alt="avatar" :size="30" :src="`${cdn_url}/${scope.row.username}`" />
+              <ElAvatar alt="avatar" :size="30" :src="`https://cdn.leafage.top/${scope.row.username}`" />
               <div class="inline-flex flex-col">
                 <span class="text-sm">
                   {{ scope.row.fullName }}

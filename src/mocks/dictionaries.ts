@@ -14,7 +14,7 @@ const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700].map(item => {
 })
 
 for (let i = 1; i < 28; i++) {
-  const superiorId: number | null = [100, 200, 300, 400, 500, 600, 700][Math.floor(Math.random() * 7)] || null
+  const superiorId = [100, 200, 300, 400, 500, 600, 700][Math.floor(Math.random() * 7)] || null
   const row: Dictionary = {
     id: i,
     superiorId: superiorId,

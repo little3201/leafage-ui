@@ -1,12 +1,11 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Group, GroupMembers, GroupPrivileges, GroupRoles, TreeNode } from 'src/types'
-import { dealFilters } from 'src/utils'
 
 const datas: Group[] = []
 
 for (let i = 1; i < 28; i++) {
-  const superiorId: number | null = Math.floor(Math.random() * 12) || null
+  const superiorId = Math.floor(Math.random() * 12) || null
   const row: Group = {
     id: i,
     superiorId: superiorId,
@@ -142,15 +141,19 @@ export const groupsHandlers = [
     const size = searchParams.get('size')
     const filters = searchParams.get('filters')
 
-    let superiorId: number | null = null
     let filtered = datas
     if (filters) {
-      const filter = dealFilters(filters) as { superiorId?: number } | null
-      // 更好的类型检查方式
-      if (filter?.superiorId) {
-        superiorId = filter.superiorId
-        filtered = datas.filter(item => { return item.superiorId === superiorId })
-      }
+      const filterPairs = filters.split('&')
+      let superiorId: number | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'superiorId' && value) {
+          superiorId = Number(value)
+          if (operator == 'eq') {
+            filtered = datas.filter(item => { return item.superiorId === superiorId })
+          }
+        }
+      })
     }
 
     const data = {

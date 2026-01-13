@@ -9,7 +9,6 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const userStore = useUserStore()
 
-const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const initialValues: User = {
   id: null,
   username: userStore.username,
@@ -29,7 +28,7 @@ const state = reactive({
   <h3>{{ t('label.overview') }}</h3>
   <div class="flex flex-row">
     <div class="px-6 relative group">
-      <ElAvatar :size="192" :src="`${cdn_url}/${form.username}`" />
+      <ElAvatar :size="192" :src="`https://cdn.leafage.top/${form.username}`" />
       <div
         class="absolute inset-0 w-48 h-48 ml-6 hidden group-hover:flex items-center justify-center rounded-full bg-(--el-overlay-color-lighter) group-hover:opacity-100 transition">
         <ElButton title="upload" type="primary" circle>

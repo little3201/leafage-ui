@@ -97,7 +97,7 @@ export const schemesHandlers = [
   http.get(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      const filtered = datas.filter(item => item.id === Number(id))[0]
+      const filtered = datas.find(item => item.id === Number(id))
       return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()

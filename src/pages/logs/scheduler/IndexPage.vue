@@ -57,8 +57,8 @@ async function load() {
     const res = await retrieveSchedulerLogs(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     loading.value = false
   }
@@ -73,8 +73,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchSchedulerLog(id)
     row.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     detailLoading.value = false
   }
@@ -122,8 +122,8 @@ async function removeRow(id: number) {
   try {
     await removeSchedulerLog(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -134,8 +134,8 @@ async function clearRows() {
   try {
     await clearSchedulerLogs()
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

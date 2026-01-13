@@ -186,6 +186,7 @@ export interface SchedulerLog extends AudtiMetadata {
 }
 
 export interface FileRecord extends AudtiMetadata {
+  superiorId: number | null
   name: string
   extension?: string
   path: string

@@ -1,7 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Fragment } from 'src/types'
-import { dealFilters } from 'src/utils'
 
 const datas: Fragment[] = []
 
@@ -22,7 +21,7 @@ export const fragmentsHandlers = [
   http.get(`/api${SERVER_URL.FRAGMENT}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      const filtered = datas.filter(item => item.id === Number(id))[0]
+      const filtered = datas.find(item => item.id === Number(id))
       return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
@@ -35,15 +34,20 @@ export const fragmentsHandlers = [
     const filters = searchParams.get('filters')
     // Construct a JSON response with the list of all Row
     // as the response body.
-    let language: string | null = null
+
     let filtered = datas
     if (filters) {
-      const filter = dealFilters(filters) as { language?: string } | null
-      // 更好的类型检查方式
-      if (filter?.language) {
-        language = filter.language
-        filtered = datas.filter(item => item.language === language?.substring(language.lastIndexOf(':') + 1))
-      }
+      const filterPairs = filters.split('&')
+      let language: string | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'language' && value) {
+          language = value
+          if (operator == 'eq') {
+            filtered = datas.filter(item => { return item.language === language })
+          }
+        }
+      })
     }
     const data = {
       content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),

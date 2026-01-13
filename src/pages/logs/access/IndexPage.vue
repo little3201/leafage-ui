@@ -59,8 +59,8 @@ async function load() {
     const res = await retrieveAccessLogs(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     loading.value = false
   }
@@ -75,8 +75,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchAccessLog(id)
     row.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     detailLoading.value = false
   }
@@ -124,8 +124,8 @@ async function removeRow(id: number) {
   try {
     await removeAccessLog(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -136,8 +136,8 @@ async function clearRows() {
   try {
     await clearAccessLogs()
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

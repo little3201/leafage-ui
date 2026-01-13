@@ -14,7 +14,6 @@ const router = useRouter()
 const { currentRoute } = useRouter()
 const userStore = useUserStore()
 
-const cdn_url = import.meta.env.VITE_APP_CDN_URL
 const user = {
   username: userStore.username,
   fullName: userStore.fullName,
@@ -51,12 +50,12 @@ async function logout() {
         </ElButton>
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
-            <ElAvatar alt="avatar" :size="32" :src="`${cdn_url}/${user.username}`" />
+            <ElAvatar alt="avatar" :size="32" :src="`https://cdn.leafage.top/${user.username}`" />
             <span class="ml-2 text-white">{{ user.username }}</span>
           </div>
           <template #dropdown>
             <div class="flex items-center space-x-2 p-4">
-              <ElAvatar alt="avatar" :size="32" :src="`${cdn_url}/${user.username}`" />
+              <ElAvatar alt="avatar" :size="32" :src="`https://cdn.leafage.top/${user.username}`" />
               <div class="inline-flex flex-col">
                 <span>{{ user.username }}</span>
                 <span class="text-xs text-(--el-text-color-secondary)">{{ user.fullName }}</span>
@@ -82,7 +81,7 @@ async function logout() {
 
   <ElAside class="fixed top-12.5 left-0" width="200px">
     <ElScrollbar>
-      <ElMenu router unique-opened class="el-menu-collapse" :default-active="currentRoute.fullPath">
+      <ElMenu router unique-opened :default-active="currentRoute.fullPath">
         <ElMenuItem :index="'/'">
           <Icon icon="material-symbols:home-outline-rounded" width="1.25em" height="1.25em" class="mr-2" />{{
             $t('page.home') }}

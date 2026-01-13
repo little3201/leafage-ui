@@ -103,8 +103,8 @@ async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privil
       datas.value = list
       total.value = res.data.page.totalElements
     }
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     loading.value = false
   }
@@ -126,8 +126,8 @@ const refreshChildren = async (rowKey: number) => {
     })
 
     tableRef.value?.updateKeyChildren(String(rowKey), list)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -154,8 +154,8 @@ async function saveRow(id?: number) {
       const res = await retrievePrivilegeSubset(id)
       subset.value = res.data
     }
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
   visible.value = true
 }
@@ -168,8 +168,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchPrivilege(id)
     form.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -177,8 +177,8 @@ async function enableChange(id: number) {
   try {
     await enablePrivilege(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 

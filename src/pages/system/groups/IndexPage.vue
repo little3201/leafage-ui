@@ -127,8 +127,8 @@ async function loadUsers() {
   try {
     const res = await retrieveUsers({ page: 1, size: 99 })
     members.value = res.data.content
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -136,8 +136,8 @@ async function loadRoles() {
   try {
     const res = await retrieveRoles({ page: 1, size: 99 })
     roles.value = res.data.content
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -145,8 +145,8 @@ async function loadGroupUsers(id: number) {
   try {
     const res = await retrieveGroupMembers(id)
     relationUsers.value = res.data.map((item: GroupMembers) => item.username)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -154,8 +154,8 @@ async function loadGrouRoles(id: number) {
   try {
     const res = await retrieveGroupRoles(id)
     relationRoles.value = res.data.map((item: GroupRoles) => item.roleId)
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -171,8 +171,8 @@ async function loadTree() {
 
     treeEl.value!.setCurrentKey(currentNodeKey.value)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally {
     treeLoading.value = false
   }
@@ -199,8 +199,8 @@ async function load() {
     const res = await retrieveGroups(pagination, filters.value)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   } finally { loading.value = false }
 }
 
@@ -220,8 +220,8 @@ async function relationRow(id: number) {
   relationVisible.value = true
   try {
     await Promise.all([loadGroupUsers(id), loadUsers()])
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -231,8 +231,8 @@ async function authorizeRow(id: number) {
   try {
     const res = await retrieveGroupPrivileges(id)
     authorities.value = res.data.map((row: GroupPrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
   authorizeVisible.value = true
 }
@@ -257,8 +257,8 @@ async function loadOne(id: number) {
   try {
     const res = await fetchGroup(id)
     form.value = res.data
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -270,8 +270,8 @@ async function enableChange(id: number) {
   try {
     await enableGroup(id)
     await load()
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -309,8 +309,8 @@ async function onSubmit(formEl: FormInstance) {
 async function removeRow(id: number) {
   try {
     await Promise.all([removeGroup(id), load(), loadTree()])
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
@@ -415,8 +415,8 @@ async function handleCheckChange(data: TreeNode, checked: boolean) {
       authorities.value.splice(keyIndex, 1)
       await removeGroupPrivileges(form.value.id, data.id)
     }
-  } catch {
-    return Promise.resolve()
+  } catch (error) {
+    return error
   }
 }
 
