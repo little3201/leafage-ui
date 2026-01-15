@@ -42,6 +42,14 @@ export const samplesHandlers = [
       return HttpResponse.json()
     }
   }),
+  http.get(`/api${SERVER_URL.SAMPLE}/:id/preview`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json(datas.find(item => item.id === Number(id)))
+    } else {
+      return HttpResponse.json()
+    }
+  }),
   http.get(`/api${SERVER_URL.SAMPLE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
