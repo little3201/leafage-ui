@@ -17,6 +17,15 @@ export const retrieveSamples = (pagination: Pagination, filters?: object | strin
 }
 
 /**
+ * Retrieve rows by given ids
+ * @param ids the given ids
+ * @returns Rows data
+ */
+export const retrieveAllSamples = (ids?: number[]) => {
+  return api.get(SERVER_URL.SAMPLE, { params: { ids } })
+}
+
+/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data

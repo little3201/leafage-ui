@@ -17,6 +17,15 @@ export const retrieveFragments = (pagination: Pagination, filters?: object | str
 }
 
 /**
+ * Retrieve rows by given ids
+ * @param ids the given ids
+ * @returns Rows data
+ */
+export const retrieveAllSamples = (ids?: number[]) => {
+  return api.get(SERVER_URL.FRAGMENT, { params: { ids } })
+}
+
+/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data

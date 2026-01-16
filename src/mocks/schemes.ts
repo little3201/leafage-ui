@@ -173,6 +173,13 @@ export const schemesHandlers = [
     }
     return HttpResponse.error()
   }),
+  http.patch(`/api${SERVER_URL.SCHEME}/:id/modules`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json()
+    }
+    return HttpResponse.error()
+  }),
   http.patch(`/api${SERVER_URL.SCHEME}/:id`, ({ params }) => {
     const { id } = params
     if (id) {

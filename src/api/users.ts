@@ -73,9 +73,8 @@ export const removeUser = (id: number) => {
 
 /**
  * Relation privileges for a specific row
- * @param ids Row IDs
- * @param privilegeIds Privilege id
- * @param actions Actions
+ * @param privilegeId Privilege id
+ * @param relations Relation privilege
  */
 export const relationUsersPrivileges = (privilegeId: number, relations: { key: number | string, actions: string[] }[]) => {
   const datas = relations.map(item => { return { username: item.key, actions: item.actions } })

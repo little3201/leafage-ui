@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Module, ModuleSample } from 'src/types'
+import type { Module, ModuleSample, Sample } from 'src/types'
 
 const datas: Module[] = []
 
@@ -8,6 +8,7 @@ for (let i = 1; i < 20; i++) {
   const row: Module = {
     id: i,
     name: 'name_' + i,
+    description: 'this is description.',
     version: 1,
     enabled: true,
     lastModifiedDate: new Date()
@@ -27,12 +28,90 @@ for (let i = 1; i < 6; i++) {
 }
 
 
+const previewSamples: Sample[] = [
+  {
+    id: 1,
+    name: 'IndexPage',
+    language: 'vue',
+    module: '',
+    type: 'UI',
+    version: 1,
+    enabled: true,
+    body: '<template>\n  <div class="app-container">\n </div>\n</template>',
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 2,
+    name: 'users',
+    language: 'ts',
+    module: '',
+    type: 'TS',
+    version: 1,
+    enabled: true,
+    body: 'import { api } from \'boot/axios\'\nimport { SERVER_URL } from \'src/constants\'\nimport type { Pagination, User } from \'src/types\'\n\n/**\n * Retrieve rows\n * @param pagination Pagination and sort parameters\n * @param filters Optional filter or sort parameters\n * @returns Rows data\n */\nexport const retrieveUsers = (pagination: Pagination, filters?: object) => {\n  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, ...filters } })\n}\n\n',
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 3,
+    name: 'entity',
+    language: 'java',
+    module: '',
+    type: 'Model',
+    version: 1,
+    enabled: true,
+    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 4,
+    name: 'repository',
+    language: 'java',
+    module: '',
+    type: 'Repository',
+    version: 1,
+    enabled: true,
+    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 5,
+    name: 'mapper',
+    language: 'java',
+    module: '',
+    type: 'Repository',
+    version: 1,
+    enabled: true,
+    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
+    lastModifiedDate: new Date()
+  },
+  {
+    id: 6,
+    name: 'controller',
+    language: 'java',
+    module: '',
+    type: 'Controller',
+    version: 1,
+    enabled: true,
+    body: '// 数据对象 (Entity)\npackage com.example.demo.entity;\n\nimport javax.persistence.Entity;\nimport javax.persistence.GeneratedValue;\nimport javax.persistence.GenerationType;\nimport javax.persistence.Id;\nimport java.util.Date;\n\n@Entity\npublic class Page {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n    private String language;\n    private String version;\n    private int type;\n    private boolean enabled;\n    private String body;\n    private Date lastModifiedDate;\n\n    // Getters and Setters\n}\n\n// Repository\n',
+    lastModifiedDate: new Date()
+  }
+]
+
+
 export const modulesHandlers = [
   http.get(`/api${SERVER_URL.MODULE}/:id/samples`, ({ params }) => {
     const { id } = params
     if (id) {
       const filtered = moduleSamples.filter(item => item.moduleId === Number(id))
       return HttpResponse.json(filtered)
+    } else {
+      return HttpResponse.json()
+    }
+  }),
+  http.get(`/api${SERVER_URL.MODULE}/:id/preview`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json(previewSamples)
     } else {
       return HttpResponse.json()
     }
@@ -100,7 +179,13 @@ export const modulesHandlers = [
     } else {
       return HttpResponse.error()
     }
-
+  }),
+  http.patch(`/api${SERVER_URL.MODULE}/:id/samples`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json()
+    }
+    return HttpResponse.error()
   }),
   http.patch(`/api${SERVER_URL.MODULE}/:id`, ({ params }) => {
     const { id } = params
