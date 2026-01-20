@@ -29,10 +29,11 @@ export const retrieveFields = (id: number, tableName: string) => {
 /**
  * Retrieve modules for a specific row
  * @param id Row ID
+ * @param table Table name
  * @returns Scheme modules
  */
-export const retrieveSchemeModules = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEME}/${id}/modules`)
+export const retrieveSchemeModules = (id: number, table: string) => {
+  return api.get(`${SERVER_URL.SCHEME}/${id}/modules`, { params: { table } })
 }
 
 /**
