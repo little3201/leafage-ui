@@ -256,7 +256,6 @@ export interface ModuleSample {
   id: number
   moduleId: number
   sampleId: number
-  table?: string
 }
 
 
