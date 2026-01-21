@@ -212,7 +212,7 @@ export interface SchemeModule {
   id: number
   schemeId: number
   moduleId: number
-  table?: string
+  tableName?: string
 }
 
 export interface Field extends AudtiMetadata {
