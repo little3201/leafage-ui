@@ -9,7 +9,7 @@ import { onMounted, reactive, ref } from 'vue'
 
 const today = ref(new Date())
 // 获取指数
-const lineOptionsData = reactive<ApexOptions | object>(lineOptions) as ApexOptions
+const lineOptionsData = reactive<ApexOptions | object>(lineOptions)
 const datas = ref<Record<string, Schedule[]>>({})
 
 async function load(month: number) {
@@ -36,8 +36,7 @@ onMounted(async () => {
         <template #date-cell="{ data }">
           <span>{{ data.date.getDate() }}</span>
           <div v-if="datas[data.date.getDate()]" class="flex-col overflow-y-auto h-14">
-            <ElText v-for="(item, index) in datas[data.date.getDate()]" :key="index" class="block" tag="b"
-              :type="item.type">
+            <ElText v-for="(item, index) in datas[data.date.getDate()]" :key="index" class="block" :type="item.type">
               {{ item.title }}
             </ElText>
           </div>

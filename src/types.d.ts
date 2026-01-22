@@ -297,5 +297,5 @@ export interface Schedule extends AudtiMetadata {
   location?: string
   startDate: string
   endDate: string
-  type?: string
+  type: string
 }
