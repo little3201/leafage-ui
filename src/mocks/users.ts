@@ -22,20 +22,6 @@ export const usersHandlers = [
       sub: 'username'
     })
   }),
-  http.get(`/api${SERVER_URL.USER}/me`, () => {
-    return HttpResponse.json({
-      id: 1,
-      enabled: true,
-      lastModifiedDate: null,
-      username: 'admin',
-      fullName: '勒布朗 詹姆斯 雷蒙',
-      avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-      email: 'test@test.com',
-      accountNonExpires: null,
-      accountNonLocked: true,
-      credentialsNonExpires: null
-    })
-  }),
   http.get(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
