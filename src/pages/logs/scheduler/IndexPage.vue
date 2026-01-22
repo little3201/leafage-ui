@@ -4,7 +4,7 @@ import type { TableInstance } from 'element-plus'
 import { dayjs } from 'element-plus'
 import { clearSchedulerLogs, fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/scheduler-logs'
 import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
-import type { Pagination, SchedulerLog } from 'src/types'
+import type { Filters, Pagination, SchedulerLog } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 
@@ -19,9 +19,8 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filters = ref({
-  name: null,
-  method: null
+const filters = reactive<Filters<SchedulerLog>>({
+  name: { op: 'eq', value: undefined }
 })
 
 const detailLoading = ref<boolean>(false)
@@ -54,7 +53,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveSchedulerLogs(pagination, filters.value)
+    const res = await retrieveSchedulerLogs(pagination, filters)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -84,10 +83,7 @@ async function loadOne(id: number) {
  * reset
  */
 async function reset() {
-  filters.value = {
-    name: null,
-    method: null
-  }
+  filters.name!.value = undefined
   await load()
 }
 
@@ -155,13 +151,14 @@ async function confirmEvent(id: number) {
     <ElCard shadow="never">
       <ElForm inline :model="filters">
         <ElFormItem :label="$t('label.name')" prop="name">
-          <ElInput v-model="filters.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+          <ElInput v-model="filters.name!.value"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" type="primary" @click="load">
+          <ElButton title="search" type="primary" @click="load()">
             <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
-          <ElButton title="reset" @click="reset">
+          <ElButton title="reset" @click="reset()">
             <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
@@ -183,7 +180,7 @@ async function confirmEvent(id: number) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="refresh" plain circle @click="load">
+            <ElButton title="refresh" plain circle @click="load()">
               <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>

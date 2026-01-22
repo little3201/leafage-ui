@@ -9,7 +9,7 @@ import {
   modifyDictionary,
   retrieveDictionaries, retrieveDictionarySubset
 } from 'src/api/dictionaries'
-import type { Dictionary, Pagination } from 'src/types'
+import type { Dictionary, Filters, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -35,8 +35,8 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = ref({
-  name: null
+const filters = reactive<Filters<Dictionary>>({
+  name: { op: 'eq', value: undefined }
 })
 
 const formRef = ref<FormInstance>()
@@ -85,7 +85,7 @@ async function load(row?: Dictionary, treeNode?: unknown, resolve?: (date: Dicti
       })
       resolve(list)
     } else {
-      const res = await retrieveDictionaries(pagination, filters.value)
+      const res = await retrieveDictionaries(pagination, filters)
       const list = res.data.content
       // 处理子节点
       list.forEach((element: Dictionary) => {
@@ -128,9 +128,7 @@ const refreshChildren = async (rowKey: number) => {
  * reset
  */
 async function reset() {
-  filters.value = {
-    name: null
-  }
+  filters.name!.value = undefined
   await load()
 }
 
@@ -224,8 +222,8 @@ async function onSubmit(formEl: FormInstance) {
       if (form.value.superiorId) {
         await refreshChildren(form.value.superiorId)
       }
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return error
     } finally {
       loading.value = false
     }
@@ -255,13 +253,14 @@ function onUpload(options: UploadRequestOptions) {
     <ElCard shadow="never">
       <ElForm inline :model="filters" @submit.prevent>
         <ElFormItem :label="$t('label.name')" prop="name">
-          <ElInput v-model="filters.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+          <ElInput v-model="filters.name!.value"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">
             <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
-          <ElButton title="reset" @click="reset">
+          <ElButton title="reset" @click="reset()">
             <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>

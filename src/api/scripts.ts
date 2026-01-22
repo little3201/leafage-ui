@@ -1,14 +1,16 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Script } from 'src/types'
+import type { Filters, Script } from 'src/types'
+import { dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
- * @param filters Optional filter or sort parameters
+ * @param filter Optional filter parameters
  * @returns Rows data
  */
-export const retrieveScripts = () => {
-  return api.get(SERVER_URL.SCRIPT)
+export const retrieveScripts = (filter?: Filters<Script>) => {
+  const filters = dealFilters(filter)
+  return api.get(SERVER_URL.SCRIPT, { params: { filters } })
 }
 
 /**

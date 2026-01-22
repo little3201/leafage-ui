@@ -4,7 +4,7 @@ import type { TableInstance } from 'element-plus'
 import { dayjs } from 'element-plus'
 import { clearOperationLogs, fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/operation-logs'
 import { actions } from 'src/constants'
-import type { OperationLog, Pagination } from 'src/types'
+import type { Filters, OperationLog, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 
@@ -19,9 +19,9 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filters = ref({
-  module: null,
-  action: null
+const filters = reactive<Filters<OperationLog>>({
+  module: { op: 'eq', value: undefined },
+  action: { op: 'eq', value: undefined }
 })
 
 const detailLoading = ref<boolean>(false)
@@ -56,7 +56,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveOperationLogs(pagination, filters.value)
+    const res = await retrieveOperationLogs(pagination, filters)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -86,10 +86,8 @@ async function loadOne(id: number) {
  * reset
  */
 async function reset() {
-  filters.value = {
-    module: null,
-    action: null
-  }
+  filters.module!.value = undefined
+  filters.action!.value = undefined
   await load()
 }
 
@@ -155,16 +153,18 @@ async function confirmEvent(id: number) {
     <ElCard shadow="never">
       <ElForm inline :model="filters">
         <ElFormItem :label="$t('label.module')" prop="module">
-          <ElInput v-model="filters.module" :placeholder="$t('placeholder.inputText', { field: $t('label.module') })" />
+          <ElInput v-model="filters.module!.value"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.module') })" />
         </ElFormItem>
         <ElFormItem :label="$t('label.action')" prop="action">
-          <ElInput v-model="filters.action" :placeholder="$t('placeholder.inputText', { field: $t('label.action') })" />
+          <ElInput v-model="filters.action!.value"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.action') })" />
         </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" type="primary" @click="load">
+          <ElButton title="search" type="primary" @click="load()">
             <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
-          <ElButton title="reset" @click="reset">
+          <ElButton title="reset" @click="reset()">
             <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
@@ -186,7 +186,7 @@ async function confirmEvent(id: number) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="refresh" plain circle @click="load">
+            <ElButton title="refresh" plain circle @click="load()">
               <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
@@ -268,8 +268,8 @@ async function confirmEvent(id: number) {
         </ElTag>
         <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.params')" span="3">{{ row.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.request.body')" span="3">{{ row.body }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ row.params }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.request.body')" :span="3">{{ row.body }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.sessionId')" :span="2">{{ row.sessionId }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.userAgent')" :span="3">{{ row.userAgent }}</ElDescriptionsItem>

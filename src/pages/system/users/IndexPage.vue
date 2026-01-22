@@ -11,7 +11,7 @@ import {
   unlockUser
 } from 'src/api/users'
 import { userStatus } from 'src/constants'
-import type { Pagination, User } from 'src/types'
+import type { Filters, Pagination, User } from 'src/types'
 import { exportToExcel, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -37,8 +37,8 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = ref({
-  username: null
+const filters = reactive<Filters<User>>({
+  username: { op: 'eq', value: undefined }
 })
 
 const formRef = ref<FormInstance>()
@@ -84,7 +84,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveUsers(pagination, filters.value)
+    const res = await retrieveUsers(pagination, filters)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -96,9 +96,7 @@ async function load() {
  * reset
  */
 async function reset() {
-  filters.value = {
-    username: null
-  }
+  filters.username!.value = undefined
   await load()
 }
 
@@ -190,8 +188,8 @@ async function onSubmit(formEl: FormInstance) {
       }
       visible.value = false
       await load()
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return error
     } finally {
       saveLoading.value = false
     }
@@ -243,14 +241,14 @@ function onUpload(options: UploadRequestOptions) {
     <ElCard shadow="never">
       <ElForm inline :model="filters" @submit.prevent>
         <ElFormItem :label="$t('label.username')" prop="username">
-          <ElInput v-model="filters.username"
+          <ElInput v-model="filters.username!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.username') })" />
         </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" type="primary" @click="load">
+          <ElButton title="search" type="primary" @click="load()">
             <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
-          <ElButton title="reset" @click="reset">
+          <ElButton title="reset" @click="reset()">
             <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
@@ -276,7 +274,7 @@ function onUpload(options: UploadRequestOptions) {
 
         <ElCol :span="8" class="text-right">
           <ElTooltip effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="refresh" plain circle @click="load">
+            <ElButton title="refresh" plain circle @click="load()">
               <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>

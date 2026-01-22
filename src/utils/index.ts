@@ -1,4 +1,4 @@
-import type { PrivilegeTreeNode } from 'src/types'
+import type { Filters, PrivilegeTreeNode } from 'src/types'
 import { useUserStore } from 'stores/user-store'
 import type { RouteRecordNameGeneric } from 'vue-router'
 import * as XLSX from 'xlsx'
@@ -204,17 +204,45 @@ function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): string[]
   return []
 }
 
-export function dealFilters(filters?: object | string) {
-  if (filters && typeof filters === 'object') {
-    filters = Object.entries(filters)
-      .filter(([, value]) => value != null && value !== '')
-      .map(([key, value]) => {
-        return `${key}:${value}`
-      })
-      .join(',')
+export function dealFilters<T>(filters: Filters<T> | undefined): string | undefined {
+  if (!filters || Object.keys(filters).length === 0) {
+    return undefined
   }
-  if (typeof filters === 'string') {
-    return filters.length ? filters : undefined
+
+  const conditions: string[] = []
+
+  // 使用 keyof T 来遍历，但因为是 Partial，所以要用 keyof typeof filters
+  for (const field in filters) {
+    const cond = filters[field]
+    if (!cond) continue
+
+    const { op, value } = cond
+
+    // 跳过无效值
+    if (value == null || value === '') {
+      continue
+    }
+
+    let valueStr: string
+
+    // 根据 op 处理 value 的字符串化方式
+    if (op === 'in' || op === 'notIn') {
+      // 假设 value 是数组类型（实际使用时应匹配实体字段类型）
+      valueStr = Array.isArray(value) ? value.join(',') : String(value)
+    } else if (op === 'between' || op === 'notBetween') {
+      // 假设 value 是 [any, any] 形式的数组
+      valueStr = Array.isArray(value) && value.length === 2
+        ? value.join(',')
+        : String(value)
+    } else {
+      valueStr = String(value).trim()
+    }
+
+    // 只在有有效值时加入
+    if (valueStr) {
+      conditions.push(`${field}:${op}:${valueStr}`)
+    }
   }
-  return filters
+
+  return conditions.length > 0 ? conditions.join(',') : undefined
 }

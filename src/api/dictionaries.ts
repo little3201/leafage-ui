@@ -1,18 +1,16 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Dictionary, Pagination } from 'src/types'
+import type { Dictionary, Filters, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
  * @param pagination Pagination and sort parameters
- * @param filters Optional filter or sort parameters
+ * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveDictionaries = (pagination: Pagination, filters?: object | string) => {
-  if (filters) {
-    filters = dealFilters(filters)
-  }
+export const retrieveDictionaries = (pagination: Pagination, filter?: Filters<Dictionary>) => {
+  const filters = dealFilters(filter)
   return api.get(SERVER_URL.DICTIONARY, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 

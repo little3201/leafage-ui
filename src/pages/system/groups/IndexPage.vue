@@ -21,7 +21,7 @@ import {
 import { retrieveRoles } from 'src/api/roles'
 import { retrieveUsers } from 'src/api/users'
 import { actions } from 'src/constants'
-import type { Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Role, TreeNode, User } from 'src/types'
+import type { Filters, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Role, TreeNode, User } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -69,9 +69,9 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = ref({
-  superiorId: null as string | null,
-  name: null
+const filters = reactive<Filters<Group>>({
+  superiorId: { op: 'eq', value: Number(currentNodeKey.value) },
+  name: { op: 'eq', value: undefined }
 })
 
 const formRef = ref<FormInstance>()
@@ -194,9 +194,8 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  filters.value.superiorId = currentNodeKey.value ? 'eq:' + currentNodeKey.value : null
   try {
-    const res = await retrieveGroups(pagination, filters.value)
+    const res = await retrieveGroups(pagination, filters)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -208,7 +207,7 @@ async function load() {
  * reset
  */
 async function reset() {
-  filters.value.name = null
+  filters.name!.value = undefined
   await load()
 }
 
@@ -294,8 +293,8 @@ async function onSubmit(formEl: FormInstance) {
       visible.value = false
       await load()
       await loadTree()
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return error
     } finally {
       saveLoading.value = false
     }
@@ -335,8 +334,8 @@ async function handleTransferUserChange(value: TransferKey[], direction: Transfe
       } else if (movedKeys.length) {
         await removeGroupMembers(form.value.id, movedKeys as string[])
       }
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return error
     }
   }
 }
@@ -354,8 +353,8 @@ async function handleTransferRoleChange(value: TransferKey[], direction: Transfe
       } else if (movedKeys.length) {
         await removeGroupRoles(form.value.id, movedKeys as number[])
       }
-    } catch {
-      return Promise.resolve()
+    } catch (error) {
+      return error
     }
   }
 }
@@ -480,13 +479,14 @@ async function tabChange(tab: TabPaneName) {
       <ElCard shadow="never">
         <ElForm inline :model="filters" @submit.prevent>
           <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="filters.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+            <ElInput v-model="filters.name!.value"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
           </ElFormItem>
           <ElFormItem>
-            <ElButton title="search" type="primary" @click="load">
+            <ElButton title="search" type="primary" @click="load()">
               <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
             </ElButton>
-            <ElButton title="reset" @click="reset">
+            <ElButton title="reset" @click="reset()">
               <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
             </ElButton>
           </ElFormItem>
@@ -514,7 +514,7 @@ async function tabChange(tab: TabPaneName) {
 
           <ElCol :span="8" class="text-right">
             <ElTooltip :content="$t('action.refresh')" placement="top">
-              <ElButton title="refresh" plain circle @click="load">
+              <ElButton title="refresh" plain circle @click="load()">
                 <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
               </ElButton>
             </ElTooltip>

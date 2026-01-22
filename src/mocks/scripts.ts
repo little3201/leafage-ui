@@ -8,7 +8,7 @@ const datas: Script[] = [
     name: 'MySQL',
     icon: '/svgs/mysql.svg',
     version: '8.0.34',
-    type: 'Connection',
+    os: 'linux',
     body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   }, {
@@ -16,7 +16,7 @@ const datas: Script[] = [
     name: 'Nginx',
     icon: '/svgs/nginx.svg',
     version: '1.8.12',
-    type: 'Middleware',
+    os: 'windows',
     body: '#!/bin/bash\necho \\"Starting Nginx...\\"\nservice nginx start\necho \\"Nginx is now running.\\"\n',
     lastModifiedDate: new Date()
   },
@@ -25,7 +25,7 @@ const datas: Script[] = [
     name: 'Nodejs',
     icon: '/svgs/nodejs.svg',
     version: '20.5.6',
-    type: 'Middleware',
+    os: 'windows',
     body: 'npm install',
     lastModifiedDate: new Date()
   },
@@ -34,7 +34,7 @@ const datas: Script[] = [
     name: 'PostgreSql',
     icon: '/svgs/postgresql.svg',
     version: '16.2.3',
-    type: 'Connection',
+    os: 'linux',
     body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     lastModifiedDate: new Date()
   },
@@ -43,7 +43,7 @@ const datas: Script[] = [
     name: 'Redis',
     icon: '/svgs/redis.svg',
     version: '6.0.1',
-    type: 'Middleware',
+    os: 'windows',
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     lastModifiedDate: new Date()
   },
@@ -52,7 +52,7 @@ const datas: Script[] = [
     name: 'Redis',
     icon: '/svgs/redis.svg',
     version: '7.0.1',
-    type: 'Middleware',
+    os: 'windows',
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     lastModifiedDate: new Date()
   },
@@ -61,7 +61,7 @@ const datas: Script[] = [
     name: 'Redis',
     icon: '/svgs/redis.svg',
     version: '3.0.1',
-    type: 'Middleware',
+    os: 'windows',
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     lastModifiedDate: new Date()
   }
@@ -77,11 +77,27 @@ export const scriptsHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCRIPT}`, () => {
+  http.get(`/api${SERVER_URL.SCRIPT}`, ({ request }) => {
+    const searchParams = new URL(request.url).searchParams
+    const filters = searchParams.get('filters')
     // Construct a JSON response with the list of all Row
     // as the response body.
+    let filtered = datas
+    if (filters) {
+      const filterPairs = filters.split('&')
+      let os: string | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'os' && value) {
+          os = value
+          if (operator == 'eq') {
+            filtered = datas.filter(item => { return item.os === os })
+          }
+        }
+      })
+    }
 
-    return HttpResponse.json(datas)
+    return HttpResponse.json(filtered)
   }),
   http.post(`/api${SERVER_URL.SCRIPT}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
