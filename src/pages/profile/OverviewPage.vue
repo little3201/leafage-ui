@@ -27,13 +27,15 @@ const state = reactive({
 <template>
   <h3>{{ t('label.overview') }}</h3>
   <div class="flex flex-row">
-    <div class="px-6 relative group">
+    <div class="relative group mx-6">
       <ElAvatar :size="192" :src="`https://cdn.leafage.top/${form.username}`" />
       <div
-        class="absolute inset-0 w-48 h-48 ml-6 hidden group-hover:flex items-center justify-center rounded-full bg-(--el-overlay-color-lighter) group-hover:opacity-100 transition">
-        <ElButton title="upload" type="primary" circle>
-          <Icon icon="material-symbols:upload-rounded" width="1.25em" height="1.25em" />
-        </ElButton>
+        class="absolute inset-0 h-48 flex items-center justify-center gap-4 rounded-full bg-(--el-overlay-color-lighter) opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <ElUpload :limit="1" class="h-8">
+          <ElButton title="upload" type="primary" circle>
+            <Icon icon="material-symbols:upload-rounded" width="1.25em" height="1.25em" />
+          </ElButton>
+        </ElUpload>
         <ElButton title="remove" circle>
           <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />
         </ElButton>

@@ -6,64 +6,57 @@ const datas: Script[] = [
   {
     id: 1,
     name: 'MySQL',
-    icon: '/svgs/mysql.svg',
     version: '8.0.34',
-    os: 'linux',
+    os: 'LINUX',
     body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
-    lastModifiedDate: new Date()
+    attachment: 'mysql-8.0.34-linux.tar.gz'
   }, {
     id: 2,
     name: 'Nginx',
-    icon: '/svgs/nginx.svg',
     version: '1.8.12',
-    os: 'windows',
+    os: 'WINDOWS',
     body: '#!/bin/bash\necho \\"Starting Nginx...\\"\nservice nginx start\necho \\"Nginx is now running.\\"\n',
-    lastModifiedDate: new Date()
+    attachment: 'nginx-1.8.12-windows.zip'
   },
   {
     id: 3,
     name: 'Nodejs',
-    icon: '/svgs/nodejs.svg',
     version: '20.5.6',
-    os: 'windows',
+    os: 'WINDOWS',
     body: 'npm install',
-    lastModifiedDate: new Date()
+    attachment: 'nodejs-20.5.6-windows.zip'
   },
   {
     id: 4,
     name: 'PostgreSql',
-    icon: '/svgs/postgresql.svg',
     version: '16.2.3',
-    os: 'linux',
+    os: 'LINUX',
     body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
-    lastModifiedDate: new Date()
+    attachment: 'postgresql-16.2.3-linux.tar.gz'
   },
   {
     id: 5,
     name: 'Redis',
-    icon: '/svgs/redis.svg',
     version: '6.0.1',
-    os: 'windows',
+    os: 'WINDOWS',
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    lastModifiedDate: new Date()
+    attachment: 'redis-6.0.1-windows.zip'
   },
   {
     id: 6,
     name: 'Redis',
-    icon: '/svgs/redis.svg',
     version: '7.0.1',
-    os: 'windows',
+    os: 'WINDOWS',
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    lastModifiedDate: new Date()
+    attachment: 'redis-7.0.1-windows.zip'
   },
   {
     id: 7,
     name: 'Redis',
-    icon: '/svgs/redis.svg',
     version: '3.0.1',
-    os: 'windows',
+    os: 'WINDOWS',
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
-    lastModifiedDate: new Date()
+    attachment: 'redis-3.0.1-windows.zip'
   }
 ]
 

@@ -96,6 +96,7 @@ export default {
     language: 'Language',
     filePath: 'File Path',
     imports: 'Imports',
+    attachment: 'Attachment',
   },
 
   action: {

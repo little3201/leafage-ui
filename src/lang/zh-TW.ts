@@ -96,6 +96,7 @@ export default {
     language: '語言',
     filePath: '文件路徑',
     imports: '引用',
+    attachment: '附件',
   },
 
   action: {

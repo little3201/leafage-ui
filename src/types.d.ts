@@ -299,9 +299,9 @@ export interface SampleFragment {
 export interface Script extends AudtiMetadata {
   name: string
   os: string
-  icon: string
   version: string
   body: string
+  attachment: string | undefined
 }
 
 export interface Connection extends AudtiMetadata {

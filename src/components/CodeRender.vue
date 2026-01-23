@@ -25,5 +25,4 @@ const highlightResult = computed<HighlightResult | null>(() => {
       {{ highlightResult?.language }}
     </small>
   </pre>
-  <ElEmpty v-else description="No Data" />
 </template>

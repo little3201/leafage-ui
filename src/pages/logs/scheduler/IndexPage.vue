@@ -270,8 +270,8 @@ async function confirmEvent(id: number) {
   </ElDialog>
 </template>
 
-<style lang="scss">
-.el-tag__content {
+<style lang="scss" scoped>
+:deep(.el-tag__content) {
   display: inline-flex;
   align-items: center;
 }
