@@ -37,6 +37,8 @@ export default {
     httpMethod: 'Http Method',
     url: 'URL',
     params: 'Params',
+    key: 'Key',
+    value: 'Value',
     body: 'Body',
     request: {
       body: 'Request Body',

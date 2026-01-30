@@ -37,6 +37,8 @@ export default {
     httpMethod: 'Http方法',
     url: '接口',
     params: '參數',
+    key: '鍵',
+    value: '值',
     body: '內容',
     request: {
       body: '請求體',

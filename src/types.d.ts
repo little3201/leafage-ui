@@ -296,12 +296,18 @@ export interface SampleFragment {
   fragmentId: number
 }
 
+interface Params {
+  key: string
+  value: string | null
+}
+
 export interface Script extends AudtiMetadata {
   name: string
-  os: string
-  version: string
+  params: Params[]
   body: string
   attachment: string | undefined
+  os: string
+  version: string
 }
 
 export interface Connection extends AudtiMetadata {

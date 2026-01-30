@@ -37,6 +37,8 @@ export default {
     httpMethod: 'Http方法',
     url: '接口',
     params: '参数',
+    key: '键',
+    value: '值',
     body: '内容',
     request: {
       body: '请求体',
