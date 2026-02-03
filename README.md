@@ -48,7 +48,7 @@
 ```
 ├── public/                 # Public static assets
 │   ├── icons/              # Public icons
-│   ├── svgs/               # Public svgs
+│   └── svgs/               # Public svgs
 ├── src/
 │   ├── api/                # http request api
 │   ├── assets/             # assets
@@ -63,18 +63,19 @@
 │   ├── router/             # vue router
 │   ├── stores/             # Pinia
 │   ├── utils/              # Utils
-│   └── App.vue             # Root component
-│   └── env.d.ts            # Env.d
-│   └── main.ts             # main
+│   ├── App.vue             # Root component
+│   ├── env.d.ts            # Env.d
+│   ├── main.ts             # main
 │   └── types.d.ts          # Types.d
-├── test/                   # Test
+├── test/                   # Test with vitest
+│   └── utils.test.ts       # utils test
 ├── index.html              # Entry HTML file
 ├── .env.development        # Env for dev
 ├── .env.production         # Env for prod
-└── postcss.config.js       # Postcss configuration
-└── eslint.config.js        # Eslint configuration
-└── commitlint.config.js    # Commitlint configuration
-└── lint-staged.config.js   # Lint staged configuration
-└── vite.config.ts          # Vite configuration
+├── postcss.config.js       # Postcss configuration
+├── eslint.config.js        # Eslint configuration
+├── commitlint.config.js    # Commitlint configuration
+├── lint-staged.config.js   # Lint staged configuration
+├── vite.config.ts          # Vite configuration
 └── vitest.config.ts        # Vitest configuration
 ```

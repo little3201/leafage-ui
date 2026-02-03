@@ -145,3 +145,8 @@ export const osTypes = [
   { label: 'Windows', value: 'WINDOWS', dictionary: 900 },
   { label: 'MacOS', value: 'MACOS', dictionary: 1000 }
 ]
+
+export const scriptModes: { [key: string]: 'Server' | 'Docker' } = {
+  SERVER: 'Server',
+  DOCKER: 'Docker'
+}
