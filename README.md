@@ -64,6 +64,9 @@
 │   ├── stores/             # Pinia
 │   ├── utils/              # Utils
 │   └── App.vue             # Root component
+│   └── env.d.ts            # Env.d
+│   └── main.ts             # main
+│   └── types.d.ts          # Types.d
 ├── test/                   # Test
 ├── index.html              # Entry HTML file
 ├── .env.development        # Env for dev
@@ -72,6 +75,6 @@
 └── eslint.config.js        # Eslint configuration
 └── commitlint.config.js    # Commitlint configuration
 └── lint-staged.config.js   # Lint staged configuration
-└── quasar.config.ts        # Vite configuration
+└── vite.config.ts          # Vite configuration
 └── vitest.config.ts        # Vitest configuration
 ```
