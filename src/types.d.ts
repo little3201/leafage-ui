@@ -310,6 +310,12 @@ export interface Script extends AudtiMetadata {
   version: string
 }
 
+export interface ScriptConfig {
+  mode: string
+  os: string
+  scripts: { id: number; params: Record<string, string | null> }[]
+}
+
 export interface Connection extends AudtiMetadata {
   type: string
   database: string
