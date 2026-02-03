@@ -1,41 +1,43 @@
 <template>
   <ElCard shadow="never">
-    <div class="text-center pb-8">
-      <h2>常见问题解答（FAQ）</h2>
-      <ElInput v-model="searchQuery" placeholder="搜索问题..." clearable style="max-width: 480px;">
-        <template #prefix>
-          <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
-        </template>
-      </ElInput>
-    </div>
-
-    <ElCollapse>
-      <ElCollapseItem v-for="faq in faqList" :key="faq.name" :title="faq.title" :name="faq.name">
-        <p>{{ faq.content }}</p>
-      </ElCollapseItem>
-    </ElCollapse>
-
-    <div class="text-center">
-      <div class="p-8">
-        <h3>仍然有问题？</h3>
-        <p>如果您无法在 FAQ 中找到答案，可以随时联系我们，我们会尽快回复您！</p>
+    <div class="container mx-auto">
+      <div class="text-center pb-8">
+        <h2>常见问题解答（FAQ）</h2>
+        <ElInput v-model="searchQuery" placeholder="搜索问题..." clearable style="max-width: 480px;">
+          <template #prefix>
+            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
+          </template>
+        </ElInput>
       </div>
-      <ElRow :gutter="20">
-        <ElCol :span="12">
-          <div class="bg-(--el-bg-color-page) rounded-xl p-6">
-            <Icon icon="material-symbols:phone-in-talk-rounded" width="48" height="48" />
-            <p><strong>电话：</strong> +86 123 4567 8901</p>
-            <p>We are always happy to help!</p>
-          </div>
-        </ElCol>
-        <ElCol :span="12">
-          <div class="bg-(--el-bg-color-page) rounded-xl p-6">
-            <Icon icon="material-symbols:mail-outline-rounded" width="48" height="48" />
-            <p><strong>邮箱：</strong> hello@help.com</p>
-            <p>Best way to get answer faster!</p>
-          </div>
-        </ElCol>
-      </ElRow>
+
+      <ElCollapse>
+        <ElCollapseItem v-for="faq in faqList" :key="faq.name" :title="faq.title" :name="faq.name">
+          <p>{{ faq.content }}</p>
+        </ElCollapseItem>
+      </ElCollapse>
+
+      <div class="text-center">
+        <div class="p-8">
+          <h3>仍然有问题？</h3>
+          <p>如果您无法在 FAQ 中找到答案，可以随时联系我们，我们会尽快回复您！</p>
+        </div>
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <div class="bg-(--el-bg-color-page) rounded-xl p-6">
+              <Icon icon="material-symbols:phone-in-talk-rounded" width="48" height="48" />
+              <p><strong>电话：</strong> +86 123 4567 8901</p>
+              <p>We are always happy to help!</p>
+            </div>
+          </ElCol>
+          <ElCol :span="12">
+            <div class="bg-(--el-bg-color-page) rounded-xl p-6">
+              <Icon icon="material-symbols:mail-outline-rounded" width="48" height="48" />
+              <p><strong>邮箱：</strong> hello@help.com</p>
+              <p>Best way to get answer faster!</p>
+            </div>
+          </ElCol>
+        </ElRow>
+      </div>
     </div>
   </ElCard>
 </template>

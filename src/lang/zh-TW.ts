@@ -149,7 +149,7 @@ export default {
     users: '用戶',
     dictionaries: '字典',
     regions: '行政區劃',
-
+    faq: '常見問題',
     files: '文檔管理',
     profile: '個人中心',
     exploiters: '開發工具',

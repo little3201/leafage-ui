@@ -149,7 +149,7 @@ export default {
     users: 'Users',
     dictionaries: 'Dictionaries',
     regions: 'Regions',
-
+    faq: 'FAQ',
     files: 'Files',
     profile: 'Profile',
     exploiters: 'Exploiters',

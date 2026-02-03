@@ -222,10 +222,11 @@ async function onSubmit(formEl: FormInstance) {
       if (form.value.superiorId) {
         await refreshChildren(form.value.superiorId)
       }
+
     } catch (error) {
       return error
     } finally {
-      loading.value = false
+      saveLoading.value = false
     }
   }
 }

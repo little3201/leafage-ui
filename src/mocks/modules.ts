@@ -10,8 +10,7 @@ for (let i = 1; i < 20; i++) {
     name: 'name_' + i,
     description: 'this is description.',
     version: 1,
-    enabled: true,
-    lastModifiedDate: new Date()
+    enabled: true
   }
   datas.push(row)
 }

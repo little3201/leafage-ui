@@ -9,7 +9,8 @@ for (let i = 1; i < 29; i++) {
     id: i,
     name: 'name_' + i,
     language: ['java', 'vue', 'ts'][Math.floor(Math.random() * 3)] || '',
-    body: 'body',
+    imports: 'import { Example } from "example"',
+    body: 'this is body for code',
     version: 1,
     enabled: true,
     lastModifiedDate: new Date()

@@ -4,6 +4,10 @@
 
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE) [![github stars](https://img.shields.io/github/stars/little3201/leafage-ui)](https://github.com/little3201/leafage-ui/stargazers) [![github forks](https://img.shields.io/github/forks/little3201/leafage-ui)](https://github.com/little3201/leafage-ui/network/members)
 
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-ui&metric=bugs)](https://sonarcloud.io/summary/new_code?id=little3201_leafage-ui)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-ui&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=little3201_leafage-ui)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=little3201_leafage-ui&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=little3201_leafage-ui)
+
 </div>
 
 <p align="center">
@@ -31,30 +35,43 @@
 
 代码规范：Eslint、Prettier、Stylelint、Husky、Lint-staged、cz-git
 
+## 页面预览
+
+**light模式**
+<img src="https://cdn.leafage.top/preview-light-element.jpeg" alt="light" />
+
+**dark模式**
+<img src="https://cdn.leafage.top/preview-dark-element.jpeg" alt="dark" />
+
 ### 目录结构
 
 ```
+├── public/                 # Public static assets
+│   ├── icons/              # Public icons
+│   ├── svgs/               # Public svgs
 ├── src/
-│   ├── api/            # http request api
-│   ├── assets/         # assets
-│   ├── boot/           # plugins init
-│   ├── components/     # Vue components
-│   ├── constants/      # Constants
-│   ├── css/            # css
-│   ├── lang/           # i18n languages
-│   ├── layouts/        # Layout components
-│   ├── mocks/          # Mocks with msw
-│   ├── pages/          # Pages
-│   ├── router/         # vue router
-│   ├── stores/         # Pinia
-│   ├── utils/          # Utils
-│   └── App.vue         # Root component
-├── public/             # Public static assets
-│   ├── icons/          # Public icons
-│   ├── svgs/           # Public svgs
-├── index.html          # Entry HTML file
-├── .env.development    # Env for dev
-├── .env.production     # Env for prod
-└── eslint.config.js    # Eslint configuration
-└── vite.config.js      # Vite configuration
+│   ├── api/                # http request api
+│   ├── assets/             # assets
+│   ├── boot/               # plugins init
+│   ├── components/         # Vue components
+│   ├── constants/          # Constants
+│   ├── css/                # css
+│   ├── lang/               # i18n languages
+│   ├── layouts/            # Layout components
+│   ├── mocks/              # Mocks with msw
+│   ├── pages/              # Pages
+│   ├── router/             # vue router
+│   ├── stores/             # Pinia
+│   ├── utils/              # Utils
+│   └── App.vue             # Root component
+├── test/                   # Test
+├── index.html              # Entry HTML file
+├── .env.development        # Env for dev
+├── .env.production         # Env for prod
+└── postcss.config.js       # Postcss configuration
+└── eslint.config.js        # Eslint configuration
+└── commitlint.config.js    # Commitlint configuration
+└── lint-staged.config.js   # Lint staged configuration
+└── quasar.config.ts        # Vite configuration
+└── vitest.config.ts        # Vitest configuration
 ```

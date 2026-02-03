@@ -10,7 +10,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 
-const router = useRouter()
 const { currentRoute } = useRouter()
 const userStore = useUserStore()
 
@@ -45,9 +44,6 @@ async function logout() {
       <div class="inline-flex justify-end items-center space-x-4">
         <ThemeToogle />
         <LanguageSelector />
-        <ElButton title="faq" type="default" link @click="router.push('/faq')">
-          <Icon icon="material-symbols:help-outline-rounded" class="text-white" width="22" height="22" />
-        </ElButton>
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
             <ElAvatar alt="avatar" :size="32" :src="`https://cdn.leafage.top/${user.username}`" />
@@ -64,12 +60,18 @@ async function logout() {
             <ElDropdownMenu>
               <RouterLink to="/profile" class="no-underline">
                 <ElDropdownItem>
-                  <Icon icon="material-symbols:manage-accounts-rounded" width="1.25em" height="1.25em" class="mr-2" />
+                  <Icon icon="material-symbols:manage-accounts-rounded" width="1.5em" height="1.5em" class="mr-2" />
                   {{ $t('page.profile') }}
                 </ElDropdownItem>
               </RouterLink>
+              <RouterLink to="/faq" class="no-underline">
+                <ElDropdownItem>
+                  <Icon icon="material-symbols:help-outline-rounded" width="1.5em" height="1.5em" class="mr-2" />
+                  {{ $t('page.faq') }}
+                </ElDropdownItem>
+              </RouterLink>
               <ElDropdownItem divided @click="logout">
-                <Icon icon="material-symbols:logout-rounded" width="1.25em" height="1.25em" class="mr-2" />
+                <Icon icon="material-symbols:logout-rounded" width="1.5em" height="1.5em" class="mr-2" />
                 {{ $t('action.signout') }}
               </ElDropdownItem>
             </ElDropdownMenu>

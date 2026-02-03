@@ -296,14 +296,14 @@ export interface SampleFragment {
   fragmentId: number
 }
 
-interface Params {
+export interface ParamPair {
   key: string
   value: string | null
 }
 
 export interface Script extends AudtiMetadata {
   name: string
-  params: Params[]
+  params: Record<string, string | null>
   body: string
   attachment: string | undefined
   os: string
@@ -325,5 +325,5 @@ export interface Schedule extends AudtiMetadata {
   location?: string
   startDate: string
   endDate: string
-  type: string
+  type: 'primary' | 'success' | 'warning' | 'danger'
 }
