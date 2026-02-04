@@ -56,5 +56,5 @@ export const importScripts = (file: File) => {
  * @returns Modified row
  */
 export const configScripts = (row: ScriptConfig) => {
-  return api.patch(`${SERVER_URL.SCRIPT}/config`, row)
+  return api.patch(`${SERVER_URL.SCRIPT}/config`, row, { responseType: 'blob' })
 }
