@@ -8,10 +8,6 @@ export function signIn() {
   globalThis.location.href = BASE_URL
 }
 
-export function authorize() {
-  globalThis.location.href = BASE_URL + '/oauth2/authorization/web-client-authorization-code'
-}
-
 export function getUserInfo() {
   return api.get(SERVER_URL.USERINFO)
 }

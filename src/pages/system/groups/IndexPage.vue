@@ -119,6 +119,7 @@ async function onCurrentChange(data: TreeNode) {
     return
   }
   currentNodeKey.value = String(data.id)
+  filters.superiorId!.value = Number(currentNodeKey.value)
   pagination.page = 1
   await load()
 }

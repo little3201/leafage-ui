@@ -13,7 +13,8 @@ const abortControllerMap: Map<string, AbortController> = new Map()
 const api: AxiosInstance = axios.create({
   baseURL: '/api',
   timeout: 15000,
-  withCredentials: true
+  withCredentials: true,
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 })
 
 // 请求拦截器
