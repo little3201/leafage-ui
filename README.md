@@ -15,8 +15,8 @@
   
   后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
 
-  基于 <a href="https://element-plus.org">Element plus</a> 库（branch: element）。</br>
-  基于 <a href="https://quasar.dev">Quasar framework</a> 库（branch: main, develop）。</br>
+  基于 <a href="https://element-plus.org">Element plus</a> 库（branch: element）预览地址： https://preivew.leafage.top。</br>
+  基于 <a href="https://quasar.dev">Quasar framework</a> 库（branch: main, develop）预览地址： https://console.leafage.top。</br>
   基于 <a href="https://mui.com">Material UI</a> 库（branch: react）。
 </p>
 
