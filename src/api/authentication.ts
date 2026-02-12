@@ -13,5 +13,5 @@ export function getUserInfo() {
 }
 
 export function signOut() {
-  return api.post(SERVER_URL.LOGOUT, null)
+  globalThis.location.href = BASE_URL + SERVER_URL.LOGOUT
 }

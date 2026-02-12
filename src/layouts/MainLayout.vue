@@ -3,7 +3,7 @@ import { Icon } from '@iconify/vue'
 import EssentialList from 'components/EssentialList.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
-import { signIn, signOut } from 'src/api/authentication'
+import { signOut } from 'src/api/authentication'
 import logo from 'src/assets/logo.svg'
 import { useUserStore } from 'stores/user-store'
 import { ref } from 'vue'
@@ -21,12 +21,9 @@ const user = {
 
 const isCollapse = ref(false)
 
-async function logout() {
-  const res = await signOut()
-  if (res && res.status === 200) {
-    userStore.$reset()
-    void signIn()
-  }
+function logout() {
+  userStore.$reset()
+  signOut()
 }
 </script>
 
