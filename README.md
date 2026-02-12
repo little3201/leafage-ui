@@ -17,7 +17,7 @@
 
   基于 <a href="https://element-plus.org">Element plus</a> 库（branch: element）预览地址： https://preivew.leafage.top。</br>
   基于 <a href="https://quasar.dev">Quasar framework</a> 库（branch: main, develop）预览地址： https://console.leafage.top。</br>
-  基于 <a href="https://mui.com">Material UI</a> 库（branch: react）。
+  基于 <a href="https://mui.com/material-ui">Material UI</a> 库（branch: react）。
 </p>
 
 ### 特性
