@@ -23,57 +23,62 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.dictionaries')" :rows="rows" :columns="columns" row-key="id"
-      :loading="loading" v-model:pagination="pagination" :filter="filter" binary-state-sort @request="onRequest"
-      class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="sym_r_search" />
+    <div class="row q-gutter-md">
+      <div class="col-3">
+        <q-card flat>
+          <q-card-section>
+            <q-tree :nodes="treeDatas" node-key="id" label-key="name" v-model:selected="treeSelected"
+              @update:selected="refresh()" @lazy-load="onLazyLoad" />
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col">
+        <q-table ref="tableRef" flat :title="$t('page.dictionaries')" :rows="rows" :columns="columns" row-key="id"
+          :loading="loading" v-model:pagination="pagination" :filter="filter" binary-state-sort @request="onRequest"
+          class="full-width">
+          <template v-slot:top-right>
+            <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
+              <template v-slot:append>
+                <q-icon name="sym_r_search" />
+              </template>
+            </q-input>
+
+            <q-btn :disabled="!treeSelected" title="create" round padding="xs" color="primary" class="q-mx-sm"
+              :disable="loading" icon="sym_r_add" @click="saveRow()" />
+            <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
+              icon="sym_r_refresh" @click="refresh" />
+            <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
+              icon="sym_r_database_upload" @click="importRow" />
+            <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
+              @click="exportTable(columns, rows)" />
           </template>
-        </q-input>
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
-        <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_database_upload" @click="importRow" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
-          @click="exportTable(columns, rows)" />
-      </template>
 
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(`label.${col.label}`) }}
-          </q-th>
-        </q-tr>
-      </template>
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th v-for="col in props.cols" :key="col.name" :props="props">
+                {{ $t(`label.${col.label}`) }}
+              </q-th>
+            </q-tr>
+          </template>
 
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-btn title="expand" round flat dense @click="props.expand = !props.expand"
-              :icon="props.expand ? 'sym_r_keyboard_arrow_down' : 'sym_r_keyboard_arrow_right'" />
-          </q-td>
-          <q-td v-for="col in props.cols" :key="col.name">
-            <div v-if="col.name === 'id'" class="text-right">
-              <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-                @click="saveRow(col.value)" />
-            </div>
-            <div v-else-if="col.name === 'enabled'" class="text-center">
-              <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
-                color="positive" />
-            </div>
-            <span v-else>{{ col.value }}</span>
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%">
-            <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id" />
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td v-for="col in props.cols" :key="col.name">
+                <div v-if="col.name === 'id'" class="text-right">
+                  <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
+                    @click="saveRow(col.value)" />
+                </div>
+                <div v-else-if="col.name === 'enabled'" class="text-center">
+                  <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+                    color="positive" />
+                </div>
+                <span v-else>{{ col.value }}</span>
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
+      </div>
+    </div>
 
     <!-- import -->
     <q-dialog v-model="importVisible" persistent>
@@ -96,12 +101,11 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { enableDictionary, fetchDictionary, importDictionaries, modifyDictionary, retrieveDictionaries } from 'src/api/dictionaries'
-import type { Dictionary, Filter, Pagination } from 'src/types'
+import { createDictionary, enableDictionary, fetchDictionary, importDictionaries, modifyDictionary, retrieveDictionaries, retrieveDictionarySubset } from 'src/api/dictionaries'
+import type { Dictionary, Filter, Pagination, TreeNode } from 'src/types'
 import { exportTable } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
-import SubPage from './SubPage.vue'
 
 
 const userStore = useUserStore()
@@ -109,9 +113,13 @@ const userStore = useUserStore()
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
+const treeSelected = ref('')
+const treeDatas = ref<Array<TreeNode>>([])
+
 const tableRef = ref<QTable>()
 const rows = ref<Array<Dictionary>>([])
 const filter = reactive<Filter<Dictionary>>({
+  superiorId: { op: 'eq', value: null },
   name: { op: 'eq', value: undefined }
 })
 const loading = ref(false)
@@ -139,8 +147,15 @@ const columns: QTableColumn<Dictionary>[] = [
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
-onMounted(() => {
+onMounted(async () => {
   refresh()
+
+  const res = await retrieveDictionaries({ page: 1, size: 99, sortBy: 'id', descending: false }, filter)
+  treeDatas.value = res.data.content.map((item: Dictionary) => ({
+    id: item.id!,
+    name: item.name,
+    lazy: (item.count ?? 0) > 0
+  }))
 })
 
 /**
@@ -151,13 +166,13 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
 
-
   const params: Pagination = { page, size: rowsPerPage }
   if (sortBy) {
     params.sortBy = sortBy
     params.descending = descending
   }
 
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   try {
     const res = await retrieveDictionaries({ ...params }, filter)
     pagination.value.page = page
@@ -172,6 +187,27 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   } finally {
     loading.value = false
   }
+}
+
+
+/**
+ * lazy load children nodes
+ * @param node current node
+ * @param key node key, which is the id of region in this case
+ */
+async function onLazyLoad({ node, key, done }: { node: TreeNode, key: string, done: (children?: readonly TreeNode[]) => void }) {
+  if (!key) {
+    done([])
+    return
+  }
+
+  const res = await retrieveDictionarySubset(node.id!)
+  done(res.data.map((item: Dictionary) => ({
+    id: item.id!,
+    name: item.name,
+    lazy: (item.count ?? 0) > 0
+  })))
+  refresh()
 }
 
 function importRow() {
@@ -191,7 +227,7 @@ async function enableRow(id: number) {
   }
 }
 
-async function saveRow(id: number) {
+async function saveRow(id?: number) {
   form.value = { ...initialValues }
   if (id) {
     try {
@@ -204,15 +240,20 @@ async function saveRow(id: number) {
   visible.value = true
 }
 
+
 async function onSubmit() {
-  if (form.value.id) {
-    try {
+  try {
+    if (form.value.id) {
       await modifyDictionary(form.value.id, form.value)
-      refresh()
-      visible.value = false
-    } catch (error) {
-      return error
+    } else {
+      // create region, set superiorId to null if treeSelected is empty
+      form.value.superiorId = treeSelected.value ? Number(treeSelected.value) : null
+      await createDictionary(form.value)
     }
+    refresh()
+    visible.value = false
+  } catch (error) {
+    return error
   }
 }
 

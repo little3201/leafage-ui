@@ -12,6 +12,12 @@
             <q-input outlined dense v-model="form.name" :label="$t('label.name')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
 
+            <q-input outlined dense v-model="form.postalCode" :label="$t('label.postalCode')" lazy-rules
+              :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
+
+            <q-input outlined dense v-model="form.areaCode" :label="$t('label.areaCode')" lazy-rules
+              :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
+
             <q-input outlined dense v-model="form.description" :label="$t('label.description')" type="textarea" />
           </q-card-section>
 
@@ -184,7 +190,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     params.descending = descending
   }
 
-  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) || null : null
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   try {
     const res = await retrieveRegions({ ...params }, filter)
     pagination.value.page = page
@@ -269,6 +275,8 @@ async function onSubmit() {
     if (form.value.id) {
       await modifyRegion(form.value.id, form.value)
     } else {
+      // create region, set superiorId to null if treeSelected is empty
+      form.value.superiorId = treeSelected.value ? Number(treeSelected.value) : null
       await createRegion(form.value)
     }
     visible.value = false
