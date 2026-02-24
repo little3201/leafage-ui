@@ -21,7 +21,7 @@
                 {{ row.name }}
               </p>
               <p><strong>{{ $t('label.size') }}</strong>
-                {{ formatFileSize(row.size) }}
+                {{ humanStorageSize(row.size) }}
               </p>
               <p><strong>{{ $t('label.contentType') }}</strong>
                 {{ row.contentType }}
@@ -113,7 +113,7 @@
             </q-breadcrumbs>
           </template>
           <template v-slot:top-right>
-            <q-input dense debounce="300" v-model="filter.name" placeholder="Search">
+            <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
               <template v-slot:append>
                 <q-icon name="sym_r_search" />
               </template>
@@ -146,7 +146,7 @@
           </template>
           <template v-slot:body-cell-size="props">
             <q-td :props="props">
-              {{ formatFileSize(props.row.size) }}
+              {{ humanStorageSize(props.row.size) }}
             </q-td>
           </template>
           <template v-slot:body-cell-lastModifiedDate="props">
@@ -170,28 +170,32 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { date } from 'quasar'
-import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/files'
-import type { FileRecord } from 'src/types'
-import { formatFileSize } from 'src/utils'
+import { date, format } from 'quasar'
+import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import type { FileRecord, Filter, Pagination } from 'src/types'
 import { useUserStore } from 'stores/user-store'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 
 
+const { humanStorageSize } = format
 const userStore = useUserStore()
 const visible = ref<boolean>(false)
 const uploadVisible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
 const rows = ref<Array<FileRecord>>([])
-const filter = ref({
-  superiorId: null as string | null,
-  name: null
+
+const expandRows = ref<Array<FileRecord>>([])
+const currentRow = ref<FileRecord | null>(null)
+const filter = reactive<Filter<FileRecord>>({
+  superiorId: { op: 'eq', value: currentRow.value?.id },
+  name: { op: 'eq', value: undefined }
 })
 const loading = ref<boolean>(false)
 
 const initialValues: FileRecord = {
   id: null,
+  superiorId: null,
   name: '',
   size: 0,
   path: ''
@@ -199,15 +203,12 @@ const initialValues: FileRecord = {
 const row = ref<FileRecord>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: true,
   page: 1,
   rowsPerPage: 7,
   rowsNumber: 0
 })
-
-const expandRows = ref<Array<FileRecord>>([])
-const currentRow = ref<FileRecord | null>(null)
 
 const columns: QTableColumn<FileRecord>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
@@ -230,8 +231,12 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   const { page, rowsPerPage, sortBy, descending } = props.pagination
 
   props.filter.superiorId = currentRow.value ? `eq:${currentRow.value.id}` : null
-  const filter = props.filter
-  const params = { page, size: rowsPerPage, sortBy, descending }
+
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
   try {
     const res = await retrieveFiles({ ...params }, filter)

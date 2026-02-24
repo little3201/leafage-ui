@@ -29,7 +29,6 @@ export async function signIn() {
   } catch {
     globalThis.location.replace('/login')
   }
-
 }
 
 export async function handleCallback() {

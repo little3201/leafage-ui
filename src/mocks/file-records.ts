@@ -9,6 +9,7 @@ for (let i = 1; i < 28; i++) {
   const randomIndex = Math.floor(Math.random() * 6)
   const data: FileRecord = {
     id: i,
+    superiorId: Math.floor(Math.random() * 6) || null,
     name: 'file_name_' + i + (i % 3 > 0 ? '.zip' : '.jpg'),
     contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || 'unknown',
     size: Math.floor(Math.random() * 100000),

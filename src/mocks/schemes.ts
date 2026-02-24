@@ -8,11 +8,12 @@ const datas: Scheme[] = [
 for (let i = 1; i < 16; i++) {
   const row: Scheme = {
     id: i,
-    module: 'module_name' + i,
+    module: 'name' + i,
     connectionId: 1,
     packageName: 'com.example',
     scope: 'PARTIAL',
     tables: ['messages', 'users', 'roles'],
+    samples: i > 3 ? [1, 2, 3, 4, 5] : [],
     enabled: i > 2
   }
   datas.push(row)
@@ -37,7 +38,6 @@ for (let i = 1; i < 8; i++) {
     schemeId: Math.floor(Math.random() * 5) + 1,
     tableName: 'table_name' + i,
     name: 'column_name' + i,
-    comment: 'comment',
     dataType: 'varchar',
     length: 255,
     fieldType: 'String',

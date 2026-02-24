@@ -1,6 +1,6 @@
 import type { QTableProps } from 'quasar'
 import { Notify, exportFile } from 'quasar'
-import type { Dictionary } from 'src/types'
+import type { Filter } from 'src/types'
 
 /**
  * Resolve a child path relative to a parent path
@@ -57,36 +57,6 @@ export const formatDuration = (ms: number): string => {
   }
 
   return sign + (parts.length > 0 ? parts.join('') : '0ms')
-}
-
-/**
- * Format a file size given in bytes into a human-readable string
- * @param {number} size - The file size in bytes
- * @returns {string} - The formatted file size
- */
-export const formatFileSize = (size: number) => {
-  if (Number.isNaN(size) || size <= 0) return '-'
-
-  const units = ['B', 'KB', 'MB', 'GB', 'TB']
-  let index = 0
-
-  while (size >= 1024 && index < units.length - 1) {
-    size /= 1024
-    index++
-  }
-
-  return `${size.toFixed(2)}${units[index]}`
-}
-
-/**
- * 格式化字典数据
- * @param value 字典值
- * @param rows  字典列表
- * @returns 字典名称
- */
-export function formatDictionary(value: number, rows: Dictionary[]): string {
-  const dictItem = rows.find(item => item.id === value)
-  return dictItem ? dictItem.name : ''
 }
 
 export function visibleArray<T extends string | number>(array: T[], count: number): T[] {
@@ -152,16 +122,47 @@ export async function generateCodeChallenge(codeVerifier: string) {
     .then(buffer => base64UrlEncode(new Uint8Array(buffer)))
 }
 
-export function dealFilters(filters?: object | string) {
-  if (filters && typeof filters === 'object') {
-    filters = Object.entries(filters)
-      .filter(([, value]) => value != null && value !== '')
-      .map(([key, value]) => {
-        return `${key}:${value}`
-      })
-      .join(',')
+export function dealFilters<T>(filters: Filter<T> | undefined): string | undefined {
+  if (!filters || Object.keys(filters).length === 0) {
+    return undefined
   }
-  return filters?.length ? filters : undefined
+
+  const conditions: string[] = []
+
+  // 使用 keyof T 来遍历，但因为是 Partial，所以要用 keyof typeof filters
+  for (const field in filters) {
+    const cond = filters[field]
+    if (!cond) continue
+
+    const { op, value } = cond
+
+    // 跳过无效值
+    if (value == null || value === '') {
+      continue
+    }
+
+    let valueStr: string
+
+    // 根据 op 处理 value 的字符串化方式
+    if (op === 'in' || op === 'notIn') {
+      // 假设 value 是数组类型（实际使用时应匹配实体字段类型）
+      valueStr = Array.isArray(value) ? value.join(',') : String(value)
+    } else if (op === 'between' || op === 'notBetween') {
+      // 假设 value 是 [any, any] 形式的数组
+      valueStr = Array.isArray(value) && value.length === 2
+        ? value.join(',')
+        : String(value)
+    } else {
+      valueStr = String(value).trim()
+    }
+
+    // 只在有有效值时加入
+    if (valueStr) {
+      conditions.push(`${field}:${op}:${valueStr}`)
+    }
+  }
+
+  return conditions.length > 0 ? conditions.join(',') : undefined
 }
 
 /**

@@ -27,7 +27,7 @@
       :loading="loading" v-model:pagination="pagination" :filter="filter" binary-state-sort @request="onRequest"
       class="full-width">
       <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
           <template v-slot:append>
             <q-icon name="sym_r_search" />
           </template>
@@ -97,10 +97,10 @@
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { enableDictionary, fetchDictionary, importDictionaries, modifyDictionary, retrieveDictionaries } from 'src/api/dictionaries'
-import type { Dictionary } from 'src/types'
+import type { Dictionary, Filter, Pagination } from 'src/types'
 import { exportTable } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import SubPage from './SubPage.vue'
 
 
@@ -111,7 +111,9 @@ const importVisible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
 const rows = ref<Array<Dictionary>>([])
-const filter = ref('')
+const filter = reactive<Filter<Dictionary>>({
+  name: { op: 'eq', value: undefined }
+})
 const loading = ref(false)
 
 const initialValues: Dictionary = {
@@ -123,7 +125,7 @@ const initialValues: Dictionary = {
 const form = ref<Dictionary>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: true,
   page: 1,
   rowsPerPage: 7,
@@ -148,9 +150,13 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
 
-  const params = { page, size: rowsPerPage, sortBy, descending }
+
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
   try {
     const res = await retrieveDictionaries({ ...params }, filter)

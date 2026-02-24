@@ -15,7 +15,7 @@ for (let i = 1; i < Math.floor(Math.random() * 30); i++) {
       title: ['公司年会', '部门团建', '产品发布', '法定节假日', '双十一大促', '系统维护'][Math.floor(Math.random() * 6)] || '今日事件',
       startDate: day.toISOString().split('T')[0] || '',
       endDate: new Date(today.getTime() + Math.random() * 7 * 86400000).toISOString().split('T')[0] || '',
-      type: ['primary', 'success', 'warning', 'danger'][Math.floor(Math.random() * 4)] || 'primary',
+      type: (['primary', 'success', 'warning', 'danger'] as Array<'primary' | 'success' | 'warning' | 'danger'>)[Math.floor(Math.random() * 4)] || 'primary',
     }
     schedules.push(event)
   }

@@ -1,9 +1,9 @@
 import { defineBoot } from '#q-app/wrappers'
-import { useUserStore } from 'stores/user-store'
+import { getUserInfo, signIn } from 'src/api/authentication'
 import { retrievePrivilegeTree } from 'src/api/privileges'
-import { signIn, getUserInfo } from 'src/api/authentication'
-import type { RouteRecordRaw } from 'vue-router'
 import type { PrivilegeTreeNode } from 'src/types'
+import { useUserStore } from 'stores/user-store'
+import type { RouteRecordRaw } from 'vue-router'
 
 
 const BlankLayout = () => import('src/layouts/BlankLayout.vue')

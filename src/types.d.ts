@@ -3,6 +3,28 @@ interface AudtiMetadata {
   lastModifiedDate?: Date
 }
 
+type FilterOperator =
+  | 'eq' | 'neq'
+  | 'gt' | 'egt' | 'lt' | 'elt'
+  | 'like'
+  | 'in' | 'notIn'
+  | 'between' | 'notBetween'
+  | 'isNull' | 'isNotNull'
+
+export type Filter<T> = Partial<{
+  [K in keyof T]: {
+    op: T[K] extends string | null | undefined
+    ? 'eq' | 'neq' | 'like' | 'ilike' | 'notLike' | 'in' | 'notIn' | 'isNull' | 'isNotNull'
+    : T[K] extends number | null | undefined
+    ? 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'notIn'
+    : T[K] extends boolean | null | undefined
+    ? 'eq' | 'neq' | 'isNull' | 'isNotNull'
+    : T[K] extends Date | string | null | undefined  // 日期通常用 ISO string
+    ? 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'between' | 'notBetween' : FilterOperator
+    value: T[K] | undefined
+  }
+}>
+
 export interface Pagination {
   page: number,
   size: number,
@@ -165,6 +187,7 @@ export interface SchedulerLog extends AudtiMetadata {
 }
 
 export interface FileRecord extends AudtiMetadata {
+  superiorId: number | null
   name: string
   extension?: string
   path: string
@@ -176,11 +199,13 @@ export interface FileRecord extends AudtiMetadata {
   lastModifiedDate?: Date
 }
 
+
 export interface Scheme extends AudtiMetadata {
   module: string
   connectionId: number | null
   packageName: string
   tables: string[]
+  samples: number[]
   scope: string
   enabled?: boolean
 }
@@ -189,6 +214,7 @@ export interface SchemeModule {
   id: number
   schemeId: number
   moduleId: number
+  tableName?: string
 }
 
 export interface Field extends AudtiMetadata {
@@ -197,7 +223,6 @@ export interface Field extends AudtiMetadata {
   name: string
   dataType: string
   length: number
-  comment: string
   fieldType: string
   formType: string
   tsType: string
@@ -225,7 +250,6 @@ export interface Sample extends AudtiMetadata {
 export interface Module extends AudtiMetadata {
   name: string
   description?: string
-  samples?: string[]
   version?: number
   enabled?: boolean
 }
@@ -252,12 +276,24 @@ export interface SampleFragment {
   fragmentId: number
 }
 
+export interface ParamPair {
+  key: string
+  value: string | null
+}
+
 export interface Script extends AudtiMetadata {
   name: string
-  type: string | undefined
-  icon: string
-  version: string
+  params: Record<string, string | null>
   body: string
+  attachment: string | undefined
+  os: string
+  version: string
+}
+
+export interface ScriptConfig {
+  mode: string
+  os: string
+  scripts: { id: number; params: Record<string, string | null> }[]
 }
 
 export interface Connection extends AudtiMetadata {
@@ -275,5 +311,5 @@ export interface Schedule extends AudtiMetadata {
   location?: string
   startDate: string
   endDate: string
-  type?: string
+  type: 'primary' | 'success' | 'warning' | 'danger'
 }

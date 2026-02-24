@@ -46,7 +46,7 @@
       :loading="loading" v-model:pagination="pagination" :filter="filter" binary-state-sort @request="onRequest"
       class="full-width">
       <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
           <template v-slot:append>
             <q-icon name="sym_r_search" />
           </template>
@@ -136,10 +136,10 @@ import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { retrieveDictionarySubset } from 'src/api/dictionaries'
 import { enablePrivilege, fetchPrivilege, importPrivileges, modifyPrivilege, retrievePrivileges, retrievePrivilegeSubset } from 'src/api/privileges'
 import { actions } from 'src/constants'
-import type { Dictionary, Privilege } from 'src/types'
+import type { Dictionary, Filter, Pagination, Privilege } from 'src/types'
 import { exportTable, visibleArray } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import SubPage from './SubPage.vue'
 
 
@@ -150,7 +150,9 @@ const importVisible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
 const rows = ref<Array<Privilege>>([])
-const filter = ref('')
+const filter = reactive<Filter<Privilege>>({
+  name: { op: 'eq', value: undefined }
+})
 const loading = ref<boolean>(false)
 const buttonOptions = ref<Array<Dictionary>>([])
 
@@ -167,7 +169,7 @@ const initialValues: Privilege = {
 const form = ref<Privilege>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: false,
   page: 1,
   rowsPerPage: 7,
@@ -199,9 +201,13 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
 
-  const params = { page, size: rowsPerPage, sortBy, descending }
+
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
   try {
     const res = await retrievePrivileges({ ...params }, filter)

@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination } from 'src/types'
+import type { FileRecord, Filter, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,10 +9,8 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveFiles = (pagination: Pagination, filters?: object | string) => {
-  if (filters) {
-    filters = dealFilters(filters)
-  }
+export const retrieveFiles = (pagination: Pagination, filter?: Filter<FileRecord>) => {
+  const filters = dealFilters(filter)
   return api.get(SERVER_URL.FILE, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
@@ -30,8 +28,10 @@ export const fetchFile = (id: number) => {
  * @param file file
  * @returns Uploaded row
  */
-export const uploadFile = (file: File, superiorId?: number | null) => {
-  return api.postForm(`${SERVER_URL.FILE}`, { file, superiorId })
+export const uploadFile = (file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  return api.post(`${SERVER_URL.FILE}/upload`, formData)
 }
 
 /**
@@ -39,7 +39,7 @@ export const uploadFile = (file: File, superiorId?: number | null) => {
  * @param id Row ID
  * @returns data stream
  */
-export const downloadFile = (id: number) => {
+export const download = (id: number) => {
   return api.get(`${SERVER_URL.FILE}/${id}/download`)
 }
 

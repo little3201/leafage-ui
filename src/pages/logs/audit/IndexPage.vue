@@ -51,7 +51,7 @@
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input dense debounce="300" v-model="filter.resource!.value" placeholder="Search">
           <template v-slot:append>
             <q-icon name="sym_r_search" />
           </template>
@@ -105,16 +105,19 @@
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/audit-logs'
-import type { AuditLog } from 'src/types'
+import type { AuditLog, Filter, Pagination } from 'src/types'
 import { exportTable, formatDuration } from 'src/utils'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 
 
 const visible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
 const rows = ref<Array<AuditLog>>([])
-const filter = ref('')
+const filter = reactive<Filter<AuditLog>>({
+  resource: { op: 'eq', value: undefined },
+  action: { op: 'eq', value: undefined }
+})
 const loading = ref<boolean>(false)
 
 const initialValues: AuditLog = {
@@ -126,7 +129,7 @@ const initialValues: AuditLog = {
 const row = ref<AuditLog>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: true,
   page: 1,
   rowsPerPage: 7,
@@ -157,9 +160,13 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
 
-  const params = { page, size: rowsPerPage, sortBy, descending }
+
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
   try {
     const res = await retrieveAuditLogs({ ...params }, filter)

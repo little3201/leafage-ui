@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Sample } from 'src/types'
+import type { Filter, Pagination, Sample } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,10 +9,8 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSamples = (pagination: Pagination, filters?: object | string) => {
-  if (filters) {
-    filters = dealFilters(filters)
-  }
+export const retrieveSamples = (pagination: Pagination, filter?: Filter<Sample>) => {
+  const filters = dealFilters(filter)
   return api.get(SERVER_URL.SAMPLE, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 

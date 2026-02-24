@@ -12,7 +12,11 @@ import type { ComposerTranslation } from 'vue-i18n'
 const { t } = i18n.global as { t: ComposerTranslation }
 const abortControllerMap: Map<string, AbortController> = new Map()
 
-const api: AxiosInstance = axios.create({ baseURL: process.env.API || '/api', timeout: 10000, withCredentials: true })
+const api: AxiosInstance = axios.create({
+  baseURL: process.env.API || '/api',
+  timeout: 10000,
+  withCredentials: true
+})
 
 export default defineBoot(({ store }) => {
   api.interceptors.request.use(
@@ -86,3 +90,4 @@ function cancelAllRequest() {
 }
 
 export { api }
+

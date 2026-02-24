@@ -24,61 +24,65 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.regions')" selection="multiple" v-model:selected="selected"
-      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="sym_r_search" />
+    <div class="row q-gutter-md">
+      <div class="col-3">
+        <q-card flat>
+          <q-card-section>
+            <q-tree :nodes="treeDatas" node-key="id" label-key="name" v-model:selected="treeSelected"
+              @update:selected="refresh()" @lazy-load="onLazyLoad" />
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col">
+        <q-table ref="tableRef" flat :title="$t('page.regions')" selection="multiple" v-model:selected="selected"
+          :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading"
+          :filter="filter" binary-state-sort @request="onRequest" class="full-width">
+          <template v-slot:top-right>
+            <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
+              <template v-slot:append>
+                <q-icon name="sym_r_search" />
+              </template>
+            </q-input>
+            <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
+              @click="saveRow()" />
+            <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
+              icon="sym_r_refresh" @click="refresh" />
+            <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
+              icon="sym_r_database_upload" @click="importRow" />
+            <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
+              @click="exportTable(columns, rows)" />
           </template>
-        </q-input>
-        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
-          @click="saveRow()" />
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
-        <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_database_upload" @click="importRow" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
-          @click="exportTable(columns, rows)" />
-      </template>
 
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(`label.${col.label}`) }}
-          </q-th>
-        </q-tr>
-      </template>
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th v-for="col in props.cols" :key="col.name" :props="props">
+                {{ $t(`label.${col.label}`) }}
+              </q-th>
+            </q-tr>
+          </template>
 
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-btn title="expand" round flat dense @click="props.expand = !props.expand"
-              :icon="props.expand ? 'sym_r_keyboard_arrow_down' : 'sym_r_keyboard_arrow_right'" />
-          </q-td>
-          <q-td v-for="col in props.cols" :key="col.name">
-            <div v-if="col.name === 'id'" class="text-right">
-              <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-                @click="saveRow(props.row.id)" />
-              <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-                @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
-            </div>
-            <div v-else-if="col.name === 'enabled'" class="text-center">
-              <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
-                color="positive" />
-            </div>
-            <span v-else>{{ col.value }}</span>
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%" class="q-pr-none">
-            <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id" />
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
+          <template v-slot:body="props">
+            <q-tr :props="props">
+
+              <q-td v-for="col in props.cols" :key="col.name">
+                <div v-if="col.name === 'id'" class="text-right">
+                  <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
+                    @click="saveRow(props.row.id)" />
+                  <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
+                    @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+                </div>
+                <div v-else-if="col.name === 'enabled'" class="text-center">
+                  <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+                    color="positive" />
+                </div>
+                <span v-else>{{ col.value }}</span>
+              </q-td>
+            </q-tr>
+
+          </template>
+        </q-table>
+      </div>
+    </div>
 
     <!-- import -->
     <q-dialog v-model="importVisible" persistent>
@@ -101,12 +105,14 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { createRegion, enableRegion, fetchRegion, importRegions, modifyRegion, removeRegion, retrieveRegions } from 'src/api/regions'
-import type { Region } from 'src/types'
+import {
+  createRegion, enableRegion, fetchRegion, importRegions, modifyRegion,
+  removeRegion, retrieveRegions, retrieveRegionSubset
+} from 'src/api/regions'
+import type { Filter, Pagination, Region, TreeNode } from 'src/types'
 import { exportTable } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
-import { onMounted, ref } from 'vue'
-import SubPage from './SubPage.vue'
+import { onMounted, reactive, ref } from 'vue'
 
 
 const userStore = useUserStore()
@@ -114,10 +120,17 @@ const userStore = useUserStore()
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
+const treeSelected = ref('')
+const treeDatas = ref<Array<TreeNode>>([])
+
 const tableRef = ref<QTable>()
 const rows = ref<Array<Region>>([])
-const filter = ref('')
+const filter = reactive<Filter<Region>>({
+  superiorId: { op: 'eq', value: null },
+  name: { op: 'eq', value: undefined }
+})
 const loading = ref<boolean>(false)
+
 
 const initialValues: Region = {
   id: null,
@@ -128,7 +141,7 @@ const initialValues: Region = {
 const form = ref<Region>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: false,
   page: 1,
   rowsPerPage: 7,
@@ -146,8 +159,15 @@ const columns: QTableColumn<Region>[] = [
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
-onMounted(() => {
+onMounted(async () => {
   refresh()
+
+  const res = await retrieveRegions({ page: 1, size: 34, sortBy: 'id', descending: false }, filter)
+  treeDatas.value = res.data.content.map((item: Region) => ({
+    id: item.id!,
+    name: item.name,
+    lazy: (item.count ?? 0) > 0
+  }))
 })
 
 /**
@@ -157,10 +177,14 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
 
-  const params = { page, size: rowsPerPage, sortBy, descending }
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) || null : null
   try {
     const res = await retrieveRegions({ ...params }, filter)
     pagination.value.page = page
@@ -175,6 +199,26 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   } finally {
     loading.value = false
   }
+}
+
+/**
+ * lazy load children nodes
+ * @param node current node
+ * @param key node key, which is the id of region in this case
+ */
+async function onLazyLoad({ node, key, done }: { node: TreeNode, key: string, done: (children?: readonly TreeNode[]) => void }) {
+  if (!key) {
+    done([])
+    return
+  }
+
+  const res = await retrieveRegionSubset(node.id!)
+  done(res.data.map((item: Region) => ({
+    id: item.id!,
+    name: item.name,
+    lazy: (item.count ?? 0) > 0
+  })))
+  refresh()
 }
 
 function importRow() {

@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Connection, Pagination } from 'src/types'
+import type { Connection, Filter, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 
@@ -8,10 +8,8 @@ import { dealFilters } from 'src/utils'
  * Retrieve rows
  * @returns Rows data
  */
-export const retrieveConnections = (pagination: Pagination, filters?: object | string) => {
-  if (filters) {
-    filters = dealFilters(filters)
-  }
+export const retrieveConnections = (pagination: Pagination, filter?: Filter<Connection>) => {
+  const filters = dealFilters(filter)
   return api.get(`${SERVER_URL.CONNECTION}`, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
