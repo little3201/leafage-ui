@@ -140,3 +140,14 @@ export const languages = [
   { label: 'vue', value: 'VUE' },
   { label: 'react', value: 'REACT' }
 ]
+
+export const osTypes = [
+  { label: 'Linux', value: 'LINUX', dictionary: 800 },
+  { label: 'Windows', value: 'WINDOWS', dictionary: 900 },
+  { label: 'MacOS', value: 'MACOS', dictionary: 1000 }
+]
+
+export const scriptModes: { [key: string]: 'Server' | 'Docker' } = {
+  SERVER: 'Server',
+  DOCKER: 'Docker'
+}

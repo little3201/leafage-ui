@@ -37,6 +37,8 @@ export default {
     httpMethod: 'Http方法',
     url: '接口',
     params: '參數',
+    key: '鍵',
+    value: '值',
     body: '內容',
     request: {
       body: '請求體',
@@ -96,6 +98,7 @@ export default {
     language: '語言',
     filePath: '文件路徑',
     imports: '引用',
+    attachment: '附件',
   },
 
   action: {
@@ -133,6 +136,8 @@ export default {
     signin: '登 錄',
     signup: '註 冊',
     signout: '退出登錄',
+    back: '返回',
+    continue: '繼續'
   },
 
   page: {
@@ -144,7 +149,7 @@ export default {
     users: '用戶',
     dictionaries: '字典',
     regions: '行政區劃',
-
+    faq: '常見問題',
     files: '文檔管理',
     profile: '個人中心',
     exploiters: '開發工具',

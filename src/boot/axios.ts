@@ -60,6 +60,7 @@ export default defineBoot(({ store }) => {
           await signIn()
           return
         case 403:
+          cancelAllRequest()
           Notify.create({ type: 'forbidden', message: t('message.error') })
           break
         case 404:

@@ -37,6 +37,8 @@ export default {
     httpMethod: 'Http Method',
     url: 'URL',
     params: 'Params',
+    key: 'Key',
+    value: 'Value',
     body: 'Body',
     request: {
       body: 'Request Body',
@@ -96,6 +98,7 @@ export default {
     language: 'Language',
     filePath: 'File Path',
     imports: 'Imports',
+    attachment: 'Attachment',
   },
 
   action: {
@@ -133,6 +136,8 @@ export default {
     signin: 'Sign In',
     signup: 'Sign Up',
     signout: 'Sign Out',
+    back: 'Back',
+    continue: 'Continue'
   },
 
   page: {
@@ -144,7 +149,7 @@ export default {
     users: 'Users',
     dictionaries: 'Dictionaries',
     regions: 'Regions',
-
+    faq: 'FAQ',
     files: 'Files',
     profile: 'Profile',
     exploiters: 'Exploiters',
