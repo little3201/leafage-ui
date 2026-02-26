@@ -2,13 +2,14 @@ import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Script } from 'src/types'
 
+
 const datas: Script[] = [
   {
     id: 1,
     name: 'MySQL',
     version: '8.0.34',
     os: 'LINUX',
-    params: { key: 'port', value: '3306' },
+    params: { host: '127.0.0.1', port: '3306' },
     body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     attachment: 'mysql-8.0.34-linux.tar.gz'
   }, {
@@ -34,7 +35,7 @@ const datas: Script[] = [
     name: 'PostgreSql',
     version: '16.2.3',
     os: 'LINUX',
-    params: { key: 'port', value: '5432' },
+    params: { host: '127.0.0.1', port: '5432' },
     body: '#!/bin/bash\necho \\"Starting PostgreSQL...\\"\nservice postgresql start\necho \\"PostgreSQL is now running.\\"\n',
     attachment: 'postgresql-16.2.3-linux.tar.gz'
   },
@@ -43,7 +44,7 @@ const datas: Script[] = [
     name: 'Redis',
     version: '6.0.1',
     os: 'WINDOWS',
-    params: { key: 'port', value: '6379' },
+    params: { host: '127.0.0.1', port: '6379' },
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     attachment: 'redis-6.0.1-windows.zip'
   },
@@ -52,7 +53,7 @@ const datas: Script[] = [
     name: 'Redis',
     version: '7.0.1',
     os: 'WINDOWS',
-    params: { key: 'port', value: '6379' },
+    params: { host: '127.0.0.1', port: '6379' },
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     attachment: 'redis-7.0.1-windows.zip'
   },
@@ -61,7 +62,7 @@ const datas: Script[] = [
     name: 'Redis',
     version: '3.0.1',
     os: 'WINDOWS',
-    params: { key: 'port', value: '6379' },
+    params: { host: '127.0.0.1', port: '6379' },
     body: '#!/bin/bash\necho \\"Starting Redis...\\"\nservice redis-server start\necho \\"Redis is now running.\\"\n',
     attachment: 'redis-3.0.1-windows.zip'
   }
