@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Dictionary } from 'src/types'
 
-const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700].map(item => {
+const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map(item => {
   return {
     id: item,
     superiorId: null,
@@ -14,7 +14,7 @@ const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700].map(item => {
 })
 
 for (let i = 1; i < 28; i++) {
-  const superiorId: number | null = [100, 200, 300, 400, 500, 600, 700][Math.floor(Math.random() * 7)] || null
+  const superiorId: number | null = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000][Math.floor(Math.random() * 10)] || null
   const row: Dictionary = {
     id: i,
     superiorId: superiorId,

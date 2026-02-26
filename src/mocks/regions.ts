@@ -3,30 +3,20 @@ import { SERVER_URL } from 'src/constants'
 import type { Region } from 'src/types'
 
 const datas: Region[] = []
-const subDatas: Region[] = []
 
 for (let i = 1; i < 34; i++) {
+  const superiorId = Math.floor(Math.random() * 12) || null
   const data: Region = {
     id: i,
     name: 'region_' + i,
-    superiorId: null,
+    superiorId: superiorId,
     areaCode: Math.floor(Math.random() * 100).toString(),
     postalCode: Math.floor(Math.random() * 3000).toString(),
     enabled: i % 3 > 0,
+    count: i,
     description: 'This is region description about xxx'
   }
-  for (let j = 1; j < i; j++) {
-    const subData: Region = {
-      id: 100 + j,
-      name: 'region_' + i + '_' + j,
-      superiorId: i,
-      areaCode: Math.floor(Math.random() * 1000).toString(),
-      postalCode: Math.floor(Math.random() * 3000) + j * 100 + '',
-      enabled: j % 2 > 0,
-      description: 'This is region description about xxx'
-    }
-    subDatas.push(subData)
-  }
+
   datas.push(data)
 }
 
@@ -34,14 +24,16 @@ export const regionsHandlers = [
   http.get(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      let res = datas.find(item => item.id === Number(id))
-      if (!res) {
-        res = subDatas.find(item => item.id === Number(id))
-      }
+      const res = datas.find(item => item.id === Number(id))
       return HttpResponse.json(res)
     } else {
       return HttpResponse.json()
     }
+  }),
+  http.get(`/api${SERVER_URL.REGION}/:id/subset`, ({ params }) => {
+    const { id } = params
+    const filtered = datas.filter(item => item.superiorId === Number(id))
+    return HttpResponse.json(filtered)
   }),
   http.get(`/api${SERVER_URL.REGION}`, ({ request }) => {
     const url = new URL(request.url)
@@ -49,10 +41,20 @@ export const regionsHandlers = [
     const size = url.searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
-    let filtered = []
-    const superiorId = url.searchParams.get('superiorId')
-    if (superiorId) {
-      filtered = subDatas.filter(item => item.superiorId === Number(superiorId))
+    let filtered: Region[] = []
+    const filter = url.searchParams.get('filters')
+    if (filter) {
+      const filterPairs = filter.split('&')
+      let superiorId: string | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'superiorId' && value) {
+          superiorId = value
+          if (operator == 'eq') {
+            filtered = datas.filter(item => item.superiorId === Number(superiorId))
+          }
+        }
+      })
     } else {
       filtered = datas
     }
