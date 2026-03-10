@@ -304,103 +304,111 @@ async function confirmEvent(id: number) {
 </script>
 
 <template>
-  <ElSpace size="large" alignment="flex-start">
-    <ElCard class="w-64" shadow="never">
-      <ElFormItem prop="filterText">
-        <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
-          <template #prefix>
-            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
-          </template>
-        </ElInput>
-      </ElFormItem>
-
-      <ElTree ref="treeEl" :load="loadTree" lazy v-loading="treeLoading" node-key="id" :current-node-key="treeSelected"
-        highlight-current :props="{ label: 'name' }" :filter-node-method="filterNode" @current-change="onCurrentChange">
-      </ElTree>
-    </ElCard>
-
-    <ElSpace size="large" fill>
+  <ElRow :gutter="20">
+    <ElCol :span="6" :xl="4">
       <ElCard shadow="never">
-        <ElForm inline :model="filter" @submit.prevent>
-          <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="filter.name!.value"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
-          </ElFormItem>
-          <ElFormItem>
-            <ElButton title="search" type="primary" @click="load()">
-              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
-            </ElButton>
-            <ElButton title="reset" @click="reset()">
-              <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
-            </ElButton>
-          </ElFormItem>
-        </ElForm>
-      </ElCard>
-
-      <ElCard shadow="never">
-        <ElRow :gutter="20" justify="space-between" class="mb-4">
-          <ElCol :span="16" class="text-left">
-            <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
-              <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
-            </ElButton>
-            <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain @click="importRows">
-              <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
-                $t('action.import') }}
-            </ElButton>
-            <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
-              :loading="exportLoading">
-              <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
-                $t('action.export') }}
-            </ElButton>
-          </ElCol>
-
-          <ElCol :span="8" class="text-right">
-            <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-              <ElButton title="refresh" plain circle @click="load()">
-                <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
-              </ElButton>
-            </ElTooltip>
-          </ElCol>
-        </ElRow>
-
-        <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
-          <ElTableColumn type="selection" />
-          <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-          <ElTableColumn prop="name" :label="$t('label.name')" sortable />
-          <ElTableColumn prop="areaCode" :label="$t('label.areaCode')" sortable />
-          <ElTableColumn prop="postalCode" :label="$t('label.postalCode')" sortable />
-          <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-            <template #default="scope">
-              <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
-                style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
+        <ElFormItem prop="filterText">
+          <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
+            <template #prefix>
+              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
             </template>
-          </ElTableColumn>
-          <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
-          <ElTableColumn :label="$t('label.actions')">
-            <template #default="scope">
-              <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
-                @click="saveRow(scope.row.id)">
-                <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
-              </ElButton>
-              <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
-                <template #reference>
-                  <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
-                    <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
-                    }}
-                  </ElButton>
-                </template>
-              </ElPopconfirm>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-        <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
-          <template #default>
-            {{ $t('message.selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
-          </template>
-        </ElPagination>
+          </ElInput>
+        </ElFormItem>
+
+        <ElTree ref="treeEl" :load="loadTree" lazy v-loading="treeLoading" node-key="id"
+          :current-node-key="treeSelected" highlight-current :props="{ label: 'name' }" :filter-node-method="filterNode"
+          @current-change="onCurrentChange">
+        </ElTree>
       </ElCard>
-    </ElSpace>
-  </ElSpace>
+    </ElCol>
+
+    <ElCol :span="18" :xl="20">
+      <ElSpace size="large" fill>
+        <ElCard shadow="never">
+          <ElForm inline :model="filter" @submit.prevent>
+            <ElFormItem :label="$t('label.name')" prop="name">
+              <ElInput v-model="filter.name!.value"
+                :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+            </ElFormItem>
+            <ElFormItem>
+              <ElButton title="search" type="primary" @click="load()">
+                <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
+              </ElButton>
+              <ElButton title="reset" @click="reset()">
+                <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
+              </ElButton>
+            </ElFormItem>
+          </ElForm>
+        </ElCard>
+
+        <ElCard shadow="never">
+          <ElRow :gutter="20" justify="space-between" class="mb-4">
+            <ElCol :span="16" class="text-left">
+              <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
+                <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
+              </ElButton>
+              <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain
+                @click="importRows">
+                <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
+                  $t('action.import') }}
+              </ElButton>
+              <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
+                :loading="exportLoading">
+                <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+                  $t('action.export') }}
+              </ElButton>
+            </ElCol>
+
+            <ElCol :span="8" class="text-right">
+              <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
+                <ElButton title="refresh" plain circle @click="load()">
+                  <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+                </ElButton>
+              </ElTooltip>
+            </ElCol>
+          </ElRow>
+
+          <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
+            <ElTableColumn type="selection" />
+            <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+            <ElTableColumn prop="name" :label="$t('label.name')" sortable />
+            <ElTableColumn prop="areaCode" :label="$t('label.areaCode')" sortable />
+            <ElTableColumn prop="postalCode" :label="$t('label.postalCode')" sortable />
+            <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
+              <template #default="scope">
+                <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
+                  style="--el-switch-on-color: var(--el-color-success);"
+                  :disabled="!hasAction($route.name, 'enable')" />
+              </template>
+            </ElTableColumn>
+            <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
+            <ElTableColumn :label="$t('label.actions')">
+              <template #default="scope">
+                <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
+                  @click="saveRow(scope.row.id)">
+                  <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
+                </ElButton>
+                <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+                  <template #reference>
+                    <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
+                      <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{
+                        $t('action.remove')
+                      }}
+                    </ElButton>
+                  </template>
+                </ElPopconfirm>
+              </template>
+            </ElTableColumn>
+          </ElTable>
+          <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+            <template #default>
+              {{ $t('message.selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+            </template>
+          </ElPagination>
+        </ElCard>
+      </ElSpace>
+    </ElCol>
+  </ElRow>
 
   <!-- form -->
   <ElDialog v-model="visible" :title="$t('page.regions')" align-center :show-close="false" width="480">
