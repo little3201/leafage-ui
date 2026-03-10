@@ -18,7 +18,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filters = reactive<Filters<AccessLog>>({
+const filter = reactive<Filters<AccessLog>>({
   url: { op: 'eq', value: undefined },
   statusCode: { op: 'eq', value: undefined }
 })
@@ -56,7 +56,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveAccessLogs(pagination, filters)
+    const res = await retrieveAccessLogs(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -86,8 +86,8 @@ async function loadOne(id: number) {
  * reset
  */
 async function reset() {
-  filters.url!.value = undefined
-  filters.statusCode!.value = undefined
+  filter.url!.value = undefined
+  filter.statusCode!.value = undefined
   await load()
 }
 
@@ -153,13 +153,12 @@ async function confirmEvent(id: number) {
 <template>
   <ElSpace size="large" fill>
     <ElCard shadow="never">
-      <ElForm inline :model="filters">
+      <ElForm inline :model="filter">
         <ElFormItem :label="$t('label.url')" prop="url">
-          <ElInput v-model="filters.url!.value"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.url') })" />
+          <ElInput v-model="filter.url!.value" :placeholder="$t('placeholder.inputText', { field: $t('label.url') })" />
         </ElFormItem>
         <ElFormItem :label="$t('label.statusCode')" prop="statusCode">
-          <ElInput v-model="filters.statusCode!.value"
+          <ElInput v-model="filter.statusCode!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.statusCode') })" />
         </ElFormItem>
         <ElFormItem>

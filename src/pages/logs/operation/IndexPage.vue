@@ -19,7 +19,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filters = reactive<Filters<OperationLog>>({
+const filter = reactive<Filters<OperationLog>>({
   module: { op: 'eq', value: undefined },
   action: { op: 'eq', value: undefined }
 })
@@ -56,7 +56,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveOperationLogs(pagination, filters)
+    const res = await retrieveOperationLogs(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -86,8 +86,8 @@ async function loadOne(id: number) {
  * reset
  */
 async function reset() {
-  filters.module!.value = undefined
-  filters.action!.value = undefined
+  filter.module!.value = undefined
+  filter.action!.value = undefined
   await load()
 }
 
@@ -151,13 +151,13 @@ async function confirmEvent(id: number) {
 <template>
   <ElSpace size="large" fill>
     <ElCard shadow="never">
-      <ElForm inline :model="filters">
+      <ElForm inline :model="filter">
         <ElFormItem :label="$t('label.module')" prop="module">
-          <ElInput v-model="filters.module!.value"
+          <ElInput v-model="filter.module!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.module') })" />
         </ElFormItem>
         <ElFormItem :label="$t('label.action')" prop="action">
-          <ElInput v-model="filters.action!.value"
+          <ElInput v-model="filter.action!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.action') })" />
         </ElFormItem>
         <ElFormItem>

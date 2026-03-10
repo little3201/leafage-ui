@@ -37,7 +37,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = reactive<Filters<User>>({
+const filter = reactive<Filters<User>>({
   username: { op: 'eq', value: undefined }
 })
 
@@ -84,7 +84,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveUsers(pagination, filters)
+    const res = await retrieveUsers(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -96,7 +96,7 @@ async function load() {
  * reset
  */
 async function reset() {
-  filters.username!.value = undefined
+  filter.username!.value = undefined
   await load()
 }
 
@@ -239,9 +239,9 @@ function onUpload(options: UploadRequestOptions) {
 <template>
   <ElSpace size="large" fill>
     <ElCard shadow="never">
-      <ElForm inline :model="filters" @submit.prevent>
+      <ElForm inline :model="filter" @submit.prevent>
         <ElFormItem :label="$t('label.username')" prop="username">
-          <ElInput v-model="filters.username!.value"
+          <ElInput v-model="filter.username!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.username') })" />
         </ElFormItem>
         <ElFormItem>

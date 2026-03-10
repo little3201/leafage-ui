@@ -20,7 +20,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filters = reactive<Filters<FileRecord>>({
+const filter = reactive<Filters<FileRecord>>({
   superiorId: { op: 'eq', value: currentRow.value?.id },
   name: { op: 'eq', value: undefined }
 })
@@ -58,7 +58,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveFiles(pagination, filters)
+    const res = await retrieveFiles(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -81,7 +81,7 @@ async function loadOne(id: number) {
  * reset
  */
 async function reset() {
-  filters.name!.value = undefined
+  filter.name!.value = undefined
   await load()
 }
 
@@ -237,9 +237,9 @@ async function handleBreadcrumbClick(index: number) {
 
     <ElSpace size="large" fill>
       <ElCard shadow="never">
-        <ElForm inline :model="filters">
+        <ElForm inline :model="filter">
           <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="filters.name!.value"
+            <ElInput v-model="filter.name!.value"
               :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
           </ElFormItem>
           <ElFormItem>

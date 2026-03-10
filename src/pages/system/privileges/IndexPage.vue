@@ -34,7 +34,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = reactive<Filters<Privilege>>({
+const filter = reactive<Filters<Privilege>>({
   name: { op: 'like', value: undefined },
   path: { op: 'eq', value: undefined }
 })
@@ -92,7 +92,7 @@ async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privil
       })
       resolve(list)
     } else {
-      const res = await retrievePrivileges(pagination, filters)
+      const res = await retrievePrivileges(pagination, filter)
       const list = res.data.content
       // 处理子节点
       list.forEach((element: Privilege) => {
@@ -135,8 +135,8 @@ const refreshChildren = async (rowKey: number) => {
  * reset
  */
 async function reset() {
-  filters.name!.value = undefined
-  filters.path!.value = undefined
+  filter.name!.value = undefined
+  filter.path!.value = undefined
   await load()
 }
 
@@ -262,13 +262,13 @@ function onCheckChange(item: string) {
 <template>
   <ElSpace size="large" fill>
     <ElCard shadow="never">
-      <ElForm inline :model="filters">
+      <ElForm inline :model="filter">
         <ElFormItem :label="$t('label.name')" prop="name">
-          <ElInput v-model="filters.name!.value"
+          <ElInput v-model="filter.name!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem :label="$t('label.path')" prop="path">
-          <ElInput v-model="filters.path!.value"
+          <ElInput v-model="filter.path!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.path') })" />
         </ElFormItem>
         <ElFormItem>

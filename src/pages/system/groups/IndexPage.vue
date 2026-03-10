@@ -43,7 +43,7 @@ const pagination = reactive<Pagination>({
 
 const treeEl = ref<TreeInstance>()
 const treeLoading = ref<boolean>(false)
-const currentNodeKey = ref<string>('1')
+const treeSelected = ref<string>('1')
 const filterText = ref('')
 
 const groupTree = ref<TreeNode[]>([])
@@ -69,8 +69,8 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = reactive<Filters<Group>>({
-  superiorId: { op: 'eq', value: Number(currentNodeKey.value) },
+const filter = reactive<Filters<Group>>({
+  superiorId: { op: 'eq', value: Number(treeSelected.value) },
   name: { op: 'eq', value: undefined }
 })
 
@@ -115,11 +115,11 @@ const filterNode = (value: string, data: { [key: string]: string }) => {
  * @param data node节点
  */
 async function onCurrentChange(data: TreeNode) {
-  if (currentNodeKey.value === String(data.id)) {
+  if (treeSelected.value === String(data.id)) {
     return
   }
-  currentNodeKey.value = String(data.id)
-  filters.superiorId!.value = Number(currentNodeKey.value)
+  treeSelected.value = String(data.id)
+  filter.superiorId!.value = Number(treeSelected.value)
   pagination.page = 1
   await load()
 }
@@ -168,9 +168,7 @@ async function loadTree() {
   try {
     const res = await retrieveGroupTree()
     groupTree.value = res.data
-    currentNodeKey.value = (res.data[0] && res.data[0]?.id) || 1
 
-    treeEl.value!.setCurrentKey(currentNodeKey.value)
     await load()
   } catch (error) {
     return error
@@ -196,7 +194,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveGroups(pagination, filters)
+    const res = await retrieveGroups(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -208,7 +206,7 @@ async function load() {
  * reset
  */
 async function reset() {
-  filters.name!.value = undefined
+  filter.name!.value = undefined
   await load()
 }
 
@@ -288,7 +286,7 @@ async function onSubmit(formEl: FormInstance) {
       if (form.value.id) {
         await modifyGroup(form.value.id, form.value)
       } else {
-        form.value.superiorId = Number(currentNodeKey.value)
+        form.value.superiorId = Number(treeSelected.value)
         await createGroup(form.value)
       }
       visible.value = false
@@ -470,17 +468,16 @@ async function tabChange(tab: TabPaneName) {
         </ElInput>
       </ElFormItem>
 
-      <ElTree ref="treeEl" v-loading="treeLoading" :data="groupTree" default-expand-all :expand-on-click-node="false"
-        node-key="id" :current-node-key="currentNodeKey" highlight-current :props="{ label: 'name' }"
-        :filter-node-method="filterNode" @current-change="onCurrentChange">
+      <ElTree ref="treeEl" v-loading="treeLoading" :data="groupTree" node-key="id" :current-node-key="treeSelected"
+        highlight-current :props="{ label: 'name' }" :filter-node-method="filterNode" @current-change="onCurrentChange">
       </ElTree>
     </ElCard>
 
     <ElSpace size="large" fill>
       <ElCard shadow="never">
-        <ElForm inline :model="filters" @submit.prevent>
+        <ElForm inline :model="filter" @submit.prevent>
           <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="filters.name!.value"
+            <ElInput v-model="filter.name!.value"
               :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
           </ElFormItem>
           <ElFormItem>

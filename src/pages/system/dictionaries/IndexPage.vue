@@ -35,7 +35,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = reactive<Filters<Dictionary>>({
+const filter = reactive<Filters<Dictionary>>({
   name: { op: 'eq', value: undefined }
 })
 
@@ -85,7 +85,7 @@ async function load(row?: Dictionary, treeNode?: unknown, resolve?: (date: Dicti
       })
       resolve(list)
     } else {
-      const res = await retrieveDictionaries(pagination, filters)
+      const res = await retrieveDictionaries(pagination, filter)
       const list = res.data.content
       // 处理子节点
       list.forEach((element: Dictionary) => {
@@ -128,7 +128,7 @@ const refreshChildren = async (rowKey: number) => {
  * reset
  */
 async function reset() {
-  filters.name!.value = undefined
+  filter.name!.value = undefined
   await load()
 }
 
@@ -252,9 +252,9 @@ function onUpload(options: UploadRequestOptions) {
 <template>
   <ElSpace size="large" fill>
     <ElCard shadow="never">
-      <ElForm inline :model="filters" @submit.prevent>
+      <ElForm inline :model="filter" @submit.prevent>
         <ElFormItem :label="$t('label.name')" prop="name">
-          <ElInput v-model="filters.name!.value"
+          <ElInput v-model="filter.name!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem>

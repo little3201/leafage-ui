@@ -5,11 +5,11 @@ import type { Region } from 'src/types'
 const datas: Region[] = []
 const subDatas: Region[] = []
 
-for (let i = 1; i < 34; i++) {
-  const superiorId = Math.floor(Math.random() * 12) || null
+for (let i = 1; i < 99; i++) {
+  const superiorId = Math.floor(Math.random() * 34) || null
   const data: Region = {
     id: i,
-    superiorId: superiorId,
+    superiorId: i > 33 ? superiorId : null,
     name: 'region_' + i,
     areaCode: Math.floor(Math.random() * 100),
     postalCode: Math.floor(Math.random() * 3000),
@@ -39,17 +39,27 @@ export const regionsHandlers = [
     const size = searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
-    let filtered = []
-    const superiorId = searchParams.get('superiorId')
-    if (superiorId) {
-      filtered = subDatas.filter(item => item.superiorId === Number(superiorId))
+    let filtered: Region[] = []
+    const filter = searchParams.get('filters')
+    if (filter) {
+      const filterPairs = filter.split('&')
+      let superiorId: string | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'superiorId' && value) {
+          superiorId = value
+          if (operator == 'eq') {
+            filtered = datas.filter(item => item.superiorId === Number(superiorId))
+          }
+        }
+      })
     } else {
       filtered = datas
     }
     const data = {
       content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
 

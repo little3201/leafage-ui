@@ -59,7 +59,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filters = reactive<Filters<Role>>({
+const filter = reactive<Filters<Role>>({
   name: { op: 'eq', value: undefined }
 })
 
@@ -115,7 +115,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveRoles(pagination, filters)
+    const res = await retrieveRoles(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -129,7 +129,7 @@ async function load() {
  * reset
  */
 async function reset() {
-  filters.name!.value = undefined
+  filter.name!.value = undefined
   await load()
 }
 
@@ -349,9 +349,9 @@ async function handleActionCheck(privilegeId: number, item: string) {
 <template>
   <ElSpace size="large" fill>
     <ElCard shadow="never">
-      <ElForm inline :model="filters" @submit.prevent>
+      <ElForm inline :model="filter" @submit.prevent>
         <ElFormItem :label="$t('label.name')" prop="name">
-          <ElInput v-model="filters.name!.value"
+          <ElInput v-model="filter.name!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem>
