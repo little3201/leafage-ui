@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em">
+      <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section>
             <div class="text-h6">{{ $t('page.users') }}</div>
@@ -72,8 +72,8 @@
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-badge :color="props.row.nullable ? 'positive' : 'primary'" rounded class="q-mr-sm" />
-          {{ props.row.nullable ? 'Y' : 'N' }}
+          <q-badge :color="userStatus[props.row.status]" rounded class="q-mr-sm" />
+          {{ props.row.status }}
         </q-td>
       </template>
       <template v-slot:body-cell-enabled="props">
@@ -116,6 +116,7 @@
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/users'
+import { userStatus } from 'src/constants'
 import type { Filter, Pagination, User } from 'src/types'
 import { exportTable } from 'src/utils'
 import { useUserStore } from 'stores/user-store'

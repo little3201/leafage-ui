@@ -44,7 +44,7 @@ export const SERVER_URL = {
   CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 连接
 }
 
-export const actions: { [key: string]: string } = {
+export const actions: { [key: string]: 'primary' | 'secondary' | 'positive' | 'info' | 'warning' | 'negative' } = {
   create: 'primary',
   modify: 'primary',
   upload: 'primary',
@@ -64,7 +64,7 @@ export const actions: { [key: string]: string } = {
   detail: 'info'
 }
 
-export const httpMethods: { [key: string]: string } = {
+export const httpMethods: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
   GET: 'positive',
   POST: 'warning',
   PUT: 'primary',
@@ -105,27 +105,27 @@ export const shceduleStatusIcon: { [key: string]: string } = {
   CANCELED: 'cancel'
 }
 
-export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
-  ACTIVE: 'success',
+export const userStatus: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
+  ACTIVE: 'positive',
   LOCKED: 'primary',
   EXPIRED: 'info',
   CREDENTIALS_EXPIRED: 'warning',
-  DISABLED: 'danger'
+  DISABLED: 'negative'
 }
 
-export const schemeScope: { [key: string]: 'primary' | 'success' } = {
-  ALL: 'success',
-  PARTIAL: 'primary'
-}
+export const schemeScope = [
+  { label: 'All', value: 'ALL' },
+  { label: 'Partial', value: 'PARTIAL' }
+]
 
 export const databaseType: { [key: string]: string } = {
   POSTGRESQL: 'postgresql',
   MYSQL: 'mysql'
 }
 
-export const sampleType: { [key: string]: 'primary' | 'success' } = {
+export const sampleType: { [key: string]: 'primary' | 'positive' } = {
   SINGLE: 'primary',
-  COMBINE: 'success'
+  COMBINE: 'positive'
 }
 
 export const languages = [

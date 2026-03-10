@@ -29,7 +29,7 @@ for (let i = 1; i < 6; i++) {
 const previewSamples: Sample[] = [
   {
     id: 1,
-    name: 'IndexPage',
+    name: 'IndexPage.vue',
     language: 'vue',
     module: '',
     type: 'UI',
@@ -40,7 +40,7 @@ const previewSamples: Sample[] = [
   },
   {
     id: 2,
-    name: 'users',
+    name: 'users.ts',
     language: 'ts',
     module: '',
     type: 'TS',
@@ -51,7 +51,7 @@ const previewSamples: Sample[] = [
   },
   {
     id: 3,
-    name: 'entity',
+    name: 'entity.java',
     language: 'java',
     module: '',
     type: 'Model',
@@ -62,7 +62,7 @@ const previewSamples: Sample[] = [
   },
   {
     id: 4,
-    name: 'repository',
+    name: 'repository.java',
     language: 'java',
     module: '',
     type: 'Repository',
@@ -73,7 +73,7 @@ const previewSamples: Sample[] = [
   },
   {
     id: 5,
-    name: 'mapper',
+    name: 'mapper.java',
     language: 'java',
     module: '',
     type: 'Repository',
@@ -84,7 +84,7 @@ const previewSamples: Sample[] = [
   },
   {
     id: 6,
-    name: 'controller',
+    name: 'controller.java',
     language: 'java',
     module: '',
     type: 'Controller',

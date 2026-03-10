@@ -10,8 +10,8 @@ for (let i = 1; i < 28; i++) {
   const data: FileRecord = {
     id: i,
     superiorId: Math.floor(Math.random() * 6) || null,
-    name: 'file_name_' + i + (i % 3 > 0 ? '.zip' : '.jpg'),
-    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || 'unknown',
+    name: 'file_name_' + i + ['.jpg', '.png', '.pdf', '.zip', '.txt', '.gif'][randomIndex] || '',
+    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/octet-stream', 'image/gif'][randomIndex] || 'unknown',
     size: Math.floor(Math.random() * 100000),
     path: '/path/to/test' + i,
     directory: false,

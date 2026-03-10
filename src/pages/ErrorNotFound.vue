@@ -2,9 +2,9 @@
   <q-layout>
     <q-page-container class="overflow-hidden">
       <q-page padding class="text-center flex-center vertical-middle">
-        <q-img :src="img404" style="width: 30%; " class="q-mx-auto" />
+        <q-img :src="img404" style="width: 30%;" class="q-mx-auto" />
 
-        <div class="text-h2" style="opacity:.4">
+        <div class="text-h2" style="opacity:.4;">
           Oops. Nothing here...
         </div>
 

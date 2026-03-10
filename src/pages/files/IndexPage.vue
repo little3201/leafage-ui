@@ -2,7 +2,7 @@
   <q-page padding>
 
     <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em">
+      <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section class="flex items-center q-pb-none">
             <div class="text-h6">{{ $t('page.files') }}</div>
@@ -36,7 +36,7 @@
     </q-dialog>
 
     <q-dialog v-model="uploadVisible" persistent>
-      <q-card style="min-width: 25em">
+      <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section>
             <div class="text-h6">{{ $t('page.files') }}</div>
