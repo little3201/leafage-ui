@@ -52,36 +52,36 @@ for (let i = 1; i < 17; i++) {
 }
 
 // 将扁平数据转换为树形结构
-function buildTree(groups: Group[]): TreeNode[] {
+function buildTree(datas: Group[]): TreeNode[] {
   const map = new Map<number, TreeNode>()
   const tree: TreeNode[] = []
 
   // 第一步：创建映射，只处理有 id 的节点
-  groups.forEach(group => {
-    if (group.id) {
-      map.set(group.id, {
-        ...group,
+  datas.forEach(data => {
+    if (data.id) {
+      map.set(data.id, {
+        ...data,
         children: []
       })
     }
   })
 
   // 第二步：构建层级关系
-  groups.forEach(group => {
+  datas.forEach(data => {
     // 跳过没有 id 的节点
-    if (!group.id) return
+    if (!data.id) return
 
-    const currentNode = map.get(group.id)
+    const currentNode = map.get(data.id)
     // 确保当前节点存在
     if (!currentNode) return
 
     // 处理上级关系
-    if (group.superiorId === undefined || group.superiorId === null) {
+    if (data.superiorId === undefined || data.superiorId === null) {
       // 没有上级，作为根节点
       tree.push(currentNode)
     } else {
       // 有上级，尝试找到父节点
-      const parentNode = map.get(group.superiorId)
+      const parentNode = map.get(data.superiorId)
       if (parentNode) {
         // 父节点存在，添加到父节点的 children
         parentNode.children!.push(currentNode)
@@ -129,7 +129,7 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      const filtered = datas.filter(item => item.id === Number(id))
+      const filtered = datas.find(item => item.id === Number(id))
       return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
@@ -231,9 +231,11 @@ export const groupsHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`, ({ params, request }) => {
     const { id, privilegeId } = params
-    if (id && privilegeId) {
+    const searchParams = new URL(request.url).searchParams
+    const action = searchParams.get('action')
+    if (id && privilegeId && action) {
       return HttpResponse.json()
     } else {
       return HttpResponse.error()

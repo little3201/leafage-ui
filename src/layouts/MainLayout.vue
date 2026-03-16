@@ -6,7 +6,6 @@ import ThemeToogle from 'components/ThemeToogle.vue'
 import { signOut } from 'src/api/authentication'
 import logo from 'src/assets/logo.svg'
 import { useUserStore } from 'stores/user-store'
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 
@@ -18,8 +17,6 @@ const user = {
   fullName: userStore.fullName,
   privileges: userStore.privileges
 }
-
-const isCollapse = ref(false)
 
 function logout() {
   userStore.$reset()
@@ -33,9 +30,6 @@ function logout() {
       <div class="inline-flex items-center">
         <ElImage :src="logo" alt="avatar" class="w-8 h-8" />
         <span class="ml-3 text-20px font-bold text-white">Project Management</span>
-        <ElButton link class="ml-8" @click="isCollapse = !isCollapse">
-          <Icon icon="material-symbols:menu" class="text-white" width="1.5em" height="1.5em" />
-        </ElButton>
       </div>
 
       <div class="inline-flex justify-end items-center space-x-4">
@@ -78,7 +72,7 @@ function logout() {
     </div>
   </ElHeader>
 
-  <ElAside class="fixed top-12.5 left-0" width="200px">
+  <ElAside class="fixed top-12.5">
     <ElScrollbar>
       <ElMenu router unique-opened :default-active="currentRoute.fullPath">
         <ElMenuItem :index="'/'">
@@ -97,11 +91,11 @@ function logout() {
     </ElScrollbar>
   </ElAside>
 
-  <ElMain class="bg-(--el-bg-color-page) min-h-[calc(100vh-100px)] ml-50 mt-12.5">
+  <ElMain class="bg-(--el-bg-color-page) min-h-[calc(100vh-100px)] ml-(--el-aside-width) mt-12.5">
     <RouterView />
   </ElMain>
 
-  <ElFooter height="50px" class="bg-(--el-bg-color-page) ml-50 text-center pt-4!">
+  <ElFooter height="50px" class="bg-(--el-bg-color-page) ml-(--el-aside-width) text-center pt-4!">
     <span class="text-sm">Copyright &copy; {{ new Date().getFullYear() }} Leafage. All Rights Reserved.</span>
   </ElFooter>
 </template>

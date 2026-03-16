@@ -4,6 +4,7 @@
 export default {
   label: {
     no: 'NO.',
+    title: 'Title',
     action: 'Action',
     actions: 'Actions',
     name: 'Name',
@@ -165,6 +166,8 @@ export default {
     accessLogs: 'Access Log',
     auditLogs: 'Audit Log',
     schedulerLogs: 'Scheduler Log',
+    docs: 'Docs',
+    sections: 'Sections',
   },
 
   github: 'Github',

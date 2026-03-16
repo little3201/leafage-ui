@@ -42,6 +42,15 @@ export const modifyScript = (id: number, row: Script) => {
 }
 
 /**
+ * Remove a row
+ * @param id Row ID
+ * @returns Deletion status
+ */
+export const removeScript = (id: number) => {
+  return api.delete(`${SERVER_URL.SCRIPT}/${id}`)
+}
+
+/**
  * Import rows
  * @param file file
  * @returns

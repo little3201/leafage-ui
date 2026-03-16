@@ -16,6 +16,7 @@ import { samplesHandlers } from './samples'
 import { schedulerLogsHandlers } from './scheduler-logs'
 import { schemesHandlers } from './schemes'
 import { scriptsHandlers } from './scripts'
+import { sectionsHandlers } from './sections'
 import { usersHandlers } from './users'
 
 export const handlers = [
@@ -37,5 +38,6 @@ export const handlers = [
   ...schedulerLogsHandlers,
   ...schemesHandlers,
   ...scriptsHandlers,
-  ...usersHandlers
+  ...usersHandlers,
+  ...sectionsHandlers
 ]

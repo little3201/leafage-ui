@@ -41,7 +41,7 @@ const items = ref([
   </ElRow>
 
   <ElRow :gutter="16">
-    <ElCol :span="5">
+    <ElCol :span="5" :xl="4">
       <ElCard shadow="never">
         <ElMenu router :default-active="currentRoute.fullPath">
           <ElMenuItem v-for="item in items" :key="item.name" :index="`/profile${item.router}`">
@@ -52,7 +52,7 @@ const items = ref([
       </ElCard>
     </ElCol>
 
-    <ElCol :span="19">
+    <ElCol :span="19" :xl="20">
       <ElCard shadow="never">
         <RouterView />
       </ElCard>

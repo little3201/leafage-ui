@@ -21,7 +21,7 @@ import {
 import { retrieveRoles } from 'src/api/roles'
 import { retrieveUsers } from 'src/api/users'
 import { actions } from 'src/constants'
-import type { Filters, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Role, TreeNode, User } from 'src/types'
+import type { Filters, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Privilege, Role, TreeNode, User } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -41,9 +41,10 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
+const authorizeTableRef = ref<TableInstance>()
 const treeEl = ref<TreeInstance>()
 const treeLoading = ref<boolean>(false)
-const treeSelected = ref<string>('1')
+const treeSelected = ref<string>('')
 const filterText = ref('')
 
 const groupTree = ref<TreeNode[]>([])
@@ -70,7 +71,7 @@ const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Group>>({
-  superiorId: { op: 'eq', value: Number(treeSelected.value) },
+  superiorId: { op: 'eq', value: null },
   name: { op: 'eq', value: undefined }
 })
 
@@ -193,6 +194,7 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
+  filter.superiorId!.value = treeSelected.value.length > 0 ? Number(treeSelected.value) : null
   try {
     const res = await retrieveGroups(pagination, filter)
     datas.value = res.data.content
@@ -395,29 +397,6 @@ function onUpload(options: UploadRequestOptions) {
   return importGroups(options.file)
 }
 
-/**
- * 权限树check事件
- * @param data 树节点
- * @param checked 是否checked
- */
-async function handleCheckChange(data: TreeNode, checked: boolean) {
-  if (!data.id || (data.children?.length ?? 0) > 0 || !form.value.id) return
-  // 检查是否已授权
-  const keyIndex = authorities.value.findIndex(a => a.privilegeId === data.id)
-
-  try {
-    if (checked && keyIndex === -1) {
-      authorities.value.push({ privilegeId: data.id, actions: [] })
-      await relationGroupPrivileges(form.value.id, data.id)
-    } else if (!checked && keyIndex !== -1) {
-      authorities.value.splice(keyIndex, 1)
-      await removeGroupPrivileges(form.value.id, data.id)
-    }
-  } catch (error) {
-    return error
-  }
-}
-
 async function handleActionCheck(privilegeId: number, item: string) {
   if (!form.value.id) return
   // 查找对应 privilegeId 的对象
@@ -454,6 +433,13 @@ async function tabChange(tab: TabPaneName) {
       await loadGrouRoles(form.value.id)
     }
   }
+}
+
+const rowSelected = (row: Privilege) => {
+  if (!authorizeTableRef.value) return false
+
+  const selectedRows = authorizeTableRef.value.getSelectionRows()
+  return selectedRows.some(selectedRow => selectedRow.id === row.id)
 }
 </script>
 
@@ -625,25 +611,27 @@ async function tabChange(tab: TabPaneName) {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="65em">
-    <ElTree :data="userStore.privileges" :props="{ label: 'name' }" node-key="id" show-checkbox default-expand-all
-      :default-checked-keys="authorities.map(item => item.privilegeId)" :check-on-click-leaf="false"
-      @check-change="handleCheckChange">
-      <template #default="{ node, data }">
-        <div class="flex flex-1 ">
-          <Icon v-if="data.meta.icon" :icon="`material-symbols:${data.meta.icon}-rounded`" width="1.25em"
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="57em">
+    <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
+      <ElTableColumn type="selection" />
+      <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell">
+        <template #default="scope">
+          <Icon :icon="`material-symbols:${scope.row.meta.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
             height="1.25em" class="mr-2" />
-          <span>{{ $t(`page.${node.label}`) }}</span>
-        </div>
-        <div>
-          <ElCheckTag v-for="item in data.meta.actions" :key="item"
-            :checked="(authorities.find(a => a.privilegeId === data.id)?.actions || []).includes(item)"
-            :type="actions[item]" class="mr-2" @change="handleActionCheck(data.id, item)">
+          {{ scope.row.name ? $t(`page.${scope.row.name}`) : '' }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="actions" :label="$t('label.actions')">
+        <template #default="scope">
+          <ElCheckTag v-for="(item, index) in scope.row.meta.actions" :key="index" :type="actions[item]"
+            :disabled="!rowSelected(scope.row)"
+            :checked="(authorities.find(a => a.privilegeId === scope.row.id)?.actions || []).includes(item)"
+            @change="handleActionCheck(scope.row.id, item)" class="mr-2">
             {{ $t(`action.${item}`) }}
           </ElCheckTag>
-        </div>
-      </template>
-    </ElTree>
+        </template>
+      </ElTableColumn>
+    </ElTable>
   </ElDialog>
 
   <!-- import -->
@@ -667,7 +655,7 @@ async function tabChange(tab: TabPaneName) {
         </div>
       </template>
     </ElUpload>
-    <p class="text-red">xxxx</p>
+
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}

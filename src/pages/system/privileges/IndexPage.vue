@@ -318,23 +318,21 @@ function onCheckChange(item: string) {
         <ElTableColumn prop="redirect" :label="$t('label.redirect')" />
         <ElTableColumn prop="actions" :label="$t('label.actions')">
           <template #default="scope">
-            <template v-if="scope.row.actions && scope.row.actions.length > 0">
-              <ElTag v-for="(item, index) in visibleArray(scope.row.actions, 3)" :key="index" :type="actions[item]"
-                class="mr-2">
+            <ElTag v-for="(item, index) in visibleArray(scope.row.actions, 3)" :key="index" :type="actions[item]"
+              class="mr-2">
+              {{ $t(`action.${item}`) }}
+            </ElTag>
+            <ElPopover v-if="scope.row.actions && scope.row.actions.length > 3" placement="top-start" trigger="hover">
+              <template #reference>
+                <ElTag type="primary">
+                  +{{ scope.row.actions.length - 3 }}
+                </ElTag>
+              </template>
+              <ElTag v-for="(item, index) in scope.row.actions.slice(3)" :key="index" :type="actions[item]"
+                class="mb-2 mr-2">
                 {{ $t(`action.${item}`) }}
               </ElTag>
-              <ElPopover v-if="scope.row.actions.length > 3" placement="top-start" trigger="hover">
-                <template #reference>
-                  <ElTag type="primary">
-                    +{{ scope.row.actions.length - 3 }}
-                  </ElTag>
-                </template>
-                <ElTag v-for="(item, index) in scope.row.actions.slice(3)" :key="index" :type="actions[item]"
-                  class="mb-2 mr-2">
-                  {{ $t(`action.${item}`) }}
-                </ElTag>
-              </ElPopover>
-            </template>
+            </ElPopover>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>

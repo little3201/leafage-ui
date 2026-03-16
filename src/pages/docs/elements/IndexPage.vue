@@ -1,38 +1,40 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import CodeRender from 'components/CodeRender.vue'
 import type {
-  FormInstance, FormRules, TableInstance, TransferDataItem,
-  TransferDirection, TransferKey, UploadInstance, UploadRequestOptions
+  FormInstance, FormRules,
+  TableInstance,
+  TransferDirection, TransferKey,
+  UploadInstance, UploadRequestOptions
 } from 'element-plus'
+import { retrieveFragments } from 'src/api/fragments'
 import {
-  createRole,
-  enableRole,
-  fetchRole,
-  importRoles,
-  modifyRole,
-  relationRoleMembers,
-  relationRolePrivileges,
-  removeRole,
-  removeRoleMembers,
-  removeRolePrivileges,
-  retrieveRoleMembers,
-  retrieveRolePrivileges,
-  retrieveRoles
-} from 'src/api/roles'
-import { retrieveUsers } from 'src/api/users'
-import { actions } from 'src/constants'
-import type { Filters, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from 'src/types'
+  createSample,
+  enableSample,
+  fetchSample,
+  importSamples,
+  modifySample,
+  previewSample,
+  relationFragments,
+  removeSample,
+  removeSampleFragments,
+  retrieveSampleFragments,
+  retrieveSamples
+} from 'src/api/samples'
+import { languages, sampleType } from 'src/constants'
+import type { Filters, Fragment, Pagination, Sample, SampleFragment } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()
-const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
-const datas = ref<Array<Role>>([])
+const saveLoading = ref<boolean>(false)
+const importLoading = ref<boolean>(false)
+const exportLoading = ref<boolean>(false)
+const datas = ref<Array<Sample>>([])
 const total = ref<number>(0)
 
 const tableRef = ref<TableInstance>()
@@ -41,63 +43,46 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const authorizeTableRef = ref<TableInstance>()
-const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
-
-const relationVisible = ref<boolean>(false)
-const members = ref<Array<TransferDataItem>>([])
-const relations = ref<Array<string>>([])
-
-const authorizeVisible = ref<boolean>(false)
-const authorities = ref<Array<{
-  privilegeId: number,
-  actions: string[]
-}>>([])
-
+const configVisible = ref<boolean>(false)
+const relations = ref<Array<number>>([])
 const importVisible = ref<boolean>(false)
-const importLoading = ref<boolean>(false)
-const exportLoading = ref<boolean>(false)
+const previewVisible = ref<boolean>(false)
+
+const fragments = ref<Array<Fragment>>([])
+const formRef = ref<FormInstance>()
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Role>>({
-  name: { op: 'eq', value: undefined }
+const filter = reactive<Filters<Sample>>({
+  name: { op: 'like', value: undefined },
+  language: { op: 'eq', value: undefined }
 })
 
-const formRef = ref<FormInstance>()
-const initialValues: Role = {
+const initialValues: Sample = {
   id: null,
-  name: ''
+  name: '',
+  module: '',
+  language: '',
+  type: 'SINGLE',
+  body: ''
 }
-const form = ref<Role>({ ...initialValues })
+const form = ref<Sample>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
     { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
+  ],
+  type: [
+    { required: true, message: t('placeholder.selectText', { field: t('label.type') }), trigger: 'blur' }
+  ],
+  language: [
+    { required: true, message: t('placeholder.selectText', { field: t('label.language') }), trigger: 'blur' }
   ]
 })
 
 onMounted(async () => {
   await load()
 })
-
-async function loadUsers() {
-  try {
-    const res = await retrieveUsers({ page: 1, size: 99 })
-    members.value = res.data.content
-  } catch (error) {
-    return error
-  }
-}
-
-async function loadRoleUsers(id: number) {
-  try {
-    const res = await retrieveRoleMembers(id)
-    relations.value = res.data.map((item: RoleMembers) => item.username)
-  } catch (error) {
-    return error
-  }
-}
 
 /**
  * 分页变化
@@ -116,7 +101,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveRoles(pagination, filter)
+    const res = await retrieveSamples(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -131,116 +116,8 @@ async function load() {
  */
 async function reset() {
   filter.name!.value = undefined
+  filter.language!.value = undefined
   await load()
-}
-
-/**
- * 关联弹出框
- * @param id 主键
- */
-async function relationRow(id: number) {
-  relationVisible.value = true
-  try {
-    await Promise.all([loadRoleUsers(id), loadUsers()])
-  } catch (error) {
-    return error
-  }
-}
-
-async function authorizeRow(id: number) {
-  authorities.value = []
-  form.value.id = id
-  try {
-    const res = await retrieveRolePrivileges(id)
-    authorities.value = res.data.map((row: RolePrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
-  } catch (error) {
-    return error
-  }
-  authorizeVisible.value = true
-}
-
-/**
- * 新增、编辑弹出框
- * @param id 主键
- */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
-  visible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchRole(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 启用、停用
- * @param id 主键
- */
-async function enableChange(id: number) {
-  try {
-    await enableRole(id)
-    await load()
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 表单提交
- */
-async function onSubmit(formEl: FormInstance) {
-  if (!formEl) return
-
-  const valid = await formEl.validate()
-  if (valid) {
-    saveLoading.value = true
-    try {
-      if (form.value.id) {
-        await modifyRole(form.value.id, form.value)
-      } else {
-        await createRole(form.value)
-      }
-      visible.value = false
-      await load()
-    } catch (error) {
-      return error
-    } finally {
-      saveLoading.value = false
-    }
-  }
-}
-
-/**
- * 删除
- * @param id 主键
- */
-async function removeRow(id: number) {
-  try {
-    await removeRole(id)
-    await load()
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
 }
 
 /**
@@ -258,13 +135,131 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'roles')
+    exportToCSV(selectedRows, 'samples')
   }
   exportLoading.value = false
 }
 
 /**
- * 导入提交
+ * preview
+ * @param id 主键
+ */
+async function previewRow(id: number) {
+  try {
+    const res = await previewSample(id)
+    form.value = res.data
+  } catch (error) {
+    return error
+  }
+  previewVisible.value = true
+}
+
+/**
+ * 弹出框
+ * @param id 主键
+ */
+async function saveRow(id?: number) {
+  form.value = { ...initialValues }
+  if (id) {
+    await loadOne(id)
+  }
+  visible.value = true
+}
+
+/**
+ * 配置
+ * @param id 主键
+ */
+async function configRow(row: Sample) {
+  if (!row.id) {
+    return
+  }
+  configVisible.value = true
+  form.value.id = row.id
+  try {
+    const [sampleFragmentRes, fragmentRes] = await Promise.all([
+      retrieveSampleFragments(row.id),
+      retrieveFragments({ page: 1, size: 99 }, { language: { op: 'eq', value: row.language } })
+    ])
+    relations.value = sampleFragmentRes.data.map((item: SampleFragment) => item.fragmentId)
+    fragments.value = fragmentRes.data.content
+  } catch (error) {
+    return error
+  }
+}
+
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  try {
+    const res = await fetchSample(id)
+    form.value = res.data
+  } catch (error) {
+    return error
+  }
+}
+
+/**
+ * 启用、停用
+ * @param id 主键
+ */
+async function enableChange(id: number) {
+  try {
+    await enableSample(id)
+    await load()
+  } catch (error) {
+    return error
+  }
+}
+
+/**
+ * 表单提交
+ */
+async function onSubmit(formEl: FormInstance) {
+  if (!formEl) return
+
+  const valid = await formEl.validate()
+  if (valid) {
+    saveLoading.value = true
+    try {
+      if (form.value.id) {
+        await modifySample(form.value.id, form.value)
+      } else {
+        await createSample(form.value)
+      }
+      visible.value = false
+      await load()
+    } catch (error) {
+      return error
+    } finally {
+      saveLoading.value = false
+    }
+  }
+}
+
+/**
+ * transfer事件
+ * @param value 数据
+ * @param direction 方向
+ */
+async function handleTransferChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
+  if (form.value.id) {
+    try {
+      if (direction === 'right') {
+        await relationFragments(form.value.id, value as number[])
+      } else if (movedKeys.length) {
+        await removeSampleFragments(form.value.id, movedKeys as number[])
+      }
+    } catch (error) {
+      return error
+    }
+  }
+}
+
+/**
+ * 表单提交
  */
 function onImportSubmit(importEl: UploadInstance) {
   if (!importEl) return
@@ -277,60 +272,28 @@ function onImportSubmit(importEl: UploadInstance) {
 }
 
 function onUpload(options: UploadRequestOptions) {
-  return importRoles(options.file)
+  return importSamples(options.file)
 }
 
 /**
- * transfer事件
- * @param value 数据
- * @param direction 方向
+ * 删除
+ * @param id 主键
  */
-async function handleTransferChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
-  if (form.value.id) {
-    try {
-      if (direction === 'right') {
-        await relationRoleMembers(form.value.id, value as string[])
-      } else if (movedKeys.length) {
-        await removeRoleMembers(form.value.id, movedKeys as string[])
-      }
-    } catch (error) {
-      return error
-    }
+async function removeRow(id: number) {
+  try {
+    await removeSample(id)
+    await load()
+  } catch (error) {
+    return error
   }
 }
 
-async function handleActionCheck(privilegeId: number, item: string) {
-  if (!form.value.id) return
-  // 查找对应 privilegeId 的对象
-  const keyIndex = authorities.value.findIndex(a => a.privilegeId === privilegeId)
-
-  if (keyIndex >= 0) {
-    // 如果已存在该 key，更新 actions
-    const existingAction = authorities.value[keyIndex]
-    if (existingAction) {
-      const itemIndex = existingAction.actions.indexOf(item)
-
-      if (itemIndex >= 0) {
-        // 如果 actions 中已有该 item，则移除
-        existingAction.actions.splice(itemIndex, 1)
-        await removeRolePrivileges(form.value.id, privilegeId, item)
-
-      } else {
-        existingAction.actions.push(item)
-        await relationRolePrivileges(form.value.id, privilegeId, item)
-      }
-    }
-  } else {
-    authorities.value.push({ privilegeId, actions: [item] })
-    await relationRolePrivileges(form.value.id, privilegeId, item)
-  }
-}
-
-const rowSelected = (row: Privilege) => {
-  if (!authorizeTableRef.value) return false
-
-  const selectedRows = authorizeTableRef.value.getSelectionRows()
-  return selectedRows.some(selectedRow => selectedRow.id === row.id)
+/**
+ * 确认
+ * @param id 主键
+ */
+async function confirmEvent(id: number) {
+  await removeRow(id)
 }
 </script>
 
@@ -342,11 +305,17 @@ const rowSelected = (row: Privilege) => {
           <ElInput v-model="filter.name!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
+        <ElFormItem :label="$t('label.language')" prop="language">
+          <ElSelect v-model="filter.language!.value" class="min-w-48"
+            :placeholder="$t('placeholder.selectText', { field: $t('label.language') })">
+            <ElOption v-for="(label, value) in languages" :key="value" :label="label" :value="value" />
+          </ElSelect>
+        </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" type="primary" @click="load()">
+          <ElButton type="primary" @click="load()">
             <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
           </ElButton>
-          <ElButton title="reset" @click="reset()">
+          <ElButton @click="reset()">
             <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
           </ElButton>
         </ElFormItem>
@@ -356,15 +325,14 @@ const rowSelected = (row: Privilege) => {
     <ElCard shadow="never">
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
-          <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
+          <ElButton v-if="hasAction($route.name, 'create')" title="create" type="primary" @click="saveRow()">
             <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain @click="importRows">
+          <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
             <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
-              $t('action.import')
-            }}
+              $t('action.import') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
             <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
               $t('action.export') }}
@@ -383,8 +351,25 @@ const rowSelected = (row: Privilege) => {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')" sortable />
-        <ElTableColumn prop="members" :label="$t('label.members')" />
+        <ElTableColumn prop="name" :label="$t('label.name')" sortable>
+          <template #default="scope">
+            <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
+              {{ scope.row.name }}{{ scope.row.suffix }}
+            </ElButton>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="language" :label="$t('label.language')" sortable>
+          <template #default="scope">
+            {{ languages[scope.row.language] || scope.row.language }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip prop="filePath" :label="$t('label.filePath')" />
+        <ElTableColumn prop="type" :label="$t('label.type')" sortable>
+          <template #default="scope">
+            <ElBadge is-dot :type="sampleType[scope.row.type]" class="mr-1" />
+            <ElText :type="sampleType[scope.row.type]">{{ scope.row.type }}</ElText>
+          </template>
+        </ElTableColumn>
         <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
           <template #default="scope">
             <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
@@ -394,22 +379,18 @@ const rowSelected = (row: Privilege) => {
         <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
+            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
-            <ElButton v-if="hasAction($route.name, 'relation')" title=" relation" type="success" link
-              @click="relationRow(scope.row.id)">
-              <Icon icon="material-symbols:link-rounded" width="16" height="16" />{{ $t('action.relation') }}
-            </ElButton>
-            <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" type="success" link
-              @click="authorizeRow(scope.row.id)">
-              <Icon icon="material-symbols:privacy-tip-outline-rounded" width="16" height="16" />{{
-                $t('action.authorize') }}
+            <ElButton v-if="scope.row.type === 'COMBINE' && hasAction($route.name, 'config')" title="config"
+              type="success" link @click="configRow(scope.row)">
+              <Icon icon="material-symbols:plug-connect-outline-rounded" width="16" height="16" />{{ $t('action.config')
+              }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
                   <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
                   }}
                 </ElButton>
@@ -427,12 +408,42 @@ const rowSelected = (row: Privilege) => {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.roles')" align-center :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="$t('page.samples')" align-center :show-close="false" width="600">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
-        <ElCol>
+        <ElCol :span="12">
           <ElFormItem :label="$t('label.name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="6">
+          <ElFormItem :label="$t('label.language')" prop="language">
+            <ElSelect v-model="form.language">
+              <ElOption v-for="(label, value) in languages" :key="value" :label="label" :value="value" />
+            </ElSelect>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="6">
+          <ElFormItem :label="$t('label.type')" prop="type">
+            <ElSelect v-model="form.type">
+              <ElOption v-for="(_, value) in sampleType" :key="value" :label="value" :value="value" />
+            </ElSelect>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol>
+          <ElFormItem :label="$t('label.filePath')" prop="filePath">
+            <ElInput v-model="form.filePath"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.filePath') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol>
+          <ElFormItem :label="$t('label.body')" prop="body">
+            <ElInput v-model="form.body" type="textarea" :rows="12"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.body') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -456,48 +467,31 @@ const rowSelected = (row: Privilege) => {
     </template>
   </ElDialog>
 
-  <!-- relation -->
-  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center width="640">
+  <!-- config -->
+  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center width="640">
     <div style="text-align: center">
-      <ElTransfer v-model="relations" :props="{ key: 'username', label: 'fullName' }"
-        :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="members"
+      <ElTransfer v-model="relations" :props="{ key: 'id', label: 'name' }"
+        :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="fragments"
         @change="handleTransferChange" />
     </div>
   </ElDialog>
 
-  <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="57em">
-    <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
-      <ElTableColumn type="selection" />
-      <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell">
-        <template #default="scope">
-          <Icon :icon="`material-symbols:${scope.row.meta.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
-            height="1.25em" class="mr-2" />
-          {{ scope.row.name ? $t(`page.${scope.row.name}`) : '' }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="actions" :label="$t('label.actions')">
-        <template #default="scope">
-          <ElCheckTag v-for="(item, index) in scope.row.meta.actions" :key="index" :type="actions[item]"
-            :disabled="!rowSelected(scope.row)"
-            :checked="(authorities.find(a => a.privilegeId === scope.row.id)?.actions || []).includes(item)"
-            @change="handleActionCheck(scope.row.id, item)" class="mr-2">
-            {{ $t(`action.${item}`) }}
-          </ElCheckTag>
-        </template>
-      </ElTableColumn>
-    </ElTable>
+  <!-- preview -->
+  <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
+    <ElScrollbar max-height="600px">
+      <CodeRender v-if="form.body" :content="form.body" :language="form.language.toLowerCase()" />
+    </ElScrollbar>
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/roles.xlsx`" :download="$t('page.roles') + '.xlsx'">
-        {{ $t('page.roles') }}.xlsx
+      <a :href="`templates/samples.xlsx`" :download="$t('page.samples') + '.xlsx'">
+        {{ $t('page.samples') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+      accept=".xls,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
@@ -510,7 +504,6 @@ const rowSelected = (row: Privilege) => {
         </div>
       </template>
     </ElUpload>
-
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -522,9 +515,3 @@ const rowSelected = (row: Privilege) => {
     </template>
   </ElDialog>
 </template>
-
-<style lang="scss" scoped>
-.el-check-tag {
-  padding: 4px 9px;
-}
-</style>

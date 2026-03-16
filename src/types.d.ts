@@ -333,3 +333,12 @@ export interface Schedule extends AudtiMetadata {
   endDate: string
   type: 'primary' | 'success' | 'warning' | 'danger'
 }
+
+export interface Section extends AudtiMetadata {
+  superiorId: number | null
+  title: string
+  type: string | null
+  body: string
+  hasChildren?: boolean
+  count?: number
+}

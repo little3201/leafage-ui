@@ -5,11 +5,14 @@ import type {
   TreeNodeData, UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import {
-  createRegion, enableRegion, fetchRegion, importRegions,
-  modifyRegion, removeRegion,
-  retrieveRegions, retrieveRegionSubset
-} from 'src/api/regions'
-import type { Filters, Pagination, Region } from 'src/types'
+  createSection,
+  fetchSection, importSections,
+  modifySection,
+  removeSection,
+  retrieveSections,
+  retrieveSectionSubset
+} from 'src/api/sections'
+import type { Filters, Pagination, Section } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -17,13 +20,8 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const treeRef = ref<TreeInstance>()
-const treeLoading = ref<boolean>(false)
-const treeSelected = ref<string>('')
-const filterText = ref('')
-
 const loading = ref<boolean>(false)
-const datas = ref<Array<Region>>([])
+const datas = ref<Array<Section>>([])
 const total = ref<number>(0)
 
 const tableRef = ref<TableInstance>()
@@ -31,6 +29,11 @@ const pagination = reactive<Pagination>({
   page: 1,
   size: 10
 })
+
+const treeRef = ref<TreeInstance>()
+const treeLoading = ref<boolean>(false)
+const treeSelected = ref<string>('')
+const filterText = ref('')
 
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
@@ -40,22 +43,24 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Region>>({
-  superiorId: { op: 'eq', value: null },
-  name: { op: 'eq', value: undefined }
+const filter = reactive<Filters<Section>>({
+  superiorId: { op: 'eq', value: Number(treeSelected.value) },
+  title: { op: 'eq', value: undefined }
 })
 
 const formRef = ref<FormInstance>()
-const initialValues: Region = {
+const initialValues: Section = {
   id: null,
-  name: '',
-  superiorId: null
+  title: '',
+  superiorId: null,
+  type: 'HEADING',
+  body: ''
 }
-const form = ref<Region>({ ...initialValues })
+const form = ref<Section>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
-  name: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
+  title: [
+    { required: true, message: t('placeholder.inputText', { field: t('label.title') }), trigger: 'blur' }
   ]
 })
 
@@ -96,15 +101,8 @@ async function onCurrentChange(data: TreeNodeData) {
 }
 
 /**
- * 分页变化
- * @param currentPage 当前页码
- * @param pageSize 分页大小
+ * 加载tree
  */
-async function pageChange(currentPage: number, pageSize: number) {
-  pagination.page = currentPage
-  pagination.size = pageSize
-  await load()
-}
 
 /**
  * 加载tree
@@ -114,10 +112,10 @@ async function loadTree(node: TreeNode, resolve: (data: TreeData) => void) {
 
   try {
     filter.superiorId!.value = treeSelected.value.length > 0 ? Number(treeSelected.value) : null
-    const res = await retrieveRegions({ page: 1, size: 34, sortBy: 'id', descending: false }, filter)
-    const treeData = res.data.content.map((item: Region) => ({
+    const res = await retrieveSections({ page: 1, size: 34, sortBy: 'id', descending: false }, filter)
+    const treeData = res.data.content.map((item: Section) => ({
       id: item.id!,
-      name: item.name,
+      name: item.title,
       isLeaf: (item.count ?? 0) === 0
     }))
     resolve(treeData)
@@ -129,27 +127,28 @@ async function loadTree(node: TreeNode, resolve: (data: TreeData) => void) {
 }
 
 /**
+ * 分页变化
+ * @param currentPage 当前页码
+ * @param pageSize 分页大小
+ */
+async function pageChange(currentPage: number, pageSize: number) {
+  pagination.page = currentPage
+  pagination.size = pageSize
+  await load()
+}
+
+/**
  * 加载列表
  */
 async function load() {
   loading.value = true
-  filter.superiorId!.value = treeSelected.value.length > 0 ? Number(treeSelected.value) : null
   try {
-    const res = await retrieveRegions(pagination, filter)
-    const list = res.data.content
-    // 处理子节点
-    list.forEach((element: Region) => {
-      if (element.count && element.count > 0) {
-        element.hasChildren = true
-      }
-    })
-    datas.value = list
+    const res = await retrieveSections(pagination, filter)
+    datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
     return error
-  } finally {
-    loading.value = false
-  }
+  } finally { loading.value = false }
 }
 
 /**
@@ -158,10 +157,10 @@ async function load() {
  */
 const refreshChildren = async (rowKey: number) => {
   try {
-    const res = await retrieveRegionSubset(rowKey)
+    const res = await retrieveSectionSubset(rowKey)
     const list = res.data
     // 处理子节点
-    list.forEach((element: Region) => {
+    list.forEach((element: Section) => {
       if (element.count && element.count > 0) {
         element.hasChildren = true
       }
@@ -177,12 +176,12 @@ const refreshChildren = async (rowKey: number) => {
  * reset
  */
 async function reset() {
-  filter.name!.value = undefined
+  filter.title!.value = undefined
   await load()
 }
 
 /**
- * 弹出框
+ * 新增、编辑弹出框
  * @param id 主键
  */
 async function saveRow(id?: number) {
@@ -199,21 +198,8 @@ async function saveRow(id?: number) {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchRegion(id)
+    const res = await fetchSection(id)
     form.value = res.data
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 启用、停用
- * @param id 主键
- */
-async function enableChange(id: number) {
-  try {
-    await enableRegion(id)
-    await load()
   } catch (error) {
     return error
   }
@@ -230,10 +216,10 @@ async function onSubmit(formEl: FormInstance) {
     saveLoading.value = true
     try {
       if (form.value.id) {
-        await modifyRegion(form.value.id, form.value)
+        await modifySection(form.value.id, form.value)
       } else {
         form.value.superiorId = Number(treeSelected.value)
-        await createRegion(form.value)
+        await createSection(form.value)
       }
       visible.value = false
       await load()
@@ -247,6 +233,27 @@ async function onSubmit(formEl: FormInstance) {
       saveLoading.value = false
     }
   }
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
+async function removeRow(id: number) {
+  try {
+    await removeSection(id)
+    await load()
+  } catch (error) {
+    return error
+  }
+}
+
+/**
+ * 确认
+ * @param id 主键
+ */
+async function confirmEvent(id: number) {
+  await removeRow(id)
 }
 
 /**
@@ -264,7 +271,7 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'regions')
+    exportToCSV(selectedRows, 'sections')
   }
   exportLoading.value = false
 }
@@ -283,29 +290,9 @@ function onImportSubmit(importEl: UploadInstance) {
 }
 
 function onUpload(options: UploadRequestOptions) {
-  return importRegions(options.file)
+  return importSections(options.file)
 }
 
-/**
- * 删除
- * @param id 主键
- */
-async function removeRow(id: number) {
-  try {
-    await removeRegion(id)
-    await load()
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
-}
 </script>
 
 <template>
@@ -331,9 +318,9 @@ async function confirmEvent(id: number) {
       <ElSpace size="large" fill>
         <ElCard shadow="never">
           <ElForm inline :model="filter" @submit.prevent>
-            <ElFormItem :label="$t('label.name')" prop="name">
-              <ElInput v-model="filter.name!.value"
-                :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+            <ElFormItem :label="$t('label.title')" prop="title">
+              <ElInput v-model="filter.title!.value"
+                :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
             </ElFormItem>
             <ElFormItem>
               <ElButton title="search" type="primary" @click="load()">
@@ -355,17 +342,19 @@ async function confirmEvent(id: number) {
               <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain
                 @click="importRows">
                 <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
-                  $t('action.import') }}
+                  $t('action.import')
+                }}
               </ElButton>
               <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
                 :loading="exportLoading">
                 <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
-                  $t('action.export') }}
+                  $t('action.export')
+                }}
               </ElButton>
             </ElCol>
 
             <ElCol :span="8" class="text-right">
-              <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
+              <ElTooltip :content="$t('action.refresh')" placement="top">
                 <ElButton title="refresh" plain circle @click="load()">
                   <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
                 </ElButton>
@@ -376,24 +365,16 @@ async function confirmEvent(id: number) {
           <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
             <ElTableColumn type="selection" />
             <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-            <ElTableColumn prop="name" :label="$t('label.name')" sortable />
-            <ElTableColumn prop="areaCode" :label="$t('label.areaCode')" sortable />
-            <ElTableColumn prop="postalCode" :label="$t('label.postalCode')" sortable />
-            <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-              <template #default="scope">
-                <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
-                  style="--el-switch-on-color: var(--el-color-success);"
-                  :disabled="!hasAction($route.name, 'enable')" />
-              </template>
-            </ElTableColumn>
-            <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
+            <ElTableColumn prop="title" :label="$t('label.title')" sortable />
+            <ElTableColumn prop="body" :label="$t('label.body')" />
             <ElTableColumn :label="$t('label.actions')">
               <template #default="scope">
                 <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
                   @click="saveRow(scope.row.id)">
                   <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
                 </ElButton>
-                <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+                <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
+                  @confirm="confirmEvent(scope.row.id)">
                   <template #reference>
                     <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
                       <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{
@@ -416,34 +397,20 @@ async function confirmEvent(id: number) {
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.regions')" align-center :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.areaCode')" prop="areaCode">
-            <ElInput v-model="form.areaCode"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.areaCode') })" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.postalCode')" prop="postalCode">
-            <ElInput v-model="form.postalCode"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.postalCode') })" />
+          <ElFormItem :label="$t('label.title')" prop="title">
+            <ElInput v-model="form.title" :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
+          <ElFormItem :label="$t('label.body')" prop="body">
+            <ElInput v-model="form.body" type="textarea"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.body') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -462,11 +429,11 @@ async function confirmEvent(id: number) {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/regions.xlsx`" :download="$t('page.regions') + '.xlsx'">
-        {{ $t('page.regions') }}.xlsx
+      <a :href="`templates/sections.xlsx`" :download="$t('page.sections') + '.xlsx'">
+        {{ $t('page.sections') }}.xlsx
       </a>
     </p>
-    <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="() => load()"
+    <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
       accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />

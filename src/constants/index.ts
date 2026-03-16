@@ -35,7 +35,10 @@ export const SERVER_URL = {
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 母板
   MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
   FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
-  CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 库连接
+  CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections'), // 库连接
+
+  // docs
+  SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections') // 章节
 }
 
 // 按钮对应tag类型

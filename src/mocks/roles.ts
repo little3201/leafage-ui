@@ -140,9 +140,11 @@ export const rolesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.patch(`/api${SERVER_URL.ROLE}/:id/privileges/:privilegeId`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.ROLE}/:id/privileges/:privilegeId`, ({ params, request }) => {
     const { id, privilegeId } = params
-    if (id && privilegeId) {
+    const searchParams = new URL(request.url).searchParams
+    const action = searchParams.get('action')
+    if (id && privilegeId && action) {
       return HttpResponse.json()
     } else {
       return HttpResponse.error()

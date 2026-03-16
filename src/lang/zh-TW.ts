@@ -4,6 +4,7 @@
 export default {
   label: {
     no: '序號',
+    title: '標題',
     action: '操作',
     actions: '操作',
     name: '名稱',
@@ -165,6 +166,8 @@ export default {
     accessLogs: '訪問紀錄',
     auditLogs: '審計日誌',
     schedulerLogs: '調度日誌',
+    docs: '文檔',
+    sections: '章節',
   },
 
   github: 'Github',

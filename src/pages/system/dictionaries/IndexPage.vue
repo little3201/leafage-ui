@@ -377,7 +377,7 @@ function onUpload(options: UploadRequestOptions) {
         </div>
       </template>
     </ElUpload>
-    <p class="text-red">xxxx</p>
+
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
