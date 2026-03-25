@@ -28,8 +28,8 @@ export const fetchSection = (id: number) => {
  * @param id Row ID
  * @returns Subset data
  */
-export const retrieveSectionSubset = (id: number) => {
-  return api.get(`${SERVER_URL.SECTION}/${id}/subset`)
+export const retrieveSectionSubset = (id: number | null) => {
+  return api.get(`${SERVER_URL.SECTION}/subset`, { params: { id } })
 }
 
 /**

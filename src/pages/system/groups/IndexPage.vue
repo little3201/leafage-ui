@@ -2,16 +2,16 @@
 import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules, TableInstance, TabPaneName, TransferDirection, TransferKey, TreeInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
 import {
+  addMembers,
+  addPrivilege,
+  addRoles,
   createGroup,
   enableGroup, fetchGroup, importGroups,
   modifyGroup,
-  relationGroupMembers,
-  relationGroupPrivileges,
-  relationGroupRoles,
   removeGroup,
-  removeGroupMembers,
-  removeGroupPrivileges,
-  removeGroupRoles,
+  removeMembers,
+  removePrivilege,
+  removeRoles,
   retrieveGroupMembers,
   retrieveGroupPrivileges,
   retrieveGroupRoles,
@@ -168,8 +168,10 @@ async function loadTree() {
   treeLoading.value = true
   try {
     const res = await retrieveGroupTree()
-    groupTree.value = res.data
-
+    groupTree.value = res.data.map((element: TreeNode) => ({
+      ...element,
+      isLeaf: !(element.children?.length && element.children?.length > 0)
+    }))
     await load()
   } catch (error) {
     return error
@@ -331,9 +333,9 @@ async function handleTransferUserChange(value: TransferKey[], direction: Transfe
   if (form.value.id) {
     try {
       if (direction === 'right') {
-        await relationGroupMembers(form.value.id, value as string[])
+        await addMembers(form.value.id, value as string[])
       } else if (movedKeys.length) {
-        await removeGroupMembers(form.value.id, movedKeys as string[])
+        await removeMembers(form.value.id, movedKeys as string[])
       }
     } catch (error) {
       return error
@@ -350,9 +352,9 @@ async function handleTransferRoleChange(value: TransferKey[], direction: Transfe
   if (form.value.id) {
     try {
       if (direction === 'right') {
-        await relationGroupRoles(form.value.id, value as number[])
+        await addRoles(form.value.id, value as number[])
       } else if (movedKeys.length) {
-        await removeGroupRoles(form.value.id, movedKeys as number[])
+        await removeRoles(form.value.id, movedKeys as number[])
       }
     } catch (error) {
       return error
@@ -411,16 +413,16 @@ async function handleActionCheck(privilegeId: number, item: string) {
       if (itemIndex >= 0) {
         // 如果 actions 中已有该 item，则移除
         existingAction.actions.splice(itemIndex, 1)
-        await removeGroupPrivileges(form.value.id, privilegeId, item)
+        await removePrivilege(form.value.id, privilegeId, item)
 
       } else {
         existingAction.actions.push(item)
-        await relationGroupPrivileges(form.value.id, privilegeId, item)
+        await addPrivilege(form.value.id, privilegeId, item)
       }
     }
   } else {
     authorities.value.push({ privilegeId, actions: [item] })
-    await relationGroupPrivileges(form.value.id, privilegeId, item)
+    await addPrivilege(form.value.id, privilegeId, item)
   }
 }
 
@@ -456,7 +458,7 @@ const rowSelected = (row: Privilege) => {
         </ElFormItem>
 
         <ElTree ref="treeEl" v-loading="treeLoading" :data="groupTree" node-key="id" :current-node-key="treeSelected"
-          highlight-current :props="{ label: 'name' }" :filter-node-method="filterNode"
+          highlight-current :props="{ label: 'name', isLeaf: 'isLeaf' }" :filter-node-method="filterNode"
           @current-change="onCurrentChange">
         </ElTree>
       </ElCard>

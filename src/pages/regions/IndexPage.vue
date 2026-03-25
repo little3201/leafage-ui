@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
-  FormInstance, FormRules, TableInstance, TreeData, TreeInstance, TreeNode,
+  FormInstance, FormRules, TableInstance, TreeData, TreeInstance,
   TreeNodeData, UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import {
@@ -109,16 +109,15 @@ async function pageChange(currentPage: number, pageSize: number) {
 /**
  * 加载tree
  */
-async function loadTree(node: TreeNode, resolve: (data: TreeData) => void) {
+async function loadTree({ data }: { data: TreeNodeData }, resolve: (data: TreeData) => void) {
   treeLoading.value = true
 
   try {
-    filter.superiorId!.value = treeSelected.value.length > 0 ? Number(treeSelected.value) : null
-    const res = await retrieveRegions({ page: 1, size: 34, sortBy: 'id', descending: false }, filter)
-    const treeData = res.data.content.map((item: Region) => ({
-      id: item.id!,
-      name: item.name,
-      isLeaf: (item.count ?? 0) === 0
+    const superiorId = data.id ? Number(data.id) : null
+    const res = await retrieveRegionSubset(superiorId)
+    const treeData = res.data.map((element: Region) => ({
+      ...element,
+      isLeaf: !(element.count && element.count > 0)
     }))
     resolve(treeData)
   } catch (error) {
@@ -133,17 +132,9 @@ async function loadTree(node: TreeNode, resolve: (data: TreeData) => void) {
  */
 async function load() {
   loading.value = true
-  filter.superiorId!.value = treeSelected.value.length > 0 ? Number(treeSelected.value) : null
   try {
     const res = await retrieveRegions(pagination, filter)
-    const list = res.data.content
-    // 处理子节点
-    list.forEach((element: Region) => {
-      if (element.count && element.count > 0) {
-        element.hasChildren = true
-      }
-    })
-    datas.value = list
+    datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
     return error
@@ -159,15 +150,12 @@ async function load() {
 const refreshChildren = async (rowKey: number) => {
   try {
     const res = await retrieveRegionSubset(rowKey)
-    const list = res.data
-    // 处理子节点
-    list.forEach((element: Region) => {
-      if (element.count && element.count > 0) {
-        element.hasChildren = true
-      }
-    })
+    const treeData = res.data.map((element: Region) => ({
+      ...element,
+      isLeaf: !(element.count && element.count > 0)
+    }))
 
-    treeRef.value?.updateKeyChildren(String(rowKey), list)
+    treeRef.value?.updateKeyChildren(String(rowKey), treeData)
   } catch (error) {
     return error
   }
@@ -321,8 +309,8 @@ async function confirmEvent(id: number) {
         </ElFormItem>
 
         <ElTree ref="treeRef" :load="loadTree" lazy v-loading="treeLoading" node-key="id"
-          :current-node-key="treeSelected" highlight-current :props="{ label: 'name' }" :filter-node-method="filterNode"
-          @current-change="onCurrentChange">
+          :current-node-key="treeSelected" highlight-current :props="{ label: 'name', isLeaf: 'isLeaf' }"
+          :filter-node-method="filterNode" @current-change="onCurrentChange">
         </ElTree>
       </ElCard>
     </ElCol>

@@ -5,16 +5,16 @@ import type {
   TransferDirection, TransferKey, UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import {
+  addMembers,
+  addPrivilege,
   createRole,
   enableRole,
   fetchRole,
   importRoles,
   modifyRole,
-  relationRoleMembers,
-  relationRolePrivileges,
+  removeMembers,
+  removePrivilege,
   removeRole,
-  removeRoleMembers,
-  removeRolePrivileges,
   retrieveRoleMembers,
   retrieveRolePrivileges,
   retrieveRoles
@@ -149,14 +149,20 @@ async function relationRow(id: number) {
 
 async function authorizeRow(id: number) {
   authorities.value = []
+  authorizeTableRef.value?.clearSelection()
   form.value.id = id
   try {
     const res = await retrieveRolePrivileges(id)
-    authorities.value = res.data.map((row: RolePrivileges) => ({ privilegeId: row.privilegeId, actions: row.actions }))
+    authorities.value = res.data.map((row: RolePrivileges) => {
+      const toogleRow = { id: row.privilegeId }
+      authorizeTableRef.value?.toggleRowSelection(toogleRow, true)
+      return { privilegeId: row.privilegeId, actions: row.actions }
+    })
+
+    authorizeVisible.value = true
   } catch (error) {
     return error
   }
-  authorizeVisible.value = true
 }
 
 /**
@@ -289,9 +295,9 @@ async function handleTransferChange(value: TransferKey[], direction: TransferDir
   if (form.value.id) {
     try {
       if (direction === 'right') {
-        await relationRoleMembers(form.value.id, value as string[])
+        await addMembers(form.value.id, value as string[])
       } else if (movedKeys.length) {
-        await removeRoleMembers(form.value.id, movedKeys as string[])
+        await removeMembers(form.value.id, movedKeys as string[])
       }
     } catch (error) {
       return error
@@ -313,16 +319,16 @@ async function handleActionCheck(privilegeId: number, item: string) {
       if (itemIndex >= 0) {
         // 如果 actions 中已有该 item，则移除
         existingAction.actions.splice(itemIndex, 1)
-        await removeRolePrivileges(form.value.id, privilegeId, item)
+        await removePrivilege(form.value.id, privilegeId, item)
 
       } else {
         existingAction.actions.push(item)
-        await relationRolePrivileges(form.value.id, privilegeId, item)
+        await addPrivilege(form.value.id, privilegeId, item)
       }
     }
   } else {
     authorities.value.push({ privilegeId, actions: [item] })
-    await relationRolePrivileges(form.value.id, privilegeId, item)
+    await addPrivilege(form.value.id, privilegeId, item)
   }
 }
 

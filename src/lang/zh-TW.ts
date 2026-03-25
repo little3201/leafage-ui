@@ -5,6 +5,7 @@ export default {
   label: {
     no: '序號',
     title: '標題',
+    summary: '摘要',
     action: '操作',
     actions: '操作',
     name: '名稱',
@@ -157,7 +158,7 @@ export default {
     connections: '連接',
     schemes: '方案',
     scripts: '腳本',
-    templates: '模板管理',
+    codes: '代碼',
     samples: '樣板',
     modules: '模板',
     fragments: '片段',
@@ -166,7 +167,8 @@ export default {
     accessLogs: '訪問紀錄',
     auditLogs: '審計日誌',
     schedulerLogs: '調度日誌',
-    docs: '文檔',
+    docs: '文檔管理',
+    reports: '報告',
     sections: '章節',
   },
 

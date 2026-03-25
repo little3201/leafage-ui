@@ -21,6 +21,11 @@ for (let i = 1; i < 99; i++) {
 }
 
 export const regionsHandlers = [
+  http.get(`/api${SERVER_URL.REGION}/subset`, ({ request }) => {
+    const searchParams = new URL(request.url).searchParams
+    const id = searchParams.get('id')
+    return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
+  }),
   http.get(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params
     if (id) {

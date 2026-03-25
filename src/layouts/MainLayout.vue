@@ -29,7 +29,7 @@ function logout() {
     <div class="inline-flex grow justify-between">
       <div class="inline-flex items-center">
         <ElImage :src="logo" alt="avatar" class="w-8 h-8" />
-        <span class="ml-3 text-20px font-bold text-white">Project Management</span>
+        <h3 class="ml-3 text-white">Project Management</h3>
       </div>
 
       <div class="inline-flex justify-end items-center space-x-4">

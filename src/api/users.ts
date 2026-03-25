@@ -70,31 +70,6 @@ export const removeUser = (id: number) => {
 }
 
 /**
- * Relation privileges for a specific row
- * @param privilegeId Privilege id
- * @param relations Relation privilege
- */
-export const relationUsersPrivileges = (privilegeId: number, relations: { key: number | string, actions: string[] }[]) => {
-  const datas = relations.map(item => { return { username: item.key, actions: item.actions } })
-  return api.patch(`${SERVER_URL.USER}/privileges/${privilegeId}`, datas)
-}
-
-/**
- * Remove privileges for a specific row
- * @param username Row username
- * @param privilegeIds Privilege id
- * @param actions Actions
- */
-export const removeUsersPrivileges = (username: string, privilegeId: number, actions?: string[]) => {
-  if (actions && actions.length > 0) {
-    const params = { actions: actions.join(',') }
-    return api.delete(`${SERVER_URL.USER}/${username}/privileges/${privilegeId}`, { params })
-  } else {
-    return api.delete(`${SERVER_URL.USER}/${username}/privileges/${privilegeId}`)
-  }
-}
-
-/**
  * Import rows
  * @param file file
  * @returns

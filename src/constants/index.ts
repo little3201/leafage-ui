@@ -38,6 +38,7 @@ export const SERVER_URL = {
   CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections'), // 库连接
 
   // docs
+  REPORT: SERVER_PREFIX.HYPERVISOR.concat('/reports'), // 报告
   SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections') // 章节
 }
 
@@ -152,4 +153,11 @@ export const osTypes = [
 export const scriptModes: { [key: string]: 'Server' | 'Docker' } = {
   SERVER: 'Server',
   DOCKER: 'Docker'
+}
+
+export const reportTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' } = {
+  DOC: 'primary',
+  DOCX: 'success',
+  PDF: 'info',
+  MARKDOWN: 'warning'
 }

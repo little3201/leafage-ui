@@ -5,6 +5,7 @@ export default {
   label: {
     no: 'NO.',
     title: 'Title',
+    summary: 'Summary',
     action: 'Action',
     actions: 'Actions',
     name: 'Name',
@@ -155,7 +156,7 @@ export default {
     profile: 'Profile',
     exploiters: 'Exploiters',
     connections: 'Connections',
-    templates: 'Templates',
+    codes: 'Codes',
     schemes: 'Schemes',
     modules: 'Modules',
     fragments: 'Fragments',
@@ -167,6 +168,7 @@ export default {
     auditLogs: 'Audit Log',
     schedulerLogs: 'Scheduler Log',
     docs: 'Docs',
+    reports: 'Reports',
     sections: 'Sections',
   },
 

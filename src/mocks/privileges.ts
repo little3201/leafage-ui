@@ -201,9 +201,9 @@ const subDatas: Privilege[] = [
   {
     id: 17,
     superiorId: 14,
-    path: 'templates',
-    name: 'templates',
-    component: 'exploiters/templates',
+    path: 'codes',
+    name: 'codes',
+    component: 'exploiters/codes',
     count: 3,
     enabled: true,
     icon: 'folder-code-outline',
@@ -225,7 +225,7 @@ const subDatas: Privilege[] = [
     superiorId: 17,
     path: 'modules',
     name: 'modules',
-    component: 'exploiters/templates/modules',
+    component: 'exploiters/codes/modules',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable'],
     count: 0,
     enabled: true,
@@ -237,7 +237,7 @@ const subDatas: Privilege[] = [
     superiorId: 17,
     path: 'samples',
     name: 'samples',
-    component: 'exploiters/templates/samples',
+    component: 'exploiters/codes/samples',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable'],
     count: 0,
     enabled: true,
@@ -249,7 +249,7 @@ const subDatas: Privilege[] = [
     superiorId: 17,
     path: 'fragments',
     name: 'fragments',
-    component: 'exploiters/templates/fragments',
+    component: 'exploiters/codes/fragments',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable'],
     count: 0,
     enabled: true,
@@ -435,11 +435,11 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 17,
-        name: 'templates',
+        name: 'codes',
         meta: {
-          path: 'templates',
+          path: 'codes',
           component: '#',
-          redirect: '/exploiter/templates/samples',
+          redirect: '/exploiter/codes/samples',
           icon: 'folder-code-outline',
         },
         children: [
@@ -448,7 +448,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             name: 'modules',
             meta: {
               path: 'modules',
-              component: 'exploiters/templates/modules',
+              component: 'exploiters/codes/modules',
               icon: 'modeling-outline',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable']
             }
@@ -458,7 +458,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             name: 'samples',
             meta: {
               path: 'samples',
-              component: 'exploiters/templates/samples',
+              component: 'exploiters/codes/samples',
               icon: 'code-blocks-outline',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'enable']
             }
@@ -468,7 +468,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             name: 'fragments',
             meta: {
               path: 'fragments',
-              component: 'exploiters/templates/fragments',
+              component: 'exploiters/codes/fragments',
               icon: 'code',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
             }
@@ -483,12 +483,23 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: 'docs',
       component: '#',
-      redirect: '/docs/sections',
+      redirect: '/docs/reports',
       icon: 'drive-file-move-outline'
     },
     children: [
       {
         id: 23,
+        name: 'reports',
+        meta: {
+          path: 'reports',
+          component: 'docs/reports',
+          icon: 'assignment-add-outline',
+          actions: ['create', 'modify', 'remove', 'import', 'export']
+        },
+        children: []
+      },
+      {
+        id: 24,
         name: 'sections',
         meta: {
           path: 'sections',

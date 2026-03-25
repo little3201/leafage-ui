@@ -1,3 +1,4 @@
+
 interface AudtiMetadata {
   id: number | null
   lastModifiedDate?: Date
@@ -123,17 +124,17 @@ export interface Region extends AudtiMetadata {
   superiorId: number | null
   areaCode?: number
   postalCode?: number
-  hasChildren?: boolean
   enabled?: boolean
   description?: string
   count?: number
-  hasChildren?: boolean
+  isLeaf?: boolean
 }
 
 export interface TreeNode {
   id: number | null
   name: string
   children?: TreeNode[]
+  isLeaf?: boolean
 }
 
 export interface PrivilegeTreeNode extends TreeNode {
@@ -339,6 +340,13 @@ export interface Section extends AudtiMetadata {
   title: string
   type: string | null
   body: string
-  hasChildren?: boolean
+  isLeaf?: boolean
   count?: number
+}
+
+export interface Report extends AudtiMetadata {
+  title: string
+  summary: string
+  type: string | null
+  body: string
 }

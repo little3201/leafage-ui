@@ -19,8 +19,8 @@ export const retrieveRegions = (pagination: Pagination, filter?: Filters<Region>
  * @param id Row ID
  * @returns Subset data
  */
-export const retrieveRegionSubset = (id: number) => {
-  return api.get(`${SERVER_URL.REGION}/${id}/subset`)
+export const retrieveRegionSubset = (id: number | null) => {
+  return api.get(`${SERVER_URL.REGION}/subset`, { params: { id } })
 }
 
 /**

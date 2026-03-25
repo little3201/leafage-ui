@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
-  FormInstance, FormRules, TableInstance, TreeData, TreeInstance, TreeNode,
+  FormInstance, FormRules, TableInstance, TreeData, TreeInstance,
   TreeNodeData, UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import {
@@ -44,7 +44,7 @@ const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Section>>({
-  superiorId: { op: 'eq', value: Number(treeSelected.value) },
+  superiorId: { op: 'eq', value: null },
   title: { op: 'eq', value: undefined }
 })
 
@@ -103,20 +103,14 @@ async function onCurrentChange(data: TreeNodeData) {
 /**
  * 加载tree
  */
-
-/**
- * 加载tree
- */
-async function loadTree(node: TreeNode, resolve: (data: TreeData) => void) {
+async function loadTree({ data }: { data: TreeNodeData }, resolve: (data: TreeData) => void) {
   treeLoading.value = true
-
   try {
-    filter.superiorId!.value = treeSelected.value.length > 0 ? Number(treeSelected.value) : null
-    const res = await retrieveSections({ page: 1, size: 34, sortBy: 'id', descending: false }, filter)
-    const treeData = res.data.content.map((item: Section) => ({
-      id: item.id!,
-      name: item.title,
-      isLeaf: (item.count ?? 0) === 0
+    const superiorId = data.id ? Number(data.id) : null
+    const res = await retrieveSectionSubset(superiorId)
+    const treeData = res.data.map((element: Section) => ({
+      ...element,
+      isLeaf: !(element.count && element.count > 0)
     }))
     resolve(treeData)
   } catch (error) {
@@ -158,15 +152,12 @@ async function load() {
 const refreshChildren = async (rowKey: number) => {
   try {
     const res = await retrieveSectionSubset(rowKey)
-    const list = res.data
-    // 处理子节点
-    list.forEach((element: Section) => {
-      if (element.count && element.count > 0) {
-        element.hasChildren = true
-      }
-    })
+    const treeData = res.data.map((element: Section) => ({
+      ...element,
+      isLeaf: !(element.count && element.count > 0)
+    }))
 
-    treeRef.value?.updateKeyChildren(String(rowKey), list)
+    treeRef.value?.updateKeyChildren(String(rowKey), treeData)
   } catch (error) {
     return error
   }
@@ -308,8 +299,8 @@ function onUpload(options: UploadRequestOptions) {
         </ElFormItem>
 
         <ElTree ref="treeRef" :load="loadTree" lazy v-loading="treeLoading" node-key="id"
-          :current-node-key="treeSelected" highlight-current :props="{ label: 'name' }" :filter-node-method="filterNode"
-          @current-change="onCurrentChange">
+          :current-node-key="treeSelected" highlight-current :props="{ label: 'title', isLeaf: 'isLeaf' }"
+          :filter-node-method="filterNode" @current-change="onCurrentChange">
         </ElTree>
       </ElCard>
     </ElCol>
@@ -366,7 +357,7 @@ function onUpload(options: UploadRequestOptions) {
             <ElTableColumn type="selection" />
             <ElTableColumn type="index" :label="$t('label.no')" width="55" />
             <ElTableColumn prop="title" :label="$t('label.title')" sortable />
-            <ElTableColumn prop="body" :label="$t('label.body')" />
+            <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.body')" />
             <ElTableColumn :label="$t('label.actions')">
               <template #default="scope">
                 <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
@@ -397,7 +388,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="500">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -409,7 +400,7 @@ function onUpload(options: UploadRequestOptions) {
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.body')" prop="body">
-            <ElInput v-model="form.body" type="textarea"
+            <ElInput v-model="form.body" type="textarea" :rows="6"
               :placeholder="$t('placeholder.inputText', { field: $t('label.body') })" />
           </ElFormItem>
         </ElCol>

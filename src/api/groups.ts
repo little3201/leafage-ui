@@ -97,7 +97,7 @@ export const removeGroup = (id: number) => {
  * @param id Row ID
  * @param usernames usernames
  */
-export const relationGroupMembers = (id: number, usernames: string[]) => {
+export const addMembers = (id: number, usernames: string[]) => {
   return api.patch(`${SERVER_URL.GROUP}/${id}/members`, usernames)
 }
 
@@ -106,7 +106,7 @@ export const relationGroupMembers = (id: number, usernames: string[]) => {
  * @param id Row ID
  * @param usernames usernames
  */
-export const removeGroupMembers = (id: number, usernames: string[]) => {
+export const removeMembers = (id: number, usernames: string[]) => {
   const params = usernames ? { usernames: usernames.join(',') } : {}
   return api.delete(`${SERVER_URL.GROUP}/${id}/members`, { params })
 }
@@ -116,7 +116,7 @@ export const removeGroupMembers = (id: number, usernames: string[]) => {
  * @param id Row ID
  * @param roleIds Role ids
  */
-export const relationGroupRoles = (id: number, roleIds: number[]) => {
+export const addRoles = (id: number, roleIds: number[]) => {
   return api.patch(`${SERVER_URL.GROUP}/${id}/roles`, roleIds)
 }
 
@@ -125,7 +125,7 @@ export const relationGroupRoles = (id: number, roleIds: number[]) => {
  * @param id Row ID
  * @param roleIds Role ids
  */
-export const removeGroupRoles = (id: number, roleIds: number[]) => {
+export const removeRoles = (id: number, roleIds: number[]) => {
   const params = roleIds ? { roleIds: roleIds.join(',') } : {}
   return api.delete(`${SERVER_URL.GROUP}/${id}/roles`, { params })
 }
@@ -136,7 +136,7 @@ export const removeGroupRoles = (id: number, roleIds: number[]) => {
  * @param privilegeId Privilege id
  * @param action Action
  */
-export const relationGroupPrivileges = (id: number, privilegeId: number, action?: string) => {
+export const addPrivilege = (id: number, privilegeId: number, action?: string) => {
   return api.patch(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, {}, { params: { action } })
 }
 
@@ -146,7 +146,7 @@ export const relationGroupPrivileges = (id: number, privilegeId: number, action?
  * @param privilegeId Privilege id
  * @param action Action
  */
-export const removeGroupPrivileges = (id: number, privilegeId: number, action?: string) => {
+export const removePrivilege = (id: number, privilegeId: number, action?: string) => {
   return api.delete(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, { params: { action } })
 }
 

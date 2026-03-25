@@ -46,7 +46,6 @@ export default defineConfig(({ mode }) => {
     ],
     server: {
       // https: true,
-      open: true,
       proxy: {
         '/api': {
           target: env.VITE_BASE_URL,
