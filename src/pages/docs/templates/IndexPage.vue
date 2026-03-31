@@ -5,7 +5,6 @@ import type {
   UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import { dayjs } from 'element-plus'
-import SectionPage from 'pages/docs/sections/IndexPage.vue'
 import {
   createTemplate, fetchTemplate, importTemplates, modifyTemplate, previewTemplate,
   removeTemplate, retrieveTemplates,
@@ -364,7 +363,7 @@ function onUpload(options: UploadRequestOptions) {
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center>
     <div style="text-align: center">
-      <SectionPage />
+
     </div>
   </ElDialog>
 

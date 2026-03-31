@@ -508,6 +508,17 @@ const treeNodes: PrivilegeTreeNode[] = [
           actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
         },
         children: []
+      },
+      {
+        id: 25,
+        name: 'sections',
+        meta: {
+          path: 'sections',
+          component: 'docs/sections',
+          icon: 'assignment-add-outline',
+          actions: ['create', 'modify', 'remove', 'import', 'export']
+        },
+        children: []
       }
     ]
   }
