@@ -25,7 +25,7 @@ const options = computed(() => ({
   theme: {
     mode: $q.dark.isActive ? 'dark' : 'light'
   }
-}))
+} satisfies ApexOptions))
 
 const elRef = ref<HTMLElement | null>(null)
 let chart: ApexCharts
