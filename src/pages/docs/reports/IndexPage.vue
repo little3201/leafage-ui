@@ -5,6 +5,7 @@ import type {
   TableInstance,
   UploadInstance, UploadRequestOptions
 } from 'element-plus'
+import { dayjs } from 'element-plus'
 import {
   createReport,
   fetchReport,
@@ -14,8 +15,8 @@ import {
   removeReport,
   retrieveReports
 } from 'src/api/reports'
-import { reportTypes } from 'src/constants'
-import type { Filters, Pagination, Report } from 'src/types'
+import { reportStatus } from 'src/constants'
+import type { Filters, Pagination, Report, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -36,6 +37,12 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
+const templateOptions = ref<Array<Template>>([
+  { id: 1, name: 'Template 1' },
+  { id: 2, name: 'Template 2' },
+  { id: 3, name: 'Template 3' }
+])
+
 const visible = ref<boolean>(false)
 const configVisible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
@@ -46,15 +53,15 @@ const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Report>>({
   title: { op: 'like', value: undefined },
-  type: { op: 'eq', value: undefined }
+  status: { op: 'eq', value: undefined }
 })
 
 const initialValues: Report = {
   id: null,
   title: '',
-  summary: '',
-  type: '',
-  body: ''
+  templateId: null,
+  version: 1,
+  status: 'DRAFT',
 }
 const form = ref<Report>({ ...initialValues })
 
@@ -62,8 +69,8 @@ const rules = reactive<FormRules<typeof form>>({
   title: [
     { required: true, message: t('placeholder.inputText', { field: t('label.title') }), trigger: 'blur' }
   ],
-  type: [
-    { required: true, message: t('placeholder.selectText', { field: t('label.type') }), trigger: 'blur' }
+  status: [
+    { required: true, message: t('placeholder.selectText', { field: t('label.status') }), trigger: 'blur' }
   ]
 })
 
@@ -103,7 +110,7 @@ async function load() {
  */
 async function reset() {
   filter.title!.value = undefined
-  filter.type!.value = undefined
+  filter.status!.value = undefined
   await load()
 }
 
@@ -240,6 +247,15 @@ async function removeRow(id: number) {
 async function confirmEvent(id: number) {
   await removeRow(id)
 }
+
+/**
+   * format templates
+   * @param cellValue cell value
+   */
+function formatTemplates(cellValue: number): string {
+  const matched = templateOptions.value.find(item => item.id === cellValue)
+  return matched ? matched.name : ''
+}
 </script>
 
 <template>
@@ -250,10 +266,10 @@ async function confirmEvent(id: number) {
           <ElInput v-model="filter.title!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('label.type')" prop="type">
-          <ElSelect v-model="filter.type!.value" class="min-w-48"
-            :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
-            <ElOption v-for="(_, value) in reportTypes" :key="value" :label="value" :value="value" />
+        <ElFormItem :label="$t('label.status')" prop="status">
+          <ElSelect v-model="filter.status!.value" class="min-w-48"
+            :placeholder="$t('placeholder.selectText', { field: $t('label.status') })">
+            <ElOption v-for="(_, value) in reportStatus" :key="value" :label="value" :value="value" />
           </ElSelect>
         </ElFormItem>
         <ElFormItem>
@@ -296,24 +312,38 @@ async function confirmEvent(id: number) {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="title" :label="$t('label.title')" sortable>
+        <ElTableColumn prop="title" :label="$t('label.title')">
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
               {{ scope.row.title }}
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="type" :label="$t('label.type')" sortable>
+        <ElTableColumn prop="version" :label="$t('label.version')">
           <template #default="scope">
-            <ElBadge is-dot :type="reportTypes[scope.row.type]" class="mr-1" />
-            <ElText :type="reportTypes[scope.row.type]">{{ scope.row.type }}</ElText>
+            V{{ scope.row.version }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip prop="summary" :label="$t('label.summary')" />
+        <ElTableColumn prop="templateId" :label="$t('label.template')">
+          <template #default="scope">
+            {{ scope.row.templateId ? formatTemplates(scope.row.templateId) : '-' }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="status" :label="$t('label.status')" sortable>
+          <template #default="scope">
+            <ElBadge is-dot :type="reportStatus[scope.row.status]" class="mr-1" />
+            <ElText :type="reportStatus[scope.row.status]">{{ scope.row.status }}</ElText>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
+          <template #default="scope">
+            {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
-              @click="saveRow(scope.row.id)">
+            <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'modify')" title="modify"
+              type="primary" link @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'config')" title="config" type="success" link
@@ -341,27 +371,22 @@ async function confirmEvent(id: number) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.reports')" align-center :show-close="false" width="600">
+  <ElDialog v-model="visible" :title="$t('page.reports')" align-center :show-close="false" width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
-        <ElCol :span="12">
+        <ElCol>
           <ElFormItem :label="$t('label.title')" prop="title">
             <ElInput v-model="form.title" :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.type')" prop="type">
-            <ElSelect v-model="form.type">
-              <ElOption v-for="(_, value) in reportTypes" :key="value" :label="value" :value="value" />
-            </ElSelect>
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.summary')" prop="summary">
-            <ElInput v-model="form.summary" type="textarea" :rows="4"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.summary') })" />
+          <ElFormItem :label="$t('label.template')" prop="templateId">
+            <ElSelect v-model="form.templateId"
+              :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
+              <ElOption v-for="(item, index) in templateOptions" :key="index" :label="item.name" :value="item.id!" />
+            </ElSelect>
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -387,7 +412,7 @@ async function confirmEvent(id: number) {
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
     <ElScrollbar max-height="600px">
-      <div>{{ form.body }}</div>
+      <div>xxxx</div>
     </ElScrollbar>
   </ElDialog>
 

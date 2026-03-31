@@ -1,38 +1,25 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
-  FormInstance, FormRules, TableInstance, TransferDataItem,
-  TransferDirection, TransferKey, UploadInstance, UploadRequestOptions
+  FormInstance, FormRules, TableInstance,
+  UploadInstance, UploadRequestOptions
 } from 'element-plus'
+import { dayjs } from 'element-plus'
+import SectionPage from 'pages/docs/sections/IndexPage.vue'
 import {
-  addMembers,
-  addPrivilege,
-  createRole,
-  enableRole,
-  fetchRole,
-  importRoles,
-  modifyRole,
-  removeMembers,
-  removePrivilege,
-  removeRole,
-  retrieveRoleMembers,
-  retrieveRolePrivileges,
-  retrieveRoles
-} from 'src/api/roles'
-import { retrieveUsers } from 'src/api/users'
-import { actions } from 'src/constants'
-import type { Filters, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from 'src/types'
+  createTemplate, fetchTemplate, importTemplates, modifyTemplate, previewTemplate,
+  removeTemplate, retrieveTemplates,
+} from 'src/api/templates'
+import type { Filters, Pagination, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()
-const userStore = useUserStore()
 
 const loading = ref<boolean>(false)
-const datas = ref<Array<Role>>([])
+const datas = ref<Array<Template>>([])
 const total = ref<number>(0)
 
 const tableRef = ref<TableInstance>()
@@ -41,35 +28,26 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const authorizeTableRef = ref<TableInstance>()
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const relationVisible = ref<boolean>(false)
-const members = ref<Array<TransferDataItem>>([])
-const relations = ref<Array<string>>([])
-
-const authorizeVisible = ref<boolean>(false)
-const authorities = ref<Array<{
-  privilegeId: number,
-  actions: string[]
-}>>([])
-
+const configVisible = ref<boolean>(false)
+const previewVisible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Role>>({
+const filter = reactive<Filters<Template>>({
   name: { op: 'eq', value: undefined }
 })
 
 const formRef = ref<FormInstance>()
-const initialValues: Role = {
+const initialValues: Template = {
   id: null,
   name: ''
 }
-const form = ref<Role>({ ...initialValues })
+const form = ref<Template>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
@@ -80,24 +58,6 @@ const rules = reactive<FormRules<typeof form>>({
 onMounted(async () => {
   await load()
 })
-
-async function loadUsers() {
-  try {
-    const res = await retrieveUsers({ page: 1, size: 99 })
-    members.value = res.data.content
-  } catch (error) {
-    return error
-  }
-}
-
-async function loadRoleUsers(id: number) {
-  try {
-    const res = await retrieveRoleMembers(id)
-    relations.value = res.data.map((item: RoleMembers) => item.username)
-  } catch (error) {
-    return error
-  }
-}
 
 /**
  * 分页变化
@@ -116,14 +76,12 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveRoles(pagination, filter)
+    const res = await retrieveTemplates(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
     return error
-  } finally {
-    loading.value = false
-  }
+  } finally { loading.value = false }
 }
 
 /**
@@ -135,34 +93,17 @@ async function reset() {
 }
 
 /**
- * 关联弹出框
+ * preview
  * @param id 主键
  */
-async function relationRow(id: number) {
-  relationVisible.value = true
+async function previewRow(id: number) {
   try {
-    await Promise.all([loadRoleUsers(id), loadUsers()])
+    const res = await previewTemplate(id)
+    form.value = res.data
   } catch (error) {
     return error
   }
-}
-
-async function authorizeRow(id: number) {
-  authorities.value = []
-  authorizeTableRef.value?.clearSelection()
-  form.value.id = id
-  try {
-    const res = await retrieveRolePrivileges(id)
-    authorities.value = res.data.map((row: RolePrivileges) => {
-      const toogleRow = { id: row.privilegeId }
-      authorizeTableRef.value?.toggleRowSelection(toogleRow, true)
-      return { privilegeId: row.privilegeId, actions: row.actions }
-    })
-
-    authorizeVisible.value = true
-  } catch (error) {
-    return error
-  }
+  previewVisible.value = true
 }
 
 /**
@@ -178,26 +119,25 @@ async function saveRow(id?: number) {
 }
 
 /**
+ * 配置
+ * @param id 主键
+ */
+function configRow(row: Template) {
+  if (!row.id) {
+    return
+  }
+  configVisible.value = true
+  form.value.id = row.id
+}
+
+/**
  * 加载
  * @param id 主键
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchRole(id)
+    const res = await fetchTemplate(id)
     form.value = res.data
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 启用、停用
- * @param id 主键
- */
-async function enableChange(id: number) {
-  try {
-    await enableRole(id)
-    await load()
   } catch (error) {
     return error
   }
@@ -214,9 +154,9 @@ async function onSubmit(formEl: FormInstance) {
     saveLoading.value = true
     try {
       if (form.value.id) {
-        await modifyRole(form.value.id, form.value)
+        await modifyTemplate(form.value.id, form.value)
       } else {
-        await createRole(form.value)
+        await createTemplate(form.value)
       }
       visible.value = false
       await load()
@@ -234,7 +174,7 @@ async function onSubmit(formEl: FormInstance) {
  */
 async function removeRow(id: number) {
   try {
-    await removeRole(id)
+    await removeTemplate(id)
     await load()
   } catch (error) {
     return error
@@ -264,7 +204,7 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'roles')
+    exportToCSV(selectedRows, 'templates')
   }
   exportLoading.value = false
 }
@@ -283,61 +223,9 @@ function onImportSubmit(importEl: UploadInstance) {
 }
 
 function onUpload(options: UploadRequestOptions) {
-  return importRoles(options.file)
+  return importTemplates(options.file)
 }
 
-/**
- * transfer事件
- * @param value 数据
- * @param direction 方向
- */
-async function handleTransferChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
-  if (form.value.id) {
-    try {
-      if (direction === 'right') {
-        await addMembers(form.value.id, value as string[])
-      } else if (movedKeys.length) {
-        await removeMembers(form.value.id, movedKeys as string[])
-      }
-    } catch (error) {
-      return error
-    }
-  }
-}
-
-async function handleActionCheck(privilegeId: number, item: string) {
-  if (!form.value.id) return
-  // 查找对应 privilegeId 的对象
-  const keyIndex = authorities.value.findIndex(a => a.privilegeId === privilegeId)
-
-  if (keyIndex >= 0) {
-    // 如果已存在该 key，更新 actions
-    const existingAction = authorities.value[keyIndex]
-    if (existingAction) {
-      const itemIndex = existingAction.actions.indexOf(item)
-
-      if (itemIndex >= 0) {
-        // 如果 actions 中已有该 item，则移除
-        existingAction.actions.splice(itemIndex, 1)
-        await removePrivilege(form.value.id, privilegeId, item)
-
-      } else {
-        existingAction.actions.push(item)
-        await addPrivilege(form.value.id, privilegeId, item)
-      }
-    }
-  } else {
-    authorities.value.push({ privilegeId, actions: [item] })
-    await addPrivilege(form.value.id, privilegeId, item)
-  }
-}
-
-const rowSelected = (row: Privilege) => {
-  if (!authorizeTableRef.value) return false
-
-  const selectedRows = authorizeTableRef.value.getSelectionRows()
-  return selectedRows.some(selectedRow => selectedRow.id === row.id)
-}
 </script>
 
 <template>
@@ -373,12 +261,13 @@ const rowSelected = (row: Privilege) => {
           <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
             :loading="exportLoading">
             <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
-              $t('action.export') }}
+              $t('action.export')
+            }}
           </ElButton>
         </ElCol>
 
         <ElCol :span="8" class="text-right">
-          <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
+          <ElTooltip :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load()">
               <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
             </ElButton>
@@ -389,34 +278,36 @@ const rowSelected = (row: Privilege) => {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')" />
-        <ElTableColumn prop="members" :label="$t('label.members')" />
-        <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
+        <ElTableColumn prop="name" :label="$t('label.name')">
           <template #default="scope">
-            <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
-              style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
+            <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
+              {{ scope.row.name }}
+            </ElButton>
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
+        <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
+          <template #default="scope">
+            {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
+          </template>
+        </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
             <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
-            <ElButton v-if="hasAction($route.name, 'relation')" title=" relation" type="success" link
-              @click="relationRow(scope.row.id)">
-              <Icon icon="material-symbols:link-rounded" width="16" height="16" />{{ $t('action.relation') }}
+            <ElButton v-if="hasAction($route.name, 'config')" title="config" type="success" link
+              @click="configRow(scope.row)">
+              <Icon icon="material-symbols:plug-connect-outline-rounded" width="16" height="16" />{{ $t('action.config')
+              }}
             </ElButton>
-            <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" type="success" link
-              @click="authorizeRow(scope.row.id)">
-              <Icon icon="material-symbols:privacy-tip-outline-rounded" width="16" height="16" />{{
-                $t('action.authorize') }}
-            </ElButton>
-            <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+            <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
+              @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
+                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{
+                    $t('action.remove')
                   }}
                 </ElButton>
               </template>
@@ -433,7 +324,7 @@ const rowSelected = (row: Privilege) => {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.roles')" align-center :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="$t('page.templates')" align-center :show-close="false">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -445,8 +336,16 @@ const rowSelected = (row: Privilege) => {
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea"
+            <ElInput v-model="form.description" type="textarea" :rows="6"
               :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol>
+          <ElFormItem :label="$t('label.variables')" prop="variables">
+            <ElInput v-model="form.variables" type="textarea" :rows="6"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.variables') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -462,44 +361,25 @@ const rowSelected = (row: Privilege) => {
     </template>
   </ElDialog>
 
-  <!-- relation -->
-  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center width="640">
+  <!-- config -->
+  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center>
     <div style="text-align: center">
-      <ElTransfer v-model="relations" :props="{ key: 'username', label: 'fullName' }"
-        :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="members"
-        @change="handleTransferChange" />
+      <SectionPage />
     </div>
   </ElDialog>
 
-  <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="57em">
-    <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
-      <ElTableColumn type="selection" />
-      <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell">
-        <template #default="scope">
-          <Icon :icon="`material-symbols:${scope.row.meta.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
-            height="1.25em" class="mr-2" />
-          {{ scope.row.name ? $t(`page.${scope.row.name}`) : '' }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="actions" :label="$t('label.actions')">
-        <template #default="scope">
-          <ElCheckTag v-for="(item, index) in scope.row.meta.actions" :key="index" :type="actions[item]"
-            :disabled="!rowSelected(scope.row)"
-            :checked="(authorities.find(a => a.privilegeId === scope.row.id)?.actions || []).includes(item)"
-            @change="handleActionCheck(scope.row.id, item)" class="mr-2">
-            {{ $t(`action.${item}`) }}
-          </ElCheckTag>
-        </template>
-      </ElTableColumn>
-    </ElTable>
+  <!-- preview -->
+  <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
+    <ElScrollbar max-height="600px">
+      <div>xxxx</div>
+    </ElScrollbar>
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/roles.xlsx`" :download="$t('page.roles') + '.xlsx'">
-        {{ $t('page.roles') }}.xlsx
+      <a :href="`templates/templates.xlsx`" :download="$t('page.templates') + '.xlsx'">
+        {{ $t('page.templates') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
@@ -528,9 +408,3 @@ const rowSelected = (row: Privilege) => {
     </template>
   </ElDialog>
 </template>
-
-<style lang="scss" scoped>
-.el-check-tag {
-  padding: 4px 9px;
-}
-</style>

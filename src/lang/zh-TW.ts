@@ -5,7 +5,7 @@ export default {
   label: {
     no: '序號',
     title: '標題',
-    summary: '摘要',
+    template: '模板',
     action: '操作',
     actions: '操作',
     name: '名稱',
@@ -170,6 +170,7 @@ export default {
     docs: '文檔管理',
     reports: '報告',
     sections: '章節',
+    templates: '模板',
   },
 
   github: 'Github',

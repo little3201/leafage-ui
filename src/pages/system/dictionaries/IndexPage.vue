@@ -294,7 +294,7 @@ function onUpload(options: UploadRequestOptions) {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" lazy :load="load" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')" sortable />
+        <ElTableColumn prop="name" :label="$t('label.name')" />
         <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
           <template #default="scope">
             <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"

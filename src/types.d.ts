@@ -335,6 +335,21 @@ export interface Schedule extends AudtiMetadata {
   type: 'primary' | 'success' | 'warning' | 'danger'
 }
 
+export interface Report extends AudtiMetadata {
+  title: string
+  templateId: number | null
+  version: number
+  status: string
+  lastModifiedDate?: Date
+}
+
+export interface Template extends AudtiMetadata {
+  name: string
+  description?: string
+  variables?: string
+}
+
+
 export interface Section extends AudtiMetadata {
   superiorId: number | null
   title: string
@@ -342,11 +357,4 @@ export interface Section extends AudtiMetadata {
   body: string
   isLeaf?: boolean
   count?: number
-}
-
-export interface Report extends AudtiMetadata {
-  title: string
-  summary: string
-  type: string | null
-  body: string
 }

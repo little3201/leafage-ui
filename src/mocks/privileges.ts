@@ -494,18 +494,18 @@ const treeNodes: PrivilegeTreeNode[] = [
           path: 'reports',
           component: 'docs/reports',
           icon: 'assignment-add-outline',
-          actions: ['create', 'modify', 'remove', 'import', 'export']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
         },
         children: []
       },
       {
         id: 24,
-        name: 'sections',
+        name: 'templates',
         meta: {
-          path: 'sections',
-          component: 'docs/sections',
+          path: 'templates',
+          component: 'docs/templates',
           icon: 'assignment-add-outline',
-          actions: ['create', 'modify', 'remove', 'import', 'export']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
         },
         children: []
       }

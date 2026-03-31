@@ -5,7 +5,7 @@ export default {
   label: {
     no: 'NO.',
     title: 'Title',
-    summary: 'Summary',
+    template: 'Template',
     action: 'Action',
     actions: 'Actions',
     name: 'Name',
@@ -170,6 +170,7 @@ export default {
     docs: 'Docs',
     reports: 'Reports',
     sections: 'Sections',
+    templates: 'Templates',
   },
 
   github: 'Github',

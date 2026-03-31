@@ -307,14 +307,14 @@ function onCheckChange(item: string) {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" lazy :load="load" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell" sortable>
+        <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell">
           <template #default="scope">
             <Icon :icon="`material-symbols:${scope.row.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
               height="1.25em" class="mr-2" />
             {{ scope.row.name ? $t(`page.${scope.row.name}`) : '' }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="path" :label="$t('label.path')" sortable />
+        <ElTableColumn prop="path" :label="$t('label.path')" />
         <ElTableColumn prop="redirect" :label="$t('label.redirect')" />
         <ElTableColumn prop="actions" :label="$t('label.actions')">
           <template #default="scope">

@@ -39,6 +39,7 @@ export const SERVER_URL = {
 
   // docs
   REPORT: SERVER_PREFIX.HYPERVISOR.concat('/reports'), // 报告
+  TEMPLATE: SERVER_PREFIX.HYPERVISOR.concat('/templates'), // 模板
   SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections') // 章节
 }
 
@@ -155,9 +156,8 @@ export const scriptModes: { [key: string]: 'Server' | 'Docker' } = {
   DOCKER: 'Docker'
 }
 
-export const reportTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' } = {
-  DOC: 'primary',
-  DOCX: 'success',
-  PDF: 'info',
-  MARKDOWN: 'warning'
+export const reportStatus: { [key: string]: 'primary' | 'success' | 'info' } = {
+  DRAFT: 'primary',
+  PUBLISHED: 'success',
+  ARCHIVED: 'info'
 }

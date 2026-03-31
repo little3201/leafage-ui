@@ -7,15 +7,16 @@ const datas: Report[] = []
 for (let i = 1; i < 28; i++) {
   const row: Report = {
     id: i,
-    title: 'title_' + i,
-    summary: 'This is summary about xxx',
-    type: ['DOC', 'DOCX', 'PDF', 'MARKDOWN'][Math.floor(Math.random() * 4)] || 'unknown',
-    body: 'This is body content about xxx'
+    title: 'This is title_' + i,
+    templateId: Math.floor(Math.random() * 10) + 1,
+    version: Math.floor(Math.random() * 10) + 1,
+    status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
+    lastModifiedDate: new Date()
   }
   datas.push(row)
 }
 
-export const sectionsHandlers = [
+export const reportsHandlers = [
   http.get(`/api${SERVER_URL.REPORT}/:id/preview`, ({ params }) => {
     const { id } = params
     if (id) {

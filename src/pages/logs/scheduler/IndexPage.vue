@@ -190,7 +190,7 @@ async function confirmEvent(id: number) {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')" sortable>
+        <ElTableColumn prop="name" :label="$t('label.name')">
           <template #default="scope">
             <ElButton title="name" type="primary" link @click="showRow(scope.row.id)">
               {{ scope.row.name }}

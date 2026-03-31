@@ -11,12 +11,14 @@ import { modulesHandlers } from './modules'
 import { operationLogsHandlers } from './operation-logs'
 import { privilegesHandlers } from './privileges'
 import { regionsHandlers } from './regions'
+import { reportsHandlers } from './reports'
 import { rolesHandlers } from './roles'
 import { samplesHandlers } from './samples'
 import { schedulerLogsHandlers } from './scheduler-logs'
 import { schemesHandlers } from './schemes'
 import { scriptsHandlers } from './scripts'
 import { sectionsHandlers } from './sections'
+import { templatesHandlers } from './templates'
 import { usersHandlers } from './users'
 
 export const handlers = [
@@ -39,5 +41,7 @@ export const handlers = [
   ...schemesHandlers,
   ...scriptsHandlers,
   ...usersHandlers,
-  ...sectionsHandlers
+  ...sectionsHandlers,
+  ...reportsHandlers,
+  ...templatesHandlers
 ]

@@ -515,7 +515,7 @@ const rowSelected = (row: Privilege) => {
           <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
             <ElTableColumn type="selection" />
             <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-            <ElTableColumn prop="name" :label="$t('label.name')" sortable />
+            <ElTableColumn prop="name" :label="$t('label.name')" />
             <ElTableColumn prop="members" :label="$t('label.members')" />
             <ElTableColumn prop="roles" :label="$t('label.roles')" />
             <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
