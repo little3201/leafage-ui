@@ -49,6 +49,22 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
         path: 'faq',
         name: 'faq',
         component: () => import('pages/faq/IndexPage.vue')
+      },
+      {
+        path: 'legal',
+        name: 'legal',
+        component: () => import('pages/legal/IndexPage.vue'),
+        children: [
+          {
+            path: 'privacy',
+            name: 'privacy',
+            component: () => import('pages/legal/privacy/IndexPage.vue')
+          }, {
+            path: 'terms',
+            name: 'terms',
+            component: () => import('pages/legal/terms/IndexPage.vue')
+          }
+        ]
       }
     ]
   },

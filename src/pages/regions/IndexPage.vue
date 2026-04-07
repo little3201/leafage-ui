@@ -450,7 +450,7 @@ async function confirmEvent(id: number) {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/regions.xlsx`" :download="$t('page.regions') + '.xlsx'">
+      <a :href="`schemas/regions.xlsx`" :download="$t('page.regions') + '.xlsx'">
         {{ $t('page.regions') }}.xlsx
       </a>
     </p>

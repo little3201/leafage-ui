@@ -170,7 +170,7 @@ export default {
     docs: '文档管理',
     reports: '报告',
     sections: '章节',
-    templates: '模板',
+    schemas: '模板',
   },
 
   github: 'Github',

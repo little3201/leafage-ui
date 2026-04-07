@@ -8,7 +8,8 @@ for (let i = 1; i < 28; i++) {
   const row: Report = {
     id: i,
     title: 'This is title_' + i,
-    templateId: Math.floor(Math.random() * 10) + 1,
+    summary: 'This is summary_' + i,
+    schemaId: Math.floor(Math.random() * 10) + 1,
     version: Math.floor(Math.random() * 10) + 1,
     status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
     lastModifiedDate: new Date()

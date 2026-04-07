@@ -6,19 +6,20 @@ import type {
 } from 'element-plus'
 import { dayjs } from 'element-plus'
 import {
-  createTemplate, fetchTemplate, importTemplates, modifyTemplate, previewTemplate,
-  removeTemplate, retrieveTemplates,
-} from 'src/api/templates'
-import type { Filters, Pagination, Template } from 'src/types'
+  createSchema, fetchSchema, importSchemas, modifySchema, previewSchema,
+  removeSchema, retrieveSchemas,
+} from 'src/api/schemas'
+import type { Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import SchemaSection from './SchemaSection.vue'
 
 
 const { t } = useI18n()
 
 const loading = ref<boolean>(false)
-const datas = ref<Array<Template>>([])
+const datas = ref<Array<Schema>>([])
 const total = ref<number>(0)
 
 const tableRef = ref<TableInstance>()
@@ -37,16 +38,16 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Template>>({
+const filter = reactive<Filters<Schema>>({
   name: { op: 'eq', value: undefined }
 })
 
 const formRef = ref<FormInstance>()
-const initialValues: Template = {
+const initialValues: Schema = {
   id: null,
   name: ''
 }
-const form = ref<Template>({ ...initialValues })
+const form = ref<Schema>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
@@ -75,7 +76,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveTemplates(pagination, filter)
+    const res = await retrieveSchemas(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -97,7 +98,7 @@ async function reset() {
  */
 async function previewRow(id: number) {
   try {
-    const res = await previewTemplate(id)
+    const res = await previewSchema(id)
     form.value = res.data
   } catch (error) {
     return error
@@ -121,7 +122,7 @@ async function saveRow(id?: number) {
  * 配置
  * @param id 主键
  */
-function configRow(row: Template) {
+function configRow(row: Schema) {
   if (!row.id) {
     return
   }
@@ -135,7 +136,7 @@ function configRow(row: Template) {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchTemplate(id)
+    const res = await fetchSchema(id)
     form.value = res.data
   } catch (error) {
     return error
@@ -153,9 +154,9 @@ async function onSubmit(formEl: FormInstance) {
     saveLoading.value = true
     try {
       if (form.value.id) {
-        await modifyTemplate(form.value.id, form.value)
+        await modifySchema(form.value.id, form.value)
       } else {
-        await createTemplate(form.value)
+        await createSchema(form.value)
       }
       visible.value = false
       await load()
@@ -173,7 +174,7 @@ async function onSubmit(formEl: FormInstance) {
  */
 async function removeRow(id: number) {
   try {
-    await removeTemplate(id)
+    await removeSchema(id)
     await load()
   } catch (error) {
     return error
@@ -203,7 +204,7 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'templates')
+    exportToCSV(selectedRows, 'schemas')
   }
   exportLoading.value = false
 }
@@ -222,7 +223,7 @@ function onImportSubmit(importEl: UploadInstance) {
 }
 
 function onUpload(options: UploadRequestOptions) {
-  return importTemplates(options.file)
+  return importSchemas(options.file)
 }
 
 </script>
@@ -323,7 +324,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.templates')" align-center :show-close="false">
+  <ElDialog v-model="visible" :title="$t('page.schemas')" align-center :show-close="false">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -363,7 +364,7 @@ function onUpload(options: UploadRequestOptions) {
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center>
     <div style="text-align: center">
-
+      <SchemaSection />
     </div>
   </ElDialog>
 
@@ -377,8 +378,8 @@ function onUpload(options: UploadRequestOptions) {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/templates.xlsx`" :download="$t('page.templates') + '.xlsx'">
-        {{ $t('page.templates') }}.xlsx
+      <a :href="`schemas/schemas.xlsx`" :download="$t('page.schemas') + '.xlsx'">
+        {{ $t('page.schemas') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"

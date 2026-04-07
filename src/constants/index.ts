@@ -39,7 +39,7 @@ export const SERVER_URL = {
 
   // docs
   REPORT: SERVER_PREFIX.HYPERVISOR.concat('/reports'), // 报告
-  TEMPLATE: SERVER_PREFIX.HYPERVISOR.concat('/templates'), // 模板
+  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 模板
   SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections') // 章节
 }
 
@@ -160,4 +160,11 @@ export const reportStatus: { [key: string]: 'primary' | 'success' | 'info' } = {
   DRAFT: 'primary',
   PUBLISHED: 'success',
   ARCHIVED: 'info'
+}
+
+export const sectionType: { [key: string]: 'primary' | 'success' | 'info' | 'warning' } = {
+  HEADLING: 'primary',
+  PARAGRAPH: 'success',
+  TABLE: 'info',
+  IMAGE: 'warning'
 }

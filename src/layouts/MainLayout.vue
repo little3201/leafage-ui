@@ -25,7 +25,7 @@ function logout() {
 </script>
 
 <template>
-  <ElHeader class="fixed top-0 left-0 right-0 flex flex-nowrap bg-(--el-color-primary) z-10" height="50px">
+  <ElHeader class="fixed top-0 left-0 right-0 flex flex-nowrap bg-(--el-color-primary) z-10">
     <div class="inline-flex grow justify-between">
       <div class="inline-flex items-center">
         <ElImage :src="logo" alt="avatar" class="w-8 h-8" />
@@ -38,14 +38,14 @@ function logout() {
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
             <ElAvatar alt="avatar" :size="32" :src="`https://cdn.leafage.top/${user.username}`" />
-            <span class="ml-2 text-white">{{ user.username }}</span>
+            <span class="ml-2 text-white">{{ user.fullName }}</span>
           </div>
           <template #dropdown>
             <div class="flex items-center space-x-2 p-4">
               <ElAvatar alt="avatar" :size="32" :src="`https://cdn.leafage.top/${user.username}`" />
               <div class="inline-flex flex-col">
-                <span>{{ user.username }}</span>
-                <span class="text-xs text-(--el-text-color-secondary)">{{ user.fullName }}</span>
+                <span>{{ user.fullName }}</span>
+                <span class="text-xs text-(--el-text-color-secondary)">{{ user.username }}</span>
               </div>
             </div>
             <ElDropdownMenu>
@@ -72,7 +72,7 @@ function logout() {
     </div>
   </ElHeader>
 
-  <ElAside class="fixed top-12.5">
+  <ElAside class="fixed top-15">
     <ElScrollbar>
       <ElMenu router unique-opened :default-active="currentRoute.fullPath">
         <ElMenuItem :index="'/'">
@@ -91,11 +91,17 @@ function logout() {
     </ElScrollbar>
   </ElAside>
 
-  <ElMain class="bg-(--el-bg-color-page) min-h-[calc(100vh-100px)] ml-(--el-aside-width) mt-12.5">
+  <ElMain class="bg-(--el-bg-color-page) min-h-[calc(100vh-120px)] ml-(--el-aside-width) mt-15">
     <RouterView />
   </ElMain>
 
-  <ElFooter height="50px" class="bg-(--el-bg-color-page) ml-(--el-aside-width) text-center pt-4!">
-    <span class="text-sm">Copyright &copy; {{ new Date().getFullYear() }} Leafage. All Rights Reserved.</span>
+  <ElFooter class="bg-(--el-bg-color-page) ml-(--el-aside-width) text-center">
+    <div class="text-sm mb-2 space-x-4">
+      <a href="/legal/privacy" class="text-(--el-text-color-regular) no-underline hover:underline">隐私政策</a>
+      <a href="/legal/terms" class="text-(--el-text-color-regular) no-underline hover:underline">使用条款</a>
+      <a href="/legal" class="text-(--el-text-color-regular) no-underline hover:underline">法律信息</a>
+    </div>
+    <span class="text-sm text-(--el-text-color-regular)">Copyright &copy; 2018-{{ new Date().getFullYear() }}
+      Leafage. All Rights Reserved.</span>
   </ElFooter>
 </template>

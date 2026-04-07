@@ -16,10 +16,11 @@ import {
   retrieveReports
 } from 'src/api/reports'
 import { reportStatus } from 'src/constants'
-import type { Filters, Pagination, Report, Template } from 'src/types'
+import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ReportSection from './sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -37,10 +38,10 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const templateOptions = ref<Array<Template>>([
-  { id: 1, name: 'Template 1' },
-  { id: 2, name: 'Template 2' },
-  { id: 3, name: 'Template 3' }
+const templateOptions = ref<Array<Schema>>([
+  { id: 1, name: 'Schema 1' },
+  { id: 2, name: 'Schema 2' },
+  { id: 3, name: 'Schema 3' }
 ])
 
 const visible = ref<boolean>(false)
@@ -59,7 +60,7 @@ const filter = reactive<Filters<Report>>({
 const initialValues: Report = {
   id: null,
   title: '',
-  templateId: null,
+  schemaId: null,
   version: 1,
   status: 'DRAFT',
 }
@@ -249,7 +250,7 @@ async function confirmEvent(id: number) {
 }
 
 /**
-   * format templates
+   * format schemas
    * @param cellValue cell value
    */
 function formatTemplates(cellValue: number): string {
@@ -319,14 +320,15 @@ function formatTemplates(cellValue: number): string {
             </ElButton>
           </template>
         </ElTableColumn>
+        <ElTableColumn prop="summary" :label="$t('label.summary')" />
         <ElTableColumn prop="version" :label="$t('label.version')">
           <template #default="scope">
             V{{ scope.row.version }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="templateId" :label="$t('label.template')">
+        <ElTableColumn prop="schemaId" :label="$t('label.template')">
           <template #default="scope">
-            {{ scope.row.templateId ? formatTemplates(scope.row.templateId) : '-' }}
+            {{ scope.row.schemaId ? formatTemplates(scope.row.schemaId) : '-' }}
           </template>
         </ElTableColumn>
         <ElTableColumn prop="status" :label="$t('label.status')" sortable>
@@ -382,11 +384,19 @@ function formatTemplates(cellValue: number): string {
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.template')" prop="templateId">
-            <ElSelect v-model="form.templateId"
+          <ElFormItem :label="$t('label.template')" prop="schemaId">
+            <ElSelect v-model="form.schemaId"
               :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
               <ElOption v-for="(item, index) in templateOptions" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol>
+          <ElFormItem :label="$t('label.summary')" prop="summary">
+            <ElInput v-model="form.summary" type="textarea"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.summary') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -403,23 +413,21 @@ function formatTemplates(cellValue: number): string {
   </ElDialog>
 
   <!-- config -->
-  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center width="640">
-    <div style="text-align: center">
-
-    </div>
+  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center>
+    <ReportSection :report-id="form.id!" />
   </ElDialog>
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
     <ElScrollbar max-height="600px">
-      <div>xxxx</div>
+      <ReportSection :report-id="form.id!" :preview="true" />
     </ElScrollbar>
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/reports.xlsx`" :download="$t('page.reports') + '.xlsx'">
+      <a :href="`schemas/reports.xlsx`" :download="$t('page.reports') + '.xlsx'">
         {{ $t('page.reports') }}.xlsx
       </a>
     </p>

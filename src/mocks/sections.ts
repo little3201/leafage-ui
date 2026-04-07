@@ -10,7 +10,6 @@ for (let i = 1; i < 28; i++) {
     id: i,
     superiorId: superiorId || null,
     title: 'title_' + i,
-    type: null,
     body: 'This is body content about xxx',
     count: Math.floor(Math.random() * 2) || 0,
   }

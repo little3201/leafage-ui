@@ -359,7 +359,7 @@ function onUpload(options: UploadRequestOptions) {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
+      <a :href="`schemas/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx
       </a>
     </p>

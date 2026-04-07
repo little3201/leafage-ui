@@ -500,10 +500,10 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 24,
-        name: 'templates',
+        name: 'schemas',
         meta: {
-          path: 'templates',
-          component: 'docs/templates',
+          path: 'schemas',
+          component: 'docs/schemas',
           icon: 'assignment-add-outline',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
         },

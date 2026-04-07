@@ -337,15 +337,18 @@ export interface Schedule extends AudtiMetadata {
 
 export interface Report extends AudtiMetadata {
   title: string
-  templateId: number | null
+  schemaId: number | null
+  summary?: string
+  body?: string
   version: number
   status: string
   lastModifiedDate?: Date
 }
 
-export interface Template extends AudtiMetadata {
+export interface Schema extends AudtiMetadata {
   name: string
   description?: string
+  category?: string
   variables?: string
 }
 
@@ -353,7 +356,6 @@ export interface Template extends AudtiMetadata {
 export interface Section extends AudtiMetadata {
   superiorId: number | null
   title: string
-  type: string | null
   body: string
   isLeaf?: boolean
   count?: number

@@ -429,7 +429,7 @@ function onCheckChange(item: string) {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`templates/privileges.xlsx`" :download="$t('page.privileges') + '.xlsx'">
+      <a :href="`schemas/privileges.xlsx`" :download="$t('page.privileges') + '.xlsx'">
         {{ $t('page.privileges') }}.xlsx
       </a>
     </p>
