@@ -4,24 +4,19 @@ import type {
   FormInstance, FormRules, TableInstance, TreeData, TreeInstance,
   TreeNodeData
 } from 'element-plus'
-import {
-  createSection,
-  fetchSection,
-  modifySection,
-  removeSection,
-  retrieveSections,
-  retrieveSectionSubset
-} from 'src/api/sections'
-import type { Filters, Pagination, Section } from 'src/types'
+import { createSchemaSection, fetchSchemaSection, modifySchemaSection, removeSchemaSection, retrieveSchemaSections, retrieveSchemaSectionSubset } from 'src/api/schemas'
+import type { Filters, Pagination, SchemaSection } from 'src/types'
 import { hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()
-
+const props = defineProps<{
+  schemaId: number
+}>()
 const loading = ref<boolean>(false)
-const datas = ref<Array<Section>>([])
+const datas = ref<Array<SchemaSection>>([])
 const total = ref<number>(0)
 
 const tableRef = ref<TableInstance>()
@@ -38,19 +33,20 @@ const filterText = ref('')
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const filter = reactive<Filters<Section>>({
+const filter = reactive<Filters<SchemaSection>>({
   superiorId: { op: 'eq', value: null },
   title: { op: 'eq', value: undefined }
 })
 
 const formRef = ref<FormInstance>()
-const initialValues: Section = {
+const initialValues: SchemaSection = {
   id: null,
+  schemaId: props.schemaId,
   title: '',
   superiorId: null,
   body: ''
 }
-const form = ref<Section>({ ...initialValues })
+const form = ref<SchemaSection>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   title: [
@@ -66,10 +62,17 @@ onMounted(async () => {
  * 监听tree
  */
 watch(
-  () => filterText.value,
-  (val) => {
-    treeRef.value!.filter(val)
-  }
+  [() => filterText.value, () => props.schemaId],
+  async ([newFilterText, newSchemaId], [oldFilterText, oldSchemaId]) => {
+    if (newFilterText !== oldFilterText) {
+      treeRef.value!.filter(newFilterText)
+    }
+
+    if (newSchemaId !== oldSchemaId) {
+      await loadTree({ data: { id: null } as TreeNodeData }, () => { })
+    }
+  },
+  { immediate: false }
 )
 
 /**
@@ -101,8 +104,8 @@ async function loadTree({ data }: { data: TreeNodeData }, resolve: (data: TreeDa
   treeLoading.value = true
   try {
     const superiorId = data.id ? Number(data.id) : null
-    const res = await retrieveSectionSubset(superiorId)
-    const treeData = res.data.map((element: Section) => ({
+    const res = await retrieveSchemaSectionSubset(props.schemaId, superiorId)
+    const treeData = res.data.map((element: SchemaSection) => ({
       ...element,
       isLeaf: !(element.count && element.count > 0)
     }))
@@ -131,7 +134,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveSections(pagination, filter)
+    const res = await retrieveSchemaSections(props.schemaId, pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -143,10 +146,10 @@ async function load() {
  * 刷新子节点
  * @param rowKey row key
  */
-const refreshChildren = async (rowKey: number) => {
+async function refreshChildren(rowKey: number) {
   try {
-    const res = await retrieveSectionSubset(rowKey)
-    const treeData = res.data.map((element: Section) => ({
+    const res = await retrieveSchemaSectionSubset(props.schemaId, rowKey)
+    const treeData = res.data.map((element: SchemaSection) => ({
       ...element,
       isLeaf: !(element.count && element.count > 0)
     }))
@@ -175,7 +178,7 @@ async function saveRow(id?: number) {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchSection(id)
+    const res = await fetchSchemaSection(props.schemaId, id)
     form.value = res.data
   } catch (error) {
     return error
@@ -193,10 +196,10 @@ async function onSubmit(formEl: FormInstance) {
     saveLoading.value = true
     try {
       if (form.value.id) {
-        await modifySection(form.value.id, form.value)
+        await modifySchemaSection(props.schemaId, form.value)
       } else {
         form.value.superiorId = Number(treeSelected.value)
-        await createSection(form.value)
+        await createSchemaSection(props.schemaId, form.value)
       }
       visible.value = false
       await load()
@@ -218,7 +221,7 @@ async function onSubmit(formEl: FormInstance) {
  */
 async function removeRow(id: number) {
   try {
-    await removeSection(id)
+    await removeSchemaSection(props.schemaId, id)
     await load()
   } catch (error) {
     return error
@@ -235,7 +238,7 @@ async function confirmEvent(id: number) {
 </script>
 
 <template>
-  <ElRow :gutter="20">
+  <ElRow :gutter="16">
     <ElCol :span="8" :xl="6">
       <ElCard shadow="never">
         <ElFormItem prop="filterText">

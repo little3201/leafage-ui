@@ -7,14 +7,15 @@ const databases: Connection[] = [
 ]
 
 for (let i = 1; i < 8; i++) {
+  const type = ['MYSQL', 'POSTGRESQL'][Math.floor(Math.random() * 2)] || 'MYSQL'
   const row: Connection = {
     id: i,
-    database: 'db_name' + i,
+    database: 'DB_Name_' + i,
     host: '127.0.0.1',
-    port: 3306,
+    port: type === 'MYSQL' ? 3306 : 5432,
     username: 'admin',
-    params: '',
-    type: 'MYSQL'
+    params: type === 'MYSQL' ? 'useSSL=false&serverTimezone=UTC' : '',
+    type: type,
   }
   databases.push(row)
 }

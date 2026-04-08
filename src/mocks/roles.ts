@@ -7,7 +7,7 @@ const datas: Role[] = []
 for (let i = 1; i < 28; i++) {
   const data: Role = {
     id: i,
-    name: 'role_' + i,
+    name: 'Role_' + i,
     enabled: i % 3 > 0,
     description: 'this is description for this row'
   }
@@ -16,7 +16,7 @@ for (let i = 1; i < 28; i++) {
 
 const privileges: RolePrivileges[] = []
 
-for (let i = 1; i < 17; i++) {
+for (let i = 2; i < 17; i++) {
   const row: RolePrivileges = {
     id: i,
     privilegeId: i,

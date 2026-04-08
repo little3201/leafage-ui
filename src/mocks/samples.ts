@@ -7,7 +7,7 @@ const datas: Sample[] = []
 for (let i = 1; i < 16; i++) {
   const row: Sample = {
     id: i,
-    name: 'name_' + i,
+    name: 'Name_' + i,
     language: ['java', 'vue', 'ts'][Math.floor(Math.random() * 3)] || '',
     filePath: 'src/${packageName}/${module}',
     module: '',

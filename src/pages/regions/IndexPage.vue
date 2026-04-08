@@ -297,7 +297,7 @@ async function confirmEvent(id: number) {
 </script>
 
 <template>
-  <ElRow :gutter="20">
+  <ElRow :gutter="16">
     <ElCol :span="6" :xl="4">
       <ElCard shadow="never">
         <ElFormItem prop="filterText">

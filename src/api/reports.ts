@@ -15,6 +15,16 @@ export const retrieveReports = (pagination: Pagination, filter?: Filters<Report>
 }
 
 /**
+ * Retrieve rows
+ * @param pagination Pagination and sort parameters
+ * @param filter Optional filter or sort parameters
+ * @returns Rows data
+ */
+export const retrieveReportSectionTree = (id: number) => {
+  return api.get(`${SERVER_URL.REPORT}/${id}/sections`)
+}
+
+/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -24,12 +34,13 @@ export const fetchReport = (id: number) => {
 }
 
 /**
- * Preview a specific row
+ * Fetch a specific row
  * @param id Row ID
+ * @param sectionId Section ID
  * @returns Row data
  */
-export const previewReport = (id: number) => {
-  return api.get(`${SERVER_URL.REPORT}/${id}/preview`)
+export const fetchReportSection = (id: number, sectionId: number) => {
+  return api.get(`${SERVER_URL.REPORT}/${id}/sections/${sectionId}`)
 }
 
 /**

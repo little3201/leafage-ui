@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { GroupPrivileges, Privilege, PrivilegeTreeNode, RolePrivileges, UserPrivileges } from 'src/types'
+import { actionIcons, actionTypes, SERVER_URL } from 'src/constants'
+import type { GroupPrivileges, Privilege, PrivilegeAction, PrivilegeTreeNode, RolePrivileges, UserPrivileges } from 'src/types'
 
 const datas: Privilege[] = [
   {
@@ -36,7 +36,7 @@ const datas: Privilege[] = [
     icon: 'location-on-outline',
     actions: ['create', 'modify', 'remove', 'import', 'export'],
     count: 0,
-    enabled: false,
+    enabled: true,
     description: 'this is description for this row'
   },
   {
@@ -59,6 +59,18 @@ const datas: Privilege[] = [
     name: 'exploiters',
     redirect: 'schemes',
     icon: 'build-outline',
+    count: 1,
+    enabled: true,
+    description: 'this is description for this row'
+  },
+  {
+    id: 22,
+    superiorId: null,
+    name: 'docs',
+    path: 'docs',
+    component: '#',
+    redirect: '/docs/reports',
+    icon: 'drive-file-move-outline',
     count: 1,
     enabled: true,
     description: 'this is description for this row'
@@ -215,6 +227,7 @@ const subDatas: Privilege[] = [
     path: 'connections',
     name: 'connections',
     component: 'exploiters/connections',
+    actions: ['create', 'modify', 'remove', 'import', 'export'],
     count: 0,
     enabled: true,
     icon: 'database-search',
@@ -255,6 +268,39 @@ const subDatas: Privilege[] = [
     enabled: true,
     icon: 'code',
     description: 'this is description for this row'
+  },
+  {
+    id: 23,
+    superiorId: 22,
+    name: 'reports',
+    path: 'reports',
+    component: 'docs/reports',
+    icon: 'assignment-add-outline',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'config'],
+    count: 0,
+    enabled: true,
+  },
+  {
+    id: 24,
+    name: 'schemas',
+    superiorId: 22,
+    path: 'schemas',
+    component: 'docs/schemas',
+    icon: 'assignment-add-outline',
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'config'],
+    count: 0,
+    enabled: true,
+  },
+  {
+    id: 25,
+    name: 'sections',
+    superiorId: 22,
+    path: 'sections',
+    component: 'docs/sections',
+    icon: 'assignment-add-outline',
+    actions: ['create', 'modify', 'remove', 'import', 'export'],
+    count: 0,
+    enabled: true,
   }
 ]
 
@@ -524,6 +570,26 @@ const treeNodes: PrivilegeTreeNode[] = [
   }
 ]
 
+const privilegeActions: PrivilegeAction[] = [
+]
+
+
+export const actions: string[] = [
+  'create',
+  'modify',
+  'remove',
+  'clear',
+  'import',
+  'export',
+  'upload',
+  'download',
+  'unlock',
+  'relation',
+  'authorize',
+  'config',
+  'execute'
+]
+
 
 const roles: RolePrivileges[] = []
 
@@ -550,6 +616,21 @@ for (let i = 1; i < 28; i++) {
   groups.push(row)
 }
 
+for (let i = 1; i < 25; i++) {
+  const count = Math.floor(Math.random() * actions.length) + 1
+  for (let j = 1; j <= count; j++) {
+    const row: PrivilegeAction = {
+      id: j + 1,
+      privilegeId: i,
+      name: actions[j - 1],
+      type: actionTypes[actions[j - 1]] || null,
+      icon: actionIcons[actions[j - 1]] || '',
+      enabled: true
+    }
+    privilegeActions.push(row)
+  }
+}
+
 
 const users: UserPrivileges[] = []
 
@@ -566,6 +647,20 @@ for (let i = 1; i < 28; i++) {
 export const privilegesHandlers = [
   http.get(`/api${SERVER_URL.PRIVILEGE}/tree`, () => {
     return HttpResponse.json(treeNodes)
+  }),
+  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/actions`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json(privilegeActions.filter(item => item.privilegeId === Number(id)))
+    }
+    return HttpResponse.json()
+  }),
+  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/actions/:actionId`, ({ params }) => {
+    const { id, actionId } = params
+    if (id && actionId) {
+      return HttpResponse.json(privilegeActions.filter(item => item.privilegeId === Number(id) && item.id === Number(actionId))[0])
+    }
+    return HttpResponse.json()
   }),
   http.get(`/api${SERVER_URL.PRIVILEGE}/:id`, ({ params }) => {
     const { id } = params

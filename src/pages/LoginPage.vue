@@ -129,8 +129,8 @@ async function onSubmit() {
                 <ElRow>
                   <ElCol>
                     <ElFormItem>
-                      <ElButton title="signin" size="large" type="primary" :loading="loading" class="w-full"
-                        native-type="submit">
+                      <ElButton title="signin" auto-insert-space size="large" type="primary" :loading="loading"
+                        class="w-full" native-type="submit">
                         {{ $t('action.signin') }}
                       </ElButton>
                     </ElFormItem>

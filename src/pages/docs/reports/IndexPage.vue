@@ -11,7 +11,6 @@ import {
   fetchReport,
   importReports,
   modifyReport,
-  previewReport,
   removeReport,
   retrieveReports
 } from 'src/api/reports'
@@ -139,13 +138,8 @@ function exportRows() {
  * preview
  * @param id 主键
  */
-async function previewRow(id: number) {
-  try {
-    const res = await previewReport(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+function previewRow(id: number) {
+  form.value.id = id
   previewVisible.value = true
 }
 
@@ -165,12 +159,13 @@ async function saveRow(id?: number) {
  * 配置
  * @param id 主键
  */
-function configRow(row: Report) {
-  if (!row.id) {
+function configRow(id: number) {
+  if (!id) {
     return
   }
+
+  form.value.id = id
   configVisible.value = true
-  form.value.id = row.id
 }
 
 /**
@@ -320,7 +315,6 @@ function formatTemplates(cellValue: number): string {
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="summary" :label="$t('label.summary')" />
         <ElTableColumn prop="version" :label="$t('label.version')">
           <template #default="scope">
             V{{ scope.row.version }}
@@ -337,6 +331,7 @@ function formatTemplates(cellValue: number): string {
             <ElText :type="reportStatus[scope.row.status]">{{ scope.row.status }}</ElText>
           </template>
         </ElTableColumn>
+        <ElTableColumn prop="owner" :label="$t('label.owner')" />
         <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
           <template #default="scope">
             {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
@@ -349,7 +344,7 @@ function formatTemplates(cellValue: number): string {
               <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'config')" title="config" type="success" link
-              @click="configRow(scope.row)">
+              @click="configRow(scope.row.id!)">
               <Icon icon="material-symbols:plug-connect-outline-rounded" width="16" height="16" />{{ $t('action.config')
               }}
             </ElButton>
@@ -394,9 +389,9 @@ function formatTemplates(cellValue: number): string {
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.summary')" prop="summary">
-            <ElInput v-model="form.summary" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.summary') })" />
+          <ElFormItem :label="$t('label.owner')" prop="owner">
+            <ElInput v-model="form.owner" type="textarea"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.owner') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -419,9 +414,9 @@ function formatTemplates(cellValue: number): string {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ElScrollbar max-height="600px">
-      <ReportSection :report-id="form.id!" :preview="true" />
-    </ElScrollbar>
+    <!-- <ElScrollbar max-height="600px"> -->
+    <ReportSection :report-id="form.id!" :preview="true" />
+    <!-- </ElScrollbar> -->
   </ElDialog>
 
   <!-- import -->

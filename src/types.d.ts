@@ -110,6 +110,14 @@ export interface Privilege extends AudtiMetadata {
   hasChildren?: boolean
 }
 
+export interface PrivilegeAction extends AudtiMetadata {
+  privilegeId: number | null
+  name: string
+  icon: string
+  type: string | null
+  enabled: boolean
+}
+
 export interface Dictionary extends AudtiMetadata {
   name: string
   superiorId: number | null
@@ -189,7 +197,7 @@ export interface AccessLog extends AudtiMetadata {
 }
 
 export interface AuditLog extends AudtiMetadata {
-  resource: string
+  module: string
   action: string
   targetId?: number
   oldValue?: string
@@ -338,7 +346,7 @@ export interface Schedule extends AudtiMetadata {
 export interface Report extends AudtiMetadata {
   title: string
   schemaId: number | null
-  summary?: string
+  owner?: string
   body?: string
   version: number
   status: string
@@ -352,11 +360,18 @@ export interface Schema extends AudtiMetadata {
   variables?: string
 }
 
-
 export interface Section extends AudtiMetadata {
   superiorId: number | null
   title: string
   body: string
   isLeaf?: boolean
   count?: number
+}
+
+export interface ReportSection extends Section {
+  reportId: number | null
+}
+
+export interface SchemaSection extends Section {
+  schemaId: number | null
 }

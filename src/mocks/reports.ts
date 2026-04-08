@@ -1,27 +1,48 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Report } from 'src/types'
+import type { Report, ReportSection } from 'src/types'
 
 const datas: Report[] = []
 
 for (let i = 1; i < 28; i++) {
   const row: Report = {
     id: i,
-    title: 'This is title_' + i,
-    summary: 'This is summary_' + i,
+    title: 'Title_' + i,
+    owner: 'Owner_Name_' + i,
     schemaId: Math.floor(Math.random() * 10) + 1,
-    version: Math.floor(Math.random() * 10) + 1,
+    version: Math.floor(Math.random() * 3) + 1,
     status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
     lastModifiedDate: new Date()
   }
   datas.push(row)
 }
 
+const sections: ReportSection[] = []
+
+for (let i = 1; i < 28; i++) {
+  const row: ReportSection = {
+    id: i,
+    title: 'Section_' + i,
+    superiorId: Math.floor(Math.random() * 27) + 1,
+    body: 'This is body of section ' + i,
+    reportId: Math.floor(Math.random() * 27) + 1
+  }
+  sections.push(row)
+}
+
 export const reportsHandlers = [
-  http.get(`/api${SERVER_URL.REPORT}/:id/preview`, ({ params }) => {
+  http.get(`/api${SERVER_URL.REPORT}/:id/sections`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.find(item => item.id === Number(id)))
+      return HttpResponse.json(sections.filter(item => item.reportId === Number(id)))
+    } else {
+      return HttpResponse.json()
+    }
+  }),
+  http.get(`/api${SERVER_URL.REPORT}/:id/sections/:sectionId`, ({ params }) => {
+    const { id, sectionId } = params
+    if (id) {
+      return HttpResponse.json(sections.find(item => item.reportId === Number(id) && item.id === Number(sectionId)))
     } else {
       return HttpResponse.json()
     }

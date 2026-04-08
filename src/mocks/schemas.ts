@@ -1,13 +1,13 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Schema } from 'src/types'
+import type { Schema, SchemaSection } from 'src/types'
 
 const datas: Schema[] = []
 
 for (let i = 1; i < 28; i++) {
   const row: Schema = {
     id: i,
-    name: 'This is title_' + i,
+    name: 'Name_' + i,
     variables: '{style: "' + 'bold' + '"}',
     description: 'this is description about xxx',
     lastModifiedDate: new Date()
@@ -15,11 +15,71 @@ for (let i = 1; i < 28; i++) {
   datas.push(row)
 }
 
+const sections: SchemaSection[] = []
+
+for (let i = 1; i < 28; i++) {
+  const row: SchemaSection = {
+    id: i,
+    title: 'Section_' + i,
+    superiorId: Math.floor(Math.random() * 7) || null,
+    body: 'This is body of section ' + i,
+    schemaId: Math.floor(Math.random() * 7) + 1
+  }
+  sections.push(row)
+}
+
+
 export const schemasHandlers = [
-  http.get(`/api${SERVER_URL.SCHEMA}/:id/preview`, ({ params }) => {
+  http.get(`/api${SERVER_URL.SCHEMA}/:id/sections/subset`, ({ params, request }) => {
     const { id } = params
+    const searchParams = new URL(request.url).searchParams
+    const superiorId = searchParams.get('superiorId')
     if (id) {
-      return HttpResponse.json(datas.find(item => item.id === Number(id)))
+      const filtered = sections.filter(item => item.schemaId === Number(id))
+      if (superiorId) {
+        return HttpResponse.json(filtered.filter(item => item.superiorId === Number(superiorId)))
+      } else {
+        return HttpResponse.json(filtered.filter(item => item.superiorId === null))
+      }
+    } else {
+      return HttpResponse.json()
+    }
+  }),
+  http.get(`/api${SERVER_URL.SCHEMA}/:id/sections`, ({ params, request }) => {
+    const { id } = params
+    const searchParams = new URL(request.url).searchParams
+    const page = searchParams.get('page')
+    const size = searchParams.get('size')
+    const filters = searchParams.get('filters')
+
+    let filtered = sections.filter(item => item.schemaId === Number(id))
+    if (filters) {
+      const filterPairs = filters.split('&')
+      let superiorId: number | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'superiorId' && value) {
+          superiorId = Number(value)
+          if (operator == 'eq') {
+            filtered = sections.filter(item => { return item.superiorId === superiorId })
+          }
+        }
+      })
+    }
+
+    const data = {
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      page: {
+        totalElements: filtered.length
+      }
+    }
+
+    return HttpResponse.json(data)
+  }),
+  http.get(`/api${SERVER_URL.SCHEMA}/:id/sections/:sectionId`, ({ params }) => {
+    const { id, sectionId } = params
+    if (id) {
+      return HttpResponse.json(sections.find(item => item.schemaId === Number(id) && item.id === Number(sectionId)))
     } else {
       return HttpResponse.json()
     }

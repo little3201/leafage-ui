@@ -8,9 +8,9 @@ for (let i = 1; i < 28; i++) {
   const row: User = {
     id: i,
     username: 'username' + i,
-    fullName: '张三' + i,
+    fullName: 'Name_' + i,
     email: 'use***' + '@**t.com',
-    status: i % 2 > 0 ? 'ACTIVE' : 'INACTIVE',
+    status: ['ACTIVE', 'LOCKED', 'EXPIRED', 'CREDENTIALS_EXPIRED', 'DISABLED'][Math.floor(Math.random() * 5)] || 'unknown',
     enabled: i % 2 > 0
   }
   datas.push(row)

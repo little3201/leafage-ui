@@ -11,7 +11,7 @@ for (let i = 1; i < 29; i++) {
     language: ['java', 'vue', 'ts'][Math.floor(Math.random() * 3)] || '',
     imports: 'import { Example } from "example"',
     body: 'this is body for code',
-    version: 1,
+    version: i,
     enabled: true,
     lastModifiedDate: new Date()
   }

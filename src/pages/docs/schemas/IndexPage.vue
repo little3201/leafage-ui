@@ -6,14 +6,15 @@ import type {
 } from 'element-plus'
 import { dayjs } from 'element-plus'
 import {
-  createSchema, fetchSchema, importSchemas, modifySchema, previewSchema,
-  removeSchema, retrieveSchemas,
+  createSchema, fetchSchema, importSchemas, modifySchema,
+  removeSchema, retrieveSchemas
 } from 'src/api/schemas'
 import type { Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SchemaSection from './SchemaSection.vue'
+import SchemaSection from './sections/IndexPage.vue'
+import PreviewSection from './sections/PreviewPage.vue'
 
 
 const { t } = useI18n()
@@ -96,13 +97,8 @@ async function reset() {
  * preview
  * @param id 主键
  */
-async function previewRow(id: number) {
-  try {
-    const res = await previewSchema(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+function previewRow(id: number) {
+  form.value.id = id
   previewVisible.value = true
 }
 
@@ -363,16 +359,14 @@ function onUpload(options: UploadRequestOptions) {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center>
-    <div style="text-align: center">
-      <SchemaSection />
-    </div>
+    <SchemaSection :schema-id="form.id!" />
   </ElDialog>
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ElScrollbar max-height="600px">
-      <div>xxxx</div>
-    </ElScrollbar>
+    <!-- <ElScrollbar max-height="600px"> -->
+    <PreviewSection :schema-id="form.id!" />
+    <!-- </ElScrollbar> -->
   </ElDialog>
 
   <!-- import -->

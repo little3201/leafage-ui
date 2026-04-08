@@ -7,7 +7,7 @@ const datas: Module[] = []
 for (let i = 1; i < 20; i++) {
   const row: Module = {
     id: i,
-    name: 'name_' + i,
+    name: 'Name_' + i,
     description: 'this is description.',
     version: 1,
     enabled: true

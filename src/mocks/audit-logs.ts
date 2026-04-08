@@ -1,20 +1,22 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
+import { actionTypes, SERVER_URL } from 'src/constants'
 import type { AuditLog } from 'src/types'
 
 
 const datas: AuditLog[] = []
 
 for (let i = 1; i < 28; i++) {
+  const action = Object.keys(actionTypes)[Math.floor(Math.random() * Object.keys(actionTypes).length)]
   const row: AuditLog = {
     id: i,
-    action: 'modify',
-    resource: 'Settings',
-    oldValue: '{"theme:"light"}',
-    newValue: '{"theme:"dark"}',
+    action: action,
+    targetId: action !== 'create' ? i : undefined,
+    module: ['users', 'groups', 'roles', 'logs', 'files'][Math.floor(Math.random() * 5)] || 'unknown',
+    oldValue: ['create', 'modify', 'patch', 'relation', 'config'].includes(action) ? '{"theme:"light"}' : '',
+    newValue: ['create', 'modify', 'patch', 'relation', 'config'].includes(action) ? '{"theme:"dark"}' : '',
     ip: '192.168.0.4',
-    statusCode: 200,
-    duration: 12121
+    statusCode: [200, 201, 400, 404, 500, 502][Math.floor(Math.random() * 6)] || 200,
+    duration: Math.floor(Math.random() * 1000),
   }
   datas.push(row)
 }

@@ -6,7 +6,7 @@ const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].
   return {
     id: item,
     superiorId: null,
-    name: 'name_' + item,
+    name: 'Name_' + item,
     enabled: true,
     description: 'This is region description about xxx',
     count: 1
@@ -18,7 +18,7 @@ for (let i = 1; i < 28; i++) {
   const row: Dictionary = {
     id: i,
     superiorId: superiorId,
-    name: 'sub_name_' + i,
+    name: 'Sub_Name_' + i,
     enabled: true,
     description: 'This is region description about xxx'
   }
@@ -26,6 +26,15 @@ for (let i = 1; i < 28; i++) {
 }
 
 export const dictionariesHandlers = [
+  http.get(`/api${SERVER_URL.DICTIONARY}/subset`, ({ request }) => {
+    const searchParams = new URL(request.url).searchParams
+    const id = searchParams.get('id')
+    if (id) {
+      return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
+    } else {
+      return HttpResponse.json(datas.filter(item => item.superiorId === null))
+    }
+  }),
   http.get(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -35,10 +44,6 @@ export const dictionariesHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.DICTIONARY}/:id/subset`, ({ params }) => {
-    const { id } = params
-    return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
-  }),
   http.get(`/api${SERVER_URL.DICTIONARY}`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
@@ -46,9 +51,25 @@ export const dictionariesHandlers = [
 
     // Construct a JSON response with the list of all Row
     // as the response body.
-    const filtered = datas.filter(item => item.superiorId === null)
+    let filtered: Dictionary[] = []
+    const filter = searchParams.get('filters')
+    if (filter) {
+      const filterPairs = filter.split('&')
+      let superiorId: string | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'superiorId' && value) {
+          superiorId = value
+          if (operator == 'eq') {
+            filtered = datas.filter(item => item.superiorId === Number(superiorId))
+          }
+        }
+      })
+    } else {
+      filtered = datas
+    }
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
       page: {
         totalElements: filtered.length
       }

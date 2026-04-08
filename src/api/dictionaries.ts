@@ -19,8 +19,8 @@ export const retrieveDictionaries = (pagination: Pagination, filter?: Filters<Di
  * @param id Row ID
  * @returns Subset data
  */
-export const retrieveDictionarySubset = (id: number) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/${id}/subset`)
+export const retrieveDictionarySubset = (id: number | null) => {
+  return api.get(`${SERVER_URL.DICTIONARY}/subset`, { params: { id } })
 }
 
 /**

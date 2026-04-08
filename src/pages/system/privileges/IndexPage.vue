@@ -9,10 +9,11 @@ import {
   modifyPrivilege,
   retrievePrivileges, retrievePrivilegeSubset
 } from 'src/api/privileges'
-import { actions } from 'src/constants'
+import { actionTypes } from 'src/constants'
 import type { Dictionary, Filters, Pagination, Privilege } from 'src/types'
 import { exportToCSV, hasAction, visibleArray } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
+import ActionPage from './ActionPage.vue'
 
 
 const loading = ref<boolean>(false)
@@ -145,7 +146,7 @@ async function reset() {
  * @param id 主键
  */
 async function saveRow(id?: number) {
-  form.value = { ...initialValues }
+  form.value = { ...initialValues, id: id || null }
   try {
     if (id) {
       await loadOne(id)
@@ -242,21 +243,6 @@ function onImportSubmit(importEl: UploadInstance) {
 function onUpload(options: UploadRequestOptions) {
   return importPrivileges(options.file)
 }
-
-/**
- * handle check change
- * @param item checked item
- */
-function onCheckChange(item: string) {
-  if (form.value.actions) {
-    const index = form.value.actions.indexOf(item)
-    if (index === -1) {
-      form.value.actions.push(item)
-    } else {
-      form.value.actions.splice(index, 1)
-    }
-  }
-}
 </script>
 
 <template>
@@ -307,7 +293,7 @@ function onCheckChange(item: string) {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" lazy :load="load" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell">
+        <ElTableColumn prop="name" :label="$t('label.name')">
           <template #default="scope">
             <Icon :icon="`material-symbols:${scope.row.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
               height="1.25em" class="mr-2" />
@@ -318,7 +304,7 @@ function onCheckChange(item: string) {
         <ElTableColumn prop="redirect" :label="$t('label.redirect')" />
         <ElTableColumn prop="actions" :label="$t('label.actions')">
           <template #default="scope">
-            <ElTag v-for="(item, index) in visibleArray(scope.row.actions, 3)" :key="index" :type="actions[item]"
+            <ElTag v-for="(item, index) in visibleArray(scope.row.actions, 3)" :key="index" :type="actionTypes[item]"
               class="mr-2">
               {{ $t(`action.${item}`) }}
             </ElTag>
@@ -328,7 +314,7 @@ function onCheckChange(item: string) {
                   +{{ scope.row.actions.length - 3 }}
                 </ElTag>
               </template>
-              <ElTag v-for="(item, index) in scope.row.actions.slice(3)" :key="index" :type="actions[item]"
+              <ElTag v-for="(item, index) in scope.row.actions.slice(3)" :key="index" :type="actionTypes[item]"
                 class="mb-2 mr-2">
                 {{ $t(`action.${item}`) }}
               </ElTag>
@@ -363,7 +349,7 @@ function onCheckChange(item: string) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center :show-close="false" width="600">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="12">
@@ -378,32 +364,24 @@ function onCheckChange(item: string) {
         </ElCol>
         <ElCol :span="12">
           <ElFormItem :label="$t('label.path')" prop="path">
-            <ElInput v-model="form.path" :placeholder="$t('placeholder.inputText', { field: $t('path') })" disabled />
+            <ElInput v-model="form.path" :placeholder="$t('placeholder.inputText', { field: $t('label.path') })"
+              disabled />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol :span="12">
           <ElFormItem :label="$t('label.component')" prop="component">
-            <ElInput v-model="form.component" :placeholder="$t('placeholder.inputText', { field: $t('component') })"
-              disabled />
+            <ElInput v-model="form.component"
+              :placeholder="$t('placeholder.inputText', { field: $t('label.component') })" disabled />
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
           <ElFormItem :label="$t('label.redirect')" prop="redirect">
-            <ElSelect v-model="form.redirect" :placeholder="$t('placeholder.selectText', { field: $t('redirect') })">
+            <ElSelect v-model="form.redirect"
+              :placeholder="$t('placeholder.selectText', { field: $t('label.redirect') })">
               <ElOption v-for="item in subset" :key="item.id!" :label="$t(`page.${item.name}`)" :value="item.path" />
             </ElSelect>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20" v-if="!form.redirect">
-        <ElCol>
-          <ElFormItem :label="$t('label.actions')" prop="meta.actions">
-            <ElCheckTag v-for="item in buttonOptions" :key="item.id!" :checked="form.actions?.includes(item.name)"
-              :type="actions[item.name]" class="mr-2 mb-2" @change="onCheckChange(item.name)">
-              {{ $t(`action.${item.name}`) }}
-            </ElCheckTag>
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -414,7 +392,15 @@ function onCheckChange(item: string) {
           </ElFormItem>
         </ElCol>
       </ElRow>
+      <ElRow :gutter="20" v-if="!form.redirect">
+        <ElCol>
+          <ElFormItem :label="$t('label.actions')" prop="meta.actions">
+            <ActionPage v-if="!form.redirect" :privilege-id="form.id!" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
     </ElForm>
+
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}

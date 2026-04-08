@@ -9,7 +9,7 @@ for (let i = 1; i < 28; i++) {
   const row: Section = {
     id: i,
     superiorId: superiorId || null,
-    title: 'title_' + i,
+    title: 'Title_' + i,
     body: 'This is body content about xxx',
     count: Math.floor(Math.random() * 2) || 0,
   }

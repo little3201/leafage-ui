@@ -7,14 +7,15 @@ const datas: SchedulerLog[] = [
 ]
 
 for (let i = 1; i < 28; i++) {
+  const status = ['PENDING', 'RUNNING', 'SUCCESS', 'FAILED', 'CANCELED'][Math.floor(Math.random() * 5)] || 'unknown'
   const row: SchedulerLog = {
     id: i,
-    name: 'DailyBackup',
+    name: 'Name_' + i,
     startTime: new Date(),
-    duration: i % 3 > 0 ? undefined : Math.floor(Math.random() * 1000),
+    duration: ['PENDING', 'RUNNING', 'CANCELED'].includes(status) ? undefined : Math.floor(Math.random() * 1000),
     nextExecuteTime: new Date(),
-    status: ['PENDING', 'RUNNING', 'SUCCESS', 'FAILED', 'CANCELED'][Math.floor(Math.random() * 5)] || '',
-    record: i % 3 > 0 ? '' : '执行完成，无错误',
+    status: status,
+    record: ['SUCCESS'].includes(status) ? '执行完成，无错误' : (['FAILED'].includes(status) ? '执行失败，错误： xxxx' : ''),
   }
   datas.push(row)
 }

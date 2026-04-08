@@ -1,3 +1,4 @@
+
 // 服务匹配前缀
 const SERVER_PREFIX = {
   HYPERVISOR: '/hypervisor', // 系统
@@ -44,20 +45,22 @@ export const SERVER_URL = {
 }
 
 // 按钮对应tag类型
-export const actions: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
+export const actionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
   preview: 'success',
   retrieve: 'success',
   fetch: 'success',
   download: 'success',
 
-  create: 'warning',
+  create: 'primary',
+  modify: 'primary',
+
   import: 'warning',
   upload: 'warning',
   export: 'warning',
-  login: 'warning',
-  logout: 'warning',
+  signin: 'warning',
+  signout: 'warning',
 
-  modify: 'primary',
+  unlock: 'success',
 
   remove: 'danger',
   clear: 'danger',
@@ -65,6 +68,31 @@ export const actions: { [key: string]: 'primary' | 'success' | 'info' | 'warning
   relation: 'info',
   authorize: 'info',
   config: 'success',
+  execute: 'success'
+}
+
+export const buttonTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
+  Primary: 'primary',
+  Success: 'success',
+  Info: 'info',
+  Warning: 'warning',
+  Danger: 'danger'
+}
+
+export const actionIcons: Record<string, string> = {
+  create: 'add',
+  modify: 'edit-outline',
+  remove: 'delete-outline',
+  clear: 'clear-all',
+  import: 'database-upload-outline',
+  export: 'file-export-outline',
+  download: 'download',
+  unlock: 'lock-open',
+  relation: 'link',
+  upload: 'upload',
+  authorize: 'privacy-tip-outline',
+  config: 'plug-connect-outline',
+  execute: 'motion-play-outline'
 }
 
 // http method对应tag类型
@@ -123,8 +151,8 @@ export const schemeScope: { [key: string]: 'primary' | 'success' } = {
 }
 
 export const databaseType: { [key: string]: string } = {
-  POSTGRESQL: 'postgresql',
-  MYSQL: 'mysql'
+  POSTGRESQL: 'PostgreSQL',
+  MYSQL: 'MySQL'
 }
 
 export const sampleType: { [key: string]: 'primary' | 'success' } = {
@@ -141,8 +169,7 @@ export const languages: { [key: string]: string } = {
   TSX: 'tsx',
   JS: 'js',
   JSX: 'jsx',
-  VUE: 'vue',
-  REACT: 'react'
+  VUE: 'vue'
 }
 
 export const osTypes = [

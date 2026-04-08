@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
-  TreeData, TreeInstance,
-  TreeNodeData
+  TreeData, TreeInstance, TreeNodeData
 } from 'element-plus'
 import {
-  fetchReportSection,
-  retrieveReportSectionTree
-} from 'src/api/reports'
+  fetchSchemaSection,
+  retrieveSchemaSectionTree
+} from 'src/api/schemas'
 import type { Section } from 'src/types'
 import { onMounted, ref, watch } from 'vue'
 
 
 const props = defineProps<{
-  reportId: number
-  preview?: boolean
+  schemaId: number
 }>()
 const treeRef = ref<TreeInstance>()
 const treeData = ref<TreeData>([])
@@ -28,23 +26,23 @@ const initialValues: Section = {
   superiorId: null,
   body: ''
 }
-const form = ref<Section>({ ...initialValues })
+const row = ref<Section>({ ...initialValues })
 
 onMounted(async () => {
   await loadTree()
 })
 
 /**
- * 监听tree,reportId
+ * 监听tree
  */
 watch(
-  [() => filterText.value, () => props.reportId],
-  async ([newFilterText, newReportId], [oldFilterText, oldReportId]) => {
+  [() => filterText.value, () => props.schemaId],
+  async ([newFilterText, newSchemaId], [oldFilterText, oldSchemaId]) => {
     if (newFilterText !== oldFilterText) {
       treeRef.value!.filter(newFilterText)
     }
 
-    if (newReportId !== oldReportId) {
+    if (newSchemaId !== oldSchemaId) {
       await loadTree()
     }
   },
@@ -60,24 +58,12 @@ const filterNode = (value: string, data: { [key: string]: string }) => {
 }
 
 /**
- * node 变化
- * @param data node节点
- */
-async function onCurrentChange(data: TreeNodeData) {
-  if (treeSelected.value === String(data.id)) {
-    return
-  }
-  treeSelected.value = String(data.id)
-  await loadOne(data.id)
-}
-
-/**
  * 加载tree
  */
 async function loadTree() {
   treeLoading.value = true
   try {
-    const res = await retrieveReportSectionTree(props.reportId)
+    const res = await retrieveSchemaSectionTree(props.schemaId)
     treeData.value = res.data
   } catch (error) {
     return error
@@ -92,29 +78,25 @@ async function loadTree() {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchReportSection(props.reportId, id)
-    form.value = res.data
+    const res = await fetchSchemaSection(props.schemaId, id)
+    row.value = res.data
   } catch (error) {
     return error
   }
 }
 
+
 /**
- * 表单提交
+ * node 变化
+ * @param data node节点
  */
-// async function onSubmit(formEl: FormInstance) {
-//   if (!formEl) return
-//   const valid = await formEl.validate()
-//   if (valid) {
-//     try {
-//       if (form.value.id) {
-//         await modifySection(form.value.id, form.value)
-//       }
-//     } catch (error) {
-//       return error
-//     }
-//   }
-// }
+async function onCurrentChange(data: TreeNodeData) {
+  if (treeSelected.value === String(data.id)) {
+    return
+  }
+  treeSelected.value = String(data.id)
+  await loadOne(Number(treeSelected.value))
+}
 </script>
 
 <template>
@@ -137,13 +119,9 @@ async function loadOne(id: number) {
     </ElCol>
 
     <ElCol :span="16" :xl="18">
-      <ElCard v-if="props.preview" shadow="never">
-        {{ form.body }}
+      <ElCard shadow="never">
+        {{ row.body }}
       </ElCard>
-      <ElFormItem v-else prop="body">
-        <ElInput v-model="form.body" type="textarea" :rows="20"
-          :placeholder="$t('placeholder.inputText', { field: $t('label.body') })" />
-      </ElFormItem>
     </ElCol>
   </ElRow>
 </template>

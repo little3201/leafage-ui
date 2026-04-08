@@ -1,21 +1,24 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
+import { actionTypes, SERVER_URL } from 'src/constants'
 import type { OperationLog } from 'src/types'
 
 
 const datas: OperationLog[] = []
 
 for (let i = 1; i < 28; i++) {
+  const action = Object.keys(actionTypes)[Math.floor(Math.random() * Object.keys(actionTypes).length)]
   const row: OperationLog = {
     id: i,
-    module: 'users',
-    action: 'create',
-    params: 'page=1',
+    module: ['users', 'groups', 'roles', 'logs', 'files'][Math.floor(Math.random() * 5)] || 'unknown',
+    action: action,
+    params: ['retrieve'].includes(action) ? 'page=1' : (['preview', 'fetch', 'remove'].includes(action) ? 'id=1' : ''),
     ip: '192.168.0.1',
-    body: '{"username":"test"}',
-    sessionId: 'sjfa2323jkljsladf',
+    body: ['create', 'modify', 'config'].includes(action) ? '{"username":"test"}' : '',
+    sessionId: crypto.randomUUID(),
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    statusCode: 201
+    statusCode: [200, 201, 400, 404, 500, 502][Math.floor(Math.random() * 6)] || 200,
+    operator: 'admin',
+    operatedAt: new Date(),
   }
   datas.push(row)
 }

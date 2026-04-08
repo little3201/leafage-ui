@@ -6,7 +6,6 @@ export default {
     no: '序號',
     title: '標題',
     template: '模板',
-    action: '操作',
     actions: '操作',
     name: '名稱',
     id: '主鍵',
@@ -58,7 +57,6 @@ export default {
     duration: '耗時',
     response: '響應',
     record: '日誌',
-    resource: '資源',
     targetId: '對象主鍵',
     oldValue: '舊值',
     newValue: '新值',
@@ -101,6 +99,7 @@ export default {
     filePath: '文件路徑',
     imports: '引用',
     attachment: '附件',
+    owner: '所有者',
   },
 
   action: {
@@ -135,8 +134,8 @@ export default {
     view: '視圖',
     save: '保存',
     goHome: '返回首頁',
-    signin: '登 錄',
-    signup: '註 冊',
+    signin: '登錄',
+    signup: '註冊',
     signout: '退出登錄',
     back: '返回',
     continue: '繼續'

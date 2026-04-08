@@ -6,7 +6,6 @@ export default {
     no: 'NO.',
     title: 'Title',
     template: 'Schema',
-    action: 'Action',
     actions: 'Actions',
     name: 'Name',
     id: 'ID',
@@ -58,7 +57,6 @@ export default {
     duration: 'Duration',
     response: 'Response',
     record: 'Record',
-    resource: 'Resource',
     targetId: 'Target ID',
     oldValue: 'Old Value',
     newValue: 'New Value',
@@ -101,6 +99,7 @@ export default {
     filePath: 'File Path',
     imports: 'Imports',
     attachment: 'Attachment',
+    owner: 'Owner',
   },
 
   action: {

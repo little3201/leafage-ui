@@ -3,7 +3,7 @@ import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { dayjs } from 'element-plus'
 import { clearOperationLogs, fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/operation-logs'
-import { actions } from 'src/constants'
+import { actionTypes } from 'src/constants'
 import type { Filters, OperationLog, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -156,9 +156,11 @@ async function confirmEvent(id: number) {
           <ElInput v-model="filter.module!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.module') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('label.action')" prop="action">
-          <ElInput v-model="filter.action!.value"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.action') })" />
+        <ElFormItem :label="$t('label.actions')" prop="action">
+          <ElSelect v-model="filter.action!.value" class="min-w-48"
+            :placeholder="$t('placeholder.selectText', { field: $t('label.actions') })">
+            <ElOption v-for="(_, value) in actionTypes" :key="value" :label="$t(`action.${value}`)" :value="value" />
+          </ElSelect>
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">
@@ -199,20 +201,20 @@ async function confirmEvent(id: number) {
         <ElTableColumn prop="module" :label="$t('label.module')" sortable>
           <template #default="scope">
             <ElButton title="module" type="primary" link @click="showRow(scope.row.id)">
-              {{ $t(`page.${scope.row.module}`) }}
+              {{ scope.row.module }}
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="action" :label="$t('label.action')" sortable>
+        <ElTableColumn prop="action" :label="$t('label.actions')" sortable>
           <template #default="scope">
-            <ElBadge is-dot :type="actions[scope.row.action]" class="mr-1" />
-            <ElText :type="actions[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
+            <ElBadge is-dot :type="actionTypes[scope.row.action]" class="mr-1" />
+            <ElText :type="actionTypes[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
           </template>
         </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
         <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.request.body')" />
         <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
-        <ElTableColumn show-overflow-tooltip prop="sessionId" :label="$t('label.sessionId')" />
+        <ElTableColumn prop="sessionId" :label="$t('label.sessionId')" />
         <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
           <template #default="scope">
             <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
@@ -255,9 +257,9 @@ async function confirmEvent(id: number) {
   <ElDialog v-model="visible" :title="$t('action.details')" align-center width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.module')">{{ $t(`page.${row.module}`) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.action')">
-        <ElBadge is-dot :type="actions[row.action]" class="mr-1" />
-        <ElText :type="actions[row.action]">{{ $t(`action.${row.action}`) }}</ElText>
+      <ElDescriptionsItem :label="$t('label.actions')">
+        <ElBadge is-dot :type="actionTypes[row.action]" class="mr-1" />
+        <ElText :type="actionTypes[row.action]">{{ $t(`action.${row.action}`) }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.statusCode')">
         <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>

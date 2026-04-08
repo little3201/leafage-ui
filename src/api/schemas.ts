@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Pagination, Schema } from 'src/types'
+import type { Filters, Pagination, Schema, SchemaSection } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -15,6 +15,38 @@ export const retrieveSchemas = (pagination: Pagination, filter?: Filters<Schema>
 }
 
 /**
+ * Retrieve rows
+ * @param pagination Pagination and sort parameters
+ * @param filter Optional filter or sort parameters
+ * @returns Rows data
+ */
+export const retrieveSchemaSectionTree = (id: number) => {
+  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections`)
+}
+
+/**
+ * Retrieve rows
+ * @param id Schema ID
+ * @param superiorId Superior section ID
+ * @returns Rows data
+ */
+export const retrieveSchemaSectionSubset = (id: number, superiorId: number | null) => {
+  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections/subset`, { params: { superiorId } })
+}
+
+/**
+ * Retrieve rows
+ * @param id Schema ID
+ * @param pagination Pagination and sort parameters
+ * @param filter Optional filter or sort parameters
+ * @returns Rows data
+ */
+export const retrieveSchemaSections = (id: number, pagination: Pagination, filter?: Filters<Schema>) => {
+  const filters = dealFilters(filter)
+  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections`, { params: { ...pagination, page: pagination.page - 1, filters } })
+}
+
+/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -24,12 +56,13 @@ export const fetchSchema = (id: number) => {
 }
 
 /**
- * Preview a specific row
+ * Fetch a specific row
  * @param id Row ID
+ * @param sectionId Section ID
  * @returns Row data
  */
-export const previewSchema = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/preview`)
+export const fetchSchemaSection = (id: number, sectionId: number) => {
+  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections/${sectionId}`)
 }
 
 /**
@@ -42,6 +75,15 @@ export const createSchema = (row: Schema) => {
 }
 
 /**
+ * Create a new row
+ * @param row Row data
+ * @returns Created row
+ */
+export const createSchemaSection = (id: number, row: SchemaSection) => {
+  return api.post(`${SERVER_URL.SCHEMA}/${id}/sections`, row)
+}
+
+/**
  * Modify an existing row
  * @param id Row ID
  * @param row Updated row data
@@ -49,6 +91,16 @@ export const createSchema = (row: Schema) => {
  */
 export const modifySchema = (id: number, row: Schema) => {
   return api.put(`${SERVER_URL.SCHEMA}/${id}`, row)
+}
+
+/**
+ * Modify an existing row
+ * @param id Row ID
+ * @param row Updated row data
+ * @returns Modified row
+ */
+export const modifySchemaSection = (id: number, row: SchemaSection) => {
+  return api.put(`${SERVER_URL.SCHEMA}/${id}/sections/${row.id}`, row)
 }
 
 /**
@@ -67,6 +119,16 @@ export const enableSchema = (id: number) => {
  */
 export const removeSchema = (id: number) => {
   return api.delete(`${SERVER_URL.SCHEMA}/${id}`)
+}
+
+/**
+ * Remove a row
+ * @param id Row ID
+ * @param sectionId Section ID
+ * @returns Deletion status
+ */
+export const removeSchemaSection = (id: number, sectionId: number) => {
+  return api.delete(`${SERVER_URL.SCHEMA}/${id}/sections/${sectionId}`)
 }
 
 /**

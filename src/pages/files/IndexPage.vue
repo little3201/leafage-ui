@@ -175,7 +175,7 @@ async function handleBreadcrumbClick(index: number) {
 </script>
 
 <template>
-  <ElRow :gutter="20">
+  <ElRow :gutter="16">
     <ElCol :span="5" :xl="4">
       <ElCard shadow="never">
         <p class="mt-0"><strong>Space Usage</strong></p>

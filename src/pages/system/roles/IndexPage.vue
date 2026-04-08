@@ -20,7 +20,6 @@ import {
   retrieveRoles
 } from 'src/api/roles'
 import { retrieveUsers } from 'src/api/users'
-import { actions } from 'src/constants'
 import type { Filters, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
@@ -54,6 +53,7 @@ const authorities = ref<Array<{
   privilegeId: number,
   actions: string[]
 }>>([])
+const authoritiesMap = reactive<Record<number, string[]>>({})
 
 const importVisible = ref<boolean>(false)
 const importLoading = ref<boolean>(false)
@@ -156,6 +156,8 @@ async function authorizeRow(id: number) {
     authorities.value = res.data.map((row: RolePrivileges) => {
       const toogleRow = { id: row.privilegeId }
       authorizeTableRef.value?.toggleRowSelection(toogleRow, true)
+
+      authoritiesMap[row.privilegeId] = row.actions || []
       return { privilegeId: row.privilegeId, actions: row.actions }
     })
 
@@ -305,34 +307,42 @@ async function handleTransferChange(value: TransferKey[], direction: TransferDir
   }
 }
 
-async function handleActionCheck(privilegeId: number, item: string) {
+async function handleActionsCheck(privilegeId: number) {
   if (!form.value.id) return
+  const selectedActions = authoritiesMap[privilegeId]
+
   // 查找对应 privilegeId 的对象
   const keyIndex = authorities.value.findIndex(a => a.privilegeId === privilegeId)
 
   if (keyIndex >= 0) {
-    // 如果已存在该 key，更新 actions
+    // 如果已存在该 privilegeId 对应的数据
     const existingAction = authorities.value[keyIndex]
     if (existingAction) {
-      const itemIndex = existingAction.actions.indexOf(item)
+      for (const item of selectedActions) {
+        const itemIndex = existingAction.actions.indexOf(item)
+        if (itemIndex === -1) {
+          // 如果 actions 中没有该 item，则添加
+          existingAction.actions.push(item)
+          await addPrivilege(form.value.id, privilegeId, item)
+        }
+      }
 
-      if (itemIndex >= 0) {
-        // 如果 actions 中已有该 item，则移除
-        existingAction.actions.splice(itemIndex, 1)
-        await removePrivilege(form.value.id, privilegeId, item)
-
-      } else {
-        existingAction.actions.push(item)
-        await addPrivilege(form.value.id, privilegeId, item)
+      // 移除已取消选择的 actions
+      for (const existingItem of existingAction.actions) {
+        if (!selectedActions.includes(existingItem)) {
+          existingAction.actions.splice(existingAction.actions.indexOf(existingItem), 1)
+          await removePrivilege(form.value.id, privilegeId, existingItem)
+        }
       }
     }
   } else {
-    authorities.value.push({ privilegeId, actions: [item] })
-    await addPrivilege(form.value.id, privilegeId, item)
+    // 如果不存在该 privilegeId，新增数据
+    authorities.value.push({ privilegeId, actions: selectedActions })
+    await addPrivilege(form.value.id, privilegeId, selectedActions.join(','))
   }
 }
 
-const rowSelected = (row: Privilege) => {
+function rowSelected(row: Privilege) {
   if (!authorizeTableRef.value) return false
 
   const selectedRows = authorizeTableRef.value.getSelectionRows()
@@ -472,10 +482,10 @@ const rowSelected = (row: Privilege) => {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="57em">
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center>
     <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
       <ElTableColumn type="selection" />
-      <ElTableColumn prop="name" :label="$t('label.name')" class-name="name-cell">
+      <ElTableColumn prop="name" :label="$t('label.name')">
         <template #default="scope">
           <Icon :icon="`material-symbols:${scope.row.meta.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
             height="1.25em" class="mr-2" />
@@ -484,12 +494,11 @@ const rowSelected = (row: Privilege) => {
       </ElTableColumn>
       <ElTableColumn prop="actions" :label="$t('label.actions')">
         <template #default="scope">
-          <ElCheckTag v-for="(item, index) in scope.row.meta.actions" :key="index" :type="actions[item]"
-            :disabled="!rowSelected(scope.row)"
-            :checked="(authorities.find(a => a.privilegeId === scope.row.id)?.actions || []).includes(item)"
-            @change="handleActionCheck(scope.row.id, item)" class="mr-2">
-            {{ $t(`action.${item}`) }}
-          </ElCheckTag>
+          <ElCheckboxGroup v-model="authoritiesMap[scope.row.id]" :disabled="!rowSelected(scope.row)"
+            @change="handleActionsCheck(scope.row.id)">
+            <ElCheckbox v-for="(item, index) in scope.row.meta.actions" :key="index" :label="$t(`action.${item}`)"
+              :value="item" />
+          </ElCheckboxGroup>
         </template>
       </ElTableColumn>
     </ElTable>

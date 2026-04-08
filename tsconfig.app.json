@@ -5,7 +5,6 @@
   "compilerOptions": {
     "composite": true,
     "types": ["vitest/config"],
-    "baseUrl": ".",
     "paths": {
       "src": ["./src"],
       "src/*": ["./src/*"],

@@ -8,10 +8,10 @@ const datas: Scheme[] = [
 for (let i = 1; i < 16; i++) {
   const row: Scheme = {
     id: i,
-    module: 'name' + i,
-    connectionId: 1,
+    module: 'Name_' + i,
+    connectionId: Math.floor(Math.random() * 7) + 1,
     packageName: 'com.example',
-    scope: 'PARTIAL',
+    scope: ['ALL', 'PARTIAL'][Math.floor(Math.random() * 2)] || 'unknown',
     tables: ['messages', 'users', 'roles'],
     samples: i > 3 ? [1, 2, 3, 4, 5] : [],
     enabled: i > 2

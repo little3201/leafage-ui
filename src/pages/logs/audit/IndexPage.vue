@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/audit-logs'
-import { actions } from 'src/constants'
+import { actionTypes } from 'src/constants'
 import type { AuditLog, Filters, Pagination } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -19,7 +19,7 @@ const pagination = reactive<Pagination>({
 })
 
 const filter = reactive<Filters<AuditLog>>({
-  resource: { op: 'eq', value: undefined },
+  module: { op: 'eq', value: undefined },
   action: { op: 'eq', value: undefined }
 })
 
@@ -27,7 +27,7 @@ const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: null,
-  resource: '',
+  module: '',
   action: '',
   ip: ''
 }
@@ -85,7 +85,7 @@ async function loadOne(id: number) {
  * reset
  */
 async function reset() {
-  filter.resource!.value = undefined
+  filter.module!.value = undefined
   filter.action!.value = undefined
   await load()
 }
@@ -141,13 +141,15 @@ async function confirmEvent(id: number) {
   <ElSpace size="large" fill>
     <ElCard shadow="never">
       <ElForm inline :model="filter">
-        <ElFormItem :label="$t('label.resource')" prop="resource">
-          <ElInput v-model="filter.resource!.value"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.resource') })" />
+        <ElFormItem :label="$t('label.module')" prop="module">
+          <ElInput v-model="filter.module!.value"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.module') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('label.action')" prop="action">
-          <ElInput v-model="filter.action!.value"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.action') })" />
+        <ElFormItem :label="$t('label.actions')" prop="action">
+          <ElSelect v-model="filter.action!.value" class="min-w-48"
+            :placeholder="$t('placeholder.selectText', { field: $t('label.actions') })">
+            <ElOption v-for="(_, value) in actionTypes" :key="value" :label="$t(`action.${value}`)" :value="value" />
+          </ElSelect>
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">
@@ -181,17 +183,17 @@ async function confirmEvent(id: number) {
 
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="resource" :label="$t('label.resource')" sortable>
+        <ElTableColumn prop="module" :label="$t('label.module')" sortable>
           <template #default="scope">
-            <ElButton title="resource" type="primary" link @click="showRow(scope.row.id)">
-              {{ scope.row.resource }}
+            <ElButton title="module" type="primary" link @click="showRow(scope.row.id)">
+              {{ scope.row.module }}
             </ElButton>
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="action" :label="$t('label.action')" sortable>
+        <ElTableColumn prop="action" :label="$t('label.actions')" sortable>
           <template #default="scope">
-            <ElBadge is-dot :type="actions[scope.row.action]" class="mr-1" />
-            <ElText :type="actions[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
+            <ElBadge is-dot :type="actionTypes[scope.row.action]" class="mr-1" />
+            <ElText :type="actionTypes[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="targetId" :label="$t('label.targetId')" />
@@ -234,10 +236,10 @@ async function confirmEvent(id: number) {
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" align-center width="600">
     <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('label.resource')">{{ row.resource }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.action')">
-        <ElBadge is-dot :type="actions[row.action]" class="mr-1" />
-        <ElText :type="actions[row.action]">{{ $t(`action.${row.action}`) }}</ElText>
+      <ElDescriptionsItem :label="$t('label.module')">{{ row.module }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.actions')">
+        <ElBadge is-dot :type="actionTypes[row.action]" class="mr-1" />
+        <ElText :type="actionTypes[row.action]">{{ $t(`action.${row.action}`) }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.statusCode')">
         <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>

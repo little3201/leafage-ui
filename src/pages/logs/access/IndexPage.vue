@@ -19,8 +19,7 @@ const pagination = reactive<Pagination>({
 })
 
 const filter = reactive<Filters<AccessLog>>({
-  url: { op: 'eq', value: undefined },
-  statusCode: { op: 'eq', value: undefined }
+  url: { op: 'eq', value: undefined }
 })
 
 const detailLoading = ref<boolean>(false)
@@ -87,7 +86,6 @@ async function loadOne(id: number) {
  */
 async function reset() {
   filter.url!.value = undefined
-  filter.statusCode!.value = undefined
   await load()
 }
 
@@ -156,10 +154,6 @@ async function confirmEvent(id: number) {
       <ElForm inline :model="filter">
         <ElFormItem :label="$t('label.url')" prop="url">
           <ElInput v-model="filter.url!.value" :placeholder="$t('placeholder.inputText', { field: $t('label.url') })" />
-        </ElFormItem>
-        <ElFormItem :label="$t('label.statusCode')" prop="statusCode">
-          <ElInput v-model="filter.statusCode!.value"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.statusCode') })" />
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">

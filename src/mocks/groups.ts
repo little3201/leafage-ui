@@ -9,7 +9,7 @@ for (let i = 1; i < 28; i++) {
   const row: Group = {
     id: i,
     superiorId: superiorId,
-    name: 'group_' + i,
+    name: 'Group_' + i,
     enabled: true,
     description: 'This is region description about xxx'
   }
@@ -41,7 +41,7 @@ for (let i = 1; i < 14; i++) {
 
 const privileges: GroupPrivileges[] = []
 
-for (let i = 1; i < 17; i++) {
+for (let i = 2; i < 17; i++) {
   const row: GroupPrivileges = {
     id: i,
     groupId: i,

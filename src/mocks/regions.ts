@@ -3,18 +3,17 @@ import { SERVER_URL } from 'src/constants'
 import type { Region } from 'src/types'
 
 const datas: Region[] = []
-const subDatas: Region[] = []
 
 for (let i = 1; i < 99; i++) {
   const superiorId = Math.floor(Math.random() * 34) || null
   const data: Region = {
     id: i,
     superiorId: i > 33 ? superiorId : null,
-    name: 'region_' + i,
+    name: 'Region_' + i,
     areaCode: Math.floor(Math.random() * 100),
     postalCode: Math.floor(Math.random() * 3000),
     enabled: i % 3 > 0,
-    count: 1,
+    count: i > 33 ? 0 : Math.floor(Math.random() * 5) + 1,
     description: 'This is region description about xxx'
   }
   datas.push(data)
@@ -24,16 +23,16 @@ export const regionsHandlers = [
   http.get(`/api${SERVER_URL.REGION}/subset`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const id = searchParams.get('id')
-    return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
+    if (id) {
+      return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
+    } else {
+      return HttpResponse.json(datas.filter(item => item.superiorId === null))
+    }
   }),
   http.get(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      let res = datas.find(item => item.id === Number(id))
-      if (!res) {
-        res = subDatas.find(item => item.id === Number(id))
-      }
-      return HttpResponse.json(res)
+      return HttpResponse.json(datas.find(item => item.id === Number(id)))
     } else {
       return HttpResponse.json()
     }

@@ -6,7 +6,6 @@ export default {
     no: '序号',
     title: '标题',
     template: '模板',
-    action: '操作',
     actions: '操作',
     name: '名称',
     id: '主键',
@@ -58,7 +57,6 @@ export default {
     duration: '耗时',
     record: '日志',
     response: '响应',
-    resource: '资源',
     targetId: '对象主键',
     oldValue: '旧值',
     newValue: '新值',
@@ -101,6 +99,7 @@ export default {
     filePath: '文件路径',
     imports: '引用',
     attachment: '附件',
+    owner: '所有者',
   },
 
   action: {
@@ -135,8 +134,8 @@ export default {
     view: '视图',
     save: '保存',
     goHome: '返回首页',
-    signin: '登 录',
-    signup: '注 册',
+    signin: '登录',
+    signup: '注册',
     signout: '退出登录',
     back: '返回',
     continue: '继续'
