@@ -206,7 +206,7 @@ async function confirmEvent(id: number) {
           <template #default="scope">
             <ElTag :type="shceduleStatus[scope.row.status]" round>
               <Icon :icon="`material-symbols:${shceduleStatusIcon[scope.row.status]}`"
-                :class="[scope.row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="16" height="16" />
+                :class="[scope.row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="1.25em" height="1.25em" />
               {{ scope.row.status }}
             </ElTag>
           </template>
@@ -227,7 +227,8 @@ async function confirmEvent(id: number) {
               :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
+                  <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
+                    $t('action.remove')
                   }}
                 </ElButton>
               </template>
@@ -253,7 +254,7 @@ async function confirmEvent(id: number) {
       <ElDescriptionsItem :label="$t('label.status')">
         <ElTag :type="shceduleStatus[row.status || '']" round>
           <Icon :icon="`material-symbols:${shceduleStatusIcon[row.status || '']}`"
-            :class="[row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="16" height="16" />
+            :class="[row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="1.25em" height="1.25em" />
           {{ row.status }}
         </ElTag>
       </ElDescriptionsItem>

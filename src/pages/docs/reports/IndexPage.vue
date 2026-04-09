@@ -14,6 +14,7 @@ import {
   removeReport,
   retrieveReports
 } from 'src/api/reports'
+import { retrieveSchemas } from 'src/api/schemas'
 import { reportStatus } from 'src/constants'
 import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
@@ -37,11 +38,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const templateOptions = ref<Array<Schema>>([
-  { id: 1, name: 'Schema 1' },
-  { id: 2, name: 'Schema 2' },
-  { id: 3, name: 'Schema 3' }
-])
+const schemas = ref<Array<Schema>>([])
 
 const visible = ref<boolean>(false)
 const configVisible = ref<boolean>(false)
@@ -76,6 +73,8 @@ const rules = reactive<FormRules<typeof form>>({
 
 onMounted(async () => {
   await load()
+
+  await loadSchemas()
 })
 
 /**
@@ -98,6 +97,21 @@ async function load() {
     const res = await retrieveReports(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
+  } catch (error) {
+    return error
+  } finally {
+    loading.value = false
+  }
+}
+
+/**
+ * 加载列表
+ */
+async function loadSchemas() {
+  loading.value = true
+  try {
+    const res = await retrieveSchemas({ page: 1, size: 99 })
+    schemas.value = res.data.content
   } catch (error) {
     return error
   } finally {
@@ -249,7 +263,7 @@ async function confirmEvent(id: number) {
    * @param cellValue cell value
    */
 function formatTemplates(cellValue: number): string {
-  const matched = templateOptions.value.find(item => item.id === cellValue)
+  const matched = schemas.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
 </script>
@@ -341,17 +355,19 @@ function formatTemplates(cellValue: number): string {
           <template #default="scope">
             <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'modify')" title="modify"
               type="primary" link @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
-            </ElButton>
-            <ElButton v-if="hasAction($route.name, 'config')" title="config" type="success" link
-              @click="configRow(scope.row.id!)">
-              <Icon icon="material-symbols:plug-connect-outline-rounded" width="16" height="16" />{{ $t('action.config')
+              <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{ $t('action.modify')
               }}
+            </ElButton>
+            <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'config')" title="config"
+              type="success" link @click="configRow(scope.row.id!)">
+              <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />
+              {{ $t('action.config') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
+                  <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
+                    $t('action.remove')
                   }}
                 </ElButton>
               </template>
@@ -382,7 +398,7 @@ function formatTemplates(cellValue: number): string {
           <ElFormItem :label="$t('label.template')" prop="schemaId">
             <ElSelect v-model="form.schemaId"
               :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
-              <ElOption v-for="(item, index) in templateOptions" :key="index" :label="item.name" :value="item.id!" />
+              <ElOption v-for="(item, index) in schemas" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
           </ElFormItem>
         </ElCol>

@@ -237,7 +237,8 @@ async function confirmEvent(id: number) {
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
+                  <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
+                    $t('action.remove')
                   }}
                 </ElButton>
               </template>

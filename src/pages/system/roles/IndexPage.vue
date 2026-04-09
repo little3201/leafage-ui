@@ -412,21 +412,23 @@ function rowSelected(row: Privilege) {
           <template #default="scope">
             <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
+              <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{ $t('action.modify')
+              }}
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'relation')" title=" relation" type="success" link
               @click="relationRow(scope.row.id)">
-              <Icon icon="material-symbols:link-rounded" width="16" height="16" />{{ $t('action.relation') }}
+              <Icon icon="material-symbols:link-rounded" width="1.25em" height="1.25em" />{{ $t('action.relation') }}
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" type="success" link
               @click="authorizeRow(scope.row.id)">
-              <Icon icon="material-symbols:privacy-tip-outline-rounded" width="16" height="16" />{{
+              <Icon icon="material-symbols:privacy-tip-outline-rounded" width="1.25em" height="1.25em" />{{
                 $t('action.authorize') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{ $t('action.remove')
+                  <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
+                    $t('action.remove')
                   }}
                 </ElButton>
               </template>

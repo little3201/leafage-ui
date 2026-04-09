@@ -30,7 +30,8 @@ const initialValues: FileRecord = {
   superiorId: null,
   name: '',
   size: 0,
-  path: ''
+  path: '',
+  directory: false,
 }
 const row = ref<FileRecord>({ ...initialValues })
 const visible = ref<boolean>(false)
@@ -148,13 +149,15 @@ function confirmEvent(id: number) {
 }
 
 async function onRowClick(row: FileRecord) {
-  if (row?.directory) {
+  if (row.directory) {
     currentRow.value = row
     if (row) {
       expandRows.value.push(row)
     }
+    // 设置 filter的superiorId为当前row的id
+    filter.superiorId!.value = row?.id
     await load()
-  } else if (row?.regularFile) {
+  } else {
     await showRow(row.id)
   }
 }
@@ -297,7 +300,7 @@ async function handleBreadcrumbClick(index: number) {
                   <ElButton title="name" type="primary" link @click="onRowClick(scope.row)">
                     <Icon v-if="scope.row.directory" icon="material-symbols:folder-open-outline-rounded" width="2em"
                       height="2em" />
-                    <template v-else-if="scope.row.regularFile && scope.row.contentType">
+                    <template v-else-if="scope.row.contentType">
                       <Icon v-if="scope.row.contentType.includes('image')" icon="material-symbols:image-outline-rounded"
                         width="2em" height="2em" />
                       <Icon v-else icon="material-symbols:docs-outline-rounded" width="2em" height="2em" />
@@ -319,14 +322,14 @@ async function handleBreadcrumbClick(index: number) {
               </ElTableColumn>
               <ElTableColumn :label="$t('label.actions')">
                 <template #default="scope">
-                  <ElButton v-if="scope.row.regularFile && hasAction($route.name, 'download')" title="download"
-                    type="success" link @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
-                    <Icon icon="material-symbols:download" width="16" height="16" />{{ $t('action.download') }}
+                  <ElButton v-if="hasAction($route.name, 'download')" title="download" type="success" link
+                    @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
+                    <Icon icon="material-symbols:download" width="1.25em" height="1.25em" />{{ $t('action.download') }}
                   </ElButton>
                   <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
                     <template #reference>
                       <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
-                        <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{
+                        <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
                           $t('action.remove')
                         }}
                       </ElButton>
@@ -343,7 +346,7 @@ async function handleBreadcrumbClick(index: number) {
             <div v-for="(data, index) in datas" :key="index" class="text-center cursor-pointer"
               @click="onRowClick(data)">
               <Icon v-if="data.directory" icon="material-symbols:folder-open-outline-rounded" width="64" height="64" />
-              <template v-else-if="data.regularFile && data.contentType">
+              <template v-else-if="data.contentType">
                 <Icon v-if="data.contentType.includes('image')" icon="material-symbols:image-outline-rounded" width="64"
                   height="64" />
                 <Icon v-else icon="material-symbols:docs-outline-rounded" width="64" height="64" />

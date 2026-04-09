@@ -114,7 +114,7 @@ const state = reactive({
             <Icon icon="simple-icons:gitee" width="24" height="24" class="mr-2" />
             <label for="candidates" class="font-medium text-gray-900">{{ $t('gitee') }}
             </label>
-            <Icon icon="material-symbols:link-rounded" width="16" height="16" class="mx-3" />
+            <Icon icon="material-symbols:link-rounded" width="1.25em" height="1.25em" class="mx-3" />
             <ElLink type="primary" href="https://www.gitee.com/" target="_blank">example@example.com</ElLink>
           </div>
 
@@ -127,7 +127,7 @@ const state = reactive({
           <div class="inline-flex items-center">
             <Icon icon="simple-icons:youtube" width="24" height="24" class="mr-2" />
             <label for="candidates" class="font-medium text-gray-900">{{ $t('youtube') }}</label>
-            <Icon icon="material-symbols:link-rounded" width="16" height="16" class="mx-3" />
+            <Icon icon="material-symbols:link-rounded" width="1.25em" height="1.25em" class="mx-3" />
             <ElLink type="primary" href="https://www.youtube.com/" target="_blank">example@example.com</ElLink>
           </div>
           <p class="mt-0 text-xs text-(--el-text-color-secondary)">Last used within the last 2 years.
@@ -141,7 +141,7 @@ const state = reactive({
             <Icon icon="simple-icons:x" width="24" height="24" class="mr-2" />
             <label for="candidates" class="font-medium text-gray-900">{{ $t('x') }}
             </label>
-            <Icon icon="material-symbols:link-rounded" width="16" height="16" class="mx-3" />
+            <Icon icon="material-symbols:link-rounded" width="1.25em" height="1.25em" class="mx-3" />
             <ElLink type="primary" href="https://www.x.com/" target="_blank">example@example.com</ElLink>
           </div>
           <p class="mt-0 text-xs text-(--el-text-color-secondary)">Last used within the last 2 years.
@@ -154,7 +154,7 @@ const state = reactive({
           <div class="inline-flex items-center">
             <Icon icon="simple-icons:xiaohongshu" width="24" height="24" class="mr-2" />
             <label for="candidates" class="font-medium text-gray-900">{{ $t('rednote') }}</label>
-            <Icon icon="material-symbols:link-rounded" width="16" height="16" class="mx-3" />
+            <Icon icon="material-symbols:link-rounded" width="1.25em" height="1.25em" class="mx-3" />
             <ElLink type="primary" href="https://www.xiaohongshu.com/" target="_blank">example@example.com</ElLink>
           </div>
           <p class="mt-0 text-xs text-(--el-text-color-secondary)">Last used within the last 2 years.

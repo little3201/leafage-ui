@@ -5,8 +5,8 @@ import type { FileRecord } from 'src/types'
 const datas: FileRecord[] = [
 ]
 
-for (let i = 1; i < 28; i++) {
-  const randomIndex = Math.floor(Math.random() * 6)
+for (let i = 1; i < 18; i++) {
+  const randomIndex = Math.floor(Math.random() * 10)
   const data: FileRecord = {
     id: i,
     superiorId: randomIndex || null,
@@ -15,8 +15,6 @@ for (let i = 1; i < 28; i++) {
     size: Math.floor(Math.random() * 100000),
     path: '/path/to/test' + i,
     directory: randomIndex === 0 ? true : false,
-    regularFile: true,
-    symbolicLink: false,
     lastModifiedDate: new Date()
   }
   datas.push(data)

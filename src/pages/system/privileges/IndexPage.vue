@@ -332,7 +332,8 @@ function onUpload(options: UploadRequestOptions) {
           <template #default="scope">
             <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
+              <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{ $t('action.modify')
+              }}
             </ElButton>
             <ElButton v-if="scope.row.count > 0" title="refresh" link @click="refreshChildren(scope.row.id)">
               <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />{{ $t('action.refresh') }}

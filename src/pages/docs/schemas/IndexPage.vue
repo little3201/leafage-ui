@@ -9,6 +9,7 @@ import {
   createSchema, fetchSchema, importSchemas, modifySchema,
   removeSchema, retrieveSchemas
 } from 'src/api/schemas'
+import { reportStatus } from 'src/constants'
 import type { Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -46,7 +47,9 @@ const filter = reactive<Filters<Schema>>({
 const formRef = ref<FormInstance>()
 const initialValues: Schema = {
   id: null,
-  name: ''
+  name: '',
+  version: 1,
+  status: 'DRAFT'
 }
 const form = ref<Schema>({ ...initialValues })
 
@@ -281,6 +284,17 @@ function onUpload(options: UploadRequestOptions) {
             </ElButton>
           </template>
         </ElTableColumn>
+        <ElTableColumn prop="version" :label="$t('label.version')">
+          <template #default="scope">
+            V{{ scope.row.version }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="status" :label="$t('label.status')" sortable>
+          <template #default="scope">
+            <ElBadge is-dot :type="reportStatus[scope.row.status]" class="mr-1" />
+            <ElText :type="reportStatus[scope.row.status]">{{ scope.row.status }}</ElText>
+          </template>
+        </ElTableColumn>
         <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
         <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
           <template #default="scope">
@@ -291,18 +305,20 @@ function onUpload(options: UploadRequestOptions) {
           <template #default="scope">
             <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
               @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="16" height="16" />{{ $t('action.modify') }}
+              <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{ $t('action.modify')
+              }}
             </ElButton>
-            <ElButton v-if="hasAction($route.name, 'config')" title="config" type="success" link
-              @click="configRow(scope.row)">
-              <Icon icon="material-symbols:plug-connect-outline-rounded" width="16" height="16" />{{ $t('action.config')
+            <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'config')" title="config"
+              type="success" link @click="configRow(scope.row)">
+              <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />{{
+                $t('action.config')
               }}
             </ElButton>
             <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
               @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="16" height="16" />{{
+                  <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
                     $t('action.remove')
                   }}
                 </ElButton>
@@ -320,7 +336,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.schemas')" align-center :show-close="false">
+  <ElDialog v-model="visible" :title="$t('page.schemas')" align-center :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -334,14 +350,6 @@ function onUpload(options: UploadRequestOptions) {
           <ElFormItem :label="$t('label.description')" prop="description">
             <ElInput v-model="form.description" type="textarea" :rows="6"
               :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('label.variables')" prop="variables">
-            <ElInput v-model="form.variables" type="textarea" :rows="6"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.variables') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>

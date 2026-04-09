@@ -223,9 +223,7 @@ export interface FileRecord extends AudtiMetadata {
   path: string
   contentType?: string
   size: number
-  directory?: boolean
-  regularFile?: boolean
-  symbolicLink?: boolean
+  directory: boolean
   lastModifiedDate?: Date
 }
 
@@ -358,6 +356,8 @@ export interface Schema extends AudtiMetadata {
   description?: string
   category?: string
   variables?: string
+  version: number
+  status: string
 }
 
 export interface Section extends AudtiMetadata {
