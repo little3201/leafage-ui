@@ -3,7 +3,7 @@ import { Icon } from '@iconify/vue'
 import type { UploadInstance, UploadRequestOptions } from 'element-plus'
 import { dayjs } from 'element-plus'
 import { downloadFile, fetchFile, retrieveFiles, uploadFile } from 'src/api/file-records'
-import { actionIcons } from 'src/constants'
+import { actionIcons, actionTypes } from 'src/constants'
 import type { FileRecord, Filters, Pagination } from 'src/types'
 import { download, formatFileSize, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -248,7 +248,7 @@ async function handleBreadcrumbClick(index: number) {
                 :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
             </ElFormItem>
             <ElFormItem>
-              <ElButton title="search" type="primary" @click="load()">
+              <ElButton title="search" :type="actionTypes['search']" @click="load()">
                 <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.search') }}
               </ElButton>
@@ -331,7 +331,8 @@ async function handleBreadcrumbClick(index: number) {
                   </ElButton>
                   <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
                     <template #reference>
-                      <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
+                      <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']"
+                        link>
                         <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em"
                           height="1.25em" />{{
                             $t('action.remove')

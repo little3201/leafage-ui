@@ -74,6 +74,8 @@ export const actionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'war
   config: 'success',
   execute: 'warning',
   enable: 'success',
+  search: 'primary',
+  sync: 'info'
 }
 
 export const actionIcons: Record<string, string> = {

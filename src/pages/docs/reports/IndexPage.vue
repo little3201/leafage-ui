@@ -15,7 +15,7 @@ import {
   retrieveReports
 } from 'src/api/reports'
 import { retrieveSchemas } from 'src/api/schemas'
-import { actionIcons } from 'src/constants'
+import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -286,16 +286,18 @@ function formatTemplates(cellValue: number): string {
     <ElCard shadow="never">
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
-          <ElButton v-if="hasAction($route.name, 'create')" title="create" type="primary" @click="saveRow()">
+          <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
+            @click="saveRow()">
             <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.create') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
+          <ElButton v-if="hasAction($route.name, 'import')" title="import" :type="actionTypes['import']" plain
+            @click="importRows">
             <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.import') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
-            :loading="exportLoading">
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
+            @click="exportRows" :loading="exportLoading">
             <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.export') }}
           </ElButton>
@@ -313,10 +315,10 @@ function formatTemplates(cellValue: number): string {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="title" :label="$t('label.title')">
+        <ElTableColumn prop="name" :label="$t('label.name')">
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
-              {{ scope.row.title }}
+              {{ scope.row.name }}
             </ElButton>
           </template>
         </ElTableColumn>
@@ -338,20 +340,20 @@ function formatTemplates(cellValue: number): string {
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
+            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
               @click="saveRow(scope.row.id)">
               <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                 $t('action.modify')
               }}
             </ElButton>
-            <ElButton v-if="hasAction($route.name, 'config')" title="config" type="success" link
+            <ElButton v-if="hasAction($route.name, 'config')" title="config" :type="actionTypes['config']" link
               @click="configRow(scope.row.id!)">
               <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />
               {{ $t('action.config') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
                   <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.remove')
                   }}

@@ -23,7 +23,7 @@ const filterText = ref('')
 
 const initialValues: Section = {
   id: null,
-  title: '',
+  name: '',
   superiorId: null,
   body: ''
 }

@@ -5,7 +5,7 @@ import type {
   TreeNodeData
 } from 'element-plus'
 import { createSchemaSection, fetchSchemaSection, modifySchemaSection, removeSchemaSection, retrieveSchemaSections, retrieveSchemaSectionSubset } from 'src/api/schemas'
-import { actionIcons } from 'src/constants'
+import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, Pagination, SchemaSection } from 'src/types'
 import { hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -35,23 +35,22 @@ const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
 const filter = reactive<Filters<SchemaSection>>({
-  superiorId: { op: 'eq', value: null },
-  title: { op: 'eq', value: undefined }
+  superiorId: { op: 'eq', value: null }
 })
 
 const formRef = ref<FormInstance>()
 const initialValues: SchemaSection = {
   id: null,
   schemaId: props.schemaId,
-  title: '',
+  name: '',
   superiorId: null,
   body: ''
 }
 const form = ref<SchemaSection>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
-  title: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.title') }), trigger: 'blur' }
+  name: [
+    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
   ]
 })
 
@@ -261,7 +260,8 @@ async function confirmEvent(id: number) {
       <ElCard shadow="never">
         <ElRow :gutter="20" justify="space-between" class="mb-4">
           <ElCol :span="16" class="text-left">
-            <ElButton v-if="hasAction($route.name, 'create')" title="create" type="primary" @click="saveRow()">
+            <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
+              @click="saveRow()">
               <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
                 $t('action.create') }}
             </ElButton>
@@ -279,11 +279,11 @@ async function confirmEvent(id: number) {
         <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
           <ElTableColumn type="selection" />
           <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-          <ElTableColumn prop="title" :label="$t('label.title')" sortable />
+          <ElTableColumn prop="name" :label="$t('label.name')" sortable />
           <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.body')" />
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
-              <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
+              <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
                 @click="saveRow(scope.row.id)">
                 <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.modify') }}
@@ -291,7 +291,7 @@ async function confirmEvent(id: number) {
               <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
                 @confirm="confirmEvent(scope.row.id)">
                 <template #reference>
-                  <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
+                  <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
                     <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
                     {{
                       $t('action.remove')
@@ -316,8 +316,8 @@ async function confirmEvent(id: number) {
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.title')" prop="title">
-            <ElInput v-model="form.title" :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
+          <ElFormItem :label="$t('label.name')" prop="name">
+            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>

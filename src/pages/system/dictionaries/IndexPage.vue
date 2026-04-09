@@ -9,7 +9,7 @@ import {
   modifyDictionary,
   retrieveDictionaries, retrieveDictionarySubset
 } from 'src/api/dictionaries'
-import { actionIcons } from 'src/constants'
+import { actionIcons, actionTypes } from 'src/constants'
 import type { Dictionary, Filters, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -303,7 +303,7 @@ function onUpload(options: UploadRequestOptions) {
                 :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
             </ElFormItem>
             <ElFormItem>
-              <ElButton title="search" type="primary" @click="load()">
+              <ElButton title="search" :type="actionTypes['search']" @click="load()">
                 <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.search') }}
               </ElButton>
@@ -318,12 +318,13 @@ function onUpload(options: UploadRequestOptions) {
         <ElCard shadow="never">
           <ElRow :gutter="20" justify="space-between" class="mb-4">
             <ElCol :span="16" class="text-left">
-              <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
+              <ElButton v-if="hasAction($route.name, 'import')" title="import" :type="actionTypes['import']" plain
+                @click="importRows">
                 <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.import') }}
               </ElButton>
-              <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
-                :loading="exportLoading">
+              <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
+                @click="exportRows" :loading="exportLoading">
                 <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.export') }}
               </ElButton>
@@ -352,7 +353,7 @@ function onUpload(options: UploadRequestOptions) {
             <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
             <ElTableColumn :label="$t('label.actions')">
               <template #default="scope">
-                <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
+                <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
                   @click="saveRow(scope.row.id)">
                   <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.modify') }}

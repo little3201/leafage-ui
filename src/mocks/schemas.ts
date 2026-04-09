@@ -21,7 +21,7 @@ const sections: SchemaSection[] = []
 for (let i = 1; i < 28; i++) {
   const row: SchemaSection = {
     id: i,
-    title: 'Section_' + i,
+    name: 'Section_' + i,
     superiorId: Math.floor(Math.random() * 7) || null,
     body: 'This is body of section ' + i,
     schemaId: Math.floor(Math.random() * 7) + 1

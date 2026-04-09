@@ -21,7 +21,7 @@ const sections: ReportSection[] = []
 for (let i = 1; i < 28; i++) {
   const row: ReportSection = {
     id: i,
-    title: 'Section_' + i,
+    name: 'Section_' + i,
     superiorId: Math.floor(Math.random() * 27) + 1,
     body: 'This is body of section ' + i,
     reportId: Math.floor(Math.random() * 27) + 1

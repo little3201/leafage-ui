@@ -163,7 +163,7 @@ async function confirmEvent(id: number) {
           </ElSelect>
         </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" type="primary" @click="load()">
+          <ElButton title="search" :type="actionTypes['search']" @click="load()">
             <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.search') }}
           </ElButton>
@@ -181,8 +181,8 @@ async function confirmEvent(id: number) {
           <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
             <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
-            :loading="exportLoading">
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
+            @click="exportRows" :loading="exportLoading">
             <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.export') }}
           </ElButton>
@@ -238,7 +238,7 @@ async function confirmEvent(id: number) {
           <template #default="scope">
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
                   <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.remove')
                   }}

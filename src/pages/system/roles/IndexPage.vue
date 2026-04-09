@@ -20,7 +20,7 @@ import {
   retrieveRoles
 } from 'src/api/roles'
 import { retrieveUsers } from 'src/api/users'
-import { actionIcons } from 'src/constants'
+import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { useUserStore } from 'stores/user-store'
@@ -360,7 +360,7 @@ function rowSelected(row: Privilege) {
             :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" type="primary" @click="load()">
+          <ElButton title="search" :type="actionTypes['search']" @click="load()">
             <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.search') }}
           </ElButton>
@@ -375,17 +375,19 @@ function rowSelected(row: Privilege) {
     <ElCard shadow="never">
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
-          <ElButton v-if="hasAction($route.name, 'create')" title="create" type="primary" @click="saveRow()">
+          <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
+            @click="saveRow()">
             <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.create') }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
+          <ElButton v-if="hasAction($route.name, 'import')" title="import" :type="actionTypes['import']" plain
+            @click="importRows">
             <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.import')
             }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
-            :loading="exportLoading">
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
+            @click="exportRows" :loading="exportLoading">
             <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.export') }}
           </ElButton>
@@ -414,25 +416,25 @@ function rowSelected(row: Privilege) {
         <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
+            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
               @click="saveRow(scope.row.id)">
               <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                 $t('action.modify')
               }}
             </ElButton>
-            <ElButton v-if="hasAction($route.name, 'relation')" title="relation" type="success" link
+            <ElButton v-if="hasAction($route.name, 'relation')" title="relation" :type="actionTypes['relation']" link
               @click="relationRow(scope.row.id)">
               <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em" />{{
                 $t('action.relation') }}
             </ElButton>
-            <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" type="success" link
+            <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" :type="actionTypes['authorize']" link
               @click="authorizeRow(scope.row.id)">
               <Icon :icon="`material-symbols:${actionIcons['authorize']}-rounded`" width="1.25em" height="1.25em" />{{
                 $t('action.authorize') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
                   <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.remove')
                   }}

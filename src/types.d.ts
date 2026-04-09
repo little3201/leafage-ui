@@ -358,7 +358,7 @@ export interface Schema extends AudtiMetadata {
 
 export interface Section extends AudtiMetadata {
   superiorId: number | null
-  title: string
+  name: string
   body: string
   isLeaf?: boolean
   count?: number
