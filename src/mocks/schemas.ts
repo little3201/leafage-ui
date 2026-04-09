@@ -8,7 +8,6 @@ for (let i = 1; i < 28; i++) {
   const row: Schema = {
     id: i,
     name: 'Name_' + i,
-    variables: '{style: "' + 'bold' + '"}',
     version: Math.floor(Math.random() * 3) + 1,
     status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
     description: 'this is description about xxx',

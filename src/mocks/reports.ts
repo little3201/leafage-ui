@@ -11,7 +11,6 @@ for (let i = 1; i < 28; i++) {
     owner: 'Owner_Name_' + i,
     schemaId: Math.floor(Math.random() * 10) + 1,
     version: Math.floor(Math.random() * 3) + 1,
-    status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
     lastModifiedDate: new Date()
   }
   datas.push(row)

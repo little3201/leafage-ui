@@ -7,6 +7,7 @@ import {
   fetchSchemaSection,
   retrieveSchemaSectionTree
 } from 'src/api/schemas'
+import { actionIcons } from 'src/constants'
 import type { Section } from 'src/types'
 import { onMounted, ref, watch } from 'vue'
 
@@ -106,7 +107,7 @@ async function onCurrentChange(data: TreeNodeData) {
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
-              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
         </ElFormItem>

@@ -15,7 +15,7 @@ import {
   retrieveReports
 } from 'src/api/reports'
 import { retrieveSchemas } from 'src/api/schemas'
-import { reportStatus } from 'src/constants'
+import { actionIcons } from 'src/constants'
 import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -49,25 +49,20 @@ const formRef = ref<FormInstance>()
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Report>>({
-  title: { op: 'like', value: undefined },
-  status: { op: 'eq', value: undefined }
+  title: { op: 'like', value: undefined }
 })
 
 const initialValues: Report = {
   id: null,
   title: '',
   schemaId: null,
-  version: 1,
-  status: 'DRAFT',
+  version: 1
 }
 const form = ref<Report>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   title: [
     { required: true, message: t('placeholder.inputText', { field: t('label.title') }), trigger: 'blur' }
-  ],
-  status: [
-    { required: true, message: t('placeholder.selectText', { field: t('label.status') }), trigger: 'blur' }
   ]
 })
 
@@ -124,7 +119,6 @@ async function loadSchemas() {
  */
 async function reset() {
   filter.title!.value = undefined
-  filter.status!.value = undefined
   await load()
 }
 
@@ -276,18 +270,14 @@ function formatTemplates(cellValue: number): string {
           <ElInput v-model="filter.title!.value"
             :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
         </ElFormItem>
-        <ElFormItem :label="$t('label.status')" prop="status">
-          <ElSelect v-model="filter.status!.value" class="min-w-48"
-            :placeholder="$t('placeholder.selectText', { field: $t('label.status') })">
-            <ElOption v-for="(_, value) in reportStatus" :key="value" :label="value" :value="value" />
-          </ElSelect>
-        </ElFormItem>
         <ElFormItem>
           <ElButton type="primary" @click="load()">
-            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
+            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.search') }}
           </ElButton>
           <ElButton @click="reset()">
-            <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
+            <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -297,15 +287,16 @@ function formatTemplates(cellValue: number): string {
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
           <ElButton v-if="hasAction($route.name, 'create')" title="create" type="primary" @click="saveRow()">
-            <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
+            <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.create') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
-            <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
+            <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.import') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+            <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.export') }}
           </ElButton>
         </ElCol>
@@ -313,7 +304,7 @@ function formatTemplates(cellValue: number): string {
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load()">
-              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
         </ElCol>
@@ -339,12 +330,6 @@ function formatTemplates(cellValue: number): string {
             {{ scope.row.schemaId ? formatTemplates(scope.row.schemaId) : '-' }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="status" :label="$t('label.status')" sortable>
-          <template #default="scope">
-            <ElBadge is-dot :type="reportStatus[scope.row.status]" class="mr-1" />
-            <ElText :type="reportStatus[scope.row.status]">{{ scope.row.status }}</ElText>
-          </template>
-        </ElTableColumn>
         <ElTableColumn prop="owner" :label="$t('label.owner')" />
         <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
           <template #default="scope">
@@ -353,20 +338,21 @@ function formatTemplates(cellValue: number): string {
         </ElTableColumn>
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'modify')" title="modify"
-              type="primary" link @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{ $t('action.modify')
+            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
+              @click="saveRow(scope.row.id)">
+              <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
+                $t('action.modify')
               }}
             </ElButton>
-            <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'config')" title="config"
-              type="success" link @click="configRow(scope.row.id!)">
+            <ElButton v-if="hasAction($route.name, 'config')" title="config" type="success" link
+              @click="configRow(scope.row.id!)">
               <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />
               {{ $t('action.config') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
+                  <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.remove')
                   }}
                 </ElButton>

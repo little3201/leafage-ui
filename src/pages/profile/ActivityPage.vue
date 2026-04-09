@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { actions } from 'src/constants'
+import { actionTypes } from 'src/constants'
 import { ref } from 'vue'
 
 
@@ -16,7 +16,7 @@ const activities = ref([
 <template>
   <h3>Last 3 days activities</h3>
   <ElTimeline>
-    <ElTimelineItem v-for="activity in activities" :key="activity.id" :type="actions[activity.action]"
+    <ElTimelineItem v-for="activity in activities" :key="activity.id" :type="actionTypes[activity.action]"
       :timestamp="activity.lastModifiedDate" placement="top">
       <ElCard shadow="never">
         <h4 class="my-0">{{ activity.name }}</h4>

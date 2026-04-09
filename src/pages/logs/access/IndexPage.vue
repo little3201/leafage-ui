@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { clearAccessLogs, fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/access-logs'
-import { httpMethods } from 'src/constants'
+import { actionIcons, httpMethods } from 'src/constants'
 import type { AccessLog, Filters, Pagination } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -157,10 +157,12 @@ async function confirmEvent(id: number) {
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">
-            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
+            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset()">
-            <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
+            <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -174,7 +176,7 @@ async function confirmEvent(id: number) {
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+            <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.export') }}
           </ElButton>
         </ElCol>
@@ -182,7 +184,7 @@ async function confirmEvent(id: number) {
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load()">
-              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
         </ElCol>
@@ -225,7 +227,7 @@ async function confirmEvent(id: number) {
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
-                  <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
+                  <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.remove')
                   }}
                 </ElButton>

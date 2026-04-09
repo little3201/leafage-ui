@@ -9,6 +9,7 @@ import {
   modifyDictionary,
   retrieveDictionaries, retrieveDictionarySubset
 } from 'src/api/dictionaries'
+import { actionIcons } from 'src/constants'
 import type { Dictionary, Filters, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -281,7 +282,7 @@ function onUpload(options: UploadRequestOptions) {
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
-              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
         </ElFormItem>
@@ -303,10 +304,12 @@ function onUpload(options: UploadRequestOptions) {
             </ElFormItem>
             <ElFormItem>
               <ElButton title="search" type="primary" @click="load()">
-                <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
+                <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.search') }}
               </ElButton>
               <ElButton title="reset" @click="reset()">
-                <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
+                <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.reset') }}
               </ElButton>
             </ElFormItem>
           </ElForm>
@@ -316,12 +319,12 @@ function onUpload(options: UploadRequestOptions) {
           <ElRow :gutter="20" justify="space-between" class="mb-4">
             <ElCol :span="16" class="text-left">
               <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
-                <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
+                <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.import') }}
               </ElButton>
               <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
                 :loading="exportLoading">
-                <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+                <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.export') }}
               </ElButton>
             </ElCol>
@@ -329,7 +332,7 @@ function onUpload(options: UploadRequestOptions) {
             <ElCol :span="8" class="text-right">
               <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
                 <ElButton title="refresh" plain circle @click="load()">
-                  <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+                  <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
                 </ElButton>
               </ElTooltip>
             </ElCol>
@@ -351,11 +354,12 @@ function onUpload(options: UploadRequestOptions) {
               <template #default="scope">
                 <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
                   @click="saveRow(scope.row.id)">
-                  <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{
+                  <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.modify') }}
                 </ElButton>
                 <ElButton v-if="scope.row.count > 0" title="refresh" link @click="refreshChildren(scope.row.id)">
-                  <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />{{ $t('action.refresh')
+                  <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />{{
+                    $t('action.refresh')
                   }}
                 </ElButton>
               </template>

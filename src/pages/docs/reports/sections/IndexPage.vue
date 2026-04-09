@@ -8,6 +8,7 @@ import {
   fetchReportSection,
   retrieveReportSectionTree
 } from 'src/api/reports'
+import { actionIcons } from 'src/constants'
 import type { Section } from 'src/types'
 import { onMounted, ref, watch } from 'vue'
 
@@ -124,7 +125,7 @@ async function loadOne(id: number) {
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
-              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
         </ElFormItem>

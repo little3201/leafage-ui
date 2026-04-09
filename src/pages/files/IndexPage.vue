@@ -3,6 +3,7 @@ import { Icon } from '@iconify/vue'
 import type { UploadInstance, UploadRequestOptions } from 'element-plus'
 import { dayjs } from 'element-plus'
 import { downloadFile, fetchFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import { actionIcons } from 'src/constants'
 import type { FileRecord, Filters, Pagination } from 'src/types'
 import { download, formatFileSize, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -248,10 +249,12 @@ async function handleBreadcrumbClick(index: number) {
             </ElFormItem>
             <ElFormItem>
               <ElButton title="search" type="primary" @click="load()">
-                <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
+                <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.search') }}
               </ElButton>
               <ElButton title="reset" @click="reset()">
-                <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
+                <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.reset') }}
               </ElButton>
             </ElFormItem>
           </ElForm>
@@ -280,7 +283,7 @@ async function handleBreadcrumbClick(index: number) {
               </ElTooltip>
               <ElTooltip :content="$t('action.refresh')" placement="top">
                 <ElButton title="refresh" plain circle @click="load()">
-                  <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+                  <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
                 </ElButton>
               </ElTooltip>
               <ElTooltip :content="$t('action.view')" placement="top">
@@ -329,9 +332,10 @@ async function handleBreadcrumbClick(index: number) {
                   <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
                     <template #reference>
                       <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
-                        <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
-                          $t('action.remove')
-                        }}
+                        <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em"
+                          height="1.25em" />{{
+                            $t('action.remove')
+                          }}
                       </ElButton>
                     </template>
                   </ElPopconfirm>

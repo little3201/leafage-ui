@@ -5,6 +5,7 @@ import type {
   TreeNodeData
 } from 'element-plus'
 import { createSchemaSection, fetchSchemaSection, modifySchemaSection, removeSchemaSection, retrieveSchemaSections, retrieveSchemaSectionSubset } from 'src/api/schemas'
+import { actionIcons } from 'src/constants'
 import type { Filters, Pagination, SchemaSection } from 'src/types'
 import { hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -244,7 +245,7 @@ async function confirmEvent(id: number) {
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
-              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
         </ElFormItem>
@@ -260,15 +261,16 @@ async function confirmEvent(id: number) {
       <ElCard shadow="never">
         <ElRow :gutter="20" justify="space-between" class="mb-4">
           <ElCol :span="16" class="text-left">
-            <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
-              <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
+            <ElButton v-if="hasAction($route.name, 'create')" title="create" type="primary" @click="saveRow()">
+              <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+                $t('action.create') }}
             </ElButton>
           </ElCol>
 
           <ElCol :span="8" class="text-right">
             <ElTooltip :content="$t('action.refresh')" placement="top">
               <ElButton title="refresh" plain circle @click="load()">
-                <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+                <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
               </ElButton>
             </ElTooltip>
           </ElCol>
@@ -281,16 +283,17 @@ async function confirmEvent(id: number) {
           <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.body')" />
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
-              <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
+              <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
                 @click="saveRow(scope.row.id)">
-                <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{
+                <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.modify') }}
               </ElButton>
               <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
                 @confirm="confirmEvent(scope.row.id)">
                 <template #reference>
-                  <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
-                    <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
+                  <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
+                    <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+                    {{
                       $t('action.remove')
                     }}
                   </ElButton>

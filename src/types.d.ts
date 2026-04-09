@@ -347,17 +347,13 @@ export interface Report extends AudtiMetadata {
   owner?: string
   body?: string
   version: number
-  status: string
-  lastModifiedDate?: Date
 }
 
 export interface Schema extends AudtiMetadata {
   name: string
-  description?: string
-  category?: string
-  variables?: string
   version: number
-  status: string
+  status?: string
+  description?: string
 }
 
 export interface Section extends AudtiMetadata {

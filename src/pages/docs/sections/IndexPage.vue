@@ -12,6 +12,7 @@ import {
   retrieveSections,
   retrieveSectionSubset
 } from 'src/api/sections'
+import { actionIcons } from 'src/constants'
 import type { Filters, Pagination, Section } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -292,7 +293,7 @@ function onUpload(options: UploadRequestOptions) {
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
-              <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
         </ElFormItem>
@@ -314,10 +315,12 @@ function onUpload(options: UploadRequestOptions) {
             </ElFormItem>
             <ElFormItem>
               <ElButton title="search" type="primary" @click="load()">
-                <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
+                <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.search') }}
               </ElButton>
               <ElButton title="reset" @click="reset()">
-                <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
+                <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.reset') }}
               </ElButton>
             </ElFormItem>
           </ElForm>
@@ -326,18 +329,18 @@ function onUpload(options: UploadRequestOptions) {
         <ElCard shadow="never">
           <ElRow :gutter="20" justify="space-between" class="mb-4">
             <ElCol :span="16" class="text-left">
-              <ElButton v-if="hasAction($route.name, 'create')" title=" create" type="primary" @click="saveRow()">
-                <Icon icon="material-symbols:add-rounded" width="1.25em" height="1.25em" />{{ $t('action.create') }}
+              <ElButton v-if="hasAction($route.name, 'create')" title="create" type="primary" @click="saveRow()">
+                <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.create') }}
               </ElButton>
-              <ElButton v-if="hasAction($route.name, 'import')" title=" import" type="warning" plain
-                @click="importRows">
-                <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
+              <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
+                <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.import')
                 }}
               </ElButton>
-              <ElButton v-if="hasAction($route.name, 'export')" title=" export" type="success" plain @click="exportRows"
+              <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
                 :loading="exportLoading">
-                <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+                <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.export')
                 }}
               </ElButton>
@@ -346,7 +349,7 @@ function onUpload(options: UploadRequestOptions) {
             <ElCol :span="8" class="text-right">
               <ElTooltip :content="$t('action.refresh')" placement="top">
                 <ElButton title="refresh" plain circle @click="load()">
-                  <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+                  <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
                 </ElButton>
               </ElTooltip>
             </ElCol>
@@ -359,18 +362,19 @@ function onUpload(options: UploadRequestOptions) {
             <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.body')" />
             <ElTableColumn :label="$t('label.actions')">
               <template #default="scope">
-                <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
+                <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
                   @click="saveRow(scope.row.id)">
-                  <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{
+                  <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                     $t('action.modify') }}
                 </ElButton>
                 <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
                   @confirm="confirmEvent(scope.row.id)">
                   <template #reference>
-                    <ElButton v-if="hasAction($route.name, 'remove')" title=" remove" type="danger" link>
-                      <Icon icon="material-symbols:delete-outline-rounded" width="1.25em" height="1.25em" />{{
-                        $t('action.remove')
-                      }}
+                    <ElButton v-if="hasAction($route.name, 'remove')" title="remove" type="danger" link>
+                      <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em"
+                        height="1.25em" />{{
+                          $t('action.remove')
+                        }}
                     </ElButton>
                   </template>
                 </ElPopconfirm>

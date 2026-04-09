@@ -44,39 +44,36 @@ export const SERVER_URL = {
   SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections') // 章节
 }
 
-// 按钮对应tag类型
-export const actionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
-  preview: 'success',
-  retrieve: 'success',
-  fetch: 'success',
-  download: 'success',
-
-  create: 'primary',
-  modify: 'primary',
-
-  import: 'warning',
-  upload: 'warning',
-  export: 'warning',
-  signin: 'warning',
-  signout: 'warning',
-
-  unlock: 'success',
-
-  remove: 'danger',
-  clear: 'danger',
-
-  relation: 'info',
-  authorize: 'info',
-  config: 'success',
-  execute: 'success'
-}
-
 export const buttonTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
   Primary: 'primary',
   Success: 'success',
   Info: 'info',
   Warning: 'warning',
   Danger: 'danger'
+}
+
+// 按钮对应tag类型
+export const actionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
+  preview: 'success',
+  retrieve: 'success',
+  fetch: 'success',
+  signin: 'primary',
+  signout: 'primary',
+
+  create: 'primary',
+  modify: 'primary',
+  remove: 'danger',
+  clear: 'danger',
+  import: 'warning',
+  export: 'warning',
+  upload: 'primary',
+  download: 'success',
+  unlock: 'success',
+  relation: 'success',
+  authorize: 'success',
+  config: 'success',
+  execute: 'warning',
+  enable: 'success',
 }
 
 export const actionIcons: Record<string, string> = {
@@ -86,13 +83,17 @@ export const actionIcons: Record<string, string> = {
   clear: 'clear-all',
   import: 'database-upload-outline',
   export: 'file-export-outline',
+  upload: 'upload',
   download: 'download',
   unlock: 'lock-open',
   relation: 'link',
-  upload: 'upload',
   authorize: 'privacy-tip-outline',
   config: 'plug-connect-outline',
-  execute: 'motion-play-outline'
+  execute: 'motion-play-outline',
+  enable: 'shield-toggle-outline',
+  search: 'search',
+  reset: 'replay',
+  refresh: 'refresh'
 }
 
 // http method对应tag类型
@@ -183,7 +184,7 @@ export const scriptModes: { [key: string]: 'Server' | 'Docker' } = {
   DOCKER: 'Docker'
 }
 
-export const reportStatus: { [key: string]: 'primary' | 'success' | 'info' } = {
+export const schemaStatus: { [key: string]: 'primary' | 'success' | 'info' } = {
   DRAFT: 'primary',
   PUBLISHED: 'success',
   ARCHIVED: 'info'

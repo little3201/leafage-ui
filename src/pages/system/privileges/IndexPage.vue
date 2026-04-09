@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { FormInstance, FormRules, TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
-import { retrieveDictionarySubset } from 'src/api/dictionaries'
+import type { FormInstance, FormRules, InputInstance, TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
 import {
   enablePrivilege,
   fetchPrivilege,
@@ -9,11 +8,10 @@ import {
   modifyPrivilege,
   retrievePrivileges, retrievePrivilegeSubset
 } from 'src/api/privileges'
-import { actionTypes } from 'src/constants'
+import { actionIcons, actionTypes } from 'src/constants'
 import type { Dictionary, Filters, Pagination, Privilege } from 'src/types'
 import { exportToCSV, hasAction, visibleArray } from 'src/utils'
-import { onMounted, reactive, ref } from 'vue'
-import ActionPage from './ActionPage.vue'
+import { nextTick, onMounted, reactive, ref } from 'vue'
 
 
 const loading = ref<boolean>(false)
@@ -26,7 +24,6 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const buttonOptions = ref<Array<Dictionary>>([])
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
@@ -47,7 +44,8 @@ const initialValues: Privilege = {
   superiorId: null,
   path: '',
   component: '',
-  icon: ''
+  icon: '',
+  actions: []
 }
 const form = ref<Privilege>({ ...initialValues })
 const subset = ref<Array<Privilege>>()
@@ -60,12 +58,12 @@ const rules = reactive<FormRules<typeof form>>({
     { required: true, trigger: 'blur' }
   ]
 })
+const inputValue = ref('')
+const inputVisible = ref(false)
+const InputRef = ref<InputInstance>()
 
 onMounted(async () => {
   await load()
-
-  const res = await retrieveDictionarySubset(100)
-  buttonOptions.value = res.data
 })
 
 /**
@@ -243,6 +241,27 @@ function onImportSubmit(importEl: UploadInstance) {
 function onUpload(options: UploadRequestOptions) {
   return importPrivileges(options.file)
 }
+
+function handleClose(tag: string) {
+  if (form.value.actions) {
+    form.value.actions.splice(form.value.actions.indexOf(tag), 1)
+  }
+}
+
+function showInput() {
+  inputVisible.value = true
+  void nextTick(() => {
+    InputRef.value!.input!.focus()
+  })
+}
+
+function handleInputConfirm() {
+  if (inputValue.value && form.value.actions) {
+    form.value.actions.push(inputValue.value)
+  }
+  inputVisible.value = false
+  inputValue.value = ''
+}
 </script>
 
 <template>
@@ -259,10 +278,12 @@ function onUpload(options: UploadRequestOptions) {
         </ElFormItem>
         <ElFormItem>
           <ElButton title="search" type="primary" @click="load()">
-            <Icon icon="material-symbols:search-rounded" width="1.25em" height="1.25em" />{{ $t('action.search') }}
+            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.search') }}
           </ElButton>
           <ElButton title="reset" @click="reset()">
-            <Icon icon="material-symbols:replay-rounded" width="1.25em" height="1.25em" />{{ $t('action.reset') }}
+            <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.reset') }}
           </ElButton>
         </ElFormItem>
       </ElForm>
@@ -272,19 +293,19 @@ function onUpload(options: UploadRequestOptions) {
       <ElRow :gutter="20" justify="space-between" class="mb-4">
         <ElCol :span="16" class="text-left">
           <ElButton v-if="hasAction($route.name, 'import')" title="import" type="warning" plain @click="importRows">
-            <Icon icon="material-symbols:database-upload-outline-rounded" width="1.25em" height="1.25em" />{{
+            <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.import') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" type="success" plain @click="exportRows"
             :loading="exportLoading">
-            <Icon icon="material-symbols:file-export-outline-rounded" width="1.25em" height="1.25em" />{{
+            <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.export') }}
           </ElButton>
         </ElCol>
         <ElCol :span="8" class="text-right">
           <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load()">
-              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
             </ElButton>
           </ElTooltip>
         </ElCol>
@@ -330,13 +351,15 @@ function onUpload(options: UploadRequestOptions) {
         <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
         <ElTableColumn :label="$t('label.actions')">
           <template #default="scope">
-            <ElButton v-if="hasAction($route.name, 'modify')" title=" modify" type="primary" link
+            <ElButton v-if="hasAction($route.name, 'modify')" title="modify" type="primary" link
               @click="saveRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />{{ $t('action.modify')
+              <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
+                $t('action.modify')
               }}
             </ElButton>
             <ElButton v-if="scope.row.count > 0" title="refresh" link @click="refreshChildren(scope.row.id)">
-              <Icon icon="material-symbols:refresh-rounded" width="1.25em" height="1.25em" />{{ $t('action.refresh') }}
+              <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />{{
+                $t('action.refresh') }}
             </ElButton>
           </template>
         </ElTableColumn>
@@ -350,7 +373,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center :show-close="false" width="600">
+  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="12">
@@ -388,15 +411,28 @@ function onUpload(options: UploadRequestOptions) {
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea" :placeholder="$t('label.description')" />
+          <ElFormItem :label="$t('label.actions')" prop="actions">
+            <div class="inline-flex flex-wrap gap-2">
+              <ElTag v-for="(item, index) in form.actions" :key="index" closable :type="actionTypes[item]"
+                @close="handleClose(item)">
+                <Icon :icon="`material-symbols:${actionIcons[item]}-rounded`" style="vertical-align: -3.5px"
+                  width="1.25em" height="1.25em" />
+                {{ $t(`action.${item}`) }}
+              </ElTag>
+
+              <ElInput v-if="inputVisible" ref="InputRef" v-model="inputValue" class="w-20"
+                @keyup.enter="handleInputConfirm" @blur="handleInputConfirm" />
+              <ElButton v-else circle size="small" type="primary" plain @click="showInput()">
+                <Icon icon="material-symbols:add" width="1.25em" height="1.25em" />
+              </ElButton>
+            </div>
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20" v-if="!form.redirect">
+      <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.actions')" prop="meta.actions">
-            <ActionPage v-if="!form.redirect" :privilege-id="form.id!" />
+          <ElFormItem :label="$t('label.description')" prop="description">
+            <ElInput v-model="form.description" type="textarea" :placeholder="$t('label.description')" />
           </ElFormItem>
         </ElCol>
       </ElRow>
