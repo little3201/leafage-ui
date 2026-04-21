@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Pagination, Schema, SchemaSection } from 'src/types'
+import type { Filters, Pagination, Schema, Section } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -25,28 +25,6 @@ export const retrieveSchemaSectionTree = (id: number) => {
 }
 
 /**
- * Retrieve rows
- * @param id Schema ID
- * @param superiorId Superior section ID
- * @returns Rows data
- */
-export const retrieveSchemaSectionSubset = (id: number, superiorId: number | null) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections/subset`, { params: { superiorId } })
-}
-
-/**
- * Retrieve rows
- * @param id Schema ID
- * @param pagination Pagination and sort parameters
- * @param filter Optional filter or sort parameters
- * @returns Rows data
- */
-export const retrieveSchemaSections = (id: number, pagination: Pagination, filter?: Filters<Schema>) => {
-  const filters = dealFilters(filter)
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections`, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
-
-/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -61,8 +39,8 @@ export const fetchSchema = (id: number) => {
  * @param sectionId Section ID
  * @returns Row data
  */
-export const fetchSchemaSection = (id: number, sectionId: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections/${sectionId}`)
+export const fetchSchemaSection = (sectionId: number) => {
+  return api.get(`${SERVER_URL.SCHEMA}/sections/${sectionId}`)
 }
 
 /**
@@ -79,7 +57,7 @@ export const createSchema = (row: Schema) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSchemaSection = (id: number, row: SchemaSection) => {
+export const createSchemaSection = (id: number, row: Section) => {
   return api.post(`${SERVER_URL.SCHEMA}/${id}/sections`, row)
 }
 
@@ -91,16 +69,6 @@ export const createSchemaSection = (id: number, row: SchemaSection) => {
  */
 export const modifySchema = (id: number, row: Schema) => {
   return api.put(`${SERVER_URL.SCHEMA}/${id}`, row)
-}
-
-/**
- * Modify an existing row
- * @param id Row ID
- * @param row Updated row data
- * @returns Modified row
- */
-export const modifySchemaSection = (id: number, row: SchemaSection) => {
-  return api.put(`${SERVER_URL.SCHEMA}/${id}/sections/${row.id}`, row)
 }
 
 /**

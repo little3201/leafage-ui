@@ -91,7 +91,7 @@ async function onCurrentChange(data: TreeNodeData) {
     return
   }
   treeSelected.value = String(data.id)
-  filter.superiorId!.value = Number(treeSelected.value)
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   pagination.page = 1
   await load()
 }
@@ -221,7 +221,7 @@ async function onSubmit(formEl: FormInstance) {
       if (form.value.id) {
         await modifyRegion(form.value.id, form.value)
       } else {
-        form.value.superiorId = Number(treeSelected.value)
+        form.value.superiorId = treeSelected.value ? Number(treeSelected.value) : null
         await createRegion(form.value)
       }
       visible.value = false

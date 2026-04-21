@@ -8,6 +8,7 @@ for (let i = 1; i < 28; i++) {
   const row: Schema = {
     id: i,
     name: 'Name_' + i,
+    type: ['WORD', 'EXCEL'][Math.floor(Math.random() * 2)],
     version: Math.floor(Math.random() * 3) + 1,
     status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
     description: 'this is description about xxx',
@@ -23,6 +24,7 @@ for (let i = 1; i < 28; i++) {
     id: i,
     name: 'Section_' + i,
     superiorId: Math.floor(Math.random() * 7) || null,
+    type: ['HEADING', 'PARAGRAPH', 'TABLE', 'IMAGE'][Math.floor(Math.random() * 4)] || 'unknown',
     body: 'This is body of section ' + i,
     schemaId: Math.floor(Math.random() * 7) + 1
   }

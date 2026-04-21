@@ -1,30 +1,29 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
+  FormInstance,
   TreeData, TreeInstance,
   TreeNodeData
 } from 'element-plus'
 import {
-  createReportSection,
-  fetchReportSection,
-  retrieveReportSectionTree
-} from 'src/api/reports'
-import { modifySection } from 'src/api/sections'
+  createArchiveSection,
+  fetchArchiveSection,
+  modifyArchiveSection,
+  retrieveArchiveSectionTree
+} from 'src/api/archives'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { ReportSection } from 'src/types'
+import type { ArchiveSection } from 'src/types'
 import { hasAction } from 'src/utils'
 import { onMounted, ref, watch } from 'vue'
-import ExcelContent from '../../schemas/sections/ExcelContent.vue'
 import WordContent from '../../schemas/sections/WordContent.vue'
 
 
 const props = defineProps<{
-  reportId: number
+  archiveId: number
   preview?: boolean
 }>()
 
 const visible = ref<boolean>(false)
-const itemVisible = ref<boolean>(false)
 const saveLoading = ref<boolean>(false)
 
 const treeRef = ref<TreeInstance>()
@@ -33,16 +32,16 @@ const treeLoading = ref<boolean>(false)
 const treeSelected = ref<string>('')
 const filterText = ref('')
 
-const contentFormRef = ref<InstanceType<typeof WordContent>>()
-const initialValues: ReportSection = {
+const formRef = ref<FormInstance>()
+const initialValues: ArchiveSection = {
   id: null,
   name: '',
-  reportId: props.reportId,
+  archiveId: props.archiveId,
   superiorId: null,
   type: 'HEADING',
   body: ''
 }
-const form = ref<ReportSection>({ ...initialValues })
+const form = ref<ArchiveSection>({ ...initialValues })
 
 
 onMounted(async () => {
@@ -50,13 +49,13 @@ onMounted(async () => {
 })
 
 /**
- * 监听tree,reportId
+ * 监听tree,archiveId
  */
 watch(() => filterText.value, (newVal, oldVal) => {
   if (newVal === oldVal) return
   treeRef.value!.filter(newVal)
 })
-watch(() => props.reportId, async () => {
+watch(() => props.archiveId, async () => {
   treeSelected.value = ''
   form.value = { ...initialValues }
   await loadTree()
@@ -86,10 +85,10 @@ async function onCurrentChange(data: TreeNodeData) {
  * 加载tree
  */
 async function loadTree() {
-  if (!props.reportId) return
+  if (!props.archiveId) return
   treeLoading.value = true
   try {
-    const res = await retrieveReportSectionTree(props.reportId)
+    const res = await retrieveArchiveSectionTree(props.archiveId)
     treeData.value = res.data
   } catch (error) {
     return error
@@ -104,7 +103,7 @@ async function loadTree() {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchReportSection(id)
+    const res = await fetchArchiveSection(id)
     form.value = res.data
   } catch (error) {
     return error
@@ -126,30 +125,25 @@ async function saveRow(id?: number) {
 /**
  * 表单提交
  */
-async function onSubmit() {
-  const formEl = contentFormRef.value?.formRef
+async function onSubmit(formEl: FormInstance) {
   if (!formEl) return
-
-  const sectionForm = contentFormRef.value?.form
-  if (!sectionForm) return
-
   const valid = await formEl.validate()
   if (valid) {
     try {
-      const { id } = sectionForm
+      const { id } = form.value
       const superiorId = treeSelected.value ? Number(treeSelected.value) : null
 
-      if (!id) sectionForm.superiorId = superiorId
+      if (!id) form.value.superiorId = superiorId
       const node = superiorId ? treeRef.value?.getNode(superiorId) : null
       if (node) {
-        sectionForm.level = node.level ?? 0 + 1
+        form.value.level = node.level ?? 0 + 1
       } else {
-        sectionForm.level = 1
+        form.value.level = 1
       }
 
       const res = id
-        ? await modifySection(id, sectionForm)
-        : await createReportSection(props.reportId, sectionForm)
+        ? await modifyArchiveSection(form.value.id!, form.value)
+        : await createArchiveSection(props.archiveId, form.value)
       visible.value = false
 
       if (superiorId) {
@@ -194,26 +188,21 @@ async function onSubmit() {
         {{ form.body }}
       </ElCard>
 
-      <ExcelContent :section-id="form.id!" :is-new="false" />
+      <WordContent :row="form" :is-new="false" />
     </ElCol>
   </ElRow>
 
   <!-- form -->
   <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
-    <WordContent ref="contentFormRef" :row="form" :is-new="true" />
+    <WordContent ref="formRef" :row="form" :is-new="true" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit()">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
     </template>
-  </ElDialog>
-
-  <!-- fields -->
-  <ElDialog v-model="itemVisible" :title="$t('page.fields')" align-center width="400">
-    <ExcelContent :section-id="form.id!" :is-new="true" />
   </ElDialog>
 </template>

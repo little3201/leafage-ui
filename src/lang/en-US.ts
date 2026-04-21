@@ -71,6 +71,7 @@ export default {
     size: 'Size',
     length: 'Leng',
     contentType: 'Content Type',
+    field: 'Field',
     fieldType: 'Field Type',
     formType: 'Form Type',
     tsType: 'TS Type',
@@ -168,8 +169,9 @@ export default {
     schedulerLogs: 'Scheduler Log',
     docs: 'Docs',
     reports: 'Reports',
-    sections: 'Sections',
+    archives: 'Archives',
     schemas: 'Schemas',
+    sections: 'Sections',
   },
 
   github: 'Github',

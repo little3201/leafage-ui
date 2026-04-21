@@ -1,36 +1,29 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
-  FormInstance, FormRules,
+  FormInstance,
+  FormRules,
   TableInstance,
   UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import { dayjs } from 'element-plus'
-import {
-  createReport,
-  fetchReport,
-  importReports,
-  modifyReport,
-  removeReport,
-  retrieveReports
-} from 'src/api/reports'
+import { createReport, fetchReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/reports'
 import { retrieveSchemas } from 'src/api/schemas'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ReportSection from './sections/IndexPage.vue'
+import ArchiveSection from './sections/IndexPage.vue'
+
 
 
 const { t } = useI18n()
-
 const loading = ref<boolean>(false)
-const saveLoading = ref<boolean>(false)
-const importLoading = ref<boolean>(false)
-const exportLoading = ref<boolean>(false)
 const datas = ref<Array<Report>>([])
 const total = ref<number>(0)
+
+const schemas = ref<Array<Schema>>([])
 
 const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
@@ -38,25 +31,26 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const schemas = ref<Array<Schema>>([])
-
+const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
-const configVisible = ref<boolean>(false)
-const importVisible = ref<boolean>(false)
 const previewVisible = ref<boolean>(false)
+const configVisible = ref<boolean>(false)
 
-const formRef = ref<FormInstance>()
+const importVisible = ref<boolean>(false)
+const importLoading = ref<boolean>(false)
+const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Report>>({
-  title: { op: 'like', value: undefined }
+  title: { op: 'eq', value: undefined }
 })
 
+const formRef = ref<FormInstance>()
 const initialValues: Report = {
   id: null,
   title: '',
   schemaId: null,
-  version: 1
+  body: ''
 }
 const form = ref<Report>({ ...initialValues })
 
@@ -68,7 +62,6 @@ const rules = reactive<FormRules<typeof form>>({
 
 onMounted(async () => {
   await load()
-
   await loadSchemas()
 })
 
@@ -94,9 +87,7 @@ async function load() {
     total.value = res.data.page.totalElements
   } catch (error) {
     return error
-  } finally {
-    loading.value = false
-  }
+  } finally { loading.value = false }
 }
 
 /**
@@ -105,7 +96,10 @@ async function load() {
 async function loadSchemas() {
   loading.value = true
   try {
-    const res = await retrieveSchemas({ page: 1, size: 99 })
+    const filter: Filters<Schema> = {
+      type: { op: 'eq', value: 'EXCEL' }
+    }
+    const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
     schemas.value = res.data.content
   } catch (error) {
     return error
@@ -123,26 +117,6 @@ async function reset() {
 }
 
 /**
- * 导入
- */
-function importRows() {
-  importVisible.value = true
-}
-
-/**
- * 导出
- */
-function exportRows() {
-  exportLoading.value = true
-
-  const selectedRows = tableRef.value?.getSelectionRows()
-  if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'reports')
-  }
-  exportLoading.value = false
-}
-
-/**
  * preview
  * @param id 主键
  */
@@ -152,7 +126,7 @@ function previewRow(id: number) {
 }
 
 /**
- * 弹出框
+ * 新增、编辑弹出框
  * @param id 主键
  */
 async function saveRow(id?: number) {
@@ -161,19 +135,6 @@ async function saveRow(id?: number) {
     await loadOne(id)
   }
   visible.value = true
-}
-
-/**
- * 配置
- * @param id 主键
- */
-function configRow(id: number) {
-  if (!id) {
-    return
-  }
-
-  form.value.id = id
-  configVisible.value = true
 }
 
 /**
@@ -187,6 +148,19 @@ async function loadOne(id: number) {
   } catch (error) {
     return error
   }
+}
+
+/**
+ * 配置
+ * @param id 主键
+ */
+function configRow(id: number) {
+  if (!id) {
+    return
+  }
+
+  form.value.id = id
+  configVisible.value = true
 }
 
 /**
@@ -215,23 +189,6 @@ async function onSubmit(formEl: FormInstance) {
 }
 
 /**
- * 表单提交
- */
-function onImportSubmit(importEl: UploadInstance) {
-  if (!importEl) return
-  importLoading.value = true
-
-  importEl.submit()
-
-  importLoading.value = false
-  importVisible.value = false
-}
-
-function onUpload(options: UploadRequestOptions) {
-  return importReports(options.file)
-}
-
-/**
  * 删除
  * @param id 主键
  */
@@ -253,10 +210,47 @@ async function confirmEvent(id: number) {
 }
 
 /**
+ * 导入
+ */
+function importRows() {
+  importVisible.value = true
+}
+
+/**
+ * 导出
+ */
+function exportRows() {
+  exportLoading.value = true
+
+  const selectedRows = tableRef.value?.getSelectionRows()
+  if (selectedRows && selectedRows.length) {
+    exportToCSV(selectedRows, 'sections')
+  }
+  exportLoading.value = false
+}
+
+/**
+ * 导入提交
+ */
+function onImportSubmit(importEl: UploadInstance) {
+  if (!importEl) return
+  importLoading.value = true
+
+  importEl.submit()
+
+  importLoading.value = false
+  importVisible.value = false
+}
+
+function onUpload(options: UploadRequestOptions) {
+  return importReports(options.file)
+}
+
+/**
    * format schemas
    * @param cellValue cell value
    */
-function formatTemplates(cellValue: number): string {
+function formatSchemas(cellValue: number): string {
   const matched = schemas.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
@@ -271,11 +265,11 @@ function formatTemplates(cellValue: number): string {
             :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
         </ElFormItem>
         <ElFormItem>
-          <ElButton type="primary" @click="load()">
+          <ElButton title="search" :type="actionTypes['search']" @click="load()">
             <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.search') }}
           </ElButton>
-          <ElButton @click="reset()">
+          <ElButton title="reset" @click="reset()">
             <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.reset') }}
           </ElButton>
@@ -294,17 +288,19 @@ function formatTemplates(cellValue: number): string {
           <ElButton v-if="hasAction($route.name, 'import')" title="import" :type="actionTypes['import']" plain
             @click="importRows">
             <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.import') }}
+              $t('action.import')
+            }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
             @click="exportRows" :loading="exportLoading">
             <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.export') }}
+              $t('action.export')
+            }}
           </ElButton>
         </ElCol>
 
         <ElCol :span="8" class="text-right">
-          <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
+          <ElTooltip :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load()">
               <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
             </ElButton>
@@ -315,10 +311,10 @@ function formatTemplates(cellValue: number): string {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')">
+        <ElTableColumn prop="title" :label="$t('label.title')">
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
-              {{ scope.row.name }}
+              {{ scope.row.title }}
             </ElButton>
           </template>
         </ElTableColumn>
@@ -329,10 +325,9 @@ function formatTemplates(cellValue: number): string {
         </ElTableColumn>
         <ElTableColumn prop="schemaId" :label="$t('label.template')">
           <template #default="scope">
-            {{ scope.row.schemaId ? formatTemplates(scope.row.schemaId) : '-' }}
+            {{ scope.row.schemaId ? formatSchemas(scope.row.schemaId) : '-' }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="owner" :label="$t('label.owner')" />
         <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
           <template #default="scope">
             {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
@@ -343,15 +338,15 @@ function formatTemplates(cellValue: number): string {
             <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
               @click="saveRow(scope.row.id)">
               <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
-                $t('action.modify')
-              }}
+                $t('action.modify') }}
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'config')" title="config" :type="actionTypes['config']" link
               @click="configRow(scope.row.id!)">
               <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />
               {{ $t('action.config') }}
             </ElButton>
-            <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+            <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
+              @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
                   <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
@@ -384,18 +379,10 @@ function formatTemplates(cellValue: number): string {
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.template')" prop="schemaId">
-            <ElSelect v-model="form.schemaId"
+            <ElSelect v-model="form.schemaId" :disabled="form.id !== null"
               :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
               <ElOption v-for="(item, index) in schemas" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('label.owner')" prop="owner">
-            <ElInput v-model="form.owner" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.owner') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -413,25 +400,23 @@ function formatTemplates(cellValue: number): string {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center>
-    <ReportSection :report-id="form.id!" />
+    <ArchiveSection :report-id="form.id!" />
   </ElDialog>
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <!-- <ElScrollbar max-height="600px"> -->
-    <ReportSection :report-id="form.id!" :preview="true" />
-    <!-- </ElScrollbar> -->
+    <ArchiveSection :report-id="form.id!" :preview="true" />
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/reports.xlsx`" :download="$t('page.reports') + '.xlsx'">
-        {{ $t('page.reports') }}.xlsx
+      <a :href="`schemas/sections.xlsx`" :download="$t('page.sections') + '.xlsx'">
+        {{ $t('page.sections') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".xls,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
@@ -444,6 +429,7 @@ function formatTemplates(cellValue: number): string {
         </div>
       </template>
     </ElUpload>
+
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}

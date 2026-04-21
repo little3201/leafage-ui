@@ -1,49 +1,30 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Report, ReportSection } from 'src/types'
+import type { Section } from 'src/types'
 
-const datas: Report[] = []
+const datas: Section[] = []
 
 for (let i = 1; i < 28; i++) {
-  const row: Report = {
+  const superiorId = Math.floor(Math.random() * 10)
+  const row: Section = {
     id: i,
-    title: 'Title_' + i,
-    owner: 'Owner_Name_' + i,
-    schemaId: Math.floor(Math.random() * 10) + 1,
-    version: Math.floor(Math.random() * 3) + 1,
-    lastModifiedDate: new Date()
+    superiorId: superiorId || null,
+    name: 'Title_' + i,
+    type: ['HEADING', 'PARAGRAPH', 'TABLE', 'IMAGE'][Math.floor(Math.random() * 4)] || 'unknown',
+    body: 'This is body content about xxx',
+    count: Math.floor(Math.random() * 2) || 0,
   }
   datas.push(row)
 }
 
-const sections: ReportSection[] = []
-
-for (let i = 1; i < 28; i++) {
-  const row: ReportSection = {
-    id: i,
-    name: 'Section_' + i,
-    superiorId: Math.floor(Math.random() * 27) + 1,
-    body: 'This is body of section ' + i,
-    reportId: Math.floor(Math.random() * 27) + 1
-  }
-  sections.push(row)
-}
-
 export const reportsHandlers = [
-  http.get(`/api${SERVER_URL.REPORT}/:id/sections`, ({ params }) => {
-    const { id } = params
+  http.get(`/api${SERVER_URL.REPORT}/subset`, ({ request }) => {
+    const searchParams = new URL(request.url).searchParams
+    const id = searchParams.get('id')
     if (id) {
-      return HttpResponse.json(sections.filter(item => item.reportId === Number(id)))
+      return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
     } else {
-      return HttpResponse.json()
-    }
-  }),
-  http.get(`/api${SERVER_URL.REPORT}/:id/sections/:sectionId`, ({ params }) => {
-    const { id, sectionId } = params
-    if (id) {
-      return HttpResponse.json(sections.find(item => item.reportId === Number(id) && item.id === Number(sectionId)))
-    } else {
-      return HttpResponse.json()
+      return HttpResponse.json(datas.filter(item => item.superiorId === null))
     }
   }),
   http.get(`/api${SERVER_URL.REPORT}/:id`, ({ params }) => {
@@ -59,11 +40,27 @@ export const reportsHandlers = [
     const searchParams = new URL(request.url).searchParams
     const page = searchParams.get('page')
     const size = searchParams.get('size')
+    const filters = searchParams.get('filters')
+
+    let filtered = datas
+    if (filters) {
+      const filterPairs = filters.split('&')
+      let superiorId: number | null = null
+      filterPairs.forEach(pair => {
+        const [key, operator, value] = pair.split(':')
+        if (key === 'superiorId' && value) {
+          superiorId = Number(value)
+          if (operator == 'eq') {
+            filtered = datas.filter(item => { return item.superiorId === superiorId })
+          }
+        }
+      })
+    }
 
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
     return HttpResponse.json(data)
@@ -86,7 +83,7 @@ export const reportsHandlers = [
   }),
   http.post(`/api${SERVER_URL.REPORT}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Report
+    const newData = await request.json() as Section
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -98,7 +95,7 @@ export const reportsHandlers = [
   http.put(`/api${SERVER_URL.REPORT}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Report
+    const newData = await request.json() as Section
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"

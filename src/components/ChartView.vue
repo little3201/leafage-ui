@@ -50,10 +50,10 @@ const initChart = async () => {
 
 watch(
   () => options.value,
-  async (options) => {
+  async (newVal) => {
     if (chartRef) {
       // 第二个参数 true 表示对图表强制更新
-      await chartRef.updateOptions(options, true, false)
+      await chartRef.updateOptions(newVal, true, false)
     }
   },
   {

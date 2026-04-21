@@ -36,12 +36,13 @@ export const SERVER_URL = {
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 母板
   MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
   FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
-  CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections'), // 库连接
+  CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat('/connections'), // 连接
 
   // docs
-  REPORT: SERVER_PREFIX.HYPERVISOR.concat('/reports'), // 报告
+  ARCHIVE: SERVER_PREFIX.HYPERVISOR.concat('/archives'), // 档案
   SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 模板
-  SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections') // 章节
+  SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections'), // 章节
+  REPORT: SERVER_PREFIX.HYPERVISOR.concat('/reports') // 报表
 }
 
 export const buttonTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
@@ -192,8 +193,13 @@ export const schemaStatus: { [key: string]: 'primary' | 'success' | 'info' } = {
   ARCHIVED: 'info'
 }
 
-export const sectionType: { [key: string]: 'primary' | 'success' | 'info' | 'warning' } = {
-  HEADLING: 'primary',
+export const schemaTypes: { [key: string]: 'primary' | 'success' } = {
+  WORD: 'primary',
+  EXCEL: 'success'
+}
+
+export const sectionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'warning' } = {
+  HEADING: 'primary',
   PARAGRAPH: 'success',
   TABLE: 'info',
   IMAGE: 'warning'

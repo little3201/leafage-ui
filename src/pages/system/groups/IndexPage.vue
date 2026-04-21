@@ -120,7 +120,7 @@ async function onCurrentChange(data: TreeNode) {
     return
   }
   treeSelected.value = String(data.id)
-  filter.superiorId!.value = Number(treeSelected.value)
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   pagination.page = 1
   await load()
 }
@@ -196,7 +196,7 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  filter.superiorId!.value = treeSelected.value.length > 0 ? Number(treeSelected.value) : null
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   try {
     const res = await retrieveGroups(pagination, filter)
     datas.value = res.data.content
@@ -296,7 +296,7 @@ async function onSubmit(formEl: FormInstance) {
       if (form.value.id) {
         await modifyGroup(form.value.id, form.value)
       } else {
-        form.value.superiorId = Number(treeSelected.value)
+        form.value.superiorId = treeSelected.value ? Number(treeSelected.value) : null
         await createGroup(form.value)
       }
       visible.value = false

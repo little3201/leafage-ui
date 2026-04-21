@@ -1,26 +1,35 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
-  FormInstance, FormRules, TableInstance,
+  FormInstance, FormRules,
+  TableInstance,
   UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import { dayjs } from 'element-plus'
 import {
-  createSchema, fetchSchema, importSchemas, modifySchema,
-  removeSchema, retrieveSchemas
-} from 'src/api/schemas'
-import { actionIcons, actionTypes, schemaStatus, schemaTypes } from 'src/constants'
-import type { Filters, Pagination, Schema } from 'src/types'
+  createArchive,
+  fetchArchive,
+  importArchives,
+  modifyArchive,
+  removeArchive,
+  retrieveArchives
+} from 'src/api/archives'
+import { retrieveSchemas } from 'src/api/schemas'
+import { actionIcons, actionTypes } from 'src/constants'
+import type { Archive, Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SchemaSection from './sections/IndexPage.vue'
+import ArchiveSection from './sections/IndexPage.vue'
 
 
 const { t } = useI18n()
 
 const loading = ref<boolean>(false)
-const datas = ref<Array<Schema>>([])
+const saveLoading = ref<boolean>(false)
+const importLoading = ref<boolean>(false)
+const exportLoading = ref<boolean>(false)
+const datas = ref<Array<Archive>>([])
 const total = ref<number>(0)
 
 const tableRef = ref<TableInstance>()
@@ -29,38 +38,36 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const saveLoading = ref<boolean>(false)
+const schemas = ref<Array<Schema>>([])
+
 const visible = ref<boolean>(false)
-
 const configVisible = ref<boolean>(false)
-const previewVisible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
-const importLoading = ref<boolean>(false)
-const exportLoading = ref<boolean>(false)
-const importRef = ref<UploadInstance>()
-
-const filter = reactive<Filters<Schema>>({
-  name: { op: 'eq', value: undefined },
-  status: { op: 'eq', value: undefined }
-})
+const previewVisible = ref<boolean>(false)
 
 const formRef = ref<FormInstance>()
-const initialValues: Schema = {
+const importRef = ref<UploadInstance>()
+
+const filter = reactive<Filters<Archive>>({
+  title: { op: 'like', value: undefined }
+})
+
+const initialValues: Archive = {
   id: null,
-  name: '',
-  type: 'WORD',
-  version: 1
+  title: '',
+  schemaId: null
 }
-const form = ref<Schema>({ ...initialValues })
+const form = ref<Archive>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
-  name: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
+  title: [
+    { required: true, message: t('placeholder.inputText', { field: t('label.title') }), trigger: 'blur' }
   ]
 })
 
 onMounted(async () => {
   await load()
+  await loadSchemas()
 })
 
 /**
@@ -80,113 +87,40 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   try {
-    const res = await retrieveSchemas(pagination, filter)
+    const res = await retrieveArchives(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
     return error
-  } finally { loading.value = false }
+  } finally {
+    loading.value = false
+  }
+}
+
+/**
+ * 加载列表
+ */
+async function loadSchemas() {
+  loading.value = true
+  try {
+    const filter: Filters<Schema> = {
+      type: { op: 'eq', value: 'WORD' }
+    }
+    const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
+    schemas.value = res.data.content
+  } catch (error) {
+    return error
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
  * reset
  */
 async function reset() {
-  filter.name!.value = undefined
-  filter.status!.value = undefined
+  filter.title!.value = undefined
   await load()
-}
-
-/**
- * preview
- * @param id 主键
- */
-function previewRow(id: number) {
-  form.value.id = id
-  previewVisible.value = true
-}
-
-/**
- * 新增、编辑弹出框
- * @param id 主键
- */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
-  visible.value = true
-}
-
-/**
- * 配置
- * @param id 主键
- */
-async function configRow(row: Schema) {
-  if (!row.id) {
-    return
-  }
-  await loadOne(row.id)
-  configVisible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchSchema(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 表单提交
- */
-async function onSubmit(formEl: FormInstance) {
-  if (!formEl) return
-
-  const valid = await formEl.validate()
-  if (valid) {
-    saveLoading.value = true
-    try {
-      if (form.value.id) {
-        await modifySchema(form.value.id, form.value)
-      } else {
-        await createSchema(form.value)
-      }
-      visible.value = false
-      await load()
-    } catch (error) {
-      return error
-    } finally {
-      saveLoading.value = false
-    }
-  }
-}
-
-/**
- * 删除
- * @param id 主键
- */
-async function removeRow(id: number) {
-  try {
-    await removeSchema(id)
-    await load()
-  } catch (error) {
-    return error
-  }
-}
-
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
 }
 
 /**
@@ -204,13 +138,85 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'schemas')
+    exportToCSV(selectedRows, 'reports')
   }
   exportLoading.value = false
 }
 
 /**
- * 导入提交
+ * preview
+ * @param id 主键
+ */
+function previewRow(id: number) {
+  form.value.id = id
+  previewVisible.value = true
+}
+
+/**
+ * 弹出框
+ * @param id 主键
+ */
+async function saveRow(id?: number) {
+  form.value = { ...initialValues }
+  if (id) {
+    await loadOne(id)
+  }
+  visible.value = true
+}
+
+/**
+ * 配置
+ * @param id 主键
+ */
+function configRow(id: number) {
+  if (!id) {
+    return
+  }
+
+  form.value.id = id
+  configVisible.value = true
+}
+
+/**
+ * 加载
+ * @param id 主键
+ */
+async function loadOne(id: number) {
+  try {
+    const res = await fetchArchive(id)
+    form.value = res.data
+  } catch (error) {
+    return error
+  }
+}
+
+/**
+ * 表单提交
+ */
+async function onSubmit(formEl: FormInstance) {
+  if (!formEl) return
+
+  const valid = await formEl.validate()
+  if (valid) {
+    saveLoading.value = true
+    try {
+      if (form.value.id) {
+        await modifyArchive(form.value.id, form.value)
+      } else {
+        await createArchive(form.value)
+      }
+      visible.value = false
+      await load()
+    } catch (error) {
+      return error
+    } finally {
+      saveLoading.value = false
+    }
+  }
+}
+
+/**
+ * 表单提交
  */
 function onImportSubmit(importEl: UploadInstance) {
   if (!importEl) return
@@ -223,7 +229,37 @@ function onImportSubmit(importEl: UploadInstance) {
 }
 
 function onUpload(options: UploadRequestOptions) {
-  return importSchemas(options.file)
+  return importArchives(options.file)
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
+async function removeRow(id: number) {
+  try {
+    await removeArchive(id)
+    await load()
+  } catch (error) {
+    return error
+  }
+}
+
+/**
+ * 确认
+ * @param id 主键
+ */
+async function confirmEvent(id: number) {
+  await removeRow(id)
+}
+
+/**
+   * format schemas
+   * @param cellValue cell value
+   */
+function formatSchemas(cellValue: number): string {
+  const matched = schemas.value.find(item => item.id === cellValue)
+  return matched ? matched.name : ''
 }
 
 function onSectionSave() {
@@ -235,22 +271,16 @@ function onSectionSave() {
   <ElSpace size="large" fill>
     <ElCard shadow="never">
       <ElForm inline :model="filter" @submit.prevent>
-        <ElFormItem :label="$t('label.name')" prop="name">
-          <ElInput v-model="filter.name!.value"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
-        </ElFormItem>
-        <ElFormItem :label="$t('label.status')" prop="status">
-          <ElSelect v-model="filter.status!.value" class="min-w-48"
-            :placeholder="$t('placeholder.selectText', { field: $t('label.status') })">
-            <ElOption v-for="(_, value) in schemaStatus" :key="value" :label="value" :value="value" />
-          </ElSelect>
+        <ElFormItem :label="$t('label.title')" prop="title">
+          <ElInput v-model="filter.title!.value"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
         </ElFormItem>
         <ElFormItem>
-          <ElButton title="search" :type="actionTypes['search']" @click="load()">
+          <ElButton type="primary" @click="load()">
             <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.search') }}
           </ElButton>
-          <ElButton title="reset" @click="reset()">
+          <ElButton @click="reset()">
             <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.reset') }}
           </ElButton>
@@ -269,19 +299,17 @@ function onSectionSave() {
           <ElButton v-if="hasAction($route.name, 'import')" title="import" :type="actionTypes['import']" plain
             @click="importRows">
             <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.import')
-            }}
+              $t('action.import') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
             @click="exportRows" :loading="exportLoading">
             <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.export')
-            }}
+              $t('action.export') }}
           </ElButton>
         </ElCol>
 
         <ElCol :span="8" class="text-right">
-          <ElTooltip :content="$t('action.refresh')" placement="top">
+          <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
             <ElButton title="refresh" plain circle @click="load()">
               <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
             </ElButton>
@@ -292,17 +320,11 @@ function onSectionSave() {
       <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
         <ElTableColumn type="selection" />
         <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="name" :label="$t('label.name')">
+        <ElTableColumn prop="title" :label="$t('label.title')">
           <template #default="scope">
             <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
-              {{ scope.row.name }}
+              {{ scope.row.title }}
             </ElButton>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="type" :label="$t('label.type')">
-          <template #default="scope">
-            <ElBadge is-dot :type="schemaTypes[scope.row.type]" class="mr-1" />
-            <ElText :type="schemaTypes[scope.row.type]">{{ scope.row.type }}</ElText>
           </template>
         </ElTableColumn>
         <ElTableColumn prop="version" :label="$t('label.version')">
@@ -310,13 +332,12 @@ function onSectionSave() {
             V{{ scope.row.version }}
           </template>
         </ElTableColumn>
-        <ElTableColumn prop="status" :label="$t('label.status')" sortable>
+        <ElTableColumn prop="schemaId" :label="$t('label.template')">
           <template #default="scope">
-            <ElBadge is-dot :type="schemaStatus[scope.row.status]" class="mr-1" />
-            <ElText :type="schemaStatus[scope.row.status]">{{ scope.row.status }}</ElText>
+            {{ scope.row.schemaId ? formatSchemas(scope.row.schemaId) : '-' }}
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
+        <ElTableColumn prop="owner" :label="$t('label.owner')" />
         <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
           <template #default="scope">
             {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
@@ -330,14 +351,12 @@ function onSectionSave() {
                 $t('action.modify')
               }}
             </ElButton>
-            <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'config')" title="config"
-              type="success" link @click="configRow(scope.row)">
-              <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />{{
-                $t('action.config')
-              }}
+            <ElButton v-if="hasAction($route.name, 'config')" title="config" :type="actionTypes['config']" link
+              @click="configRow(scope.row.id!)">
+              <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />
+              {{ $t('action.config') }}
             </ElButton>
-            <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
-              @confirm="confirmEvent(scope.row.id)">
+            <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
               <template #reference>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
                   <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
@@ -358,30 +377,29 @@ function onSectionSave() {
   </ElSpace>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.schemas')" align-center :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="$t('page.archives')" align-center :show-close="false" width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+          <ElFormItem :label="$t('label.title')" prop="title">
+            <ElInput v-model="form.title" :placeholder="$t('placeholder.inputText', { field: $t('label.title') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.type')" prop="type">
-            <ElSelect v-model="form.type" :disabled="form.id !== null"
-              :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
-              <ElOption v-for="(_, value) in schemaTypes" :key="value" :label="value" :value="value" />
+          <ElFormItem :label="$t('label.template')" prop="schemaId">
+            <ElSelect v-model="form.schemaId" :disabled="form.id !== null"
+              :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
+              <ElOption v-for="(item, index) in schemas" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
+          <ElFormItem :label="$t('label.owner')" prop="owner">
+            <ElInput v-model="form.owner" :placeholder="$t('placeholder.inputText', { field: $t('label.owner') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -399,7 +417,7 @@ function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <SchemaSection :schema-id="form.id!" :schema-type="form.type" />
+    <ArchiveSection :archive-id="form.id!" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -413,18 +431,18 @@ function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <SchemaSection :schema-id="form.id!" :schema-type="form.type" :preview="true" />
+    <ArchiveSection :archive-id="form.id!" :preview="true" />
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/schemas.xlsx`" :download="$t('page.schemas') + '.xlsx'">
-        {{ $t('page.schemas') }}.xlsx
+      <a :href="`schemas/reports.xlsx`" :download="$t('page.reports') + '.xlsx'">
+        {{ $t('page.reports') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+      accept=".xls,application/vnd.ms-excel,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>
@@ -437,7 +455,6 @@ function onSectionSave() {
         </div>
       </template>
     </ElUpload>
-
     <template #footer>
       <ElButton title="cancel" @click="importVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}

@@ -1,4 +1,5 @@
 import { accessLogsHandlers } from './access-logs'
+import { archivesHandlers } from './archives'
 import { auditLogsHandlers } from './audit-logs'
 import { authenticationHandlers } from './authentication'
 import { calendarEventHandlers } from './calendar-events'
@@ -18,7 +19,6 @@ import { schedulerLogsHandlers } from './scheduler-logs'
 import { schemasHandlers } from './schemas'
 import { schemesHandlers } from './schemes'
 import { scriptsHandlers } from './scripts'
-import { sectionsHandlers } from './sections'
 import { usersHandlers } from './users'
 
 export const handlers = [
@@ -41,7 +41,7 @@ export const handlers = [
   ...schemesHandlers,
   ...scriptsHandlers,
   ...usersHandlers,
-  ...sectionsHandlers,
+  ...archivesHandlers,
   ...reportsHandlers,
   ...schemasHandlers
 ]

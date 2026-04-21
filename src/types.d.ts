@@ -341,33 +341,53 @@ export interface Schedule extends AudtiMetadata {
   type: 'primary' | 'success' | 'warning' | 'danger'
 }
 
-export interface Report extends AudtiMetadata {
+export interface Archive extends AudtiMetadata {
   title: string
   schemaId: number | null
   owner?: string
   body?: string
-  version: number
+  version?: number
 }
 
 export interface Schema extends AudtiMetadata {
   name: string
+  type: string
   version: number
   status?: string
   description?: string
 }
 
+export interface Report extends AudtiMetadata {
+  title: string
+  schemaId: number | null
+  body?: string
+  version?: number
+}
+
 export interface Section extends AudtiMetadata {
   superiorId: number | null
   name: string
+  type: string
+  level?: number
   body: string
-  isLeaf?: boolean
   count?: number
 }
 
-export interface ReportSection extends Section {
-  reportId: number | null
+export interface SectionField extends AudtiMetadata {
+  name: string
+  field: string
+  type: string
+  length: number
+}
+
+export interface ArchiveSection extends Section {
+  archiveId: number | null
 }
 
 export interface SchemaSection extends Section {
   schemaId: number | null
+}
+
+export interface ReportSection extends Section {
+  reportId: number | null
 }

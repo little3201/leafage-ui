@@ -71,6 +71,7 @@ export default {
     size: '大小',
     length: '长度',
     contentType: '类型',
+    field: '属性',
     fieldType: '属性类型',
     formType: '表单类型',
     tsType: 'TS类型',
@@ -168,8 +169,9 @@ export default {
     schedulerLogs: '调度日志',
     docs: '文档管理',
     reports: '报告',
-    sections: '章节',
+    archives: '档案',
     schemas: '模板',
+    sections: '章节',
   },
 
   github: 'Github',

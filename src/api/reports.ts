@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Pagination, Report } from 'src/types'
+import type { Filters, Pagination, Report, Section } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -39,8 +39,8 @@ export const fetchReport = (id: number) => {
  * @param sectionId Section ID
  * @returns Row data
  */
-export const fetchReportSection = (id: number, sectionId: number) => {
-  return api.get(`${SERVER_URL.REPORT}/${id}/sections/${sectionId}`)
+export const fetchReportSection = (sectionId: number) => {
+  return api.get(`${SERVER_URL.REPORT}/sections/${sectionId}`)
 }
 
 /**
@@ -50,6 +50,15 @@ export const fetchReportSection = (id: number, sectionId: number) => {
  */
 export const createReport = (row: Report) => {
   return api.post(SERVER_URL.REPORT, row)
+}
+
+/**
+ * Create a new row
+ * @param row Row data
+ * @returns Created row
+ */
+export const createReportSection = (id: number, row: Section) => {
+  return api.post(`${SERVER_URL.REPORT}/${id}/sections`, row)
 }
 
 /**

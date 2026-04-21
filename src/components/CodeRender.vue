@@ -6,7 +6,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   content: string | undefined,
-  language?: string | undefined
+  language?: string
 }>()
 
 const highlightResult = computed<HighlightResult | null>(() => {

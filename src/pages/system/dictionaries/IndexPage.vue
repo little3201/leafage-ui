@@ -91,7 +91,7 @@ async function onCurrentChange(data: TreeNodeData) {
     return
   }
   treeSelected.value = String(data.id)
-  filter.superiorId!.value = Number(treeSelected.value)
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   pagination.page = 1
   await load()
 }
@@ -194,10 +194,12 @@ function exportRows() {
  * 弹出框
  * @param id 主键
  */
-async function saveRow(id: number) {
+async function saveRow(id?: number) {
   form.value = { ...initialValues }
 
-  await loadOne(id)
+  if (id) {
+    await loadOne(id)
+  }
   visible.value = true
 }
 
@@ -240,6 +242,7 @@ async function onSubmit(formEl: FormInstance) {
       if (form.value.id) {
         await modifyDictionary(form.value.id, form.value)
       } else {
+        form.value.superiorId = treeSelected.value ? Number(treeSelected.value) : null
         await createDictionary(form.value)
       }
       visible.value = false
@@ -318,6 +321,11 @@ function onUpload(options: UploadRequestOptions) {
         <ElCard shadow="never">
           <ElRow :gutter="20" justify="space-between" class="mb-4">
             <ElCol :span="16" class="text-left">
+              <ElButton v-if="treeSelected && hasAction($route.name, 'create')" title="create"
+                :type="actionTypes['create']" @click="saveRow()">
+                <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.create') }}
+              </ElButton>
               <ElButton v-if="hasAction($route.name, 'import')" title="import" :type="actionTypes['import']" plain
                 @click="importRows">
                 <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{

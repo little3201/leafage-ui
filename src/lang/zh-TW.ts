@@ -71,6 +71,7 @@ export default {
     size: '大小',
     length: '長度',
     contentType: '類型',
+    field: '屬性',
     fieldType: '屬性類型',
     formType: '表單類型',
     tsType: 'TS類型',
@@ -168,8 +169,9 @@ export default {
     schedulerLogs: '調度日誌',
     docs: '文檔管理',
     reports: '報告',
-    sections: '章節',
+    archives: '檔案',
     schemas: '模板',
+    sections: '章節',
   },
 
   github: 'Github',
