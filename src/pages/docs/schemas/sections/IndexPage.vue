@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
+  FormInstance,
   TreeData, TreeInstance, TreeNodeData
 } from 'element-plus'
 import { createSchemaSection, fetchSchemaSection, retrieveSchemaSectionTree } from 'src/api/schemas'
 import { modifySection } from 'src/api/sections'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { SchemaSection } from 'src/types'
+import type { SchemaSection, Section } from 'src/types'
 import { hasAction } from 'src/utils'
 import { onMounted, ref, watch } from 'vue'
 import ExcelContent from './ExcelContent.vue'
@@ -28,6 +29,8 @@ const filterText = ref('')
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
+const wordRef = ref<InstanceType<typeof WordContent>>()
+const excelRef = ref<InstanceType<typeof ExcelContent>>()
 const contentFormRef = ref<InstanceType<typeof WordContent>>()
 const initialValues: SchemaSection = {
   id: null,
@@ -122,21 +125,36 @@ async function loadOne(id: number) {
  * 表单提交
  */
 async function onSubmit() {
-  const formEl = contentFormRef.value?.formRef
-  if (!formEl) return
+  const sectionFormEl = contentFormRef.value?.sectionFormRef
+  if (!sectionFormEl) return
 
-  const sectionForm = contentFormRef.value?.form
+  const sectionForm = contentFormRef.value?.sectionForm
   if (!sectionForm) return
 
-  const valid = await formEl.validate()
+  await saveOrModify(sectionFormEl, sectionForm)
+}
+
+/**
+ * 修改章节
+ */
+async function modifyArchiveSection(type: string = 'WORD') {
+  const sectionFormEl = type === 'WORD' ? wordRef.value?.sectionFormRef : excelRef.value?.sectionFormRef
+  if (!sectionFormEl) return
+
+  const sectionForm = type === 'WORD' ? wordRef.value?.sectionForm : excelRef.value?.sectionForm
+  if (!sectionForm) return
+
+  await saveOrModify(sectionFormEl, sectionForm)
+}
+
+async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
+  const valid = await sectionFormEl.validate()
   if (valid) {
-    saveLoading.value = true
     try {
       const { id } = sectionForm
       const superiorId = treeSelected.value ? Number(treeSelected.value) : null
 
       if (!id) sectionForm.superiorId = superiorId
-
       const node = superiorId ? treeRef.value?.getNode(superiorId) : null
       if (node) {
         sectionForm.level = node.level ?? 0 + 1
@@ -149,18 +167,19 @@ async function onSubmit() {
         : await createSchemaSection(props.schemaId, sectionForm)
       visible.value = false
 
-      if (superiorId) {
+      if (id) {
         if (node) {
-          treeRef.value?.append(res.data, node.data)
+          Object.assign(node.data, res.data)
         }
       } else {
-        treeData.value.push(res.data)
+        if (superiorId && node) {
+          treeRef.value?.append(res.data, node.data)
+        } else {
+          treeData.value.push(res.data)
+        }
       }
     } catch (error) {
       return error
-    } finally {
-      formEl.resetFields()
-      saveLoading.value = false
     }
   }
 }
@@ -188,6 +207,10 @@ async function onSubmit() {
 // async function confirmEvent(id: number) {
 //   await removeRow(id)
 // }
+
+defineExpose({
+  modifyArchiveSection
+})
 </script>
 
 <template>
@@ -217,15 +240,15 @@ async function onSubmit() {
       <ElCard v-if="props.preview" shadow="never">
         {{ form.body }}
       </ElCard>
-      <div v-else>
-        <WordContent v-if="props.schemaType === 'WORD'" :row="form" :is-new="false" />
-        <ExcelContent v-else :section-id="form.id!" :is-new="false" />
+      <div v-else-if="treeSelected">
+        <WordContent ref="wordRef" v-if="props.schemaType === 'WORD'" :row="form" :is-new="false" />
+        <ExcelContent ref="excelRef" v-else :row="form" :is-new="false" />
       </div>
     </ElCol>
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="480">
     <WordContent ref="contentFormRef" :row="form" :is-new="true" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">

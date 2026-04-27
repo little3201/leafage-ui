@@ -4,7 +4,7 @@ import type {
   FormRules
 } from 'element-plus'
 import type { ArchiveSection, SchemaSection, Section } from 'src/types'
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
@@ -14,34 +14,52 @@ const props = defineProps<{
   isNew?: boolean
 }>()
 
-const formRef = ref<FormInstance>()
-const form = ref<Section | SchemaSection | ArchiveSection>({ ...props.row })
+const sectionFormRef = ref<FormInstance>()
+const sectionForm = ref<Section | SchemaSection | ArchiveSection>({ ...props.row })
 
-const rules = reactive<FormRules<typeof form>>({
+const rules = reactive<FormRules<typeof sectionForm>>({
   name: [
     { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
   ]
 })
 
+watch(() => props.row, async (newVal) => {
+  if (newVal) {
+    await nextTick(() => {
+      sectionForm.value = { ...newVal }
+
+      if (sectionFormRef.value) {
+        sectionFormRef.value.resetFields()
+      }
+    })
+  }
+})
+
 defineExpose({
-  formRef,
-  form
+  sectionFormRef,
+  sectionForm
 })
 </script>
 
 <template>
-  <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
+  <ElForm ref="sectionFormRef" :model="sectionForm" :rules="rules" label-position="top">
     <ElRow :gutter="20">
-      <ElCol>
+      <ElCol :span="10">
+        <ElFormItem :label="isNew ? $t('label.no') : ''" prop="sequence">
+          <ElInputNumber v-model="sectionForm.sequence"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.no') })" />
+        </ElFormItem>
+      </ElCol>
+      <ElCol :span="14">
         <ElFormItem :label="isNew ? $t('label.name') : ''" prop="name">
-          <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+          <ElInput v-model="sectionForm.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
         </ElFormItem>
       </ElCol>
     </ElRow>
-    <ElRow :gutter="20">
+    <ElRow :gutter="20" v-if="!isNew">
       <ElCol>
-        <ElFormItem :label="isNew ? $t('label.body') : ''" prop="body">
-          <ElInput v-model="form.body" type="textarea" :rows="isNew ? 6 : 20"
+        <ElFormItem prop="body">
+          <ElInput v-model="sectionForm.body" type="textarea" :rows="20"
             :placeholder="$t('placeholder.inputText', { field: $t('label.body') })" />
         </ElFormItem>
       </ElCol>

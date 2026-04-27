@@ -44,6 +44,7 @@ const filter = reactive<Filters<Schema>>({
   status: { op: 'eq', value: undefined }
 })
 
+const sectionRef = ref<InstanceType<typeof SchemaSection>>()
 const formRef = ref<FormInstance>()
 const initialValues: Schema = {
   id: null,
@@ -226,8 +227,11 @@ function onUpload(options: UploadRequestOptions) {
   return importSchemas(options.file)
 }
 
-function onSectionSave() {
-
+async function onSectionSave(type: string = 'WORD') {
+  const result = await sectionRef.value?.modifyArchiveSection(type)
+  if (result) {
+    configVisible.value = false
+  }
 }
 </script>
 
@@ -399,12 +403,12 @@ function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <SchemaSection :schema-id="form.id!" :schema-type="form.type" />
+    <SchemaSection ref="sectionRef" :schema-id="form.id!" :schema-type="form.type" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="save" type="primary" @click="onSectionSave">
+      <ElButton title="save" type="primary" @click="onSectionSave(form.type)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

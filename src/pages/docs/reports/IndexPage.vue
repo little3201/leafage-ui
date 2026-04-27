@@ -14,7 +14,7 @@ import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ArchiveSection from './sections/IndexPage.vue'
+import ReportSection from './sections/IndexPage.vue'
 
 
 
@@ -45,6 +45,7 @@ const filter = reactive<Filters<Report>>({
   title: { op: 'eq', value: undefined }
 })
 
+const sectionRef = ref<InstanceType<typeof ReportSection>>()
 const formRef = ref<FormInstance>()
 const initialValues: Report = {
   id: null,
@@ -254,6 +255,13 @@ function formatSchemas(cellValue: number): string {
   const matched = schemas.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
+
+async function onSectionSave() {
+  const result = await sectionRef.value?.modifyArchiveSection()
+  if (result) {
+    configVisible.value = false
+  }
+}
 </script>
 
 <template>
@@ -399,13 +407,22 @@ function formatSchemas(cellValue: number): string {
   </ElDialog>
 
   <!-- config -->
-  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center>
-    <ArchiveSection :report-id="form.id!" />
+  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
+    <ReportSection ref="sectionRef" :report-id="form.id!" />
+    <template #footer>
+      <ElButton title="close" @click="configVisible = false">
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+      </ElButton>
+      <ElButton title="save" type="primary" @click="onSectionSave">
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
+      </ElButton>
+    </template>
   </ElDialog>
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ArchiveSection :report-id="form.id!" :preview="true" />
+    <ReportSection :report-id="form.id!" :preview="true" />
   </ElDialog>
 
   <!-- import -->

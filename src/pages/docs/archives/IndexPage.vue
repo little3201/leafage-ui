@@ -46,6 +46,7 @@ const importVisible = ref<boolean>(false)
 const previewVisible = ref<boolean>(false)
 
 const formRef = ref<FormInstance>()
+const sectionRef = ref<InstanceType<typeof ArchiveSection>>()
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Archive>>({
@@ -254,16 +255,19 @@ async function confirmEvent(id: number) {
 }
 
 /**
-   * format schemas
-   * @param cellValue cell value
-   */
+ * format schemas
+ * @param cellValue cell value
+ */
 function formatSchemas(cellValue: number): string {
   const matched = schemas.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
 
-function onSectionSave() {
-
+async function onSectionSave() {
+  const result = await sectionRef.value?.modifyArchiveSection()
+  if (result) {
+    configVisible.value = false
+  }
 }
 </script>
 
@@ -417,7 +421,7 @@ function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <ArchiveSection :archive-id="form.id!" />
+    <ArchiveSection ref="sectionRef" :archive-id="form.id!" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}

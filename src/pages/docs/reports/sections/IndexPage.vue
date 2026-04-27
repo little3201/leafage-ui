@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
+  FormInstance,
   TreeData, TreeInstance,
   TreeNodeData
 } from 'element-plus'
@@ -11,11 +12,10 @@ import {
 } from 'src/api/reports'
 import { modifySection } from 'src/api/sections'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { ReportSection } from 'src/types'
+import type { ReportSection, Section } from 'src/types'
 import { hasAction } from 'src/utils'
 import { onMounted, ref, watch } from 'vue'
 import ExcelContent from '../../schemas/sections/ExcelContent.vue'
-import WordContent from '../../schemas/sections/WordContent.vue'
 
 
 const props = defineProps<{
@@ -33,7 +33,8 @@ const treeLoading = ref<boolean>(false)
 const treeSelected = ref<string>('')
 const filterText = ref('')
 
-const contentFormRef = ref<InstanceType<typeof WordContent>>()
+const contentRef = ref<InstanceType<typeof ExcelContent>>()
+const contentFormRef = ref<InstanceType<typeof ExcelContent>>()
 const initialValues: ReportSection = {
   id: null,
   name: '',
@@ -127,13 +128,30 @@ async function saveRow(id?: number) {
  * 表单提交
  */
 async function onSubmit() {
-  const formEl = contentFormRef.value?.formRef
-  if (!formEl) return
+  const sectionFormEl = contentFormRef.value?.sectionFormRef
+  if (!sectionFormEl) return
 
-  const sectionForm = contentFormRef.value?.form
+  const sectionForm = contentFormRef.value?.sectionForm
   if (!sectionForm) return
 
-  const valid = await formEl.validate()
+  await saveOrModify(sectionFormEl, sectionForm)
+}
+
+/**
+ * 修改章节
+ */
+async function modifyArchiveSection() {
+  const sectionFormEl = contentRef.value?.sectionFormRef
+  if (!sectionFormEl) return
+
+  const sectionForm = contentRef.value?.sectionForm
+  if (!sectionForm) return
+
+  await saveOrModify(sectionFormEl, sectionForm)
+}
+
+async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
+  const valid = await sectionFormEl.validate()
   if (valid) {
     try {
       const { id } = sectionForm
@@ -152,18 +170,26 @@ async function onSubmit() {
         : await createReportSection(props.reportId, sectionForm)
       visible.value = false
 
-      if (superiorId) {
+      if (id) {
         if (node) {
-          treeRef.value?.append(res.data, node.data)
+          Object.assign(node.data, res.data)
         }
       } else {
-        treeData.value.push(res.data)
+        if (superiorId && node) {
+          treeRef.value?.append(res.data, node.data)
+        } else {
+          treeData.value.push(res.data)
+        }
       }
     } catch (error) {
       return error
     }
   }
 }
+
+defineExpose({
+  modifyArchiveSection
+})
 </script>
 
 <template>
@@ -194,13 +220,13 @@ async function onSubmit() {
         {{ form.body }}
       </ElCard>
 
-      <ExcelContent :section-id="form.id!" :is-new="false" />
+      <ExcelContent v-if="treeSelected" :row="form" :is-new="false" />
     </ElCol>
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
-    <WordContent ref="contentFormRef" :row="form" :is-new="true" />
+  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="480">
+    <ExcelContent ref="contentFormRef" :row="form" :is-new="true" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -213,7 +239,7 @@ async function onSubmit() {
   </ElDialog>
 
   <!-- fields -->
-  <ElDialog v-model="itemVisible" :title="$t('page.fields')" align-center width="400">
-    <ExcelContent :section-id="form.id!" :is-new="true" />
+  <ElDialog v-model="itemVisible" :title="$t('action.fields')" align-center width="400">
+    <ExcelContent :row="form" :is-new="true" />
   </ElDialog>
 </template>

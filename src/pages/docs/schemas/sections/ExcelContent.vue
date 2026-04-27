@@ -3,14 +3,14 @@ import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { retrieveDictionarySubset } from 'src/api/dictionaries'
 import { createSectionField, modifySectionField, retrieveSectionFields } from 'src/api/sections'
-import type { Dictionary, SectionField } from 'src/types'
-import { onMounted, reactive, ref } from 'vue'
+import type { ArchiveSection, Dictionary, SchemaSection, Section, SectionField } from 'src/types'
+import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()
 const props = defineProps<{
-  sectionId: number | null
+  row: Section | SchemaSection | ArchiveSection
   isNew?: boolean
 }>()
 
@@ -20,9 +20,19 @@ const saveLoading = ref(false)
 const typeOptions = ref<Array<Dictionary>>([])
 
 const visible = ref(false)
+
+const sectionFormRef = ref<FormInstance>()
+const sectionForm = ref<Section | SchemaSection | ArchiveSection>({ ...props.row })
+const sectionRules = reactive<FormRules<typeof sectionForm>>({
+  name: [
+    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
+  ]
+})
+
 const formRef = ref<FormInstance>()
 const initialValues: SectionField = {
   id: null,
+  sectionId: props.row.id,
   name: '',
   type: '',
   field: '',
@@ -52,11 +62,30 @@ onMounted(async () => {
   typeOptions.value = res.data
 })
 
+watch(() => props.row, async (newVal) => {
+  if (!newVal) return
+
+  await nextTick(async () => {
+    sectionForm.value = { ...newVal }
+
+    if (sectionFormRef.value) {
+      sectionFormRef.value.resetFields()
+    }
+
+    form.value = {
+      ...initialValues,
+      sectionId: newVal.id || 0
+    }
+
+    await load()
+  })
+})
+
 async function load() {
-  if (!props.sectionId) return
+  if (!props.row.id) return
   loading.value = true
   try {
-    const res = await retrieveSectionFields(props.sectionId)
+    const res = await retrieveSectionFields(props.row.id)
     datas.value = res.data
   } catch (error) {
     return error
@@ -83,6 +112,9 @@ async function onSubmit(formEl: FormInstance) {
       } else {
         await createSectionField(form.value)
       }
+
+      visible.value = false
+      await load()
     } catch (error) {
       return error
     } finally {
@@ -90,19 +122,42 @@ async function onSubmit(formEl: FormInstance) {
     }
   }
 }
+
+defineExpose({
+  sectionFormRef,
+  sectionForm
+})
 </script>
 
 <template>
-  <ElTable v-loading="loading" :data="datas" row-key="id" table-layout="auto">
-    <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-    <ElTableColumn prop="name" :label="$t('label.name')" />
-    <ElTableColumn prop="field" :label="$t('label.field')" />
-    <ElTableColumn prop="type" :label="$t('label.type')" />
-    <ElTableColumn prop="length" :label="$t('label.length')" />
-  </ElTable>
-  <ElButton class="mt-4" type="primary" plain style="width: 100%" @click="onclick">
-    Add Item
-  </ElButton>
+  <ElForm ref="sectionFormRef" :model="sectionForm" :rules="sectionRules" label-position="top">
+    <ElRow :gutter="20">
+      <ElCol :span="10">
+        <ElFormItem :label="isNew ? $t('label.no') : ''" prop="sequence">
+          <ElInputNumber v-model="sectionForm.sequence"
+            :placeholder="$t('placeholder.inputText', { field: $t('label.no') })" />
+        </ElFormItem>
+      </ElCol>
+      <ElCol :span="14">
+        <ElFormItem :label="isNew ? $t('label.name') : ''" prop="name">
+          <ElInput v-model="sectionForm.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+        </ElFormItem>
+      </ElCol>
+    </ElRow>
+  </ElForm>
+
+  <div v-if="!isNew">
+    <ElTable v-loading="loading" :data="datas" row-key="id" table-layout="auto">
+      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn prop="name" :label="$t('label.name')" />
+      <ElTableColumn prop="field" :label="$t('label.field')" />
+      <ElTableColumn prop="type" :label="$t('label.type')" />
+      <ElTableColumn prop="length" :label="$t('label.length')" />
+    </ElTable>
+    <ElButton class="mt-4" type="primary" plain style="width: 100%" @click="onclick">
+      Add Item
+    </ElButton>
+  </div>
 
   <ElDialog v-model="visible" :title="$t('action.fields')" align-center :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">

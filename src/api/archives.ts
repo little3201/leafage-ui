@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Archive, ArchiveSection, Filters, Pagination } from 'src/types'
+import type { Archive, Filters, Pagination, Section } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -57,7 +57,7 @@ export const createArchive = (row: Archive) => {
  * @param row Row data
  * @returns Created row
  */
-export const createArchiveSection = (id: number, row: ArchiveSection) => {
+export const createArchiveSection = (id: number, row: Section) => {
   return api.post(`${SERVER_URL.ARCHIVE}/${id}/sections`, row)
 }
 
@@ -69,16 +69,6 @@ export const createArchiveSection = (id: number, row: ArchiveSection) => {
  */
 export const modifyArchive = (id: number, row: Archive) => {
   return api.put(`${SERVER_URL.ARCHIVE}/${id}`, row)
-}
-
-/**
- * Modify an existing row
- * @param id Row ID
- * @param row Updated row data
- * @returns Modified row
- */
-export const modifyArchiveSection = (id: number, row: ArchiveSection) => {
-  return api.put(`${SERVER_URL.ARCHIVE}/sections/${id}`, row)
 }
 
 /**

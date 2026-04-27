@@ -367,6 +367,7 @@ export interface Report extends AudtiMetadata {
 export interface Section extends AudtiMetadata {
   superiorId: number | null
   name: string
+  sequence?: number
   type: string
   level?: number
   body: string
@@ -375,6 +376,7 @@ export interface Section extends AudtiMetadata {
 
 export interface SectionField extends AudtiMetadata {
   name: string
+  sectionId: number | null
   field: string
   type: string
   length: number

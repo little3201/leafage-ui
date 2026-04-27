@@ -8,11 +8,11 @@ import type {
 import {
   createArchiveSection,
   fetchArchiveSection,
-  modifyArchiveSection,
   retrieveArchiveSectionTree
 } from 'src/api/archives'
+import { modifySection } from 'src/api/sections'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { ArchiveSection } from 'src/types'
+import type { ArchiveSection, Section } from 'src/types'
 import { hasAction } from 'src/utils'
 import { onMounted, ref, watch } from 'vue'
 import WordContent from '../../schemas/sections/WordContent.vue'
@@ -32,7 +32,7 @@ const treeLoading = ref<boolean>(false)
 const treeSelected = ref<string>('')
 const filterText = ref('')
 
-const formRef = ref<FormInstance>()
+const contentFormRef = ref<InstanceType<typeof WordContent>>()
 const initialValues: ArchiveSection = {
   id: null,
   name: '',
@@ -125,39 +125,69 @@ async function saveRow(id?: number) {
 /**
  * 表单提交
  */
-async function onSubmit(formEl: FormInstance) {
-  if (!formEl) return
-  const valid = await formEl.validate()
+async function onSubmit() {
+  const sectionFormEl = contentFormRef.value?.sectionFormRef
+  if (!sectionFormEl) return
+
+  const sectionForm = contentFormRef.value?.sectionForm
+  if (!sectionForm) return
+
+  await saveOrModify(sectionFormEl, sectionForm)
+}
+
+/**
+ * 修改章节
+ */
+async function modifyArchiveSection() {
+  const sectionFormEl = contentRef.value?.sectionFormRef
+  if (!sectionFormEl) return
+
+  const sectionForm = contentRef.value?.sectionForm
+  if (!sectionForm) return
+
+  await saveOrModify(sectionFormEl, sectionForm)
+}
+
+async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
+  const valid = await sectionFormEl.validate()
   if (valid) {
     try {
-      const { id } = form.value
+      const { id } = sectionForm
       const superiorId = treeSelected.value ? Number(treeSelected.value) : null
 
-      if (!id) form.value.superiorId = superiorId
+      if (!id) sectionForm.superiorId = superiorId
       const node = superiorId ? treeRef.value?.getNode(superiorId) : null
       if (node) {
-        form.value.level = node.level ?? 0 + 1
+        sectionForm.level = node.level ?? 0 + 1
       } else {
-        form.value.level = 1
+        sectionForm.level = 1
       }
 
       const res = id
-        ? await modifyArchiveSection(form.value.id!, form.value)
-        : await createArchiveSection(props.archiveId, form.value)
+        ? await modifySection(id, sectionForm)
+        : await createArchiveSection(props.archiveId, sectionForm)
       visible.value = false
 
-      if (superiorId) {
+      if (id) {
         if (node) {
-          treeRef.value?.append(res.data, node.data)
+          Object.assign(node.data, res.data)
         }
       } else {
-        treeData.value.push(res.data)
+        if (superiorId && node) {
+          treeRef.value?.append(res.data, node.data)
+        } else {
+          treeData.value.push(res.data)
+        }
       }
     } catch (error) {
       return error
     }
   }
 }
+
+defineExpose({
+  modifyArchiveSection
+})
 </script>
 
 <template>
@@ -188,18 +218,18 @@ async function onSubmit(formEl: FormInstance) {
         {{ form.body }}
       </ElCard>
 
-      <WordContent :row="form" :is-new="false" />
+      <WordContent v-if="treeSelected" :row="form" :is-new="false" />
     </ElCol>
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
-    <WordContent ref="formRef" :row="form" :is-new="true" />
+  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="480">
+    <WordContent ref="contentFormRef" :row="form" :is-new="true" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit()">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
