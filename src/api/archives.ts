@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Archive, Filters, Pagination, Section } from 'src/types'
+import type { Archive, Filters, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -15,16 +15,6 @@ export const retrieveArchives = (pagination: Pagination, filter?: Filters<Archiv
 }
 
 /**
- * Retrieve rows
- * @param pagination Pagination and sort parameters
- * @param filter Optional filter or sort parameters
- * @returns Rows data
- */
-export const retrieveArchiveSectionTree = (id: number) => {
-  return api.get(`${SERVER_URL.ARCHIVE}/${id}/sections`)
-}
-
-/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -34,31 +24,12 @@ export const fetchArchive = (id: number) => {
 }
 
 /**
- * Fetch a specific row
- * @param id Row ID
- * @param sectionId Section ID
- * @returns Row data
- */
-export const fetchArchiveSection = (sectionId: number) => {
-  return api.get(`${SERVER_URL.ARCHIVE}/sections/${sectionId}`)
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row
  */
 export const createArchive = (row: Archive) => {
   return api.post(SERVER_URL.ARCHIVE, row)
-}
-
-/**
- * Create a new row
- * @param row Row data
- * @returns Created row
- */
-export const createArchiveSection = (id: number, row: Section) => {
-  return api.post(`${SERVER_URL.ARCHIVE}/${id}/sections`, row)
 }
 
 /**

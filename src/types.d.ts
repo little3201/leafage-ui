@@ -366,6 +366,8 @@ export interface Report extends AudtiMetadata {
 
 export interface Section extends AudtiMetadata {
   superiorId: number | null
+  ownerId: number | null
+  ownerType: string | null
   name: string
   sequence?: number
   type: string
@@ -380,16 +382,4 @@ export interface SectionField extends AudtiMetadata {
   field: string
   type: string
   length: number
-}
-
-export interface ArchiveSection extends Section {
-  archiveId: number | null
-}
-
-export interface SchemaSection extends Section {
-  schemaId: number | null
-}
-
-export interface ReportSection extends Section {
-  reportId: number | null
 }

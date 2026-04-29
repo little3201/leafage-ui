@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Pagination, Report, Section } from 'src/types'
+import type { Filters, Pagination, Report } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -15,16 +15,6 @@ export const retrieveReports = (pagination: Pagination, filter?: Filters<Report>
 }
 
 /**
- * Retrieve rows
- * @param pagination Pagination and sort parameters
- * @param filter Optional filter or sort parameters
- * @returns Rows data
- */
-export const retrieveReportSectionTree = (id: number) => {
-  return api.get(`${SERVER_URL.REPORT}/${id}/sections`)
-}
-
-/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -34,31 +24,12 @@ export const fetchReport = (id: number) => {
 }
 
 /**
- * Fetch a specific row
- * @param id Row ID
- * @param sectionId Section ID
- * @returns Row data
- */
-export const fetchReportSection = (sectionId: number) => {
-  return api.get(`${SERVER_URL.REPORT}/sections/${sectionId}`)
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row
  */
 export const createReport = (row: Report) => {
   return api.post(SERVER_URL.REPORT, row)
-}
-
-/**
- * Create a new row
- * @param row Row data
- * @returns Created row
- */
-export const createReportSection = (id: number, row: Section) => {
-  return api.post(`${SERVER_URL.REPORT}/${id}/sections`, row)
 }
 
 /**

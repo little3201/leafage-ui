@@ -71,7 +71,7 @@ export default defineConfigWithVueTs(
 
       // allow console, debugger during development only
       'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-      'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+      'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn'
     }
   }
 )

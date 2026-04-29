@@ -6,15 +6,15 @@ import type {
   TreeNodeData
 } from 'element-plus'
 import {
-  createReportSection,
-  fetchReportSection,
-  retrieveReportSectionTree
-} from 'src/api/reports'
-import { modifySection } from 'src/api/sections'
+  createSection,
+  fetchSection,
+  modifySection,
+  retrieveSectionTree
+} from 'src/api/sections'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { ReportSection, Section } from 'src/types'
+import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import ExcelContent from '../../schemas/sections/ExcelContent.vue'
 
 
@@ -35,20 +35,16 @@ const filterText = ref('')
 
 const contentRef = ref<InstanceType<typeof ExcelContent>>()
 const contentFormRef = ref<InstanceType<typeof ExcelContent>>()
-const initialValues: ReportSection = {
+const initialValues: Section = {
   id: null,
   name: '',
-  reportId: props.reportId,
+  ownerId: props.reportId,
+  ownerType: 'REPORT',
   superiorId: null,
   type: 'HEADING',
   body: ''
 }
-const form = ref<ReportSection>({ ...initialValues })
-
-
-onMounted(async () => {
-  await loadTree()
-})
+const form = ref<Section>({ ...initialValues })
 
 /**
  * 监听tree,reportId
@@ -61,7 +57,7 @@ watch(() => props.reportId, async () => {
   treeSelected.value = ''
   form.value = { ...initialValues }
   await loadTree()
-})
+}, { immediate: true })
 
 /**
  * tree过滤
@@ -90,7 +86,7 @@ async function loadTree() {
   if (!props.reportId) return
   treeLoading.value = true
   try {
-    const res = await retrieveReportSectionTree(props.reportId)
+    const res = await retrieveSectionTree(props.reportId, 'REPORT')
     treeData.value = res.data
   } catch (error) {
     return error
@@ -105,7 +101,7 @@ async function loadTree() {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchReportSection(id)
+    const res = await fetchSection(id)
     form.value = res.data
   } catch (error) {
     return error
@@ -140,7 +136,7 @@ async function onSubmit() {
 /**
  * 修改章节
  */
-async function modifyArchiveSection() {
+async function modifyReportSection() {
   const sectionFormEl = contentRef.value?.sectionFormRef
   if (!sectionFormEl) return
 
@@ -167,7 +163,7 @@ async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
 
       const res = id
         ? await modifySection(id, sectionForm)
-        : await createReportSection(props.reportId, sectionForm)
+        : await createSection(sectionForm)
       visible.value = false
 
       if (id) {
@@ -188,7 +184,7 @@ async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
 }
 
 defineExpose({
-  modifyArchiveSection
+  modifyReportSection
 })
 </script>
 
@@ -220,7 +216,7 @@ defineExpose({
         {{ form.body }}
       </ElCard>
 
-      <ExcelContent v-if="treeSelected" :row="form" :is-new="false" />
+      <ExcelContent ref="contentRef" v-else-if="treeSelected" :row="form" :is-new="false" />
     </ElCol>
   </ElRow>
 

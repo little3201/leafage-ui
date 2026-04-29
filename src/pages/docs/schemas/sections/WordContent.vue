@@ -3,19 +3,19 @@ import type {
   FormInstance,
   FormRules
 } from 'element-plus'
-import type { ArchiveSection, SchemaSection, Section } from 'src/types'
+import type { Section } from 'src/types'
 import { nextTick, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()
 const props = defineProps<{
-  row: Section | SchemaSection | ArchiveSection
+  row: Section
   isNew?: boolean
 }>()
 
 const sectionFormRef = ref<FormInstance>()
-const sectionForm = ref<Section | SchemaSection | ArchiveSection>({ ...props.row })
+const sectionForm = ref<Section>({ ...props.row })
 
 const rules = reactive<FormRules<typeof sectionForm>>({
   name: [

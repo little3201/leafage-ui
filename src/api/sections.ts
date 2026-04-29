@@ -4,6 +4,14 @@ import type { Section, SectionField } from 'src/types'
 
 
 /**
+ * Fetch row tree structure
+ * @returns tree data
+ */
+export const retrieveSectionTree = (ownerId: number, ownerType: string) => {
+  return api.get(`${SERVER_URL.SECTION}/${ownerId}/tree`, { params: { ownerType } })
+}
+
+/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data

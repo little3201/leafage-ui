@@ -3,26 +3,28 @@ import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { retrieveDictionarySubset } from 'src/api/dictionaries'
 import { createSectionField, modifySectionField, retrieveSectionFields } from 'src/api/sections'
-import type { ArchiveSection, Dictionary, SchemaSection, Section, SectionField } from 'src/types'
+import type { Dictionary, Section, SectionField } from 'src/types'
 import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ExcelData from './ExcelData.vue'
 
 
 const { t } = useI18n()
 const props = defineProps<{
-  row: Section | SchemaSection | ArchiveSection
+  row: Section
   isNew?: boolean
 }>()
 
-const datas = ref([])
+const fields = ref<Array<SectionField>>([])
 const loading = ref(false)
 const saveLoading = ref(false)
 const typeOptions = ref<Array<Dictionary>>([])
 
 const visible = ref(false)
+const datas = ref([])
 
 const sectionFormRef = ref<FormInstance>()
-const sectionForm = ref<Section | SchemaSection | ArchiveSection>({ ...props.row })
+const sectionForm = ref<Section>({ ...props.row })
 const sectionRules = reactive<FormRules<typeof sectionForm>>({
   name: [
     { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
@@ -86,7 +88,7 @@ async function load() {
   loading.value = true
   try {
     const res = await retrieveSectionFields(props.row.id)
-    datas.value = res.data
+    fields.value = res.data
   } catch (error) {
     return error
   } finally {
@@ -96,6 +98,10 @@ async function load() {
 
 function onclick() {
   visible.value = true
+  form.value = {
+    ...initialValues,
+    sectionId: props.row.id || 0
+  }
 }
 
 /**
@@ -146,18 +152,23 @@ defineExpose({
     </ElRow>
   </ElForm>
 
-  <div v-if="!isNew">
-    <ElTable v-loading="loading" :data="datas" row-key="id" table-layout="auto">
-      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-      <ElTableColumn prop="name" :label="$t('label.name')" />
-      <ElTableColumn prop="field" :label="$t('label.field')" />
-      <ElTableColumn prop="type" :label="$t('label.type')" />
-      <ElTableColumn prop="length" :label="$t('label.length')" />
-    </ElTable>
-    <ElButton class="mt-4" type="primary" plain style="width: 100%" @click="onclick">
-      Add Item
-    </ElButton>
-  </div>
+  <ElTabs type="card">
+    <ElTabPane :label="$t('label.field')">
+      <ElTable v-loading="loading" :data="fields" row-key="id" table-layout="auto">
+        <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+        <ElTableColumn prop="name" :label="$t('label.name')" />
+        <ElTableColumn prop="field" :label="$t('label.field')" />
+        <ElTableColumn prop="type" :label="$t('label.type')" />
+        <ElTableColumn prop="length" :label="$t('label.length')" />
+      </ElTable>
+      <ElButton class="mt-4" type="primary" plain style="width: 100%" @click="onclick">
+        Add Item
+      </ElButton>
+    </ElTabPane>
+    <ElTabPane :label="$t('label.data')">
+      <ExcelData :fields="fields" :rows="datas" />
+    </ElTabPane>
+  </ElTabs>
 
   <ElDialog v-model="visible" :title="$t('action.fields')" align-center :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">

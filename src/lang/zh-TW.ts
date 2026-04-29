@@ -189,8 +189,6 @@ export default {
   message: {
     selectedTotal: '已選擇 {total} 條',
     removeConfirm: '是否確定要刪除這條數據？',
-    signinTo: '登錄您的帳戶',
-    alreadyExists: '數據已存在',
     forbidden: '您沒有訪問此資源的權限，請聯繫管理員。',
     notFound: '未找到您請求的資源。請檢查URL是否正確，或返回首頁。',
     serverError: '系統內部錯誤。我們正在努力修復，請稍後再試！',
@@ -198,6 +196,7 @@ export default {
   },
 
   tips: {
+    signinTo: '登錄您的帳戶',
     drop2Here: '將檔案拖放到此處，或',
     click2Upload: '點擊上傳',
     fileSizeLimit: '檔案小於 {size}。',

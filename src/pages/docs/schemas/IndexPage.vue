@@ -228,7 +228,7 @@ function onUpload(options: UploadRequestOptions) {
 }
 
 async function onSectionSave(type: string = 'WORD') {
-  const result = await sectionRef.value?.modifyArchiveSection(type)
+  const result = await sectionRef.value?.modifySchemaSection(type)
   if (result) {
     configVisible.value = false
   }

@@ -6,15 +6,15 @@ import type {
   TreeNodeData
 } from 'element-plus'
 import {
-  createArchiveSection,
-  fetchArchiveSection,
-  retrieveArchiveSectionTree
-} from 'src/api/archives'
-import { modifySection } from 'src/api/sections'
+  createSection,
+  fetchSection,
+  modifySection,
+  retrieveSectionTree
+} from 'src/api/sections'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { ArchiveSection, Section } from 'src/types'
+import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import WordContent from '../../schemas/sections/WordContent.vue'
 
 
@@ -32,21 +32,18 @@ const treeLoading = ref<boolean>(false)
 const treeSelected = ref<string>('')
 const filterText = ref('')
 
+const contentRef = ref<InstanceType<typeof WordContent>>()
 const contentFormRef = ref<InstanceType<typeof WordContent>>()
-const initialValues: ArchiveSection = {
+const initialValues: Section = {
   id: null,
   name: '',
-  archiveId: props.archiveId,
+  ownerId: props.archiveId,
+  ownerType: 'ARCHIVE',
   superiorId: null,
   type: 'HEADING',
   body: ''
 }
-const form = ref<ArchiveSection>({ ...initialValues })
-
-
-onMounted(async () => {
-  await loadTree()
-})
+const form = ref<Section>({ ...initialValues })
 
 /**
  * 监听tree,archiveId
@@ -59,7 +56,7 @@ watch(() => props.archiveId, async () => {
   treeSelected.value = ''
   form.value = { ...initialValues }
   await loadTree()
-})
+}, { immediate: true })
 
 /**
  * tree过滤
@@ -88,7 +85,7 @@ async function loadTree() {
   if (!props.archiveId) return
   treeLoading.value = true
   try {
-    const res = await retrieveArchiveSectionTree(props.archiveId)
+    const res = await retrieveSectionTree(props.archiveId, 'ARCHIVE')
     treeData.value = res.data
   } catch (error) {
     return error
@@ -103,7 +100,7 @@ async function loadTree() {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchArchiveSection(id)
+    const res = await fetchSection(id)
     form.value = res.data
   } catch (error) {
     return error
@@ -165,7 +162,7 @@ async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
 
       const res = id
         ? await modifySection(id, sectionForm)
-        : await createArchiveSection(props.archiveId, sectionForm)
+        : await createSection(sectionForm)
       visible.value = false
 
       if (id) {
@@ -218,7 +215,7 @@ defineExpose({
         {{ form.body }}
       </ElCard>
 
-      <WordContent v-if="treeSelected" :row="form" :is-new="false" />
+      <WordContent ref="contentRef" v-else-if="treeSelected" :row="form" :is-new="false" />
     </ElCol>
   </ElRow>
 

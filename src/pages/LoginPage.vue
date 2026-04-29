@@ -98,7 +98,7 @@ async function onSubmit() {
                 <ElImage :src="logo" alt="logo" class="w-24 h-24" />
               </div>
               <div class="text-lg font-bold text-center mb-xs">
-                {{ $t('message.signinTo') }}
+                {{ $t('tips.signinTo') }}
               </div>
               <ElForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit"
                 class="bg-transparent max-w-lg w-full my-6 space-y-4">

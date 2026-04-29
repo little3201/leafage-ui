@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Pagination, Schema, Section } from 'src/types'
+import type { Filters, Pagination, Schema } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -15,16 +15,6 @@ export const retrieveSchemas = (pagination: Pagination, filter?: Filters<Schema>
 }
 
 /**
- * Retrieve rows
- * @param pagination Pagination and sort parameters
- * @param filter Optional filter or sort parameters
- * @returns Rows data
- */
-export const retrieveSchemaSectionTree = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}/sections`)
-}
-
-/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -34,31 +24,12 @@ export const fetchSchema = (id: number) => {
 }
 
 /**
- * Fetch a specific row
- * @param id Row ID
- * @param sectionId Section ID
- * @returns Row data
- */
-export const fetchSchemaSection = (sectionId: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/sections/${sectionId}`)
-}
-
-/**
  * Create a new row
  * @param row Row data
  * @returns Created row
  */
 export const createSchema = (row: Schema) => {
   return api.post(SERVER_URL.SCHEMA, row)
-}
-
-/**
- * Create a new row
- * @param row Row data
- * @returns Created row
- */
-export const createSchemaSection = (id: number, row: Section) => {
-  return api.post(`${SERVER_URL.SCHEMA}/${id}/sections`, row)
 }
 
 /**
@@ -87,16 +58,6 @@ export const enableSchema = (id: number) => {
  */
 export const removeSchema = (id: number) => {
   return api.delete(`${SERVER_URL.SCHEMA}/${id}`)
-}
-
-/**
- * Remove a row
- * @param id Row ID
- * @param sectionId Section ID
- * @returns Deletion status
- */
-export const removeSchemaSection = (id: number, sectionId: number) => {
-  return api.delete(`${SERVER_URL.SCHEMA}/${id}/sections/${sectionId}`)
 }
 
 /**

@@ -189,8 +189,6 @@ export default {
   message: {
     selectedTotal: '已选择 {total} 条',
     removeConfirm: '是否确定要删除这条数据？',
-    signinTo: '登录您的帐户',
-    alreadyExists: '数据已存在',
     forbidden: '您没有访问此资源的权限，请联系管理员。',
     notFound: '未找到您请求的资源。请检查URL是否正确，或返回首页。',
     serverError: '系统内部错误。我们正在努力修复，请稍后再试！',
@@ -198,6 +196,7 @@ export default {
   },
 
   tips: {
+    signinTo: '登录您的帐户',
     drop2Here: '将文件拖放到此处，或',
     click2Upload: '点击上传',
     fileSizeLimit: '文件小于 {size}。',

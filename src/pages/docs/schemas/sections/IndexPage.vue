@@ -4,12 +4,16 @@ import type {
   FormInstance,
   TreeData, TreeInstance, TreeNodeData
 } from 'element-plus'
-import { createSchemaSection, fetchSchemaSection, retrieveSchemaSectionTree } from 'src/api/schemas'
-import { modifySection } from 'src/api/sections'
+import {
+  createSection,
+  fetchSection,
+  modifySection,
+  retrieveSectionTree
+} from 'src/api/sections'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { SchemaSection, Section } from 'src/types'
+import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import ExcelContent from './ExcelContent.vue'
 import WordContent from './WordContent.vue'
 
@@ -31,21 +35,19 @@ const visible = ref<boolean>(false)
 
 const wordRef = ref<InstanceType<typeof WordContent>>()
 const excelRef = ref<InstanceType<typeof ExcelContent>>()
-const contentFormRef = ref<InstanceType<typeof WordContent>>()
-const initialValues: SchemaSection = {
+const wordFormRef = ref<InstanceType<typeof WordContent>>()
+const excelFormRef = ref<InstanceType<typeof ExcelContent>>()
+
+const initialValues: Section = {
   id: null,
-  schemaId: props.schemaId,
+  ownerId: props.schemaId,
+  ownerType: 'SCHEMA',
   name: '',
   superiorId: null,
   type: 'HEADING',
   body: ''
 }
-const form = ref<SchemaSection>({ ...initialValues })
-
-
-onMounted(async () => {
-  await loadTree()
-})
+const form = ref<Section>({ ...initialValues })
 
 /**
  * 监听tree
@@ -58,7 +60,7 @@ watch(() => props.schemaId, async () => {
   treeSelected.value = ''
   form.value = { ...initialValues }
   await loadTree()
-})
+}, { immediate: true })
 
 /**
  * tree过滤
@@ -87,7 +89,7 @@ async function loadTree() {
   if (!props.schemaId) return
   treeLoading.value = true
   try {
-    const res = await retrieveSchemaSectionTree(props.schemaId)
+    const res = await retrieveSectionTree(props.schemaId, 'SCHEMA')
     treeData.value = res.data
   } catch (error) {
     return error
@@ -114,7 +116,7 @@ async function saveRow(id?: number) {
  */
 async function loadOne(id: number) {
   try {
-    const res = await fetchSchemaSection(id)
+    const res = await fetchSection(id)
     form.value = res.data
   } catch (error) {
     return error
@@ -124,11 +126,11 @@ async function loadOne(id: number) {
 /**
  * 表单提交
  */
-async function onSubmit() {
-  const sectionFormEl = contentFormRef.value?.sectionFormRef
+async function onSubmit(type: string = 'WORD') {
+  const sectionFormEl = type === 'WORD' ? wordFormRef.value?.sectionFormRef : excelFormRef.value?.sectionFormRef
   if (!sectionFormEl) return
 
-  const sectionForm = contentFormRef.value?.sectionForm
+  const sectionForm = type === 'WORD' ? wordFormRef.value?.sectionForm : excelFormRef.value?.sectionForm
   if (!sectionForm) return
 
   await saveOrModify(sectionFormEl, sectionForm)
@@ -137,7 +139,7 @@ async function onSubmit() {
 /**
  * 修改章节
  */
-async function modifyArchiveSection(type: string = 'WORD') {
+async function modifySchemaSection(type: string = 'WORD') {
   const sectionFormEl = type === 'WORD' ? wordRef.value?.sectionFormRef : excelRef.value?.sectionFormRef
   if (!sectionFormEl) return
 
@@ -164,7 +166,7 @@ async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
 
       const res = id
         ? await modifySection(id, sectionForm)
-        : await createSchemaSection(props.schemaId, sectionForm)
+        : await createSection(sectionForm)
       visible.value = false
 
       if (id) {
@@ -209,7 +211,7 @@ async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
 // }
 
 defineExpose({
-  modifyArchiveSection
+  modifySchemaSection
 })
 </script>
 
@@ -237,9 +239,12 @@ defineExpose({
     </ElCol>
 
     <ElCol :span="16" :xl="18">
-      <ElCard v-if="props.preview" shadow="never">
-        {{ form.body }}
-      </ElCard>
+      <div v-if="props.preview">
+        <ElCard v-if="props.schemaType === 'WORD'" shadow="never">
+          {{ form.body }}
+        </ElCard>
+        <ExcelContent v-else :row="form" :is-new="true" :preview="true" />
+      </div>
       <div v-else-if="treeSelected">
         <WordContent ref="wordRef" v-if="props.schemaType === 'WORD'" :row="form" :is-new="false" />
         <ExcelContent ref="excelRef" v-else :row="form" :is-new="false" />
@@ -249,12 +254,13 @@ defineExpose({
 
   <!-- form -->
   <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="480">
-    <WordContent ref="contentFormRef" :row="form" :is-new="true" />
+    <WordContent ref="wordFormRef" v-if="props.schemaType === 'WORD'" :row="form" :is-new="true" />
+    <ExcelContent ref="excelFormRef" v-else :row="form" :is-new="true" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit()">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(form.type)">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

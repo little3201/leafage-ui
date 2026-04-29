@@ -13,8 +13,7 @@ const abortControllerMap: Map<string, AbortController> = new Map()
 const api: AxiosInstance = axios.create({
   baseURL: '/api',
   timeout: 15000,
-  withCredentials: true,
-  xsrfHeaderName: 'X-XSRF-TOKEN',
+  withCredentials: true
 })
 
 // 请求拦截器
@@ -55,9 +54,6 @@ api.interceptors.response.use(
           break
         case 404:
           ElMessage.error({ message: t('message.notFound'), grouping: true })
-          break
-        case 409:
-          ElMessage.error({ message: t('message.alreadyExists'), grouping: true })
           break
         case 500:
           ElMessage.error({ message: t('message.serverError'), grouping: true })

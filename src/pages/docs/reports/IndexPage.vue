@@ -257,7 +257,7 @@ function formatSchemas(cellValue: number): string {
 }
 
 async function onSectionSave() {
-  const result = await sectionRef.value?.modifyArchiveSection()
+  const result = await sectionRef.value?.modifyReportSection()
   if (result) {
     configVisible.value = false
   }
