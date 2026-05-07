@@ -7,8 +7,8 @@ import type {
   UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import { dayjs } from 'element-plus'
-import { createReport, fetchReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/reports'
-import { retrieveSchemas } from 'src/api/schemas'
+import { createReport, fetchReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
+import { retrieveSchemas } from 'src/api/docs/schemas'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'

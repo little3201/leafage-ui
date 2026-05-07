@@ -8,7 +8,7 @@ import { dayjs } from 'element-plus'
 import {
   createSchema, fetchSchema, importSchemas, modifySchema,
   removeSchema, retrieveSchemas
-} from 'src/api/schemas'
+} from 'src/api/docs/schemas'
 import { actionIcons, actionTypes, schemaStatus, schemaTypes } from 'src/constants'
 import type { Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'

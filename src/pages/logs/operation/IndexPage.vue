@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { dayjs } from 'element-plus'
-import { clearOperationLogs, fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/operation-logs'
+import { clearOperationLogs, fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/logs/operation-logs'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, OperationLog, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { retrieveDictionarySubset } from 'src/api/dictionaries'
-import { createSectionField, modifySectionField, retrieveSectionFields } from 'src/api/sections'
+import { createSectionField, modifySectionField, retrieveSectionFields } from 'src/api/docs/sections'
+import { retrieveDictionarySubset } from 'src/api/system/dictionaries'
 import type { Dictionary, Section, SectionField } from 'src/types'
 import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

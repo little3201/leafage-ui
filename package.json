@@ -15,6 +15,9 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.31.6",
+    "@editorjs/list": "^2.0.9",
+    "@editorjs/table": "^2.4.5",
     "@iconify/vue": "^5.0.0",
     "@vueuse/core": "^14.2.1",
     "apexcharts": "^5.10.4",

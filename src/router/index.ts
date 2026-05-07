@@ -1,5 +1,5 @@
 import { getUserInfo, signIn } from 'src/api/authentication'
-import { retrievePrivilegeTree } from 'src/api/privileges'
+import { retrievePrivilegeTree } from 'src/api/system/privileges'
 import type { PrivilegeTreeNode } from 'src/types'
 import { useUserStore } from 'stores/user-store'
 import type { RouteRecordRaw } from 'vue-router'

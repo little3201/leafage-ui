@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { dayjs } from 'element-plus'
-import { clearSchedulerLogs, fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/scheduler-logs'
+import { clearSchedulerLogs, fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
 import { actionIcons, actionTypes, shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { Filters, Pagination, SchedulerLog } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'

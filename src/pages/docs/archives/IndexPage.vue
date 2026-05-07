@@ -13,8 +13,8 @@ import {
   modifyArchive,
   removeArchive,
   retrieveArchives
-} from 'src/api/archives'
-import { retrieveSchemas } from 'src/api/schemas'
+} from 'src/api/docs/archives'
+import { retrieveSchemas } from 'src/api/docs/schemas'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Archive, Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'

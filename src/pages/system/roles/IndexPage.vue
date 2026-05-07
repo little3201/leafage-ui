@@ -18,8 +18,8 @@ import {
   retrieveRoleMembers,
   retrieveRolePrivileges,
   retrieveRoles
-} from 'src/api/roles'
-import { retrieveUsers } from 'src/api/users'
+} from 'src/api/system/roles'
+import { retrieveUsers } from 'src/api/system/users'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'

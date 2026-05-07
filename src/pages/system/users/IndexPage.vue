@@ -9,7 +9,7 @@ import {
   modifyUser, removeUser,
   retrieveUsers,
   unlockUser
-} from 'src/api/users'
+} from 'src/api/system/users'
 import { actionIcons, actionTypes, userStatus } from 'src/constants'
 import type { Filters, Pagination, User } from 'src/types'
 import { exportToExcel, hasAction } from 'src/utils'

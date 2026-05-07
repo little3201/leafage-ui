@@ -10,7 +10,7 @@ import {
   fetchSection,
   modifySection,
   retrieveSectionTree
-} from 'src/api/sections'
+} from 'src/api/docs/sections'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'

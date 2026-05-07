@@ -17,9 +17,9 @@ import {
   retrieveGroupRoles,
   retrieveGroups,
   retrieveGroupTree
-} from 'src/api/groups'
-import { retrieveRoles } from 'src/api/roles'
-import { retrieveUsers } from 'src/api/users'
+} from 'src/api/system/groups'
+import { retrieveRoles } from 'src/api/system/roles'
+import { retrieveUsers } from 'src/api/system/users'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filters, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Privilege, Role, TreeNode, User } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'

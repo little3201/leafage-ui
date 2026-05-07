@@ -1,25 +1,26 @@
-import { accessLogsHandlers } from './access-logs'
-import { archivesHandlers } from './archives'
-import { auditLogsHandlers } from './audit-logs'
 import { authenticationHandlers } from './authentication'
 import { calendarEventHandlers } from './calendar-events'
-import { connectionsHandlers } from './connections'
-import { dictionariesHandlers } from './dictionaries'
+import { archivesHandlers } from './docs/archives'
+import { reportsHandlers } from './docs/reports'
+import { schemasHandlers } from './docs/schemas'
+import { sectionsHandlers } from './docs/sections'
+import { connectionsHandlers } from './exploiters/connections'
+import { fragmentsHandlers } from './exploiters/fragments'
+import { modulesHandlers } from './exploiters/modules'
+import { samplesHandlers } from './exploiters/samples'
+import { schemesHandlers } from './exploiters/schemes'
+import { scriptsHandlers } from './exploiters/scripts'
 import { fileRecordsHandlers } from './file-records'
-import { fragmentsHandlers } from './fragments'
-import { groupsHandlers } from './groups'
-import { modulesHandlers } from './modules'
-import { operationLogsHandlers } from './operation-logs'
-import { privilegesHandlers } from './privileges'
+import { accessLogsHandlers } from './logs/access-logs'
+import { auditLogsHandlers } from './logs/audit-logs'
+import { operationLogsHandlers } from './logs/operation-logs'
+import { schedulerLogsHandlers } from './logs/scheduler-logs'
 import { regionsHandlers } from './regions'
-import { reportsHandlers } from './reports'
-import { rolesHandlers } from './roles'
-import { samplesHandlers } from './samples'
-import { schedulerLogsHandlers } from './scheduler-logs'
-import { schemasHandlers } from './schemas'
-import { schemesHandlers } from './schemes'
-import { scriptsHandlers } from './scripts'
-import { usersHandlers } from './users'
+import { dictionariesHandlers } from './system/dictionaries'
+import { groupsHandlers } from './system/groups'
+import { privilegesHandlers } from './system/privileges'
+import { rolesHandlers } from './system/roles'
+import { usersHandlers } from './system/users'
 
 export const handlers = [
   ...accessLogsHandlers,
@@ -37,6 +38,7 @@ export const handlers = [
   ...regionsHandlers,
   ...rolesHandlers,
   ...samplesHandlers,
+  ...sectionsHandlers,
   ...schedulerLogsHandlers,
   ...schemesHandlers,
   ...scriptsHandlers,

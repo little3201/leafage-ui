@@ -7,7 +7,7 @@ import {
   importPrivileges,
   modifyPrivilege,
   retrievePrivileges, retrievePrivilegeSubset
-} from 'src/api/privileges'
+} from 'src/api/system/privileges'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Dictionary, Filters, Pagination, Privilege } from 'src/types'
 import { exportToCSV, hasAction, visibleArray } from 'src/utils'

@@ -8,7 +8,7 @@ import {
   importDictionaries,
   modifyDictionary,
   retrieveDictionaries, retrieveDictionarySubset
-} from 'src/api/dictionaries'
+} from 'src/api/system/dictionaries'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Dictionary, Filters, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'

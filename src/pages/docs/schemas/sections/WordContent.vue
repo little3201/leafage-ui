@@ -1,18 +1,24 @@
 <script setup lang="ts">
+import EditorJS from '@editorjs/editorjs'
+import List from '@editorjs/list'
+import Table from '@editorjs/table'
 import type {
   FormInstance,
   FormRules
 } from 'element-plus'
 import type { Section } from 'src/types'
-import { nextTick, reactive, ref, watch } from 'vue'
+import { nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()
+
 const props = defineProps<{
   row: Section
   isNew?: boolean
 }>()
+
+const editorRef = ref<HTMLDivElement>()
 
 const sectionFormRef = ref<FormInstance>()
 const sectionForm = ref<Section>({ ...props.row })
@@ -21,6 +27,28 @@ const rules = reactive<FormRules<typeof sectionForm>>({
   name: [
     { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
   ]
+})
+
+onMounted(() => {
+  if (editorRef.value) {
+    new EditorJS({
+      holder: editorRef.value,
+      tools: {
+        list: { class: List, inlineToolbar: true },
+        table: Table
+      },
+      data: {
+        blocks: [
+          {
+            type: 'paragraph',
+            data: {
+              text: sectionForm.value.body || ''
+            }
+          }
+        ]
+      }
+    })
+  }
 })
 
 watch(() => props.row, async (newVal) => {
@@ -58,10 +86,9 @@ defineExpose({
     </ElRow>
     <ElRow :gutter="20" v-if="!isNew">
       <ElCol>
-        <ElFormItem prop="body">
-          <ElInput v-model="sectionForm.body" type="textarea" :rows="20"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.body') })" />
-        </ElFormItem>
+        <ElCard shadow="never">
+          <div ref="editorRef" class="w-full h-full"></div>
+        </ElCard>
       </ElCol>
     </ElRow>
   </ElForm>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
-import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/audit-logs'
+import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/logs/audit-logs'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { AuditLog, Filters, Pagination } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
