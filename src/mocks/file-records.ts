@@ -75,7 +75,7 @@ export const fileRecordsHandlers = [
 
     return HttpResponse.json(datas[0])
   }),
-  http.delete(`/api${SERVER_URL.FILE}`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

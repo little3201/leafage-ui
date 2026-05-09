@@ -1,27 +1,28 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type {
-  FormInstance,
   TreeData, TreeInstance, TreeNodeData
 } from 'element-plus'
 import {
   createSection,
   fetchSection,
   modifySection,
+  removeSection,
   retrieveSectionTree
 } from 'src/api/docs/sections'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'
 import { ref, watch } from 'vue'
-import ExcelContent from './ExcelContent.vue'
+import ExcelField from './ExcelField.vue'
+import SectionContent from './SectionContent.vue'
 import WordContent from './WordContent.vue'
 
 
 const props = defineProps<{
-  schemaId: number
-  schemaType: string
-  preview?: boolean
+  ownerId: number
+  ownerType: 'REPORT' | 'ARCHIVE' | 'SCHEMA'
+  schemaType: 'WORD' | 'EXCEL'
 }>()
 
 const treeRef = ref<TreeInstance>()
@@ -33,18 +34,14 @@ const filterText = ref('')
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const wordRef = ref<InstanceType<typeof WordContent>>()
-const excelRef = ref<InstanceType<typeof ExcelContent>>()
-const wordFormRef = ref<InstanceType<typeof WordContent>>()
-const excelFormRef = ref<InstanceType<typeof ExcelContent>>()
+const sectionContentRef = ref<InstanceType<typeof SectionContent>>()
 
 const initialValues: Section = {
   id: null,
-  ownerId: props.schemaId,
-  ownerType: 'SCHEMA',
+  ownerId: props.ownerId,
+  ownerType: props.ownerType,
   name: '',
   superiorId: null,
-  type: 'HEADING',
   body: ''
 }
 const form = ref<Section>({ ...initialValues })
@@ -56,7 +53,7 @@ watch(() => filterText.value, (newVal, oldVal) => {
   if (newVal === oldVal) return
   treeRef.value!.filter(newVal)
 })
-watch(() => props.schemaId, async () => {
+watch(() => props.ownerId, async () => {
   treeSelected.value = ''
   form.value = { ...initialValues }
   await loadTree()
@@ -86,10 +83,10 @@ async function onCurrentChange(data: TreeNodeData) {
  * 加载tree
  */
 async function loadTree() {
-  if (!props.schemaId) return
+  if (!props.ownerId) return
   treeLoading.value = true
   try {
-    const res = await retrieveSectionTree(props.schemaId, 'SCHEMA')
+    const res = await retrieveSectionTree(props.ownerId, props.ownerType)
     treeData.value = res.data
   } catch (error) {
     return error
@@ -126,30 +123,13 @@ async function loadOne(id: number) {
 /**
  * 表单提交
  */
-async function onSubmit(type: string = 'WORD') {
-  const sectionFormEl = type === 'WORD' ? wordFormRef.value?.sectionFormRef : excelFormRef.value?.sectionFormRef
+async function onSubmit() {
+  const sectionFormEl = sectionContentRef.value?.sectionFormRef
   if (!sectionFormEl) return
 
-  const sectionForm = type === 'WORD' ? wordFormRef.value?.sectionForm : excelFormRef.value?.sectionForm
+  const sectionForm = sectionContentRef.value?.sectionForm
   if (!sectionForm) return
 
-  await saveOrModify(sectionFormEl, sectionForm)
-}
-
-/**
- * 修改章节
- */
-async function modifySchemaSection(type: string = 'WORD') {
-  const sectionFormEl = type === 'WORD' ? wordRef.value?.sectionFormRef : excelRef.value?.sectionFormRef
-  if (!sectionFormEl) return
-
-  const sectionForm = type === 'WORD' ? wordRef.value?.sectionForm : excelRef.value?.sectionForm
-  if (!sectionForm) return
-
-  await saveOrModify(sectionFormEl, sectionForm)
-}
-
-async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
   const valid = await sectionFormEl.validate()
   if (valid) {
     try {
@@ -187,31 +167,39 @@ async function saveOrModify(sectionFormEl: FormInstance, sectionForm: Section) {
 }
 
 /**
+ * 修改章节内容
+ */
+async function modifySectionContent() {
+  // word: body, excel: fields and datas
+  await Promise.all([])
+}
+
+/**
  * 删除
  * @param id 主键
  */
-// async function removeRow(id: number) {
-//   try {
-//     await removeSchemaSection(id)
-//     const node = treeRef.value?.getNode(id)
-//     if (node) {
-//       treeRef.value?.remove(node?.data)
-//     }
-//   } catch (error) {
-//     return error
-//   }
-// }
+async function removeRow(id: number) {
+  try {
+    await removeSection(id)
+    const node = treeRef.value?.getNode(id)
+    if (node) {
+      treeRef.value?.remove(node?.data)
+    }
+  } catch (error) {
+    return error
+  }
+}
 
 /**
  * 确认
  * @param id 主键
  */
-// async function confirmEvent(id: number) {
-//   await removeRow(id)
-// }
+async function confirmEvent(id: number) {
+  await removeRow(id)
+}
 
 defineExpose({
-  modifySchemaSection
+  modifySectionContent
 })
 </script>
 
@@ -225,42 +213,52 @@ defineExpose({
               <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
-          <ElButton v-if="!props.preview && hasAction($route.name, 'create')" title="create" circle plain size="small"
+          <ElButton v-if="hasAction($route.name, 'create')" title="create" circle plain size="small"
             :type="actionTypes['create']" @click="saveRow()">
             <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />
           </ElButton>
         </div>
 
         <ElTree ref="treeRef" :data="treeData" v-loading="treeLoading" node-key="id" :current-node-key="treeSelected"
-          highlight-current :props="{ label: 'name' }" :filter-node-method="filterNode"
-          @current-change="onCurrentChange">
+          highlight-current :filter-node-method="filterNode" @current-change="onCurrentChange">
+          <template #default="{ data }">
+            <div class="flex flex-1 items-center justify-between ">
+              <span>{{ data.meta.sequence }}. {{ data.name }}</span>
+              <div>
+                <ElButton type="primary" link @click="saveRow(data.id)">
+                  <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" />
+                </ElButton>
+                <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(data.id)">
+                  <template #reference>
+                    <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
+                      <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" />
+                    </ElButton>
+                  </template>
+                </ElPopconfirm>
+              </div>
+            </div>
+          </template>
         </ElTree>
       </ElCard>
     </ElCol>
 
     <ElCol :span="16" :xl="18">
-      <div v-if="props.preview">
-        <ElCard v-if="props.schemaType === 'WORD'" shadow="never">
-          {{ form.body }}
-        </ElCard>
-        <ExcelContent v-else :row="form" :is-new="true" :preview="true" />
+      <div v-if="treeSelected">
+        <WordContent v-if="props.schemaType === 'WORD'" :body="form.body" />
+        <ExcelField v-else :section-id="form.id!" />
       </div>
-      <div v-else-if="treeSelected">
-        <WordContent ref="wordRef" v-if="props.schemaType === 'WORD'" :row="form" :is-new="false" />
-        <ExcelContent ref="excelRef" v-else :row="form" :is-new="false" />
-      </div>
+      <ElEmpty v-else />
     </ElCol>
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="480">
-    <WordContent ref="wordFormRef" v-if="props.schemaType === 'WORD'" :row="form" :is-new="true" />
-    <ExcelContent ref="excelFormRef" v-else :row="form" :is-new="true" />
+  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
+    <SectionContent ref="sectionContentRef" :row="form" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(form.type)">
+      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit()">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

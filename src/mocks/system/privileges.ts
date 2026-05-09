@@ -485,7 +485,7 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: 'codes',
           component: '#',
-          redirect: '/exploiter/codes/samples',
+          redirect: '/exploiters/codes/samples',
           icon: 'folder-code-outline',
         },
         children: [

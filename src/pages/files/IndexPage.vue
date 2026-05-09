@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { UploadInstance, UploadRequestOptions } from 'element-plus'
 import { dayjs } from 'element-plus'
-import { downloadFile, fetchFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import { downloadFile, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { FileRecord, Filters, Pagination } from 'src/types'
 import { download, formatFileSize, hasAction } from 'src/utils'
@@ -135,17 +135,17 @@ function onUpload(options: UploadRequestOptions) {
  * 删除
  * @param id 主键
  */
-function removeRow(id: number) {
-  datas.value = datas.value.filter(item => item.id !== id)
+async function removeRow(id: number) {
+  await removeFile(id)
 }
 
 /**
  * 确认
  * @param id 主键
  */
-function confirmEvent(id: number) {
+async function confirmEvent(id: number) {
   if (id) {
-    removeRow(id)
+    await removeRow(id)
   }
 }
 
@@ -169,11 +169,11 @@ async function handleBreadcrumbClick(index: number) {
     expandRows.value = []
     currentRow.value = undefined
   } else {
-    // 点击中间层级的面包屑
     // 截断面包屑数组，保留点击位置及之前的部分
     expandRows.value = expandRows.value.slice(0, index + 1)
     currentRow.value = expandRows.value[index]
   }
+  filter.superiorId!.value = currentRow.value?.id
   await load()
 }
 </script>

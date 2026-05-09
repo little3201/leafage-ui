@@ -139,7 +139,8 @@ export default {
     signup: 'Sign Up',
     signout: 'Sign Out',
     back: 'Back',
-    continue: 'Continue'
+    continue: 'Continue',
+    maintenance: 'Maintenance',
   },
 
   page: {

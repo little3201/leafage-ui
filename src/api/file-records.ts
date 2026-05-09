@@ -38,7 +38,7 @@ export const uploadFile = (file: File, superiorId?: number | null) => {
  * @returns data stream
  */
 export const downloadFile = (id: number) => {
-  return api.get(`${SERVER_URL.FILE}/${id}/download`)
+  return api.get(`${SERVER_URL.FILE}/${id}/download`, { responseType: 'blob' })
 }
 
 /**

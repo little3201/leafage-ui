@@ -105,7 +105,7 @@ async function onSubmit() {
                 <ElRow>
                   <ElCol>
                     <ElFormItem prop="username">
-                      <ElInput size="large" :disable="loading" v-model="form.username"
+                      <ElInput size="large" :disabled="loading" v-model="form.username"
                         :placeholder="$t('label.username')">
                         <template #prefix>
                           <Icon icon="material-symbols:person-outline-rounded" width="1.25em" height="1.25em" />
@@ -117,7 +117,7 @@ async function onSubmit() {
                 <ElRow>
                   <ElCol>
                     <ElFormItem prop="password">
-                      <ElInput size="large" :disable="loading" type="password" v-model="form.password"
+                      <ElInput size="large" :disabled="loading" type="password" v-model="form.password"
                         :placeholder="$t('label.password')" show-password>
                         <template #prefix>
                           <Icon icon="material-symbols:key-vertical-outline-rounded" width="1.25em" height="1.25em" />

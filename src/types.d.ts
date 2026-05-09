@@ -351,7 +351,7 @@ export interface Archive extends AudtiMetadata {
 
 export interface Schema extends AudtiMetadata {
   name: string
-  type: string
+  type: 'WORD' | 'EXCEL'
   version: number
   status?: string
   description?: string
@@ -370,7 +370,6 @@ export interface Section extends AudtiMetadata {
   ownerType: string | null
   name: string
   sequence?: number
-  type: string
   level?: number
   body: string
   count?: number

@@ -139,7 +139,8 @@ export default {
     signup: '注册',
     signout: '退出登录',
     back: '返回',
-    continue: '继续'
+    continue: '继续',
+    maintenance: '维护',
   },
 
   page: {

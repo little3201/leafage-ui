@@ -14,8 +14,8 @@ import type { Filters, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ReportSection from './sections/IndexPage.vue'
-
+import ExcelContent from '../schemas/sections/ExcelContent.vue'
+import ReportSection from '../schemas/sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -34,7 +34,8 @@ const pagination = reactive<Pagination>({
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 const previewVisible = ref<boolean>(false)
-const configVisible = ref<boolean>(false)
+const fieldVisible = ref<boolean>(false)
+const contentVisible = ref<boolean>(false)
 
 const importVisible = ref<boolean>(false)
 const importLoading = ref<boolean>(false)
@@ -161,7 +162,20 @@ function configRow(id: number) {
   }
 
   form.value.id = id
-  configVisible.value = true
+  fieldVisible.value = true
+}
+
+/**
+ * 数据维护
+ * @param id 主键
+ */
+function modifyRow(id: number) {
+  if (!id) {
+    return
+  }
+
+  form.value.id = id
+  contentVisible.value = true
 }
 
 /**
@@ -257,9 +271,16 @@ function formatSchemas(cellValue: number): string {
 }
 
 async function onSectionSave() {
-  const result = await sectionRef.value?.modifyReportSection()
+  const result = await sectionRef.value?.modifySectionContent()
   if (result) {
-    configVisible.value = false
+    fieldVisible.value = false
+  }
+}
+
+async function onSectionContentSave() {
+  const result = await sectionRef.value?.modifySectionContent()
+  if (result) {
+    contentVisible.value = false
   }
 }
 </script>
@@ -350,8 +371,13 @@ async function onSectionSave() {
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'config')" title="config" :type="actionTypes['config']" link
               @click="configRow(scope.row.id!)">
-              <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['config']}-rounded`" width="1.25em" height="1.25em" />
               {{ $t('action.config') }}
+            </ElButton>
+            <ElButton v-if="hasAction($route.name, 'maintenance')" title="maintenance"
+              :type="actionTypes['maintenance']" link @click="modifyRow(scope.row.id!)">
+              <Icon :icon="`material-symbols:${actionIcons['maintenance']}-rounded`" width="1.25em" height="1.25em" />
+              {{ $t('action.maintenance') }}
             </ElButton>
             <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
               @confirm="confirmEvent(scope.row.id)">
@@ -407,10 +433,10 @@ async function onSectionSave() {
   </ElDialog>
 
   <!-- config -->
-  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <ReportSection ref="sectionRef" :report-id="form.id!" />
+  <ElDialog v-model="fieldVisible" :title="$t('action.config')" align-center :show-close="false">
+    <ReportSection ref="sectionRef" :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" />
     <template #footer>
-      <ElButton title="close" @click="configVisible = false">
+      <ElButton title="close" @click="fieldVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
       <ElButton title="save" type="primary" @click="onSectionSave">
@@ -420,9 +446,23 @@ async function onSectionSave() {
     </template>
   </ElDialog>
 
+  <!-- maintenance -->
+  <ElDialog v-model="contentVisible" :title="$t('action.maintenance')" align-center :show-close="false">
+    <ExcelContent ref="sectionContentRef" :section-id="form.id!" />
+    <template #footer>
+      <ElButton title="close" @click="contentVisible = false">
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+      </ElButton>
+      <ElButton title="save" type="primary" @click="onSectionContentSave">
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
+      </ElButton>
+    </template>
+  </ElDialog>
+
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ReportSection :report-id="form.id!" :preview="true" />
+    <ReportSection :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" />
   </ElDialog>
 
   <!-- import -->

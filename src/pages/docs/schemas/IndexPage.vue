@@ -227,8 +227,8 @@ function onUpload(options: UploadRequestOptions) {
   return importSchemas(options.file)
 }
 
-async function onSectionSave(type: string = 'WORD') {
-  const result = await sectionRef.value?.modifySchemaSection(type)
+async function onSectionSave() {
+  const result = await sectionRef.value?.modifySectionContent()
   if (result) {
     configVisible.value = false
   }
@@ -336,7 +336,7 @@ async function onSectionSave(type: string = 'WORD') {
             </ElButton>
             <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'config')" title="config"
               type="success" link @click="configRow(scope.row)">
-              <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />{{
+              <Icon :icon="`material-symbols:${actionIcons['config']}-rounded`" width="1.25em" height="1.25em" />{{
                 $t('action.config')
               }}
             </ElButton>
@@ -403,12 +403,12 @@ async function onSectionSave(type: string = 'WORD') {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <SchemaSection ref="sectionRef" :schema-id="form.id!" :schema-type="form.type" />
+    <SchemaSection ref="sectionRef" :owner-id="form.id!" owner-type="SCHEMA" :schema-type="form.type" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="save" type="primary" @click="onSectionSave(form.type)">
+      <ElButton title="save" type="primary" @click="onSectionSave()">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
@@ -417,7 +417,7 @@ async function onSectionSave(type: string = 'WORD') {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <SchemaSection :schema-id="form.id!" :schema-type="form.type" :preview="true" />
+    <SchemaSection :owner-id="form.id!" owner-type="SCHEMA" :schema-type="form.type" />
   </ElDialog>
 
   <!-- import -->

@@ -20,7 +20,7 @@ import type { Archive, Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ArchiveSection from './sections/IndexPage.vue'
+import ArchiveSection from '../schemas/sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -264,7 +264,7 @@ function formatSchemas(cellValue: number): string {
 }
 
 async function onSectionSave() {
-  const result = await sectionRef.value?.modifyArchiveSection()
+  const result = await sectionRef.value?.modifySectionContent()
   if (result) {
     configVisible.value = false
   }
@@ -357,7 +357,7 @@ async function onSectionSave() {
             </ElButton>
             <ElButton v-if="hasAction($route.name, 'config')" title="config" :type="actionTypes['config']" link
               @click="configRow(scope.row.id!)">
-              <Icon icon="material-symbols:plug-connect-outline-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="`material-symbols:${actionIcons['config']}-rounded`" width="1.25em" height="1.25em" />
               {{ $t('action.config') }}
             </ElButton>
             <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
@@ -421,7 +421,7 @@ async function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <ArchiveSection ref="sectionRef" :archive-id="form.id!" />
+    <ArchiveSection ref="sectionRef" :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -435,7 +435,7 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ArchiveSection :archive-id="form.id!" :preview="true" />
+    <ArchiveSection :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" />
   </ElDialog>
 
   <!-- import -->

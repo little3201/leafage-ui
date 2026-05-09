@@ -76,7 +76,8 @@ export const actionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'war
   execute: 'warning',
   enable: 'success',
   search: 'primary',
-  sync: 'info'
+  sync: 'info',
+  maintenance: 'warning'
 }
 
 export const actionIcons: Record<string, string> = {
@@ -96,7 +97,8 @@ export const actionIcons: Record<string, string> = {
   enable: 'shield-toggle-outline',
   search: 'search',
   reset: 'replay',
-  refresh: 'refresh'
+  refresh: 'refresh',
+  maintenance: 'data-table-outline'
 }
 
 // http method对应tag类型

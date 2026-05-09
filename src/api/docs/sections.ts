@@ -30,6 +30,15 @@ export const retrieveSectionFields = (id: number) => {
 }
 
 /**
+ * Get row datas
+ * @param id Row ID
+ * @returns Datas data
+ */
+export const retrieveSectionDatas = (id: number) => {
+  return api.get(`${SERVER_URL.SECTION}/${id}/datas`)
+}
+
+/**
  * Create a new row
  * @param row Row data
  * @returns Created row
