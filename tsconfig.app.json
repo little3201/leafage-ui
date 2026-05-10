@@ -1,25 +1,14 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["src/**/*", "src/**/*.ts", "src/**/*.vue", "*.d.ts", "test/*.test.ts"],
-  "exclude": ["node_modules", "dist", "coverage"],
   "compilerOptions": {
-    "composite": true,
-    "types": ["vitest/config"],
-    "paths": {
-      "src": ["./src"],
-      "src/*": ["./src/*"],
-      "components": ["./src/components"],
-      "components/*": ["./src/components/*"],
-      "layouts": ["./src/layouts"],
-      "layouts/*": ["./src/layouts/*"],
-      "pages": ["./src/pages"],
-      "pages/*": ["./src/pages/*"],
-      "assets": ["./src/assets"],
-      "assets/*": ["./src/assets/*"],
-      "boot": ["./src/boot" ],
-      "boot/*": ["./src/boot/*" ],
-      "stores": ["./src/stores"],
-      "stores/*": ["./src/stores/*"],
-    }
-  }
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client"],
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "test/*.test.ts"]
 }

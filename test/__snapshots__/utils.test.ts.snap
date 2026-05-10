@@ -1,5 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`utils > formatDuration > "0ms" 1`] = `"0ms"`;
-
-exports[`utils > isNumber > true 1`] = `true`;
