@@ -4,10 +4,9 @@ import { constantRouterMap } from './routes'
 
 // Create router instance
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: constantRouterMap
 })
-
 
 router.beforeEach((to, from) => {
   if (['/login'].includes(to.path)) return true
