@@ -9,8 +9,6 @@
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint -c ./eslint.config.js \"./src/**/*.{js,mjs,cjs,ts,vue}\"",
-    "test": "vitest",
-    "coverage": "vitest run --coverage",
     "lint:lint-staged": "lint-staged",
     "prepare": "husky"
   },
@@ -39,7 +37,6 @@
     "msw": "^2.14.5",
     "typescript": "~6.0.3",
     "vite": "^8.0.11",
-    "vitest": "^4.1.5",
     "vue-tsc": "^3.2.8"
   }
 }
