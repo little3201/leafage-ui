@@ -1,8 +1,9 @@
 import type { Filter, User } from 'src/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
+import { SERVER_URL, userStatus } from 'src/constants'
 import { applyFilters } from '../util'
 
+const statusKeys = Object.keys(userStatus) as Array<keyof typeof userStatus>
 const datas: User[] = []
 
 for (let i = 1; i < 28; i++) {
@@ -11,7 +12,7 @@ for (let i = 1; i < 28; i++) {
     username: 'username' + i,
     fullName: 'name_' + i,
     email: 'usexxx' + '@test.com',
-    status: i % 2 > 0 ? 'ACTIVE' : 'INACTIVE',
+    status: (statusKeys[Math.floor(Math.random() * statusKeys.length)]) as string,
     enabled: i % 2 > 0,
   }
   datas.push(row)

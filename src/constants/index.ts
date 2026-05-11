@@ -43,3 +43,11 @@ export const SERVER_URL = {
   FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
   CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections'), // 连接
 }
+
+export const userStatus: { [key: string]: string } = {
+  ACTIVE: 'green',
+  LOCKED: 'blue',
+  EXPIRED: 'gray',
+  CREDENTIALS_EXPIRED: 'orange',
+  DISABLED: 'red',
+}

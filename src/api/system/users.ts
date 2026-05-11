@@ -48,7 +48,7 @@ export async function modifyUser (id: number, row: User) {
  */
 export async function enableUser (id: number) {
   const res = await fetch(`/api${SERVER_URL.USER}/${id}`, { method: 'PATCH' })
-  return res.json()
+  return res.text()
 }
 
 /**
@@ -56,7 +56,7 @@ export async function enableUser (id: number) {
  */
 export async function unlockUser (id: number) {
   const res = await fetch(`/api${SERVER_URL.USER}/${id}/unlock`, { method: 'PATCH' })
-  return res.json()
+  return res.text()
 }
 
 /**

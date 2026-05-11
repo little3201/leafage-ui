@@ -26,4 +26,9 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
       },
     ],
   },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('pages/login.vue'),
+  },
 ]

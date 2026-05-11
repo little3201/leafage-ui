@@ -2,8 +2,7 @@ import { createVuetify } from 'vuetify'
 import { en, zhHans, zhHant } from 'vuetify/locale'
 import '@mdi/font/css/materialdesignicons.css'
 import '../styles/layers.css'
-import 'vuetify/styles/core'
-import 'vuetify/styles/utilities'
+import 'vuetify/styles'
 
 export default createVuetify({
   theme: {
