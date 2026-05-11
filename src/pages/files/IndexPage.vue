@@ -329,6 +329,7 @@ function handleBreadcrumbClick(index: number) {
     expandRows.value = expandRows.value.slice(0, index + 1)
     currentRow.value = expandRows.value[index] ?? null
   }
+  filter.superiorId!.value = currentRow.value?.id
   refresh()
 }
 </script>
