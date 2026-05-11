@@ -1,7 +1,5 @@
 {
   "recommendations": [
-    "vuetifyjs.vuetify-vscode",
-    "vue.volar",
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
     "vue.volar",

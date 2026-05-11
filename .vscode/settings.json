@@ -3,6 +3,7 @@
   "editor.guides.bracketPairs": true,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
     "source.fixAll.eslint": "always"
   },
   "eslint.validate": [
@@ -15,11 +16,8 @@
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "js/ts.format.semicolons": "remove",
   "eslint.format.enable": true,
-  "editor.formatOnSave": false,
-  "[vue]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
+  "editor.formatOnSave": true,
   "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }

@@ -1,7 +1,7 @@
 // 服务匹配前缀
 const SERVER_PREFIX = {
   HYPERVISOR: '/hypervisor', // 系统
-  OAUTH2: '/oauth2', // oauth2认证
+  OAUTH2: '/oauth2' // oauth2认证
 }
 
 // 接口请求路径
@@ -41,13 +41,113 @@ export const SERVER_URL = {
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 样板
   MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
   FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
-  CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections'), // 连接
+  CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 连接
 }
 
-export const userStatus: { [key: string]: string } = {
-  ACTIVE: 'green',
-  LOCKED: 'blue',
-  EXPIRED: 'gray',
-  CREDENTIALS_EXPIRED: 'orange',
-  DISABLED: 'red',
+export const actions: { [key: string]: 'primary' | 'secondary' | 'positive' | 'info' | 'warning' | 'negative' } = {
+  create: 'primary',
+  modify: 'primary',
+  upload: 'primary',
+
+  import: 'warning',
+
+  remove: 'negative',
+  clear: 'negative',
+
+  export: 'secondary',
+  download: 'secondary',
+
+  relation: 'positive',
+  config: 'positive',
+
+  preview: 'info',
+  detail: 'info'
+}
+
+export const httpMethods: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
+  GET: 'positive',
+  POST: 'warning',
+  PUT: 'primary',
+  PATCH: 'info',
+  DELETE: 'negative'
+}
+
+// 查询匹配方式
+export const queryTypes = [
+  { label: '=', value: 'eq' },
+  { label: '<>', value: 'neq' },
+  { label: '>', value: 'gt' },
+  { label: '>=', value: 'egt' },
+  { label: '<', value: 'lt' },
+  { label: '<=', value: 'elt' },
+  { label: 'LIKE', value: 'like' },
+  { label: 'IN', value: 'in' },
+  { label: 'NOT IN', value: 'notIn' },
+  { label: 'BETWEEN', value: 'between' },
+  { label: 'NOT BETWEEN', value: 'notBetween' },
+  { label: 'IS NULL', value: 'isNull' },
+  { label: 'IS NOT NULL', value: 'isNotNull' }
+]
+
+export const shceduleStatus: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
+  PENDING: 'info',
+  RUNNING: 'primary',
+  SUCCESS: 'positive',
+  FAILED: 'negative',
+  CANCELED: 'warning'
+}
+
+export const shceduleStatusIcon: { [key: string]: string } = {
+  PENDING: 'pending',
+  RUNNING: 'progress_activity',
+  SUCCESS: 'check',
+  FAILED: 'error',
+  CANCELED: 'cancel'
+}
+
+export const userStatus: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
+  ACTIVE: 'positive',
+  LOCKED: 'primary',
+  EXPIRED: 'info',
+  CREDENTIALS_EXPIRED: 'warning',
+  DISABLED: 'negative'
+}
+
+export const schemeScope = [
+  { label: 'All', value: 'ALL' },
+  { label: 'Partial', value: 'PARTIAL' }
+]
+
+export const databaseType: { [key: string]: string } = {
+  POSTGRESQL: 'postgresql',
+  MYSQL: 'mysql'
+}
+
+export const sampleType: { [key: string]: 'primary' | 'positive' } = {
+  SINGLE: 'primary',
+  COMBINE: 'positive'
+}
+
+export const languages = [
+  { label: 'java', value: 'JAVA' },
+  { label: 'yml', value: 'YML' },
+  { label: 'xml', value: 'XML' },
+  { label: 'sql', value: 'SQL' },
+  { label: 'ts', value: 'TS' },
+  { label: 'tsx', value: 'TSX' },
+  { label: 'js', value: 'JS' },
+  { label: 'jsx', value: 'JSX' },
+  { label: 'vue', value: 'VUE' },
+  { label: 'react', value: 'REACT' }
+]
+
+export const osTypes = [
+  { label: 'Linux', value: 'LINUX', dictionary: 800 },
+  { label: 'Windows', value: 'WINDOWS', dictionary: 900 },
+  { label: 'MacOS', value: 'MACOS', dictionary: 1000 }
+]
+
+export const scriptModes: { [key: string]: 'Server' | 'Docker' } = {
+  SERVER: 'Server',
+  DOCKER: 'Docker'
 }
