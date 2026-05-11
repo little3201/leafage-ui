@@ -1,4 +1,5 @@
 import { createVuetify } from 'vuetify'
+import { en, zhHans, zhHant } from 'vuetify/locale'
 import '@mdi/font/css/materialdesignicons.css'
 import '../styles/layers.css'
 import 'vuetify/styles/core'
@@ -8,6 +9,11 @@ export default createVuetify({
   theme: {
     defaultTheme: 'system',
     utilities: false,
+  },
+  locale: {
+    locale: 'zhHans',
+    fallback: 'en',
+    messages: { zhHans, zhHant, en },
   },
   display: {
     mobileBreakpoint: 'md',

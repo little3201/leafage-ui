@@ -12,6 +12,18 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
         name: 'index',
         component: () => import('pages/index.vue'),
       },
+      {
+        path: 'system',
+        name: 'system',
+        redirect: 'system/users',
+        children: [
+          {
+            path: 'users',
+            name: 'users',
+            component: () => import('pages/system/users/index.vue'),
+          },
+        ],
+      },
     ],
   },
 ]

@@ -10,8 +10,20 @@ import 'unfonts.css'
 import './styles/tailwind.css'
 import './styles/main.scss'
 
+async function prepareApp () {
+  if (import.meta.env.DEV) {
+    const { worker } = await import('boot/msw-browser')
+
+    return worker.start({
+      onUnhandledRequest: 'bypass',
+    })
+  }
+
+  return
+}
+
 const app = createApp(App)
 
-app.use(vuetify).use(createPinia()).use(i18n).use(router)
+await prepareApp()
 
-app.mount('#app')
+app.use(vuetify).use(createPinia()).use(i18n).use(router).mount('#app')
