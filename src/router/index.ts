@@ -5,8 +5,7 @@ import { constantRouterMap } from './routes'
 // Create router instance
 const router = createRouter({
   history: createWebHistory(),
-  routes: constantRouterMap,
-  scrollBehavior: () => ({ left: 0, top: 0 })
+  routes: constantRouterMap
 })
 
 

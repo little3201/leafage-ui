@@ -3,9 +3,9 @@ import PrimeVue from 'primevue/config'
 import { createApp } from 'vue'
 import App from './App.vue'
 
-import './css/style.css'
 import router from './router'
 import pinia from './stores'
+import './styles/main.css'
 
 const app = createApp(App)
 
