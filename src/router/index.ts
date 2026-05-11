@@ -1,35 +1,37 @@
-import { defineRouter } from '#q-app/wrappers'
-import {
-  createMemoryHistory,
-  createRouter,
-  createWebHashHistory,
-  createWebHistory
-} from 'vue-router'
+import { useUserStore } from 'src/stores/user'
+import { createRouter, createWebHistory } from 'vue-router'
+import { constantRouterMap } from './routes'
 
-import routes from './routes'
-
-/*
- * If not building with SSR mode, you can
- * directly export the Router instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Router instance.
- */
-export default defineRouter(function () {
-  const createHistory = process.env.SERVER
-    ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
-
-  const Router = createRouter({
-    scrollBehavior: () => ({ left: 0, top: 0 }),
-    routes,
-
-    // Leave this as is and make changes in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE)
-  })
-
-  return Router
+// Create router instance
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: constantRouterMap,
 })
+
+router.beforeEach((to, from) => {
+  if (['/login'].includes(to.path)) {
+    return true
+  }
+
+  const userStore = useUserStore()
+
+  // 动态注册路由
+  if (!userStore.routesAdded) {
+    if (!router.hasRoute('error')) {
+      router.addRoute({
+        path: '/:cacheAll(.*)*',
+        name: 'error',
+        component: () => import('pages/error.vue'),
+      })
+    }
+
+    userStore.routesAdded = true
+  }
+
+  if (!from.name && to.matched.length === 0) {
+    return { path: to.fullPath, replace: true, query: to.query, hash: to.hash }
+  }
+  return true
+})
+
+export default router
