@@ -1,10 +1,10 @@
 <template>
   <q-page padding>
     <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em;">
+      <q-card style="width: 34em;">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('page.users') }}</div>
+            <div class="text-h6">{{ form.id ? $t('action.modify') : $t('action.create') }}</div>
           </q-card-section>
 
           <q-card-section>
@@ -19,6 +19,8 @@
               :rules="[(val, rules) => rules.email(val) || $t('placeholder.inputText')]" />
           </q-card-section>
 
+          <q-separator />
+
           <q-card-actions align="right">
             <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
             <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
@@ -27,19 +29,21 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.users')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter.username!.value" placeholder="Search">
-          <template v-slot:append>
+    <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
+      row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+      @request="onRequest" class="full-width">
+      <template v-slot:top-left>
+        <q-input dense debounce="300" filled v-model="filter.username!.value" placeholder="Search">
+          <template v-slot:prepend>
             <q-icon name="sym_r_search" />
           </template>
         </q-input>
-        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
-          @click="saveRow()" />
         <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
           icon="sym_r_refresh" @click="refresh" />
+      </template>
+      <template v-slot:top-right>
+        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
+          @click="saveRow()" />
         <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
           icon="sym_r_database_upload" @click="importRow" />
         <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
