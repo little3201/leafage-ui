@@ -192,7 +192,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   try {
-    const res = await retrieveRegions({ ...params }, filter)
+    const res = await retrieveRegions(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy

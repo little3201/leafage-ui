@@ -180,7 +180,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   }
 
   try {
-    const res = await retrieveAccessLogs({ ...params }, filter)
+    const res = await retrieveAccessLogs(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy

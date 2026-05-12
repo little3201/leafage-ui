@@ -172,7 +172,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   }
 
   try {
-    const res = await retrieveSchedulerLogs({ ...params }, filter)
+    const res = await retrieveSchedulerLogs(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy

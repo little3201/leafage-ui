@@ -169,7 +169,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   }
 
   try {
-    const res = await retrieveAuditLogs({ ...params }, filter)
+    const res = await retrieveAuditLogs(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy

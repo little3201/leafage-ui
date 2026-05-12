@@ -238,7 +238,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
 
   filter.superiorId!.value = currentRowId.value ?? null
   try {
-    const res = await retrieveFiles({ ...params }, filter)
+    const res = await retrieveFiles(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
