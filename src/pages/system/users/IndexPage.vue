@@ -59,7 +59,7 @@
         <q-td :props="props">
           <div class="row items-center">
             <q-avatar size="32px">
-              <img alt="avatar" :src="`https://cdn.leafage.top//${props.row.username}`" />
+              <img alt="avatar" :src="`https://cdn.leafage.top/${props.row.username}`" />
             </q-avatar>
             <div class="column q-ml-sm">
               <span class="text-subtitle">
@@ -131,7 +131,7 @@ const importVisible = ref<boolean>(false)
 const tableRef = ref<QTable>()
 const rows = ref<Array<User>>([])
 const filter = reactive<Filter<User>>({
-  username: { op: 'eq', value: undefined }
+  username: { op: 'like', value: undefined }
 })
 const loading = ref<boolean>(false)
 

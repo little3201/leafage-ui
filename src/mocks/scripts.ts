@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Script } from 'src/types'
+import { applyFilters } from './util'
 
 const datas: Script[] = [
   {
@@ -77,22 +78,10 @@ export const scriptsHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.SCRIPT}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const filters = searchParams.get('filters')
-    let filtered = datas
-    if (filters) {
-      const filterPairs = filters.split('&')
-      let os: string | null = null
-      filterPairs.forEach(pair => {
-        const [key, operator, value] = pair.split(':')
-        if (key === 'os' && value) {
-          os = value
-          if (operator == 'eq') {
-            filtered = datas.filter(item => { return item.os === os })
-          }
-        }
-      })
-    }
+    const url = new URL(request.url)
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
 
     return HttpResponse.json(filtered)
   }),

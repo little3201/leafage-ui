@@ -124,7 +124,7 @@ const importVisible = ref<boolean>(false)
 const tableRef = ref<QTable>()
 const rows = ref<Array<Group>>([])
 const filter = reactive<Filter<Group>>({
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 const loading = ref<boolean>(false)
 

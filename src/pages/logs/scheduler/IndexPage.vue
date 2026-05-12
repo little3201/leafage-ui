@@ -121,7 +121,7 @@ const visible = ref<boolean>(false)
 const tableRef = ref<QTable>()
 const rows = ref<Array<SchedulerLog>>([])
 const filter = reactive<Filter<SchedulerLog>>({
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 
 const loading = ref<boolean>(false)

@@ -122,7 +122,7 @@ export async function generateCodeChallenge(codeVerifier: string) {
     .then(buffer => base64UrlEncode(new Uint8Array(buffer)))
 }
 
-export function dealFilters<T>(filters: Filter<T> | undefined): string | undefined {
+export function dealFilters<T>(filters?: Filter<T>): string | undefined {
   if (!filters || Object.keys(filters).length === 0) {
     return undefined
   }

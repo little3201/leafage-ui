@@ -133,7 +133,7 @@ const tableRef = ref<QTable>()
 const rows = ref<Array<Region>>([])
 const filter = reactive<Filter<Region>>({
   superiorId: { op: 'eq', value: null },
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 const loading = ref<boolean>(false)
 

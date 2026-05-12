@@ -186,10 +186,10 @@ const tableRef = ref<QTable>()
 const rows = ref<Array<FileRecord>>([])
 
 const expandRows = ref<Array<FileRecord>>([])
-const currentRow = ref<FileRecord | null>(null)
+const currentRowId = ref<number | null>(null)
 const filter = reactive<Filter<FileRecord>>({
-  superiorId: { op: 'eq', value: currentRow.value?.id },
-  name: { op: 'eq', value: undefined }
+  superiorId: { op: 'eq', value: currentRowId.value },
+  name: { op: 'like', value: undefined }
 })
 const loading = ref<boolean>(false)
 
@@ -236,7 +236,7 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     params.descending = descending
   }
 
-  filter.superiorId!.value = currentRow.value ? currentRow.value.id : null
+  filter.superiorId!.value = currentRowId.value ?? null
   try {
     const res = await retrieveFiles({ ...params }, filter)
     pagination.value.page = page
@@ -308,7 +308,7 @@ function onSubmit() {
 
 function onRowClick(evt: Event, row: FileRecord) {
   if (row?.directory) {
-    currentRow.value = row
+    currentRowId.value = row.id
     if (row) {
       expandRows.value.push(row)
     }
@@ -322,14 +322,14 @@ function handleBreadcrumbClick(index: number) {
   if (index === -1) {
     // 点击"全部文件夹"，回到根目录
     expandRows.value = []
-    currentRow.value = null
+    currentRowId.value = null
   } else {
     // 点击中间层级的面包屑
     // 截断面包屑数组，保留点击位置及之前的部分
     expandRows.value = expandRows.value.slice(0, index + 1)
-    currentRow.value = expandRows.value[index] ?? null
+    currentRowId.value = expandRows.value[index]?.id ?? null
   }
-  filter.superiorId!.value = currentRow.value?.id
+  filter.superiorId!.value = currentRowId.value
   refresh()
 }
 </script>

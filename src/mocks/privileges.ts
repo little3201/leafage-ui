@@ -1,6 +1,8 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { GroupPrivileges, Privilege, PrivilegeTreeNode, UserPrivileges } from 'src/types'
+import { applyFilters } from './util'
+
 
 const datas: Privilege[] = [
   {
@@ -537,11 +539,15 @@ export const privilegesHandlers = [
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
+
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
-      totalElements: datas.length
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      totalElements: filtered.length
     }
 
     return HttpResponse.json(data)

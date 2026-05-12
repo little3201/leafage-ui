@@ -151,7 +151,7 @@ const importVisible = ref<boolean>(false)
 const tableRef = ref<QTable>()
 const rows = ref<Array<Privilege>>([])
 const filter = reactive<Filter<Privilege>>({
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 const loading = ref<boolean>(false)
 const buttonOptions = ref<Array<Dictionary>>([])

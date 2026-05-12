@@ -120,7 +120,7 @@ const tableRef = ref<QTable>()
 const rows = ref<Array<Dictionary>>([])
 const filter = reactive<Filter<Dictionary>>({
   superiorId: { op: 'eq', value: null },
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 const loading = ref(false)
 
