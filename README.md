@@ -55,7 +55,7 @@
 │   ├── boot/               # plugins init
 │   ├── components/         # Vue components
 │   ├── constants/          # Constants
-│   ├── css/                # css
+│   ├── styles/             # styles
 │   ├── lang/               # i18n languages
 │   ├── layouts/            # Layout components
 │   ├── mocks/              # Mocks with msw

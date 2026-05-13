@@ -4,7 +4,7 @@ import type {
   FormInstance, FormRules, TableInstance,
   UploadInstance, UploadRequestOptions
 } from 'element-plus'
-import { dayjs } from 'element-plus'
+import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import {
   createSchema, fetchSchema, importSchemas, modifySchema,
   removeSchema, retrieveSchemas
@@ -79,13 +79,12 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  try {
-    const res = await retrieveSchemas(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
-  } catch (error) {
-    return error
-  } finally { loading.value = false }
+
+  const res = await retrieveSchemas(pagination, filter)
+  datas.value = res.data.content
+  total.value = res.data.page.totalElements
+
+  loading.value = false
 }
 
 /**
@@ -126,12 +125,8 @@ async function configRow(row: Schema) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  try {
-    const res = await fetchSchema(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await fetchSchema(id)
+  form.value = res.data
 }
 
 /**
@@ -150,9 +145,12 @@ async function onSubmit(formEl: FormInstance) {
         await createSchema(form.value)
       }
       visible.value = false
+
+      ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
       await load()
     } catch (error) {
-      return error
+      ElMessage.error(t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }))
+      throw error
     } finally {
       saveLoading.value = false
     }
@@ -164,20 +162,25 @@ async function onSubmit(formEl: FormInstance) {
  * @param id 主键
  */
 async function removeRow(id: number) {
-  try {
-    await removeSchema(id)
-    await load()
-  } catch (error) {
-    return error
-  }
-}
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeSchema(id)
+      await load()
 
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -309,16 +312,12 @@ async function onSectionSave() {
               $t('action.config')
             }}
           </ElButton>
-          <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
-            @confirm="confirmEvent(scope.row.id)">
-            <template #reference>
-              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
-                  $t('action.remove')
-                }}
-              </ElButton>
-            </template>
-          </ElPopconfirm>
+          <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+            @click="removeRow(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.remove')
+            }}
+          </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>
@@ -330,7 +329,8 @@ async function onSectionSave() {
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.schemas')" align-center :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
+    :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>

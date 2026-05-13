@@ -1,12 +1,7 @@
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import { i18n } from 'boot/i18n'
-import { ElMessage } from 'element-plus'
 import { signIn } from 'src/api/authentication'
-import type { ComposerTranslation } from 'vue-i18n'
 
-
-const { t } = i18n.global as { t: ComposerTranslation }
 
 const abortControllerMap: Map<string, AbortController> = new Map()
 
@@ -28,7 +23,6 @@ api.interceptors.request.use(
     return config
   },
   (error: AxiosError) => {
-    ElMessage.error({ message: error.message, grouping: true })
     return Promise.reject(error)
   }
 )
@@ -42,25 +36,9 @@ api.interceptors.response.use(
     return response
   },
   (error: AxiosError) => {
-    if (error.response) {
-      const { status } = error.response
-      switch (status) {
-        case 401:
-          cancelAllRequest()
-          signIn()
-          return
-        case 403:
-          ElMessage.error({ message: t('message.forbidden'), grouping: true })
-          break
-        case 404:
-          ElMessage.error({ message: t('message.notFound'), grouping: true })
-          break
-        case 500:
-          ElMessage.error({ message: t('message.serverError'), grouping: true })
-          break
-        default:
-          ElMessage.error({ message: t('message.error'), grouping: true })
-      }
+    if (error.response?.status === 401) {
+      cancelAllRequest()
+      signIn()
     }
     return Promise.reject(error)
   }

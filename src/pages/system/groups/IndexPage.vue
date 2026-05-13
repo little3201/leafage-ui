@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules, TableInstance, TabPaneName, TransferDirection, TransferKey, TreeInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   addMembers,
   addPrivilege,
@@ -126,39 +127,23 @@ async function onCurrentChange(data: TreeNode) {
 }
 
 async function loadUsers() {
-  try {
-    const res = await retrieveUsers({ page: 1, size: 99 })
-    members.value = res.data.content
-  } catch (error) {
-    return error
-  }
+  const res = await retrieveUsers({ page: 1, size: 99 })
+  members.value = res.data.content
 }
 
 async function loadRoles() {
-  try {
-    const res = await retrieveRoles({ page: 1, size: 99 })
-    roles.value = res.data.content
-  } catch (error) {
-    return error
-  }
+  const res = await retrieveRoles({ page: 1, size: 99 })
+  roles.value = res.data.content
 }
 
 async function loadGroupUsers(id: number) {
-  try {
-    const res = await retrieveGroupMembers(id)
-    relationUsers.value = res.data.map((item: GroupMembers) => item.username)
-  } catch (error) {
-    return error
-  }
+  const res = await retrieveGroupMembers(id)
+  relationUsers.value = res.data.map((item: GroupMembers) => item.username)
 }
 
 async function loadGrouRoles(id: number) {
-  try {
-    const res = await retrieveGroupRoles(id)
-    relationRoles.value = res.data.map((item: GroupRoles) => item.roleId)
-  } catch (error) {
-    return error
-  }
+  const res = await retrieveGroupRoles(id)
+  relationRoles.value = res.data.map((item: GroupRoles) => item.roleId)
 }
 
 /**
@@ -166,18 +151,15 @@ async function loadGrouRoles(id: number) {
  */
 async function loadTree() {
   treeLoading.value = true
-  try {
-    const res = await retrieveGroupTree()
-    groupTree.value = res.data.map((element: TreeNode) => ({
-      ...element,
-      isLeaf: !(element.children?.length && element.children?.length > 0)
-    }))
-    await load()
-  } catch (error) {
-    return error
-  } finally {
-    treeLoading.value = false
-  }
+
+  const res = await retrieveGroupTree()
+  groupTree.value = res.data.map((element: TreeNode) => ({
+    ...element,
+    isLeaf: !(element.children?.length && element.children?.length > 0)
+  }))
+  await load()
+
+  treeLoading.value = false
 }
 
 /**
@@ -197,13 +179,12 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
   filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
-  try {
-    const res = await retrieveGroups(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
-  } catch (error) {
-    return error
-  } finally { loading.value = false }
+
+  const res = await retrieveGroups(pagination, filter)
+  datas.value = res.data.content
+  total.value = res.data.page.totalElements
+
+  loading.value = false
 }
 
 /**
@@ -211,29 +192,24 @@ async function load() {
  * @param id 主键
  */
 async function relationRow(id: number) {
+  await Promise.all([loadGroupUsers(id), loadUsers()])
+
   relationVisible.value = true
-  try {
-    await Promise.all([loadGroupUsers(id), loadUsers()])
-  } catch (error) {
-    return error
-  }
 }
 
 async function authorizeRow(id: number) {
   authorities.value = []
   form.value.id = id
-  try {
-    const res = await retrieveGroupPrivileges(id)
-    authorities.value = res.data.map((row: GroupPrivileges) => {
-      const toogleRow = { id: row.privilegeId }
-      authorizeTableRef.value?.toggleRowSelection(toogleRow, true)
 
-      authoritiesMap[row.privilegeId] = row.actions || []
-      return { privilegeId: row.privilegeId, actions: row.actions }
-    })
-  } catch (error) {
-    return error
-  }
+  const res = await retrieveGroupPrivileges(id)
+  authorities.value = res.data.map((row: GroupPrivileges) => {
+    const toogleRow = { id: row.privilegeId }
+    authorizeTableRef.value?.toggleRowSelection(toogleRow, true)
+
+    authoritiesMap[row.privilegeId] = row.actions || []
+    return { privilegeId: row.privilegeId, actions: row.actions }
+  })
+
   authorizeVisible.value = true
 }
 
@@ -254,12 +230,8 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  try {
-    const res = await fetchGroup(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await fetchGroup(id)
+  form.value = res.data
 }
 
 /**
@@ -267,12 +239,8 @@ async function loadOne(id: number) {
  * @param id 主键
  */
 async function enableChange(id: number) {
-  try {
-    await enableGroup(id)
-    await load()
-  } catch (error) {
-    return error
-  }
+  await enableGroup(id)
+  await load()
 }
 
 /**
@@ -292,10 +260,13 @@ async function onSubmit(formEl: FormInstance) {
         await createGroup(form.value)
       }
       visible.value = false
+
+      ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
       await load()
       await loadTree()
     } catch (error) {
-      return error
+      ElMessage.error(t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }))
+      throw error
     } finally {
       saveLoading.value = false
     }
@@ -307,19 +278,25 @@ async function onSubmit(formEl: FormInstance) {
  * @param id 主键
  */
 async function removeRow(id: number) {
-  try {
-    await Promise.all([removeGroup(id), load(), loadTree()])
-  } catch (error) {
-    return error
-  }
-}
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeGroup(id)
+      await Promise.all([load(), loadTree()])
 
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -329,14 +306,11 @@ async function confirmEvent(id: number) {
  */
 async function handleTransferUserChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
   if (form.value.id) {
-    try {
-      if (direction === 'right') {
-        await addMembers(form.value.id, value as string[])
-      } else if (movedKeys.length) {
-        await removeMembers(form.value.id, movedKeys as string[])
-      }
-    } catch (error) {
-      return error
+
+    if (direction === 'right') {
+      await addMembers(form.value.id, value as string[])
+    } else if (movedKeys.length) {
+      await removeMembers(form.value.id, movedKeys as string[])
     }
   }
 }
@@ -348,14 +322,11 @@ async function handleTransferUserChange(value: TransferKey[], direction: Transfe
  */
 async function handleTransferRoleChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
   if (form.value.id) {
-    try {
-      if (direction === 'right') {
-        await addRoles(form.value.id, value as number[])
-      } else if (movedKeys.length) {
-        await removeRoles(form.value.id, movedKeys as number[])
-      }
-    } catch (error) {
-      return error
+
+    if (direction === 'right') {
+      await addRoles(form.value.id, value as number[])
+    } else if (movedKeys.length) {
+      await removeRoles(form.value.id, movedKeys as number[])
     }
   }
 }
@@ -540,15 +511,11 @@ const rowSelected = (row: Privilege) => {
                   $t('action.authorize')
                 }}
               </ElButton>
-              <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
-                @confirm="confirmEvent(scope.row.id)">
-                <template #reference>
-                  <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                    <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
-                    {{ $t('action.remove') }}
-                  </ElButton>
-                </template>
-              </ElPopconfirm>
+              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+                @click="removeRow(scope.row.id)">
+                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+                {{ $t('action.remove') }}
+              </ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -562,7 +529,8 @@ const rowSelected = (row: Privilege) => {
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.groups')" align-center :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
+    :show-close="false" width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>

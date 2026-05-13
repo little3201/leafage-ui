@@ -101,6 +101,7 @@ export default {
     imports: '引用',
     attachment: '附件',
     owner: '所有者',
+    all: '全部'
   },
 
   action: {
@@ -112,7 +113,7 @@ export default {
     submit: '提交',
     confirm: '确定',
     cancel: '取消',
-    create: '添加',
+    create: '创建',
     modify: '修改',
     details: '详情',
     remove: '删除',
@@ -189,11 +190,9 @@ export default {
 
   message: {
     selectedTotal: '已选择 {total} 条',
-    removeConfirm: '是否确定要删除这条数据？',
-    forbidden: '您没有访问此资源的权限，请联系管理员。',
-    notFound: '未找到您请求的资源。请检查URL是否正确，或返回首页。',
-    serverError: '系统内部错误。我们正在努力修复，请稍后再试！',
-    error: '请求无效。请检查您的输入或联系技术支持。',
+    success: '{action}成功。',
+    error: '{action}失败！',
+    networkError: '网络错误或超时'
   },
 
   tips: {
@@ -202,6 +201,8 @@ export default {
     click2Upload: '点击上传',
     fileSizeLimit: '文件小于 {size}。',
 
+    removeConfirm: '是否确定要删除这条数据？',
+    actionConfirm: '操作确认',
     welcome: '嗨！欢迎回来',
     subtitle: '请填写您的账号和密码，让我们继续探索',
     forgotPassword: '忘记密码 ？'

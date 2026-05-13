@@ -101,6 +101,7 @@ export default {
     imports: '引用',
     attachment: '附件',
     owner: '所有者',
+    all: '全部'
   },
 
   action: {
@@ -112,7 +113,7 @@ export default {
     submit: '提交',
     confirm: '確定',
     cancel: '取消',
-    create: '添加',
+    create: '創建',
     modify: '修改',
     details: '詳情',
     remove: '刪除',
@@ -189,11 +190,11 @@ export default {
 
   message: {
     selectedTotal: '已選擇 {total} 條',
-    removeConfirm: '是否確定要刪除這條數據？',
     forbidden: '您沒有訪問此資源的權限，請聯繫管理員。',
     notFound: '未找到您請求的資源。請檢查URL是否正確，或返回首頁。',
-    serverError: '系統內部錯誤。我們正在努力修復，請稍後再試！',
-    error: '請求無效。請檢查您的輸入或聯繫技術支援。',
+    success: '{action}成功。',
+    error: '{action}失敗！',
+    networkError: '網路錯誤或超時'
   },
 
   tips: {
@@ -202,6 +203,8 @@ export default {
     click2Upload: '點擊上傳',
     fileSizeLimit: '檔案小於 {size}。',
 
+    removeConfirm: '是否確定要刪除這條數據？',
+    actionConfirm: '操作確認',
     welcome: '嗨！歡迎回來',
     subtitle: '請填寫您的帳號和密碼，讓我們繼續探索',
     forgotPassword: '忘記密碼 ？'

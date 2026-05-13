@@ -10,7 +10,6 @@ const props = defineProps<{
 
 const fields = ref<Array<SectionField>>([])
 const datas = ref<Array<Record<string, unknown>>>([])
-const loading = ref(false)
 
 watch(() => props.sectionId, async (newVal) => {
   if (!newVal) return
@@ -21,28 +20,16 @@ watch(() => props.sectionId, async (newVal) => {
 
 async function loadFields() {
   if (!props.sectionId) return
-  loading.value = true
-  try {
-    const res = await retrieveSectionFields(props.sectionId)
-    fields.value = res.data
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
-  }
+
+  const res = await retrieveSectionFields(props.sectionId)
+  fields.value = res.data
 }
 
 async function loadDatas() {
   if (!props.sectionId) return
-  loading.value = true
-  try {
-    const res = await retrieveSectionDatas(props.sectionId)
-    datas.value = res.data
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
-  }
+
+  const res = await retrieveSectionDatas(props.sectionId)
+  datas.value = res.data
 }
 
 function onclick() {

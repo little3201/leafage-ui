@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/logs/audit-logs'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { AuditLog, Filters, Pagination } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+
+const { t } = useI18n()
 
 
 const loading = ref<boolean>(false)
@@ -53,15 +58,12 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  try {
-    const res = await retrieveAuditLogs(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
-  }
+
+  const res = await retrieveAuditLogs(pagination, filter)
+  datas.value = res.data.content
+  total.value = res.data.page.totalElements
+
+  loading.value = false
 }
 
 /**
@@ -70,14 +72,11 @@ async function load() {
  */
 async function loadOne(id: number) {
   detailLoading.value = true
-  try {
-    const res = await fetchAuditLog(id)
-    row.value = res.data
-  } catch (error) {
-    return error
-  } finally {
-    detailLoading.value = false
-  }
+
+  const res = await fetchAuditLog(id)
+  row.value = res.data
+
+  detailLoading.value = false
 }
 
 /**
@@ -108,23 +107,25 @@ async function showRow(id: number) {
  * @param id 主键
  */
 async function removeRow(id: number) {
-  try {
-    await removeAuditLog(id)
-    await load()
-  } catch (error) {
-    return error
-  }
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeAuditLog(id)
+      await load()
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
-
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
-}
-
-
 </script>
 
 <template>
@@ -189,15 +190,12 @@ async function confirmEvent(id: number) {
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
-          <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
-            <template #reference>
-              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
-                  $t('action.remove')
-                }}
-              </ElButton>
-            </template>
-          </ElPopconfirm>
+          <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+            @click="removeRow(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.remove')
+            }}
+          </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
-import { dayjs } from 'element-plus'
+import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { clearSchedulerLogs, fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
 import { actionIcons, actionTypes, shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { Filters, Pagination, SchedulerLog } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+
+const { t } = useI18n()
 
 
 const loading = ref<boolean>(false)
@@ -52,15 +56,12 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  try {
-    const res = await retrieveSchedulerLogs(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
-  }
+
+  const res = await retrieveSchedulerLogs(pagination, filter)
+  datas.value = res.data.content
+  total.value = res.data.page.totalElements
+
+  loading.value = false
 }
 
 /**
@@ -69,14 +70,11 @@ async function load() {
  */
 async function loadOne(id: number) {
   detailLoading.value = true
-  try {
-    const res = await fetchSchedulerLog(id)
-    row.value = res.data
-  } catch (error) {
-    return error
-  } finally {
-    detailLoading.value = false
-  }
+
+  const res = await fetchSchedulerLog(id)
+  row.value = res.data
+
+  detailLoading.value = false
 }
 
 /**
@@ -107,35 +105,49 @@ async function showRow(id: number) {
  * @param id 主键
  */
 async function removeRow(id: number) {
-  try {
-    await removeSchedulerLog(id)
-    await load()
-  } catch (error) {
-    return error
-  }
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeSchedulerLog(id)
+      await load()
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 /**
  * 清空
  */
 async function clearRows() {
-  try {
-    await clearSchedulerLogs()
-    await load()
-  } catch (error) {
-    return error
-  }
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await clearSchedulerLogs()
+      await load()
+      ElMessage.success(t('message.success', { action: t('action.clear') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.clear') }))
+      throw error
+    }
+  })
 }
-
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
-}
-
-
 </script>
 
 <template>
@@ -202,16 +214,12 @@ async function confirmEvent(id: number) {
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
-          <ElPopconfirm v-if="scope.row.status != 'RUNNING' && scope.row.status != 'PENDING'"
-            :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
-            <template #reference>
-              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
-                  $t('action.remove')
-                }}
-              </ElButton>
-            </template>
-          </ElPopconfirm>
+          <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+            @click="removeRow(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.remove')
+            }}
+          </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>

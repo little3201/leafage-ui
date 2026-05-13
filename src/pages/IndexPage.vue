@@ -13,12 +13,8 @@ const lineOptionsData = reactive<ApexOptions | object>(lineOptions)
 const datas = ref<Record<string, Schedule[]>>({})
 
 async function load(month: number) {
-  try {
-    const res = await retrieveCalendarEvents(month)
-    datas.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await retrieveCalendarEvents(month)
+  datas.value = res.data
 }
 
 onMounted(async () => {

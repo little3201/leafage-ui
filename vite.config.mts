@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
       checker({
         vueTsc: true,
         eslint: {
-          lintCommand: 'eslint -c ./eslint.config.js "./src/**/*.{js,mjs,cjs,ts,vue}"',
+          lintCommand: 'eslint',
           useFlatConfig: true
         }
       })

@@ -113,7 +113,7 @@ export const dictionariesHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete('/api/dictionaries/:id', ({ params }) => {
+  http.delete(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

@@ -14,7 +14,7 @@ for (let i = 1; i < 28; i++) {
     ownerType: ['REPORT', 'SCHEMA'][Math.floor(Math.random() * 2)] || null,
     name: 'Title_' + i,
     body: 'This is body content about xxx',
-    count: Math.floor(Math.random() * 2) || 0,
+    count: Math.floor(Math.random() * 2) || 0
   }
   datas.push(row)
 }
@@ -27,6 +27,14 @@ export const sectionsHandlers = [
       return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
     } else {
       return HttpResponse.json(datas.filter(item => item.superiorId === null))
+    }
+  }),
+  http.get(`/api${SERVER_URL.SECTION}/:id/tree`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      return HttpResponse.json(datas.filter(item => item.superiorId === null))
+    } else {
+      return HttpResponse.json()
     }
   }),
   http.get(`/api${SERVER_URL.SECTION}/:id`, ({ params }) => {

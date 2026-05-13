@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { UploadInstance, UploadRequestOptions } from 'element-plus'
-import { dayjs } from 'element-plus'
+import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { downloadFile, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { FileRecord, Filters, Pagination } from 'src/types'
 import { download, formatFileSize, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+
+const { t } = useI18n()
 
 const loading = ref<boolean>(false)
 const uploadLoading = ref<boolean>(false)
@@ -58,15 +61,12 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  try {
-    const res = await retrieveFiles(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
-  }
+
+  const res = await retrieveFiles(pagination, filter)
+  datas.value = res.data.content
+  total.value = res.data.page.totalElements
+
+  loading.value = false
 }
 
 /**
@@ -74,12 +74,8 @@ async function load() {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  try {
-    const res = await fetchFile(id)
-    row.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await fetchFile(id)
+  row.value = res.data
 }
 
 /**
@@ -105,12 +101,8 @@ function uploadRow() {
  * @param id 主键
  */
 async function downloadRow(id: number, name: string, type: string) {
-  try {
-    const res = await downloadFile(id)
-    download(res.data, name, type)
-  } catch (error) {
-    return error
-  }
+  const res = await downloadFile(id)
+  download(res.data, name, type)
 }
 
 /**
@@ -135,17 +127,25 @@ function onUpload(options: UploadRequestOptions) {
  * @param id 主键
  */
 async function removeRow(id: number) {
-  await removeFile(id)
-}
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeFile(id)
+      await load()
 
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  if (id) {
-    await removeRow(id)
-  }
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 async function onRowClick(row: FileRecord) {
@@ -175,11 +175,20 @@ async function handleBreadcrumbClick(index: number) {
   filter.superiorId!.value = currentRow.value?.id
   await load()
 }
+
+async function onUploadSuccess() {
+  await load()
+  ElMessage.success(t('message.success', { action: t('action.upload') }))
+}
+
+function onUploadError() {
+  ElMessage.error(t('message.error', { action: t('action.upload') }))
+}
 </script>
 
 <template>
   <ElRow :gutter="16">
-    <ElCol :span="5" :xl="4">
+    <ElCol :span="6" :xl="4">
       <ElCard shadow="never">
         <p class="mt-0"><strong>Space Usage</strong></p>
         <div class="text-center my-6">
@@ -191,7 +200,7 @@ async function handleBreadcrumbClick(index: number) {
           </ElProgress>
         </div>
         <ul class="flex-col space-y-4 list-none px-0">
-          <li index="images" class="flex items-center space-x-4">
+          <li index="images" class="flex items-center space-x-2">
             <ElButton title="images" circle type="success" size="large">
               <Icon icon="material-symbols:image-outline-rounded" width="1.5em" height="1.5em" />
             </ElButton>
@@ -201,7 +210,7 @@ async function handleBreadcrumbClick(index: number) {
             </div>
             <span class="text-(--el-text-color-regular)">14GB</span>
           </li>
-          <li index="media" class="flex items-center space-x-4">
+          <li index="media" class="flex items-center space-x-2">
             <ElButton title="media" circle type="primary" size="large">
               <Icon icon="material-symbols:videocam-outline-rounded" width="1.5em" height="1.5em" />
             </ElButton>
@@ -211,7 +220,7 @@ async function handleBreadcrumbClick(index: number) {
             </div>
             <span class="text-(--el-text-color-regular)">5GB</span>
           </li>
-          <li index="documents" class="flex items-center space-x-4">
+          <li index="documents" class="flex items-center space-x-2">
             <ElButton title="documents" circle type="warning" size="large">
               <Icon icon="material-symbols:docs-outline-rounded" width="1.5em" height="1.5em" />
             </ElButton>
@@ -225,13 +234,13 @@ async function handleBreadcrumbClick(index: number) {
       </ElCard>
     </ElCol>
 
-    <ElCol :span="19" :xl="20">
+    <ElCol :span="18" :xl="20">
       <ElCard shadow="never">
         <ElRow>
           <ElCol :span="23" class="text-left">
             <ElBreadcrumb class="cursor-pointer font-bold">
               <ElBreadcrumbItem @click="handleBreadcrumbClick(-1)">
-                全部文件夹
+                {{ $t('label.all') }}
               </ElBreadcrumbItem>
               <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="row.id!" @click="handleBreadcrumbClick(index)">
                 {{ row.name }}
@@ -260,7 +269,6 @@ async function handleBreadcrumbClick(index: number) {
             </ElButton>
           </ElCol>
         </ElRow>
-
 
         <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
           <ElTableColumn type="index" :label="$t('label.no')" width="55" />
@@ -295,16 +303,13 @@ async function handleBreadcrumbClick(index: number) {
                 @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
                 <Icon icon="material-symbols:download" width="1.25em" height="1.25em" />{{ $t('action.download') }}
               </ElButton>
-              <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
-                <template #reference>
-                  <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                    <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
-                    {{
-                      $t('action.remove')
-                    }}
-                  </ElButton>
-                </template>
-              </ElPopconfirm>
+              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+                @click="removeRow(scope.row.id)">
+                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+                {{
+                  $t('action.remove')
+                }}
+              </ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -332,7 +337,8 @@ async function handleBreadcrumbClick(index: number) {
 
   <!-- upload -->
   <ElDialog v-model="uploadVisible" :title="$t('action.upload')" align-center width="480">
-    <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" :on-success="load">
+    <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" @success="onUploadSuccess"
+      @error="onUploadError">
       <div class="el-icon--upload inline-flex justify-center">
         <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
       </div>

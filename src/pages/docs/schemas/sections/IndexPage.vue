@@ -3,6 +3,7 @@ import { Icon } from '@iconify/vue'
 import type {
   TreeData, TreeInstance, TreeNodeData
 } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createSection,
   fetchSection,
@@ -14,11 +15,13 @@ import { actionIcons, actionTypes } from 'src/constants'
 import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ExcelField from './ExcelField.vue'
 import SectionContent from './SectionContent.vue'
 import WordContent from './WordContent.vue'
 
 
+const { t } = useI18n()
 const props = defineProps<{
   ownerId: number
   ownerType: 'REPORT' | 'ARCHIVE' | 'SCHEMA'
@@ -85,14 +88,11 @@ async function onCurrentChange(data: TreeNodeData) {
 async function loadTree() {
   if (!props.ownerId) return
   treeLoading.value = true
-  try {
-    const res = await retrieveSectionTree(props.ownerId, props.ownerType)
-    treeData.value = res.data
-  } catch (error) {
-    return error
-  } finally {
-    treeLoading.value = false
-  }
+
+  const res = await retrieveSectionTree(props.ownerId, props.ownerType)
+  treeData.value = res.data
+
+  treeLoading.value = false
 }
 
 /**
@@ -112,12 +112,8 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  try {
-    const res = await fetchSection(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await fetchSection(id)
+  form.value = res.data
 }
 
 /**
@@ -149,6 +145,7 @@ async function onSubmit() {
         : await createSection(sectionForm)
       visible.value = false
 
+      ElMessage.success(t('message.success', { action: sectionForm.id ? t('action.modify') : t('action.create') }))
       if (id) {
         if (node) {
           Object.assign(node.data, res.data)
@@ -161,7 +158,8 @@ async function onSubmit() {
         }
       }
     } catch (error) {
-      return error
+      ElMessage.error(t('message.error', { action: sectionForm.id ? t('action.modify') : t('action.create') }))
+      throw error
     }
   }
 }
@@ -179,23 +177,28 @@ async function modifySectionContent() {
  * @param id 主键
  */
 async function removeRow(id: number) {
-  try {
-    await removeSection(id)
-    const node = treeRef.value?.getNode(id)
-    if (node) {
-      treeRef.value?.remove(node?.data)
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
     }
-  } catch (error) {
-    return error
-  }
-}
+  ).then(async () => {
+    try {
+      await removeSection(id)
+      const node = treeRef.value?.getNode(id)
+      if (node) {
+        treeRef.value?.remove(node?.data)
+      }
 
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 defineExpose({
@@ -228,13 +231,10 @@ defineExpose({
                 <ElButton type="primary" link @click="saveRow(data.id)">
                   <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" />
                 </ElButton>
-                <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(data.id)">
-                  <template #reference>
-                    <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                      <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" />
-                    </ElButton>
-                  </template>
-                </ElPopconfirm>
+                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+                  @click="removeRow(data.id)">
+                  <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" />
+                </ElButton>
               </div>
             </div>
           </template>
@@ -252,7 +252,8 @@ defineExpose({
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.sections')" align-center :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
+    :show-close="false" width="400">
     <SectionContent ref="sectionContentRef" :row="form" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">

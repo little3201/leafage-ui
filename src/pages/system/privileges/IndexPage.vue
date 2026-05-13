@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules, InputInstance, TableInstance, UploadInstance, UploadRequestOptions } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import {
   enablePrivilege,
   fetchPrivilege,
@@ -12,7 +13,10 @@ import { actionIcons, actionTypes } from 'src/constants'
 import type { Dictionary, Filters, Pagination, Privilege } from 'src/types'
 import { exportToCSV, hasAction, visibleArray } from 'src/utils'
 import { nextTick, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+
+const { t } = useI18n()
 
 const loading = ref<boolean>(false)
 const datas = ref<Array<Privilege>>([])
@@ -78,34 +82,31 @@ async function pageChange(currentPage: number, pageSize: number) {
 
 async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privilege[]) => void) {
   loading.value = true
-  try {
-    if (row && row.id && resolve) {
-      const res = await retrievePrivilegeSubset(row.id)
-      const list = res.data
-      // 处理子节点
-      list.forEach((element: Privilege) => {
-        if (element.count && element.count > 0) {
-          element.hasChildren = true
-        }
-      })
-      resolve(list)
-    } else {
-      const res = await retrievePrivileges(pagination, filter)
-      const list = res.data.content
-      // 处理子节点
-      list.forEach((element: Privilege) => {
-        if (element.count && element.count > 0) {
-          element.hasChildren = true
-        }
-      })
-      datas.value = list
-      total.value = res.data.page.totalElements
-    }
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
+
+  if (row && row.id && resolve) {
+    const res = await retrievePrivilegeSubset(row.id)
+    const list = res.data
+    // 处理子节点
+    list.forEach((element: Privilege) => {
+      if (element.count && element.count > 0) {
+        element.hasChildren = true
+      }
+    })
+    resolve(list)
+  } else {
+    const res = await retrievePrivileges(pagination, filter)
+    const list = res.data.content
+    // 处理子节点
+    list.forEach((element: Privilege) => {
+      if (element.count && element.count > 0) {
+        element.hasChildren = true
+      }
+    })
+    datas.value = list
+    total.value = res.data.page.totalElements
   }
+
+  loading.value = false
 }
 
 /**
@@ -113,20 +114,16 @@ async function load(row?: Privilege, treeNode?: unknown, resolve?: (date: Privil
  * @param rowKey row key
  */
 const refreshChildren = async (rowKey: number) => {
-  try {
-    const res = await retrievePrivilegeSubset(rowKey)
-    const list = res.data
-    // 处理子节点
-    list.forEach((element: Dictionary) => {
-      if (element.count && element.count > 0) {
-        element.hasChildren = true
-      }
-    })
+  const res = await retrievePrivilegeSubset(rowKey)
+  const list = res.data
+  // 处理子节点
+  list.forEach((element: Dictionary) => {
+    if (element.count && element.count > 0) {
+      element.hasChildren = true
+    }
+  })
 
-    tableRef.value?.updateKeyChildren(String(rowKey), list)
-  } catch (error) {
-    return error
-  }
+  tableRef.value?.updateKeyChildren(String(rowKey), list)
 }
 
 /**
@@ -135,14 +132,11 @@ const refreshChildren = async (rowKey: number) => {
  */
 async function saveRow(id?: number) {
   form.value = { ...initialValues, id: id || null }
-  try {
-    if (id) {
-      await loadOne(id)
-      const res = await retrievePrivilegeSubset(id)
-      subset.value = res.data
-    }
-  } catch (error) {
-    return error
+
+  if (id) {
+    await loadOne(id)
+    const res = await retrievePrivilegeSubset(id)
+    subset.value = res.data
   }
   visible.value = true
 }
@@ -152,21 +146,13 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  try {
-    const res = await fetchPrivilege(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await fetchPrivilege(id)
+  form.value = res.data
 }
 
 async function enableChange(id: number) {
-  try {
-    await enablePrivilege(id)
-    await load()
-  } catch (error) {
-    return error
-  }
+  await enablePrivilege(id)
+  await load()
 }
 
 /**
@@ -183,14 +169,19 @@ async function onSubmit(formEl: FormInstance) {
         await modifyPrivilege(form.value.id, form.value)
 
         visible.value = false
+
+        ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
         await load()
 
         if (form.value.superiorId) {
           await refreshChildren(form.value.superiorId)
         }
       } catch (error) {
-        return error
-      } finally { saveLoading.value = false }
+        ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
+        throw error
+      } finally {
+        saveLoading.value = false
+      }
     }
   }
 }
@@ -345,7 +336,8 @@ function handleInputConfirm() {
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.privileges')" align-center :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
+    :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="12">

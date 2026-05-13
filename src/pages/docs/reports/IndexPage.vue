@@ -6,7 +6,7 @@ import type {
   TableInstance,
   UploadInstance, UploadRequestOptions
 } from 'element-plus'
-import { dayjs } from 'element-plus'
+import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { createReport, fetchReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
 import { retrieveSchemas } from 'src/api/docs/schemas'
 import { actionIcons, actionTypes } from 'src/constants'
@@ -83,31 +83,23 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  try {
-    const res = await retrieveReports(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
-  } catch (error) {
-    return error
-  } finally { loading.value = false }
+
+  const res = await retrieveReports(pagination, filter)
+  datas.value = res.data.content
+  total.value = res.data.page.totalElements
+
+  loading.value = false
 }
 
 /**
- * 加载列表
+ * 加载 schemas
  */
 async function loadSchemas() {
-  loading.value = true
-  try {
-    const filter: Filters<Schema> = {
-      type: { op: 'eq', value: 'EXCEL' }
-    }
-    const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
-    schemas.value = res.data.content
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
+  const filter: Filters<Schema> = {
+    type: { op: 'eq', value: 'EXCEL' }
   }
+  const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
+  schemas.value = res.data.content
 }
 
 /**
@@ -136,12 +128,8 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  try {
-    const res = await fetchReport(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await fetchReport(id)
+  form.value = res.data
 }
 
 /**
@@ -186,9 +174,12 @@ async function onSubmit(formEl: FormInstance) {
         await createReport(form.value)
       }
       visible.value = false
+
+      ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
       await load()
     } catch (error) {
-      return error
+      ElMessage.error(t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }))
+      throw error
     } finally {
       saveLoading.value = false
     }
@@ -200,20 +191,25 @@ async function onSubmit(formEl: FormInstance) {
  * @param id 主键
  */
 async function removeRow(id: number) {
-  try {
-    await removeReport(id)
-    await load()
-  } catch (error) {
-    return error
-  }
-}
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeReport(id)
+      await load()
 
-/**
- * 确认
- * @param id 主键
- */
-async function confirmEvent(id: number) {
-  await removeRow(id)
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -356,16 +352,12 @@ async function onSectionContentSave() {
             <Icon :icon="`material-symbols:${actionIcons['maintenance']}-rounded`" width="1.25em" height="1.25em" />
             {{ $t('action.maintenance') }}
           </ElButton>
-          <ElPopconfirm v-if="!scope.row.hasChildren" :title="$t('message.removeConfirm')" :width="240"
-            @confirm="confirmEvent(scope.row.id)">
-            <template #reference>
-              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
-                  $t('action.remove')
-                }}
-              </ElButton>
-            </template>
-          </ElPopconfirm>
+          <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+            @click="removeRow(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.remove')
+            }}
+          </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>
@@ -377,7 +369,8 @@ async function onSectionContentSave() {
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.reports')" align-center :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
+    :show-close="false" width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>

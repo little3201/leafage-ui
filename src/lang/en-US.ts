@@ -101,6 +101,7 @@ export default {
     imports: 'Imports',
     attachment: 'Attachment',
     owner: 'Owner',
+    all: 'All'
   },
 
   action: {
@@ -189,11 +190,9 @@ export default {
 
   message: {
     selectedTotal: '{total} items selected',
-    removeConfirm: 'Are you sure to delete this?',
-    forbidden: 'You don\'t have permission to access this resource, please contact the administrator.',
-    notFound: 'The resource not be found. Please check if the URL is correct or return to the homepage.',
-    serverError: 'Internal server error. We are working hard to fix it. Please try again later!',
-    error: 'Invalid request. Please check your input or contact technical support.',
+    success: '{action} successful.',
+    error: '{action} failed!',
+    networkError: 'Network Error.'
   },
 
   tips: {
@@ -202,6 +201,8 @@ export default {
     click2Upload: 'click to upload',
     fileSizeLimit: 'File with a size less than {size}.',
 
+    removeConfirm: 'Are you sure you want to delete the data?',
+    actionConfirm: 'Action Confirm',
     welcome: 'Hi! Welcome Back.',
     subtitle: 'Please sign in to continue exploring.',
     forgotPassword: 'Forgot The Password ?'

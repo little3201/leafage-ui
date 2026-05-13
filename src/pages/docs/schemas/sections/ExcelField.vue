@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { createSectionField, modifySectionField, retrieveSectionFields } from 'src/api/docs/sections'
 import { retrieveDictionarySubset } from 'src/api/system/dictionaries'
 import type { Dictionary, SectionField } from 'src/types'
@@ -62,14 +63,11 @@ watch(() => props.sectionId, async (newVal) => {
 async function load() {
   if (!props.sectionId) return
   loading.value = true
-  try {
-    const res = await retrieveSectionFields(props.sectionId)
-    fields.value = res.data
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
-  }
+
+  const res = await retrieveSectionFields(props.sectionId)
+  fields.value = res.data
+
+  loading.value = false
 }
 
 function onclick() {
@@ -94,11 +92,13 @@ async function onSubmit(formEl: FormInstance) {
       } else {
         await createSectionField(form.value)
       }
-
       visible.value = false
+
+      ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
       await load()
     } catch (error) {
-      return error
+      ElMessage.error(t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }))
+      throw error
     } finally {
       saveLoading.value = false
     }
@@ -118,6 +118,7 @@ async function onSubmit(formEl: FormInstance) {
     Add Item
   </ElButton>
 
+  <!-- fields -->
   <ElDialog v-model="visible" :title="$t('action.fields')" align-center :show-close="false" width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">

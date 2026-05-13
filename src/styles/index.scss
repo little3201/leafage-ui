@@ -56,14 +56,6 @@ body {
   --el-card-border-radius: var(--el-border-radius-base) !important;
 }
 
-.el-card__body {
-  .el-form--inline {
-    .el-form-item {
-      margin-bottom: 0px;
-    }
-  }
-}
-
 .el-badge {
   display: inline-flex !important;
   vertical-align: baseline !important;

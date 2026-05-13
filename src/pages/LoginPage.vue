@@ -4,7 +4,7 @@ import { api } from 'boot/axios'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { ElFormItem, ElImage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import hello from 'src/assets/hello_ccwj.svg'
 import logo from 'src/assets/logo.svg'
 import { SERVER_URL } from 'src/constants'
@@ -43,7 +43,12 @@ async function onSubmit() {
     loading.value = true
     try {
       await api.get(SERVER_URL.LOGIN)
+
+      ElMessage.success(t('message.success', { action: t('action.signin') }))
       await router.replace('/')
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.signin') }))
+      throw error
     } finally {
       loading.value = false
     }

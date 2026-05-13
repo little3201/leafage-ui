@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules, TableInstance, TreeData, TreeInstance, TreeNodeData, UploadInstance, UploadRequestOptions } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   createDictionary,
   enableDictionary,
   fetchDictionary,
   importDictionaries,
   modifyDictionary,
-  retrieveDictionaries, retrieveDictionarySubset
+  removeDictionary,
+  retrieveDictionaries,
+  retrieveDictionarySubset
 } from 'src/api/system/dictionaries'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Dictionary, Filters, Pagination } from 'src/types'
@@ -113,19 +116,15 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function loadTree({ data }: { data: TreeNodeData }, resolve: (data: TreeData) => void) {
   treeLoading.value = true
 
-  try {
-    const superiorId = data.id ? Number(data.id) : null
-    const res = await retrieveDictionarySubset(superiorId)
-    const treeData = res.data.map((element: Dictionary) => ({
-      ...element,
-      isLeaf: !(element.count && element.count > 0)
-    }))
-    resolve(treeData)
-  } catch (error) {
-    return error
-  } finally {
-    treeLoading.value = false
-  }
+  const superiorId = data.id ? Number(data.id) : null
+  const res = await retrieveDictionarySubset(superiorId)
+  const treeData = res.data.map((element: Dictionary) => ({
+    ...element,
+    isLeaf: !(element.count && element.count > 0)
+  }))
+  resolve(treeData)
+
+  treeLoading.value = false
 }
 
 /**
@@ -133,15 +132,12 @@ async function loadTree({ data }: { data: TreeNodeData }, resolve: (data: TreeDa
  */
 async function load() {
   loading.value = true
-  try {
-    const res = await retrieveDictionaries(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
-  } catch (error) {
-    return error
-  } finally {
-    loading.value = false
-  }
+
+  const res = await retrieveDictionaries(pagination, filter)
+  datas.value = res.data.content
+  total.value = res.data.page.totalElements
+
+  loading.value = false
 }
 
 /**
@@ -149,17 +145,13 @@ async function load() {
  * @param rowKey row key
  */
 const refreshChildren = async (rowKey: number) => {
-  try {
-    const res = await retrieveDictionarySubset(rowKey)
-    const treeData = res.data.map((element: Dictionary) => ({
-      ...element,
-      isLeaf: !(element.count && element.count > 0)
-    }))
+  const res = await retrieveDictionarySubset(rowKey)
+  const treeData = res.data.map((element: Dictionary) => ({
+    ...element,
+    isLeaf: !(element.count && element.count > 0)
+  }))
 
-    treeRef.value?.updateKeyChildren(String(rowKey), treeData)
-  } catch (error) {
-    return error
-  }
+  treeRef.value?.updateKeyChildren(String(rowKey), treeData)
 }
 
 /**
@@ -200,12 +192,8 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  try {
-    const res = await fetchDictionary(id)
-    form.value = res.data
-  } catch (error) {
-    return error
-  }
+  const res = await fetchDictionary(id)
+  form.value = res.data
 }
 
 /**
@@ -213,12 +201,8 @@ async function loadOne(id: number) {
  * @param id 主键
  */
 async function enableChange(id: number) {
-  try {
-    await enableDictionary(id)
-    await load()
-  } catch (error) {
-    return error
-  }
+  await enableDictionary(id)
+  await load()
 }
 
 /**
@@ -238,18 +222,46 @@ async function onSubmit(formEl: FormInstance) {
         await createDictionary(form.value)
       }
       visible.value = false
+
+      ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
       await load()
 
       if (form.value.superiorId) {
         await refreshChildren(form.value.superiorId)
       }
-
     } catch (error) {
-      return error
+      ElMessage.error(t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }))
+      throw error
     } finally {
       saveLoading.value = false
     }
   }
+}
+
+/**
+ * 删除
+ * @param id 主键
+ */
+async function removeRow(id: number) {
+  // 弹出确认框
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeDictionary(id)
+      await Promise.all([load(), refreshChildren(id)])
+
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -342,6 +354,11 @@ function onUpload(options: UploadRequestOptions) {
                 <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.modify') }}
               </ElButton>
+              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
+                @click="removeRow(scope.row.id)">
+                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+                {{ $t('action.remove') }}
+              </ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -355,7 +372,8 @@ function onUpload(options: UploadRequestOptions) {
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="$t('page.dictionaries')" align-center :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
+    :show-close="false" width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="24">
