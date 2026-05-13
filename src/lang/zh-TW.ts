@@ -118,7 +118,6 @@ export default {
     remove: '刪除',
     refresh: '刷新',
     children: '子級',
-    reset: '重置',
     clear: '清空',
     upload: '上傳',
     download: '下載',

@@ -72,7 +72,7 @@ const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Group>>({
   superiorId: { op: 'eq', value: null },
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 
 const formRef = ref<FormInstance>()

@@ -31,9 +31,9 @@ export const fileRecordsHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.FILE}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
     const filters = searchParams.get('filters')
 
     let filtered = datas.filter(item => item.superiorId === null)

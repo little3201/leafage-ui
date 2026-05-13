@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { actionIcons, actionTypes, SERVER_URL } from 'src/constants'
 import type { GroupPrivileges, Privilege, PrivilegeAction, PrivilegeTreeNode, RolePrivileges, UserPrivileges } from 'src/types'
+import { applyFilters } from '../util'
 
 const datas: Privilege[] = [
   {
@@ -272,9 +273,9 @@ const subDatas: Privilege[] = [
   {
     id: 23,
     superiorId: 22,
-    name: 'reports',
-    path: 'reports',
-    component: 'docs/reports',
+    name: 'archives',
+    path: 'archives',
+    component: 'docs/archives',
     icon: 'assignment-add-outline',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'config'],
     count: 0,
@@ -293,12 +294,12 @@ const subDatas: Privilege[] = [
   },
   {
     id: 25,
-    name: 'sections',
     superiorId: 22,
-    path: 'sections',
-    component: 'docs/sections',
+    name: 'reports',
+    path: 'reports',
+    component: 'docs/reports',
     icon: 'assignment-add-outline',
-    actions: ['create', 'modify', 'remove', 'import', 'export'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'config'],
     count: 0,
     enabled: true,
   }
@@ -691,15 +692,19 @@ export const privilegesHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.PRIVILEGE}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
+
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
 

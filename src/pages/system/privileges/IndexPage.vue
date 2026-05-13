@@ -33,8 +33,7 @@ const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Privilege>>({
-  name: { op: 'like', value: undefined },
-  path: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 
 const formRef = ref<FormInstance>()

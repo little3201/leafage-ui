@@ -23,7 +23,7 @@ const pagination = reactive<Pagination>({
 
 const filter = reactive<Filters<FileRecord>>({
   superiorId: { op: 'eq', value: currentRow.value?.id },
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 
 const initialValues: FileRecord = {

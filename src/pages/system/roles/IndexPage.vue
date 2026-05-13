@@ -62,7 +62,7 @@ const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Role>>({
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 
 const formRef = ref<FormInstance>()

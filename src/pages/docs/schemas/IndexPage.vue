@@ -40,7 +40,7 @@ const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Schema>>({
-  name: { op: 'eq', value: undefined }
+  name: { op: 'like', value: undefined }
 })
 
 const sectionRef = ref<InstanceType<typeof SchemaSection>>()

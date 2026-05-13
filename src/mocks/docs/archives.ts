@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Archive, ArchiveSection } from 'src/types'
+import type { Archive, Section } from 'src/types'
+import { applyFilters } from '../util'
 
 const datas: Archive[] = []
 
@@ -16,16 +17,16 @@ for (let i = 1; i < 28; i++) {
   datas.push(row)
 }
 
-const sections: ArchiveSection[] = []
+const sections: Section[] = []
 
 for (let i = 1; i < 28; i++) {
-  const row: ArchiveSection = {
+  const row: Section = {
     id: i,
     name: 'Section_' + i,
     superiorId: Math.floor(Math.random() * 27) + 1,
-    type: ['HEADING', 'PARAGRAPH', 'TABLE', 'IMAGE'][Math.floor(Math.random() * 4)] || 'unknown',
+    ownerType: 'ARCHIVE',
     body: 'This is body of section ' + i,
-    archiveId: Math.floor(Math.random() * 27) + 1
+    ownerId: Math.floor(Math.random() * 27) + 1
   }
   sections.push(row)
 }
@@ -34,7 +35,7 @@ export const archivesHandlers = [
   http.get(`/api${SERVER_URL.ARCHIVE}/:id/sections`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(sections.filter(item => item.archiveId === Number(id)))
+      return HttpResponse.json(sections.filter(item => item.ownerId === Number(id)))
     } else {
       return HttpResponse.json()
     }
@@ -42,7 +43,7 @@ export const archivesHandlers = [
   http.get(`/api${SERVER_URL.ARCHIVE}/:id/sections/:sectionId`, ({ params }) => {
     const { id, sectionId } = params
     if (id) {
-      return HttpResponse.json(sections.find(item => item.archiveId === Number(id) && item.id === Number(sectionId)))
+      return HttpResponse.json(sections.find(item => item.ownerId === Number(id) && item.id === Number(sectionId)))
     } else {
       return HttpResponse.json()
     }
@@ -57,14 +58,17 @@ export const archivesHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.ARCHIVE}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
     return HttpResponse.json(data)

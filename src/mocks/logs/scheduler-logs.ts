@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { SchedulerLog } from 'src/types'
-
+import { applyFilters } from '../util'
 
 const datas: SchedulerLog[] = [
 ]
@@ -32,15 +32,19 @@ export const schedulerLogsHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.SCHEDULER_LOG}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
+
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
 

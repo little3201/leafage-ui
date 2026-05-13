@@ -38,9 +38,9 @@ export const regionsHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.REGION}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
     // Construct a JSON response with the list of all Row
     // as the response body.
     let filtered: Region[] = []

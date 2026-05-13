@@ -39,6 +39,7 @@ export const usersHandlers = [
 
     const filtersStr = url.searchParams.get('filters')
     const filtered = applyFilters(datas, filtersStr)
+
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {

@@ -43,7 +43,7 @@ const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Report>>({
-  title: { op: 'eq', value: undefined }
+  title: { op: 'like', value: undefined }
 })
 
 const sectionRef = ref<InstanceType<typeof ReportSection>>()

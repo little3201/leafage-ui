@@ -118,7 +118,6 @@ export default {
     remove: 'Remove',
     refresh: 'Refresh',
     children: 'Children',
-    reset: 'Reset',
     clear: 'Clear',
     upload: 'Upload',
     download: 'Download',

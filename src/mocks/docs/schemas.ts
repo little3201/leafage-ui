@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Schema } from 'src/types'
+import { applyFilters } from '../util'
 
 const datas: Schema[] = []
 
@@ -8,7 +9,7 @@ for (let i = 1; i < 28; i++) {
   const row: Schema = {
     id: i,
     name: 'Name_' + i,
-    type: ['WORD', 'EXCEL'][Math.floor(Math.random() * 2)],
+    type: (['WORD', 'EXCEL'] as const)[Math.floor(Math.random() * 2)],
     version: Math.floor(Math.random() * 3) + 1,
     status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
     description: 'this is description about xxx',
@@ -29,14 +30,17 @@ export const schemasHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.SCHEMA}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: datas.length
+        totalElements: filtered.length
       }
     }
     return HttpResponse.json(data)

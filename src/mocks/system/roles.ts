@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Role, RoleMembers, RolePrivileges } from 'src/types'
+import { applyFilters } from '../util'
 
 const datas: Role[] = []
 
@@ -66,22 +67,23 @@ export const rolesHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.ROLE}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
-    if (page && size) {
-      // Construct a JSON response with the list of all Row
-      // as the response body.
-      const data = {
-        content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
-        page: {
-          totalElements: datas.length
-        }
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
+
+    // Construct a JSON response with the list of all Row
+    // as the response body.
+    const data = {
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      page: {
+        totalElements: filtered.length
       }
-      return HttpResponse.json(data)
-    } else {
-      return HttpResponse.json(datas)
     }
+    return HttpResponse.json(data)
+
   }),
   http.post(`/api${SERVER_URL.ROLE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.

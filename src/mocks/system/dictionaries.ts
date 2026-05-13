@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Dictionary } from 'src/types'
+import { applyFilters } from '../util'
 
 const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map(item => {
   return {
@@ -45,31 +46,17 @@ export const dictionariesHandlers = [
     }
   }),
   http.get(`/api${SERVER_URL.DICTIONARY}`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams
-    const page = searchParams.get('page')
-    const size = searchParams.get('size')
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
 
     // Construct a JSON response with the list of all Row
     // as the response body.
-    let filtered: Dictionary[] = []
-    const filter = searchParams.get('filters')
-    if (filter) {
-      const filterPairs = filter.split('&')
-      let superiorId: string | null = null
-      filterPairs.forEach(pair => {
-        const [key, operator, value] = pair.split(':')
-        if (key === 'superiorId' && value) {
-          superiorId = value
-          if (operator == 'eq') {
-            filtered = datas.filter(item => item.superiorId === Number(superiorId))
-          }
-        }
-      })
-    } else {
-      filtered = datas
-    }
     const data = {
-      content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
         totalElements: filtered.length
       }
