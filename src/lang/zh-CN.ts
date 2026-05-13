@@ -184,6 +184,7 @@ export default {
   placeholder: {
     inputText: '请输入{field}',
     selectText: '请选择{field}',
+    search: '请输入关键词',
     lengthRange: '长度在 {min} 到 {max} 个字符',
   },
 

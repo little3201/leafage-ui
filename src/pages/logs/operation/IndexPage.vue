@@ -20,8 +20,7 @@ const pagination = reactive<Pagination>({
 })
 
 const filter = reactive<Filters<OperationLog>>({
-  module: { op: 'eq', value: undefined },
-  action: { op: 'eq', value: undefined }
+  module: { op: 'eq', value: undefined }
 })
 
 const detailLoading = ref<boolean>(false)
@@ -83,15 +82,6 @@ async function loadOne(id: number) {
 }
 
 /**
- * reset
- */
-async function reset() {
-  filter.module!.value = undefined
-  filter.action!.value = undefined
-  await load()
-}
-
-/**
  * 导出
  */
 function exportRows() {
@@ -149,112 +139,89 @@ async function confirmEvent(id: number) {
 </script>
 
 <template>
-  <ElSpace size="large" fill>
-    <ElCard shadow="never">
-      <ElForm inline :model="filter">
-        <ElFormItem :label="$t('label.module')" prop="module">
-          <ElInput v-model="filter.module!.value"
-            :placeholder="$t('placeholder.inputText', { field: $t('label.module') })" />
-        </ElFormItem>
-        <ElFormItem :label="$t('label.actions')" prop="action">
-          <ElSelect v-model="filter.action!.value" class="min-w-48"
-            :placeholder="$t('placeholder.selectText', { field: $t('label.actions') })">
-            <ElOption v-for="(_, value) in actionTypes" :key="value" :label="$t(`action.${value}`)" :value="value" />
-          </ElSelect>
-        </ElFormItem>
-        <ElFormItem>
-          <ElButton title="search" :type="actionTypes['search']" @click="load()">
-            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.search') }}
-          </ElButton>
-          <ElButton title="reset" @click="reset()">
-            <Icon :icon="`material-symbols:${actionIcons['reset']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.reset') }}
-          </ElButton>
-        </ElFormItem>
-      </ElForm>
-    </ElCard>
+  <ElCard shadow="never">
+    <ElRow :gutter="20" justify="space-between" class="mb-4">
+      <ElCol :span="12">
+        <ElInput v-model="filter.module!.value" clearable style="width: 240px" class="mr-4"
+          :placeholder="$t('placeholder.search')">
+          <template #prefix>
+            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+          </template>
+        </ElInput>
+        <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
+          <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+            $t('action.search') }}
+        </ElButton>
+      </ElCol>
 
-    <ElCard shadow="never">
-      <ElRow :gutter="20" justify="space-between" class="mb-4">
-        <ElCol :span="16" class="text-left">
-          <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
-            <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
-          </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
-            @click="exportRows" :loading="exportLoading">
-            <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.export') }}
-          </ElButton>
-        </ElCol>
+      <ElCol :span="12" class="text-right">
+        <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
+          <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
+        </ElButton>
+        <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
+          @click="exportRows" :loading="exportLoading">
+          <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
+            $t('action.export') }}
+        </ElButton>
+      </ElCol>
+    </ElRow>
 
-        <ElCol :span="8" class="text-right">
-          <ElTooltip class="box-item" effect="dark" :content="$t('action.refresh')" placement="top">
-            <ElButton title="refresh" plain circle @click="load()">
-              <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />
-            </ElButton>
-          </ElTooltip>
-        </ElCol>
-      </ElRow>
-
-      <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
-        <ElTableColumn type="selection" />
-        <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-        <ElTableColumn prop="module" :label="$t('label.module')" sortable>
-          <template #default="scope">
-            <ElButton title="module" type="primary" link @click="showRow(scope.row.id)">
-              {{ scope.row.module }}
-            </ElButton>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="action" :label="$t('label.actions')" sortable>
-          <template #default="scope">
-            <ElBadge is-dot :type="actionTypes[scope.row.action]" class="mr-1" />
-            <ElText :type="actionTypes[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
-        <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.request.body')" />
-        <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
-        <ElTableColumn prop="sessionId" :label="$t('label.sessionId')" />
-        <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
-          <template #default="scope">
-            <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
-              {{ scope.row.statusCode }}
-            </ElTag>
-            <ElTag v-else-if="scope.row.statusCode >= 500" type="warning" round>
-              {{ scope.row.statusCode }}
-            </ElTag>
-            <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
-        <ElTableColumn prop="operatedAt" :label="$t('label.operatedAt')" sortable>
-          <template #default="scope">
-            {{ scope.row.operatedAt ? dayjs(scope.row.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}
-          </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('label.actions')">
-          <template #default="scope">
-            <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
-              <template #reference>
-                <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                  <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
-                    $t('action.remove')
-                  }}
-                </ElButton>
-              </template>
-            </ElPopconfirm>
-          </template>
-        </ElTableColumn>
-      </ElTable>
-      <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
-        <template #default>
-          {{ $t('message.selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+    <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
+      <ElTableColumn type="selection" />
+      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn prop="module" :label="$t('label.module')" sortable>
+        <template #default="scope">
+          <ElButton title="module" type="primary" link @click="showRow(scope.row.id)">
+            {{ scope.row.module }}
+          </ElButton>
         </template>
-      </ElPagination>
-    </ElCard>
-  </ElSpace>
+      </ElTableColumn>
+      <ElTableColumn prop="action" :label="$t('label.actions')" sortable>
+        <template #default="scope">
+          <ElBadge is-dot :type="actionTypes[scope.row.action]" class="mr-1" />
+          <ElText :type="actionTypes[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
+      <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.request.body')" />
+      <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
+      <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
+        <template #default="scope">
+          <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
+            {{ scope.row.statusCode }}
+          </ElTag>
+          <ElTag v-else-if="scope.row.statusCode >= 500" type="warning" round>
+            {{ scope.row.statusCode }}
+          </ElTag>
+          <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
+      <ElTableColumn prop="operatedAt" :label="$t('label.operatedAt')" sortable>
+        <template #default="scope">
+          {{ scope.row.operatedAt ? dayjs(scope.row.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn :label="$t('label.actions')">
+        <template #default="scope">
+          <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+            <template #reference>
+              <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
+                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.remove')
+                }}
+              </ElButton>
+            </template>
+          </ElPopconfirm>
+        </template>
+      </ElTableColumn>
+    </ElTable>
+    <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+      <template #default>
+        {{ $t('message.selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+      </template>
+    </ElPagination>
+  </ElCard>
 
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" align-center width="600">

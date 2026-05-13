@@ -535,10 +535,10 @@ const treeNodes: PrivilegeTreeNode[] = [
     children: [
       {
         id: 23,
-        name: 'reports',
+        name: 'archives',
         meta: {
-          path: 'reports',
-          component: 'docs/reports',
+          path: 'archives',
+          component: 'docs/archives',
           icon: 'assignment-add-outline',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
         },
@@ -557,12 +557,12 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 25,
-        name: 'sections',
+        name: 'reports',
         meta: {
-          path: 'sections',
-          component: 'docs/sections',
+          path: 'reports',
+          component: 'docs/reports',
           icon: 'assignment-add-outline',
-          actions: ['create', 'modify', 'remove', 'import', 'export']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
         },
         children: []
       }

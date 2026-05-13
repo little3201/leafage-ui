@@ -184,6 +184,7 @@ export default {
   placeholder: {
     inputText: 'Please input {field}',
     selectText: 'Please select {field}',
+    search: 'Please input keywords',
     lengthRange: 'The length must between {min} and {max}',
   },
 

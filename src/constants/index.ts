@@ -98,7 +98,7 @@ export const actionIcons: Record<string, string> = {
   search: 'search',
   reset: 'replay',
   refresh: 'refresh',
-  maintenance: 'data-table-outline'
+  maintenance: 'data-table-outline',
 }
 
 // http method对应tag类型

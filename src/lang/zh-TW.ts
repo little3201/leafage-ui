@@ -184,6 +184,7 @@ export default {
   placeholder: {
     inputText: '請輸入{field}',
     selectText: '請選擇{field}',
+    search: '請輸入關鍵詞',
     lengthRange: '長度在 {min} 到 {max} 個字元',
   },
 
