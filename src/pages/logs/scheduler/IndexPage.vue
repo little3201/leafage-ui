@@ -181,7 +181,7 @@ async function confirmEvent(id: number) {
           {{ dayjs(scope.row.startTime).format('YYYY-MM-DD HH:mm') }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
+      <ElTableColumn prop="status" :label="$t('label.status')" align="center" sortable>
         <template #default="scope">
           <ElTag :type="shceduleStatus[scope.row.status]" round>
             <Icon :icon="`material-symbols:${shceduleStatusIcon[scope.row.status]}`"

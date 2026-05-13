@@ -302,7 +302,7 @@ async function handleBreadcrumbClick(index: number) {
                 {{ formatFileSize(scope.row.size) }}
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="contentType" :label="$t('label.contentType')" sortable />
+            <ElTableColumn show-overflow-tooltip prop="contentType" :label="$t('label.contentType')" sortable />
             <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
               <template #default="scope">
                 {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}

@@ -268,7 +268,7 @@ function onUpload(options: UploadRequestOptions) {
       <ElTableColumn prop="username" :label="$t('label.username')" sortable>
         <template #default="scope">
           <div class="flex items-center space-x-2">
-            <ElAvatar alt="avatar" :size="30" :src="`https://cdn.leafage.top/${scope.row.username}`" />
+            <ElAvatar alt="avatar" :size="34" :src="`https://cdn.leafage.top/${scope.row.username}`" />
             <div class="inline-flex flex-col">
               <span class="text-sm">
                 {{ scope.row.fullName }}
