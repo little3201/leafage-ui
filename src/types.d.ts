@@ -375,6 +375,12 @@ export interface Section extends AudtiMetadata {
   count?: number
 }
 
+export interface SectionTreeNode extends TreeNode {
+  meta: {
+    sequence: number
+  }
+}
+
 export interface SectionField extends AudtiMetadata {
   name: string
   sectionId: number | null

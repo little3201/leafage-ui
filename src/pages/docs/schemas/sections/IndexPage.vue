@@ -226,7 +226,7 @@ defineExpose({
           highlight-current :filter-node-method="filterNode" @current-change="onCurrentChange">
           <template #default="{ data }">
             <div class="flex flex-1 items-center justify-between ">
-              <span>{{ data.meta.sequence }}. {{ data.name }}</span>
+              <span>{{ data.meta!.sequence! }}. {{ data.name }}</span>
               <div>
                 <ElButton type="primary" link @click="saveRow(data.id)">
                   <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" />

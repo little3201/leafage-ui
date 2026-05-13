@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Section } from 'src/types'
+import type { Section, SectionTreeNode } from 'src/types'
 import { applyFilters } from '../util'
 
 const datas: Section[] = []
@@ -10,10 +10,11 @@ for (let i = 1; i < 28; i++) {
   const row: Section = {
     id: i,
     superiorId: superiorId || null,
-    ownerId: Math.floor(Math.random() * 10) || null,
-    ownerType: ['REPORT', 'SCHEMA'][Math.floor(Math.random() * 2)] || null,
     name: 'Title_' + i,
     body: 'This is body content about xxx',
+    ownerId: Math.floor(Math.random() * 10) || null,
+    ownerType: ['REPORT', 'SCHEMA'][Math.floor(Math.random() * 2)] || null,
+    sequence: i,
     count: Math.floor(Math.random() * 2) || 0
   }
   datas.push(row)
@@ -32,7 +33,18 @@ export const sectionsHandlers = [
   http.get(`/api${SERVER_URL.SECTION}/:id/tree`, ({ params }) => {
     const { id } = params
     if (id) {
-      return HttpResponse.json(datas.filter(item => item.superiorId === null))
+      const filtered = datas.filter(item => item.superiorId === null).map(item => {
+        const node: SectionTreeNode = {
+          id: item.id,
+          name: item.name,
+          meta: {
+            sequence: item.sequence ?? 0
+          },
+          children: []
+        }
+        return node
+      })
+      return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
     }
