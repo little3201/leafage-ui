@@ -36,7 +36,6 @@ const initialValues: FileRecord = {
 }
 const row = ref<FileRecord>({ ...initialValues })
 const visible = ref<boolean>(false)
-const showTable = ref(true)
 const uploadVisible = ref<boolean>(false)
 const uploadRef = ref<UploadInstance>()
 
@@ -272,80 +271,57 @@ async function handleBreadcrumbClick(index: number) {
             <ElButton v-if="hasAction($route.name, 'upload')" title="upload" plain type="primary" @click="uploadRow">
               <Icon icon="material-symbols:upload" width="1.25em" height="1.25em" />{{ $t('action.upload') }}
             </ElButton>
-
-            <ElButton title="view" type="success" plain circle @click="showTable = !showTable">
-              <Icon :icon="`material-symbols:${showTable ? 'grid-view-outline-rounded' : 'view-list-outline'}`"
-                width="1.25em" height="1.25em" />
-            </ElButton>
           </ElCol>
         </ElRow>
 
-        <div v-show="showTable">
-          <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
-            <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-            <ElTableColumn prop="name" :label="$t('label.name')" sortable>
-              <template #default="scope">
-                <ElButton title="name" type="primary" link @click="onRowClick(scope.row)">
-                  <Icon v-if="scope.row.directory" icon="material-symbols:folder-open-outline-rounded" width="2em"
-                    height="2em" />
-                  <template v-else-if="scope.row.contentType">
-                    <Icon v-if="scope.row.contentType.includes('image')" icon="material-symbols:image-outline-rounded"
-                      width="2em" height="2em" />
-                    <Icon v-else icon="material-symbols:docs-outline-rounded" width="2em" height="2em" />
-                  </template>
-                  <span class="ml-2">{{ scope.row.name }}</span>
-                </ElButton>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn prop="size" :label="$t('label.size')" sortable>
-              <template #default="scope">
-                {{ formatFileSize(scope.row.size) }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn show-overflow-tooltip prop="contentType" :label="$t('label.contentType')" sortable />
-            <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
-              <template #default="scope">
-                {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('label.actions')">
-              <template #default="scope">
-                <ElButton v-if="hasAction($route.name, 'download')" title="download" type="success" link
-                  @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
-                  <Icon icon="material-symbols:download" width="1.25em" height="1.25em" />{{ $t('action.download') }}
-                </ElButton>
-                <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
-                  <template #reference>
-                    <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
-                      <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em"
-                        height="1.25em" />{{
-                          $t('action.remove')
-                        }}
-                    </ElButton>
-                  </template>
-                </ElPopconfirm>
-              </template>
-            </ElTableColumn>
-          </ElTable>
-          <ElPagination layout="->, total, prev, pager, next, sizes" @change="pageChange" :total="total" />
-        </div>
 
-        <div v-show="!showTable"
-          class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-10">
-          <div v-for="(data, index) in datas" :key="index" class="text-center cursor-pointer" @click="onRowClick(data)">
-            <Icon v-if="data.directory" icon="material-symbols:folder-open-outline-rounded" width="64" height="64" />
-            <template v-else-if="data.contentType">
-              <Icon v-if="data.contentType.includes('image')" icon="material-symbols:image-outline-rounded" width="64"
-                height="64" />
-              <Icon v-else icon="material-symbols:docs-outline-rounded" width="64" height="64" />
+        <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
+          <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+          <ElTableColumn prop="name" :label="$t('label.name')" sortable>
+            <template #default="scope">
+              <ElButton title="name" type="primary" link @click="onRowClick(scope.row)">
+                <Icon v-if="scope.row.directory" icon="material-symbols:folder-open-outline-rounded" width="2em"
+                  height="2em" />
+                <template v-else-if="scope.row.contentType">
+                  <Icon v-if="scope.row.contentType.includes('image')" icon="material-symbols:image-outline-rounded"
+                    width="2em" height="2em" />
+                  <Icon v-else icon="material-symbols:docs-outline-rounded" width="2em" height="2em" />
+                </template>
+                <span class="ml-2">{{ scope.row.name }}</span>
+              </ElButton>
             </template>
-            <div>
-              <p class="my-1 text-sm text-(--el-text-color-regular)">
-                {{ data.name }}
-              </p>
-            </div>
-          </div>
-        </div>
+          </ElTableColumn>
+          <ElTableColumn prop="size" :label="$t('label.size')" sortable>
+            <template #default="scope">
+              {{ formatFileSize(scope.row.size) }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn show-overflow-tooltip prop="contentType" :label="$t('label.contentType')" sortable />
+          <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
+            <template #default="scope">
+              {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn :label="$t('label.actions')">
+            <template #default="scope">
+              <ElButton v-if="hasAction($route.name, 'download')" title="download" type="success" link
+                @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
+                <Icon icon="material-symbols:download" width="1.25em" height="1.25em" />{{ $t('action.download') }}
+              </ElButton>
+              <ElPopconfirm :title="$t('message.removeConfirm')" :width="240" @confirm="confirmEvent(scope.row.id)">
+                <template #reference>
+                  <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link>
+                    <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+                    {{
+                      $t('action.remove')
+                    }}
+                  </ElButton>
+                </template>
+              </ElPopconfirm>
+            </template>
+          </ElTableColumn>
+        </ElTable>
+        <ElPagination layout="->, total, prev, pager, next, sizes" @change="pageChange" :total="total" />
       </ElCard>
     </ElCol>
   </ElRow>

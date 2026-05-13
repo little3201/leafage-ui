@@ -299,7 +299,7 @@ const subDatas: Privilege[] = [
     path: 'reports',
     component: 'docs/reports',
     icon: 'assignment-add-outline',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'config'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'maintenance'],
     count: 0,
     enabled: true,
   }
@@ -563,7 +563,7 @@ const treeNodes: PrivilegeTreeNode[] = [
           path: 'reports',
           component: 'docs/reports',
           icon: 'assignment-add-outline',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'maintenance']
         },
         children: []
       }

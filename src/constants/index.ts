@@ -146,8 +146,8 @@ export const shceduleStatusIcon: { [key: string]: string } = {
 export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
   ACTIVE: 'success',
   LOCKED: 'primary',
-  EXPIRED: 'info',
-  CREDENTIALS_EXPIRED: 'warning',
+  EXPIRED: 'warning',
+  CREDENTIALS_EXPIRED: 'info',
   DISABLED: 'danger'
 }
 

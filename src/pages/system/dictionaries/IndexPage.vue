@@ -342,11 +342,6 @@ function onUpload(options: UploadRequestOptions) {
                 <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.modify') }}
               </ElButton>
-              <ElButton v-if="scope.row.count > 0" title="refresh" link @click="refreshChildren(scope.row.id)">
-                <Icon :icon="`material-symbols:${actionIcons['refresh']}-rounded`" width="1.25em" height="1.25em" />{{
-                  $t('action.refresh')
-                }}
-              </ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
