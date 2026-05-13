@@ -64,10 +64,16 @@ async function load() {
   if (!props.sectionId) return
   loading.value = true
 
-  const res = await retrieveSectionFields(props.sectionId)
-  fields.value = res.data
+  try {
+    const res = await retrieveSectionFields(props.sectionId)
+    fields.value = res.data
+  } catch (error) {
+    fields.value = []
 
-  loading.value = false
+    throw error
+  } finally {
+    loading.value = false
+  }
 }
 
 function onclick() {

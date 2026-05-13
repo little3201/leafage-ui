@@ -88,11 +88,15 @@ async function onCurrentChange(data: TreeNodeData) {
 async function loadTree() {
   if (!props.ownerId) return
   treeLoading.value = true
-
-  const res = await retrieveSectionTree(props.ownerId, props.ownerType)
-  treeData.value = res.data
-
-  treeLoading.value = false
+  try {
+    const res = await retrieveSectionTree(props.ownerId, props.ownerType)
+    treeData.value = res.data
+  } catch (error) {
+    treeData.value = []
+    throw error
+  } finally {
+    treeLoading.value = false
+  }
 }
 
 /**
@@ -112,8 +116,13 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  const res = await fetchSection(id)
-  form.value = res.data
+  try {
+    const res = await fetchSection(id)
+    form.value = res.data
+  } catch (error) {
+    form.value = { ...initialValues }
+    throw error
+  }
 }
 
 /**

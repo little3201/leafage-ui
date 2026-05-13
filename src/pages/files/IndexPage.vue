@@ -62,11 +62,18 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
 
-  const res = await retrieveFiles(pagination, filter)
-  datas.value = res.data.content
-  total.value = res.data.page.totalElements
+  try {
+    const res = await retrieveFiles(pagination, filter)
+    datas.value = res.data.content
+    total.value = res.data.page.totalElements
+  } catch (error) {
+    datas.value = []
+    total.value = 0
 
-  loading.value = false
+    throw error
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
@@ -74,8 +81,13 @@ async function load() {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  const res = await fetchFile(id)
-  row.value = res.data
+  try {
+    const res = await fetchFile(id)
+    row.value = res.data
+  } catch (error) {
+    row.value = { ...initialValues }
+    throw error
+  }
 }
 
 /**

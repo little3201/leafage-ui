@@ -146,8 +146,13 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  const res = await fetchPrivilege(id)
-  form.value = res.data
+  try {
+    const res = await fetchPrivilege(id)
+    form.value = res.data
+  } catch (error) {
+    form.value = { ...initialValues }
+    throw error
+  }
 }
 
 async function enableChange(id: number) {

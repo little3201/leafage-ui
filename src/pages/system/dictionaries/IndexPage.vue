@@ -133,11 +133,18 @@ async function loadTree({ data }: { data: TreeNodeData }, resolve: (data: TreeDa
 async function load() {
   loading.value = true
 
-  const res = await retrieveDictionaries(pagination, filter)
-  datas.value = res.data.content
-  total.value = res.data.page.totalElements
+  try {
+    const res = await retrieveDictionaries(pagination, filter)
+    datas.value = res.data.content
+    total.value = res.data.page.totalElements
+  } catch (error) {
+    datas.value = []
+    total.value = 0
 
-  loading.value = false
+    throw error
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
@@ -192,8 +199,13 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 async function loadOne(id: number) {
-  const res = await fetchDictionary(id)
-  form.value = res.data
+  try {
+    const res = await fetchDictionary(id)
+    form.value = res.data
+  } catch (error) {
+    form.value = { ...initialValues }
+    throw error
+  }
 }
 
 /**

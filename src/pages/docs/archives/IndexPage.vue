@@ -88,11 +88,18 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true
 
-  const res = await retrieveArchives(pagination, filter)
-  datas.value = res.data.content
-  total.value = res.data.page.totalElements
+  try {
+    const res = await retrieveArchives(pagination, filter)
+    datas.value = res.data.content
+    total.value = res.data.page.totalElements
+  } catch (error) {
+    datas.value = []
+    total.value = 0
 
-  loading.value = false
+    throw error
+  } finally {
+    loading.value = false
+  }
 }
 
 /**
@@ -144,6 +151,7 @@ async function saveRow(id?: number) {
   if (id) {
     await loadOne(id)
   }
+
   visible.value = true
 }
 
