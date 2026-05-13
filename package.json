@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit",
-    "lint": "eslint -c ./eslint.config.js \"./src/**/*.{js,mjs,cjs,ts,vue}\"",
+    "typecheck": "vue-tsc --build --force",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "lint:lint-staged": "lint-staged",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "lint:lint-staged": "lint-staged",
     "prepare": "husky"
   },
   "dependencies": {
@@ -36,6 +37,7 @@
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^9.39.4",
     "@tailwindcss/vite": "^4.2.2",
+    "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.12.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vitest/coverage-v8": "4.1.2",
