@@ -1,4 +1,4 @@
-import type { Filter, User } from 'src/types'
+import type { User } from 'src/types'
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL, userStatus } from 'src/constants'
 import { applyFilters } from '../util'
@@ -38,22 +38,17 @@ export const usersHandlers = [
       credentialsExpiresAt: null,
     })
   }),
-  http.get(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
+  http.get(`/api${SERVER_URL.USER}/:id`, ({ params }: {params: { id: number }}) => {
     const { id } = params
     return id ? HttpResponse.json(datas.find(item => item.id === Number(id))) : HttpResponse.json()
   }),
-  http.get(`/api${SERVER_URL.USER}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.USER}`, ({ request }: { request: Request }) => {
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
 
     const filtersStr = url.searchParams.get('filters')
-
-    const filters = filtersStr
-      ? JSON.parse(filtersStr) as Filter<User>
-      : undefined
-
-    const filtered = applyFilters(datas, filters)
+    const filtered = applyFilters(datas, filtersStr)
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
@@ -63,7 +58,7 @@ export const usersHandlers = [
 
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.USER}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.USER}/import`, async ({ request }: { request: Request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -79,7 +74,7 @@ export const usersHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.USER}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.USER}`, async ({ request }: { request: Request }) => {
     // Read the intercepted request body as JSON.
     const newData = await request.json() as User
 
@@ -90,7 +85,7 @@ export const usersHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.put(`/api${SERVER_URL.USER}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.USER}/:id`, async ({ params, request }: {params: { id: number }, request: Request}) => {
     const { id } = params
     // Read the intercepted request body as JSON.
     const newData = await request.json() as User
@@ -99,20 +94,20 @@ export const usersHandlers = [
     // response and send back the newly created Row!
     return id && newData ? HttpResponse.json({ ...newData, id }, { status: 202 }) : HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.USER}/:id`, ({ params }: {params: { id: number }}) => {
     const { id } = params
     return id ? HttpResponse.json() : HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.USER}/privileges/:privilegeId`, async ({ params, request }) => {
+  http.patch(`/api${SERVER_URL.USER}/privileges/:privilegeId`, async ({ params, request }: { params: { privilegeId: number }, request: Request }) => {
     const data = await request.json()
     const { privilegeId } = params
     return privilegeId && data ? HttpResponse.json() : HttpResponse.error()
   }),
-  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.USER}/:username/privileges/:privilegeId`, ({ params }: {params: { username: string, privilegeId: number }}) => {
     const { username, privilegeId } = params
     return username && privilegeId ? HttpResponse.json() : HttpResponse.error()
   }),
-  http.delete(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.USER}/:id`, ({ params }: {params: { id: number }}) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

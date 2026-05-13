@@ -39,8 +39,26 @@
     </v-app-bar>
 
     <v-navigation-drawer>
-      <v-list nav>
-        <v-list-item link title="Users" to="/system/users" />
+      <v-list activatable nav slim>
+        <v-list-item
+          exact
+          link
+          prepend-icon="mdi-home"
+          :title="$t('page.home')"
+          to="/"
+        />
+
+        <template v-for="link in userStore.privileges" :key="link.id">
+          <EssentialList v-if="link.children && link.children.length > 0" :essential-link="link" :parent-path="`/${link.meta.path}`" />
+
+          <v-list-item
+            v-else
+            link
+            :prepend-icon="`mdi-${link.meta.icon}`"
+            :title="$t(`page.${link.name}`)"
+            :to="link.meta.path"
+          />
+        </template>
       </v-list>
     </v-navigation-drawer>
 
@@ -50,17 +68,20 @@
 
     <v-footer app>
       <div class="flex-1-0-100 text-center mt-2">
-        {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+        Copyright &copy; {{ new Date().getFullYear() }} — <strong>Leafage</strong>  All Rights Reserved.
       </div>
     </v-footer>
   </v-layout>
 </template>
 
 <script setup lang="ts">
+import EssentialList from 'components/EssentialList.vue'
+import { useUserStore } from 'stores/user'
 import { useLocale, useTheme } from 'vuetify'
 
 const theme = useTheme()
 const { current } = useLocale()
+const userStore = useUserStore()
 
 function changeLocale (locale: string) {
   current.value = locale

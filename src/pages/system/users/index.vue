@@ -8,54 +8,64 @@
       :items-length="totalItems"
       :loading="loading"
       :search="filter.username!.value"
+      show-select
       @update:options="loadItems"
     >
       <template #top>
-        <div class="d-flex items-center">
-          <v-text-field
-            v-model="filter.username!.value"
-            clearable
-            density="compact"
-            flat
-            hide-details
-            label="Search"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="solo-filled"
-          />
+        <v-row class="justify-space-between">
+          <v-col class="d-flex" cols="3">
+            <v-text-field
+              v-model="filter.username!.value"
+              clearable
+              density="compact"
+              flat
+              hide-details
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              rounded="pill"
+              single-line
+              variant="solo-filled"
+            />
 
-          <v-spacer />
+            <v-btn
+              flat
+              icon="mdi-refresh"
+              @click="refresh()"
+            />
+          </v-col>
 
-          <v-btn
-            border
-            class="me-2"
-            flat
-            prepend-icon="mdi-plus"
-            rounded="lg"
-            text="Create"
-            @click="saveRow()"
-          />
+          <v-col align-self="center" class="d-flex justify-end" cols="2">
+            <v-btn
+              border
+              class="me-2"
+              flat
+              prepend-icon="mdi-plus"
+              rounded="lg"
+              text="Create"
+              @click="saveRow()"
+            />
 
-          <v-btn
-            border
-            class="me-2"
-            flat
-            prepend-icon="mdi-plus"
-            rounded="lg"
-            text="Import"
-            @click="importRows()"
-          />
+            <v-btn
+              border
+              class="me-2"
+              flat
+              prepend-icon="mdi-plus"
+              rounded="lg"
+              text="Import"
+              @click="importRows()"
+            />
 
-          <v-btn
-            border
-            class="me-2"
-            flat
-            prepend-icon="mdi-plus"
-            rounded="lg"
-            text="Export"
-            @click="exportRows()"
-          />
-        </div>
+            <v-btn
+              border
+              class="me-2"
+              flat
+              prepend-icon="mdi-plus"
+              rounded="lg"
+              text="Export"
+              @click="exportRows()"
+            />
+          </v-col>
+        </v-row>
       </template>
 
       <template #item.status="{ item }">

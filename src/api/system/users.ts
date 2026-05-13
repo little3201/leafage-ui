@@ -1,12 +1,13 @@
 import type { Filter, Pagination, User } from 'src/types'
 import { SERVER_URL } from 'src/constants'
-import { buildQuery } from 'src/utils'
+import { buildQuery, dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
  */
 export async function retrieveUsers (pagination: Pagination, filter?: Filter<User>) {
-  const query = buildQuery({ ...pagination, page: pagination.page - 1, filters: JSON.stringify(filter) })
+  const filters = dealFilters(filter)
+  const query = buildQuery({ ...pagination, page: pagination.page - 1, filters })
   const res = await fetch(`/api${SERVER_URL.USER}?${query}`)
   return res.json()
 }
