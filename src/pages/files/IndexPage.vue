@@ -223,19 +223,6 @@ async function handleBreadcrumbClick(index: number) {
           </li>
         </ul>
       </ElCard>
-
-      <ElCard shadow="never" class="mt-4">
-        <p class="mt-0"><strong>Recent Files</strong></p>
-        <ul class="flex-col list-none px-0">
-          <li v-for="i in 5" :key="i" index="images"
-            class="flex items-center space-x-2 py-2 rounded-md group hover:bg-neutral-100">
-            <Icon icon="material-symbols:image-outline-rounded" width="1.25em" height="1.25em" />
-            <span class="flex-1">fullName{{ i }}.jpg</span>
-            <Icon icon="material-symbols:close-small-outline-rounded" width="1.25em" height="1.25em"
-              class="hidden group-hover:block" />
-          </li>
-        </ul>
-      </ElCard>
     </ElCol>
 
     <ElCol :span="19" :xl="20">
@@ -268,7 +255,7 @@ async function handleBreadcrumbClick(index: number) {
           </ElCol>
 
           <ElCol :span="12" class="text-right">
-            <ElButton v-if="hasAction($route.name, 'upload')" title="upload" plain type="primary" @click="uploadRow">
+            <ElButton v-if="hasAction($route.name, 'upload')" title="upload" type="primary" @click="uploadRow">
               <Icon icon="material-symbols:upload" width="1.25em" height="1.25em" />{{ $t('action.upload') }}
             </ElButton>
           </ElCol>
