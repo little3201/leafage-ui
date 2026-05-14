@@ -22,11 +22,12 @@ import WordContent from './WordContent.vue'
 
 
 const { t } = useI18n()
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   ownerId: number
   ownerType: 'REPORT' | 'ARCHIVE' | 'SCHEMA'
-  schemaType: 'WORD' | 'EXCEL'
-}>()
+  schemaType: 'WORD' | 'EXCEL',
+  readOnly?: boolean
+}>(), { readOnly: false })
 
 const treeRef = ref<TreeInstance>()
 const treeData = ref<TreeData>([])
@@ -37,6 +38,7 @@ const filterText = ref('')
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
+const wordContentRef = ref<InstanceType<typeof WordContent>>()
 const sectionContentRef = ref<InstanceType<typeof SectionContent>>()
 
 const initialValues: Section = {
@@ -75,7 +77,7 @@ const filterNode = (value: string, data: { [key: string]: string }) => {
  * @param data node节点
  */
 async function onCurrentChange(data: TreeNodeData) {
-  if (treeSelected.value === String(data.id)) {
+  if (!data.id || treeSelected.value === String(data.id)) {
     return
   }
   treeSelected.value = String(data.id)
@@ -139,9 +141,9 @@ async function onSubmit() {
   if (valid) {
     try {
       const { id } = sectionForm
-      const superiorId = treeSelected.value ? Number(treeSelected.value) : null
 
-      if (!id) sectionForm.superiorId = superiorId
+      const superiorId = treeSelected.value ? Number(treeSelected.value) : null
+      sectionForm.superiorId = superiorId
       const node = superiorId ? treeRef.value?.getNode(superiorId) : null
       if (node) {
         sectionForm.level = node.level ?? 0 + 1
@@ -178,7 +180,16 @@ async function onSubmit() {
  */
 async function modifySectionContent() {
   // word: body, excel: fields and datas
-  await Promise.all([])
+  const blocks = await wordContentRef.value?.saveData()
+  form.value.body = JSON.stringify(blocks)
+  try {
+    await modifySection(form.value.id!, form.value)
+
+    ElMessage.success(t('message.success', { action: t('action.modify') }))
+  } catch (error) {
+    ElMessage.error(t('message.error', { action: t('action.modify') }))
+    throw error
+  }
 }
 
 /**
@@ -253,7 +264,7 @@ defineExpose({
 
     <ElCol :span="16" :xl="18">
       <div v-if="treeSelected">
-        <WordContent v-if="props.schemaType === 'WORD'" :body="form.body" />
+        <WordContent v-if="props.schemaType === 'WORD'" ref="wordContentRef" :body="form.body" :read-only="readOnly" />
         <ExcelField v-else :section-id="form.id!" />
       </div>
       <ElEmpty v-else />

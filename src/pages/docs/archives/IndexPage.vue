@@ -160,10 +160,6 @@ async function saveRow(id?: number) {
  * @param id 主键
  */
 function configRow(id: number) {
-  if (!id) {
-    return
-  }
-
   form.value.id = id
   configVisible.value = true
 }
@@ -177,7 +173,7 @@ async function loadOne(id: number) {
     const res = await fetchArchive(id)
     form.value = res.data
   } catch (error) {
-    ElMessage.error(t('message.error', { action: t('action.fetch') }))
+    form.value = { ...initialValues }
     throw error
   }
 }
@@ -416,7 +412,7 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ArchiveSection :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" />
+    <ArchiveSection :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" :read-only="true" />
   </ElDialog>
 
   <!-- import -->

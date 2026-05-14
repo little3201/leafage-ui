@@ -1,44 +1,51 @@
 <script setup lang="ts">
+import type { OutputData } from '@editorjs/editorjs'
 import EditorJS from '@editorjs/editorjs'
 import List from '@editorjs/list'
 import Table from '@editorjs/table'
-import { onMounted, ref } from 'vue'
-
+import { watch } from 'vue'
 
 
 const props = defineProps<{
-  body: string | null
+  body: string
+  readOnly: boolean
 }>()
 
-const editorRef = ref<HTMLDivElement>()
-const editor = ref<EditorJS>()
+const editor = new EditorJS({
+  holder: 'editorjs',
+  placeholder: 'Type text or paste content here...',
+  tools: {
+    list: { class: List, inlineToolbar: true },
+    table: Table
+  },
+  readOnly: props.readOnly
+})
 
-onMounted(() => {
-  if (editorRef.value) {
-    editor.value = new EditorJS({
-      holder: editorRef.value,
-      placeholder: 'Type text or paste content here...',
-      tools: {
-        list: { class: List, inlineToolbar: true },
-        table: Table
-      },
-      data: {
-        blocks: [
-          {
-            type: 'paragraph',
-            data: {
-              text: props.body || ''
-            }
-          }
-        ]
-      }
-    })
+watch(() => props.body, async (newVal) => {
+  if (editor) {
+    const data: OutputData = {
+      blocks: newVal ? JSON.parse(newVal) : []
+    }
+    await editor.isReady
+    await editor.render(data)
   }
+}, { immediate: true })
+
+async function saveData() {
+  if (editor) {
+    const output = await editor.save()
+    return output.blocks
+  }
+  return []
+}
+
+defineExpose({
+  saveData
 })
 </script>
 
 <template>
   <ElCard shadow="never">
-    <div ref="editorRef" class="w-full h-full"></div>
+    <div id="editorjs" class="w-full h-full"></div>
   </ElCard>
 </template>

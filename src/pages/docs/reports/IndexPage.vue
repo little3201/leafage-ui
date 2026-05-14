@@ -149,10 +149,6 @@ async function loadOne(id: number) {
  * @param id 主键
  */
 function configRow(id: number) {
-  if (!id) {
-    return
-  }
-
   form.value.id = id
   fieldVisible.value = true
 }
@@ -443,7 +439,7 @@ async function onSectionContentSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ReportSection :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" />
+    <ReportSection :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" :read-only="true" />
   </ElDialog>
 
   <!-- import -->

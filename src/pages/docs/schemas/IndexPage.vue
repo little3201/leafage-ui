@@ -119,11 +119,8 @@ async function saveRow(id?: number) {
  * 配置
  * @param id 主键
  */
-async function configRow(row: Schema) {
-  if (!row.id) {
-    return
-  }
-  await loadOne(row.id)
+async function configRow(id: number) {
+  await loadOne(id)
   configVisible.value = true
 }
 
@@ -319,7 +316,7 @@ async function onSectionSave() {
             }}
           </ElButton>
           <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'config')" title="config"
-            type="success" link @click="configRow(scope.row)">
+            type="success" link @click="configRow(scope.row.id)">
             <Icon :icon="`material-symbols:${actionIcons['config']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.config')
             }}
@@ -397,7 +394,7 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <SchemaSection :owner-id="form.id!" owner-type="SCHEMA" :schema-type="form.type" />
+    <SchemaSection :owner-id="form.id!" owner-type="SCHEMA" :schema-type="form.type" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
