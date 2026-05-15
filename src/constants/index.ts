@@ -78,7 +78,8 @@ export const actionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'war
   search: 'primary',
   sync: 'info',
   data: 'warning',
-  field: 'success'
+  field: 'success',
+  section: 'success'
 }
 
 export const actionIcons: Record<string, string> = {
@@ -100,7 +101,8 @@ export const actionIcons: Record<string, string> = {
   reset: 'replay',
   refresh: 'refresh',
   data: 'data-table-outline',
-  field: 'plug-connect-outline'
+  field: 'plug-connect-outline',
+  section: 'plug-connect-outline'
 }
 
 // http method对应tag类型

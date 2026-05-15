@@ -147,7 +147,7 @@ async function loadOne(id: number) {
  * 配置
  * @param id 主键
  */
-function configRow(id: number) {
+function configSection(id: number) {
   form.value.id = id
   fieldVisible.value = true
 }
@@ -156,7 +156,7 @@ function configRow(id: number) {
  * 数据维护
  * @param id 主键
  */
-function modifyRow(id: number) {
+function configData(id: number) {
   if (!id) {
     return
   }
@@ -336,12 +336,12 @@ function formatSchemas(cellValue: number): string {
               $t('action.modify') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'field')" title="config" :type="actionTypes['field']" link
-            @click="configRow(scope.row.id!)">
+            @click="configSection(scope.row.id!)">
             <Icon :icon="`material-symbols:${actionIcons['field']}-rounded`" width="1.25em" height="1.25em" />
             {{ $t('action.field') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'data')" title="data" :type="actionTypes['data']" link
-            @click="modifyRow(scope.row.id!)">
+            @click="configData(scope.row.id!)">
             <Icon :icon="`material-symbols:${actionIcons['data']}-rounded`" width="1.25em" height="1.25em" />
             {{ $t('action.data') }}
           </ElButton>

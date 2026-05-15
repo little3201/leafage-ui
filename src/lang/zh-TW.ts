@@ -141,7 +141,8 @@ export default {
     back: '返回',
     continue: '繼續',
     data: '数据',
-    addItem: '新增項目'
+    addItem: '新增項目',
+    section: '章節'
   },
 
   page: {

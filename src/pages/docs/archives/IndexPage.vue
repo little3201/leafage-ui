@@ -156,10 +156,10 @@ async function saveRow(id?: number) {
 }
 
 /**
- * 配置
+ * 章节
  * @param id 主键
  */
-function configRow(id: number) {
+function configSection(id: number) {
   form.value.id = id
   configVisible.value = true
 }
@@ -335,10 +335,10 @@ async function onSectionSave() {
               $t('action.modify')
             }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'config')" title="config" :type="actionTypes['config']" link
-            @click="configRow(scope.row.id!)">
-            <Icon :icon="`material-symbols:${actionIcons['config']}-rounded`" width="1.25em" height="1.25em" />
-            {{ $t('action.config') }}
+          <ElButton v-if="hasAction($route.name, 'section')" title="section" :type="actionTypes['section']" link
+            @click="configSection(scope.row.id!)">
+            <Icon :icon="`material-symbols:${actionIcons['section']}-rounded`" width="1.25em" height="1.25em" />
+            {{ $t('action.section') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
             @click="removeRow(scope.row.id)">

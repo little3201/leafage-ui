@@ -141,7 +141,8 @@ export default {
     back: 'Back',
     continue: 'Continue',
     data: 'Data',
-    addItem: 'Add Item'
+    addItem: 'Add Item',
+    section: 'Section'
   },
 
   page: {
