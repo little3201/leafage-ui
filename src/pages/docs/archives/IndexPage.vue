@@ -20,7 +20,7 @@ import type { Archive, Filters, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ArchiveSection from '../schemas/sections/IndexPage.vue'
+import Section from '../schemas/sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -46,7 +46,7 @@ const importVisible = ref<boolean>(false)
 const previewVisible = ref<boolean>(false)
 
 const formRef = ref<FormInstance>()
-const sectionRef = ref<InstanceType<typeof ArchiveSection>>()
+const sectionRef = ref<InstanceType<typeof Section>>()
 const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filters<Archive>>({
@@ -398,7 +398,7 @@ async function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <ArchiveSection ref="sectionRef" :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" />
+    <Section ref="sectionRef" :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -412,7 +412,7 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ArchiveSection :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" :read-only="true" />
+    <Section :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" :read-only="true" />
   </ElDialog>
 
   <!-- import -->

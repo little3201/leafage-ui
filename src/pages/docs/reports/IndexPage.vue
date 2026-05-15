@@ -15,7 +15,7 @@ import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ExcelContent from '../schemas/sections/ExcelContent.vue'
-import ReportSection from '../schemas/sections/IndexPage.vue'
+import Section from '../schemas/sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -46,7 +46,7 @@ const filter = reactive<Filters<Report>>({
   title: { op: 'like', value: undefined }
 })
 
-const sectionRef = ref<InstanceType<typeof ReportSection>>()
+const sectionRef = ref<InstanceType<typeof Section>>()
 const formRef = ref<FormInstance>()
 const initialValues: Report = {
   id: null,
@@ -411,7 +411,7 @@ async function onSectionContentSave() {
 
   <!-- config -->
   <ElDialog v-model="fieldVisible" :title="$t('action.config')" align-center :show-close="false">
-    <ReportSection ref="sectionRef" :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" />
+    <Section ref="sectionRef" :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" />
     <template #footer>
       <ElButton title="close" @click="fieldVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -439,7 +439,7 @@ async function onSectionContentSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <ReportSection :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" :read-only="true" />
+    <Section :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
