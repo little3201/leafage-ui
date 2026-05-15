@@ -277,7 +277,7 @@ const subDatas: Privilege[] = [
     path: 'archives',
     component: 'docs/archives',
     icon: 'assignment-add-outline',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'config'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'section'],
     count: 0,
     enabled: true,
   },
@@ -288,7 +288,7 @@ const subDatas: Privilege[] = [
     path: 'schemas',
     component: 'docs/schemas',
     icon: 'assignment-add-outline',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'config'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'section'],
     count: 0,
     enabled: true,
   },
@@ -299,7 +299,7 @@ const subDatas: Privilege[] = [
     path: 'reports',
     component: 'docs/reports',
     icon: 'assignment-add-outline',
-    actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'maintenance'],
+    actions: ['create', 'modify', 'remove', 'import', 'export', 'field', 'data'],
     count: 0,
     enabled: true,
   }
@@ -541,7 +541,7 @@ const treeNodes: PrivilegeTreeNode[] = [
           path: 'archives',
           component: 'docs/archives',
           icon: 'assignment-add-outline',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'section']
         },
         children: []
       },
@@ -552,7 +552,7 @@ const treeNodes: PrivilegeTreeNode[] = [
           path: 'schemas',
           component: 'docs/schemas',
           icon: 'assignment-add-outline',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'config']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'section']
         },
         children: []
       },
@@ -563,7 +563,7 @@ const treeNodes: PrivilegeTreeNode[] = [
           path: 'reports',
           component: 'docs/reports',
           icon: 'assignment-add-outline',
-          actions: ['create', 'modify', 'remove', 'import', 'export', 'config', 'maintenance']
+          actions: ['create', 'modify', 'remove', 'import', 'export', 'field', 'data']
         },
         children: []
       }
