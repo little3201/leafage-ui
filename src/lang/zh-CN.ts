@@ -123,7 +123,7 @@ export default {
     upload: '上传',
     download: '下载',
     config: '配置',
-    fields: '属性',
+    field: '属性',
     execute: '执行',
     sync: '同步',
     preview: '预览',
@@ -140,7 +140,7 @@ export default {
     signout: '退出登录',
     back: '返回',
     continue: '继续',
-    maintenance: '维护',
+    data: '数据',
     addItem: '添加项目'
   },
 

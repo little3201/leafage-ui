@@ -61,6 +61,12 @@ body {
   vertical-align: baseline !important;
 }
 
+.cell {
+  .el-form-item {
+    margin-bottom: 0px;
+  }
+}
+
 .el-input-number {
   width: 100% !important;
 }

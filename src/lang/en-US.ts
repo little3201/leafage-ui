@@ -140,7 +140,7 @@ export default {
     signout: 'Sign Out',
     back: 'Back',
     continue: 'Continue',
-    maintenance: 'Maintenance',
+    data: 'Data',
     addItem: 'Add Item'
   },
 

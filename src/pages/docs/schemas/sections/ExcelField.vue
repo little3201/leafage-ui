@@ -1,27 +1,25 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { createSectionField, modifySectionField, retrieveSectionFields } from 'src/api/docs/sections'
 import { retrieveDictionarySubset } from 'src/api/system/dictionaries'
 import type { Dictionary, SectionField } from 'src/types'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
 const { t } = useI18n()
 const props = defineProps<{
   sectionId: number
+  readOnly: boolean
 }>()
 
 const fields = ref<Array<SectionField>>([])
+const editable = ref<Record<number, boolean>>({})
 const loading = ref(false)
 const saveLoading = ref(false)
 const typeOptions = ref<Array<Dictionary>>([])
 
-const visible = ref(false)
-
-const formRef = ref<FormInstance>()
 const initialValues: SectionField = {
   id: null,
   sectionId: props.sectionId,
@@ -30,22 +28,6 @@ const initialValues: SectionField = {
   field: '',
   length: 0
 }
-const form = ref<SectionField>({ ...initialValues })
-
-const rules = reactive<FormRules<typeof form>>({
-  name: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
-  ],
-  type: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.type') }), trigger: 'blur' }
-  ],
-  field: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.field') }), trigger: 'blur' }
-  ],
-  length: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.length') }), trigger: 'blur' }
-  ]
-})
 
 onMounted(async () => {
   await load()
@@ -76,38 +58,41 @@ async function load() {
   }
 }
 
-function onclick() {
-  visible.value = true
-  form.value = {
-    ...initialValues,
-    sectionId: props.sectionId || 0
+function addRow() {
+  fields.value.push({ ...initialValues })
+}
+
+function modifyRow(id: number) {
+  editable.value[id] = true
+}
+
+function removeRow(index: number) {
+  if (fields.value.length > 0) {
+    fields.value.splice(index, 1)
   }
 }
 
 /**
  * 表单提交
  */
-async function onSubmit(formEl: FormInstance) {
-  if (!formEl) return
-  const valid = await formEl.validate()
-  if (valid) {
-    saveLoading.value = true
-    try {
-      if (form.value.id) {
-        await modifySectionField(form.value.id, form.value)
-      } else {
-        await createSectionField(form.value)
-      }
-      visible.value = false
-
-      ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
-      await load()
-    } catch (error) {
-      ElMessage.error(t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }))
-      throw error
-    } finally {
-      saveLoading.value = false
+async function confirmRow(row: SectionField) {
+  saveLoading.value = true
+  try {
+    row.sectionId = props.sectionId
+    if (row.id) {
+      await modifySectionField(row.id, row)
+      editable.value[row.id] = false
+    } else {
+      await createSectionField(row)
     }
+
+    ElMessage.success(t('message.success', { action: row.id ? t('action.modify') : t('action.create') }))
+    await load()
+  } catch (error) {
+    ElMessage.error(t('message.error', { action: row.id ? t('action.modify') : t('action.create') }))
+    throw error
+  } finally {
+    saveLoading.value = false
   }
 }
 </script>
@@ -115,55 +100,54 @@ async function onSubmit(formEl: FormInstance) {
 <template>
   <ElTable v-loading="loading" :data="fields" row-key="id" table-layout="auto">
     <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-    <ElTableColumn prop="name" :label="$t('label.name')" />
-    <ElTableColumn prop="field" :label="$t('label.field')" />
-    <ElTableColumn prop="type" :label="$t('label.type')" />
-    <ElTableColumn prop="length" :label="$t('label.length')" />
+    <ElTableColumn prop="name" :label="$t('label.name')">
+      <template #default="scope">
+        <ElFormItem v-if="editable[scope.row.id]" :prop="'fields.' + scope.$index + '.name'"
+          :rules="[{ required: true, trigger: 'blur' }]">
+          <ElInput v-model="scope.row.name" />
+        </ElFormItem>
+        <span v-else>{{ scope.row.name }}</span>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn prop="field" :label="$t('label.field')">
+      <template #default="scope">
+        <ElInput v-if="editable[scope.row.id]" v-model="scope.row.field" />
+        <span v-else>{{ scope.row.field }}</span>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn prop="type" :label="$t('label.type')">
+      <template #default="scope">
+        <ElSelect v-if="editable[scope.row.id]" v-model="scope.row.type" :disabled="scope.row.id !== null"
+          :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
+          <ElOption v-for="(item, index) in typeOptions" :key="index" :label="item.name" :value="item.name" />
+        </ElSelect>
+        <span v-else>{{ scope.row.type }}</span>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn prop="length" :label="$t('label.length')">
+      <template #default="scope">
+        <ElInput v-if="editable[scope.row.id]" v-model="scope.row.length" />
+        <span v-else>{{ scope.row.length }}</span>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
+      <template #default="scope">
+        <div class="items-center w-15">
+          <ElButton title="remove" circle size="small" type="danger" plain @click="removeRow(scope.$index)">
+            <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />
+          </ElButton>
+          <ElButton v-if="editable[scope.row.id]" title="confirm" circle size="small" type="success" plain
+            @click="confirmRow(scope.row)">
+            <Icon icon="material-symbols:check-rounded" width="1.25em" height="1.25em" />
+          </ElButton>
+          <ElButton v-else title="modify" circle size="small" type="primary" plain @click="modifyRow(scope.row.id)">
+            <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />
+          </ElButton>
+        </div>
+      </template>
+    </ElTableColumn>
   </ElTable>
-  <ElButton class="mt-4" type="primary" plain style="width: 100%" @click="onclick">
-    Add Item
+  <ElButton v-if="!readOnly" class="mt-4" type="primary" plain style="width: 100%" @click="addRow">
+    {{ $t('action.addItem') }}
   </ElButton>
-
-  <!-- fields -->
-  <ElDialog v-model="visible" :title="$t('action.fields')" align-center :show-close="false" width="480">
-    <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
-      <ElRow :gutter="20">
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.field')" prop="field">
-            <ElInput v-model="form.field" :placeholder="$t('placeholder.inputText', { field: $t('label.field') })" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.type')" prop="type">
-            <ElSelect v-model="form.type" :disabled="form.id !== null"
-              :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
-              <ElOption v-for="(item, index) in typeOptions" :key="index" :label="item.name" :value="item.name" />
-            </ElSelect>
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.length')" prop="length">
-            <ElInputNumber v-model="form.length"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.length') })" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-    </ElForm>
-    <template #footer>
-      <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
-      </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
-          $t('action.submit') }}
-      </ElButton>
-    </template>
-  </ElDialog>
 </template>

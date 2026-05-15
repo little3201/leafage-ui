@@ -17,6 +17,7 @@ import { hasAction } from 'src/utils'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ExcelContent from './ExcelContent.vue'
+import ExcelField from './ExcelField.vue'
 import SectionContent from './SectionContent.vue'
 import WordContent from './WordContent.vue'
 
@@ -26,8 +27,9 @@ const props = withDefaults(defineProps<{
   ownerId: number
   ownerType: 'REPORT' | 'ARCHIVE' | 'SCHEMA'
   schemaType: 'WORD' | 'EXCEL',
-  readOnly?: boolean
-}>(), { readOnly: false })
+  readOnly?: boolean,
+  excelMode?: boolean
+}>(), { readOnly: false, data: false })
 
 const treeRef = ref<TreeInstance>()
 const treeData = ref<TreeData>([])
@@ -157,15 +159,17 @@ async function onSubmit() {
       visible.value = false
 
       ElMessage.success(t('message.success', { action: sectionForm.id ? t('action.modify') : t('action.create') }))
+
+      const nodeData: TreeNodeData = { ...res.data, meta: { sequence: res.data.sequence } }
       if (id) {
         if (node) {
-          Object.assign(node.data, res.data)
+          Object.assign(node.data, nodeData)
         }
       } else {
         if (superiorId && node) {
-          treeRef.value?.append(res.data, node.data)
+          treeRef.value?.append(nodeData, node.data)
         } else {
-          treeData.value.push(res.data)
+          treeData.value.push(nodeData)
         }
       }
     } catch (error) {
@@ -179,7 +183,6 @@ async function onSubmit() {
  * 修改章节内容
  */
 async function modifySectionContent() {
-  // word: body, excel: fields and datas
   const blocks = await wordContentRef.value?.saveData()
   form.value.body = JSON.stringify(blocks)
   try {
@@ -198,27 +201,24 @@ async function modifySectionContent() {
  */
 async function removeRow(id: number) {
   // 弹出确认框
-  await ElMessageBox.confirm(
-    t('tips.removeConfirm'),
-    t('tips.actionConfirm'),
+  await ElMessageBox.confirm(t('tips.removeConfirm'), t('tips.actionConfirm'),
     {
       confirmButtonType: 'danger',
       type: 'warning'
-    }
-  ).then(async () => {
-    try {
-      await removeSection(id)
-      const node = treeRef.value?.getNode(id)
-      if (node) {
-        treeRef.value?.remove(node?.data)
-      }
+    }).then(async () => {
+      try {
+        await removeSection(id)
+        const node = treeRef.value?.getNode(id)
+        if (node) {
+          treeRef.value?.remove(node?.data)
+        }
 
-      ElMessage.success(t('message.success', { action: t('action.remove') }))
-    } catch (error) {
-      ElMessage.error(t('message.error', { action: t('action.remove') }))
-      throw error
-    }
-  })
+        ElMessage.success(t('message.success', { action: t('action.remove') }))
+      } catch (error) {
+        ElMessage.error(t('message.error', { action: t('action.remove') }))
+        throw error
+      }
+    })
 }
 
 defineExpose({
@@ -265,7 +265,10 @@ defineExpose({
     <ElCol :span="16" :xl="18">
       <div v-if="treeSelected">
         <WordContent v-if="props.schemaType === 'WORD'" ref="wordContentRef" :body="form.body" :read-only="readOnly" />
-        <ExcelContent v-else :section-id="form.id!" />
+        <template v-else>
+          <ExcelContent v-if="excelMode" :section-id="form.id!" :read-only="readOnly" />
+          <ExcelField v-else :section-id="form.id!" :read-only="readOnly" />
+        </template>
       </div>
       <ElEmpty v-else />
     </ElCol>

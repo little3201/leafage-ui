@@ -140,7 +140,7 @@ export default {
     signout: '退出登錄',
     back: '返回',
     continue: '繼續',
-    maintenance: '維護',
+    data: '数据',
     addItem: '新增項目'
   },
 
