@@ -33,6 +33,7 @@ async function load(month: number) {
     <ElCard shadow="never">
       <ChartView :options="lineOptionsData" />
     </ElCard>
+
     <ElCard shadow="never">
       <ElCalendar v-model="today">
         <template #date-cell="{ data }">

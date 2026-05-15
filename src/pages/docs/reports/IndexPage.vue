@@ -443,7 +443,7 @@ async function onSectionContentSave() {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`schemas/sections.xlsx`" :download="$t('page.sections') + '.xlsx'">
         {{ $t('page.sections') }}.xlsx

@@ -430,7 +430,7 @@ async function removeRow(id: number) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`schemas/regions.xlsx`" :download="$t('page.regions') + '.xlsx'">
         {{ $t('page.regions') }}.xlsx

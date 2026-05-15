@@ -97,8 +97,8 @@ function logout() {
 
   <ElFooter class="bg-(--el-bg-color-page) ml-(--el-aside-width) text-center">
     <div class="text-sm mb-2 space-x-4">
-      <a href="/legal/privacy" class="text-(--el-text-color-regular) no-underline hover:underline">隐私政策</a>
-      <a href="/legal/terms" class="text-(--el-text-color-regular) no-underline hover:underline">使用条款</a>
+      <a href="/privacy" class="text-(--el-text-color-regular) no-underline hover:underline">隐私政策</a>
+      <a href="/terms" class="text-(--el-text-color-regular) no-underline hover:underline">使用条款</a>
       <a href="/legal" class="text-(--el-text-color-regular) no-underline hover:underline">法律信息</a>
     </div>
     <span class="text-sm text-(--el-text-color-regular)">Copyright &copy; 2018-{{ new Date().getFullYear() }}

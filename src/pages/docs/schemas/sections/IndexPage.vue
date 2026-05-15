@@ -16,7 +16,7 @@ import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ExcelField from './ExcelField.vue'
+import ExcelContent from './ExcelContent.vue'
 import SectionContent from './SectionContent.vue'
 import WordContent from './WordContent.vue'
 
@@ -265,7 +265,7 @@ defineExpose({
     <ElCol :span="16" :xl="18">
       <div v-if="treeSelected">
         <WordContent v-if="props.schemaType === 'WORD'" ref="wordContentRef" :body="form.body" :read-only="readOnly" />
-        <ExcelField v-else :section-id="form.id!" />
+        <ExcelContent v-else :section-id="form.id!" />
       </div>
       <ElEmpty v-else />
     </ElCol>

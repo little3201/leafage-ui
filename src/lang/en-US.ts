@@ -141,6 +141,7 @@ export default {
     back: 'Back',
     continue: 'Continue',
     maintenance: 'Maintenance',
+    addItem: 'Add Item'
   },
 
   page: {

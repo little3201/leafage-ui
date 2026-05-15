@@ -7,7 +7,7 @@ import { watch } from 'vue'
 
 
 const props = defineProps<{
-  body: string
+  body: string | null
   readOnly: boolean
 }>()
 

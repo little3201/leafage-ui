@@ -141,6 +141,7 @@ export default {
     back: '返回',
     continue: '继续',
     maintenance: '维护',
+    addItem: '添加项目'
   },
 
   page: {

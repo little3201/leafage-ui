@@ -369,7 +369,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`schemas/users.xlsx`" :download="$t('page.users') + '.xlsx'">
         {{ $t('page.users') }}.xlsx

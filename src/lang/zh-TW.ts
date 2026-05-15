@@ -141,6 +141,7 @@ export default {
     back: '返回',
     continue: '繼續',
     maintenance: '維護',
+    addItem: '新增項目'
   },
 
   page: {

@@ -98,8 +98,8 @@ async function load() {
  * 预览
  * @param id 主键
  */
-function previewRow(id: number) {
-  form.value.id = id
+async function previewRow(id: number) {
+  await loadOne(id)
   previewVisible.value = true
 }
 
@@ -398,7 +398,7 @@ async function onSectionSave() {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`schemas/schemas.xlsx`" :download="$t('page.schemas') + '.xlsx'">
         {{ $t('page.schemas') }}.xlsx
