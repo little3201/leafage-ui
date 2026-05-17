@@ -80,6 +80,7 @@ export default {
     queryable: 'Queryable',
     queryType: 'Query Type',
     editable: 'Editable',
+    required: 'Required',
     sortable: 'Sortable',
     tables: 'Tables',
     scope: 'Scope',

@@ -80,6 +80,7 @@ export default {
     queryable: '可查询',
     queryType: '查询类型',
     editable: '可编辑',
+    required: '是否必须',
     sortable: '可排序',
     tables: '表',
     scope: '范围',

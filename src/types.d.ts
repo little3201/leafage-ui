@@ -1,3 +1,10 @@
+export interface DynamicRow {
+  id?: number
+  sectionId: number
+  data: {
+    [key: string]: unknown
+  }
+}
 
 interface AudtiMetadata {
   id: number | null
@@ -387,4 +394,5 @@ export interface SectionField extends AudtiMetadata {
   field: string
   type: string
   length: number
+  required: boolean
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { ElMessage } from 'element-plus'
-import { createSectionField, modifySectionField, retrieveSectionFields } from 'src/api/docs/sections'
-import { retrieveDictionarySubset } from 'src/api/system/dictionaries'
-import type { Dictionary, SectionField } from 'src/types'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { createSectionField, modifySectionField, removeSectionField, retrieveSectionFields } from 'src/api/docs/sections'
+import { fieldTypes } from 'src/constants'
+import type { SectionField } from 'src/types'
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -18,7 +18,6 @@ const fields = ref<Array<SectionField>>([])
 const editable = ref<Record<number, boolean>>({})
 const loading = ref(false)
 const saveLoading = ref(false)
-const typeOptions = ref<Array<Dictionary>>([])
 
 const initialValues: SectionField = {
   id: null,
@@ -26,14 +25,12 @@ const initialValues: SectionField = {
   name: '',
   type: '',
   field: '',
-  length: 0
+  length: 0,
+  required: false
 }
 
 onMounted(async () => {
   await load()
-
-  const res = await retrieveDictionarySubset(100)
-  typeOptions.value = res.data
 })
 
 watch(() => props.sectionId, async (newVal) => {
@@ -66,10 +63,25 @@ function modifyRow(id: number) {
   editable.value[id] = true
 }
 
-function removeRow(index: number) {
-  if (fields.value.length > 0) {
-    fields.value.splice(index, 1)
-  }
+async function removeRow(id: number) {
+  await ElMessageBox.confirm(
+    t('tips.removeConfirm'),
+    t('tips.actionConfirm'),
+    {
+      confirmButtonType: 'danger',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await removeSectionField(id)
+      await load()
+
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -85,9 +97,8 @@ async function confirmRow(row: SectionField) {
     } else {
       await createSectionField(row)
     }
-
-    ElMessage.success(t('message.success', { action: row.id ? t('action.modify') : t('action.create') }))
     await load()
+    ElMessage.success(t('message.success', { action: row.id ? t('action.modify') : t('action.create') }))
   } catch (error) {
     ElMessage.error(t('message.error', { action: row.id ? t('action.modify') : t('action.create') }))
     throw error
@@ -102,42 +113,56 @@ async function confirmRow(row: SectionField) {
     <ElTableColumn type="index" :label="$t('label.no')" width="55" />
     <ElTableColumn prop="name" :label="$t('label.name')">
       <template #default="scope">
-        <ElFormItem v-if="editable[scope.row.id]" :prop="'fields.' + scope.$index + '.name'"
+        <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.name`"
           :rules="[{ required: true, trigger: 'blur' }]">
-          <ElInput v-model="scope.row.name" />
+          <ElInput v-model="scope.row.name" style="width: 100px;" />
         </ElFormItem>
         <span v-else>{{ scope.row.name }}</span>
       </template>
     </ElTableColumn>
     <ElTableColumn prop="field" :label="$t('label.field')">
       <template #default="scope">
-        <ElInput v-if="editable[scope.row.id]" v-model="scope.row.field" />
-        <span v-else>{{ scope.row.field }}</span>
+        <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.field`"
+          :rules="[{ required: true, trigger: 'blur' }]">
+          <ElInput v-if="editable[scope.row.id]" v-model="scope.row.field" style="width: 100px;" />
+          <span v-else>{{ scope.row.field }}</span>
+        </ElFormItem>
       </template>
     </ElTableColumn>
     <ElTableColumn prop="type" :label="$t('label.type')">
       <template #default="scope">
-        <ElSelect v-if="editable[scope.row.id]" v-model="scope.row.type" :disabled="scope.row.id !== null"
-          :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
-          <ElOption v-for="(item, index) in typeOptions" :key="index" :label="item.name" :value="item.name" />
-        </ElSelect>
-        <span v-else>{{ scope.row.type }}</span>
+        <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.type`"
+          :rules="[{ required: true, trigger: 'blur' }]">
+          <ElSelect v-if="editable[scope.row.id]" v-model="scope.row.type" :disabled="scope.row.id !== null"
+            :placeholder="$t('placeholder.selectText', { field: $t('label.type') })" style="width: 100px;">
+            <ElOption v-for="(label, value) in fieldTypes" :key="value" :label="label" :value="value" />
+          </ElSelect>
+          <span v-else>{{ scope.row.type }}</span>
+        </ElFormItem>
       </template>
     </ElTableColumn>
     <ElTableColumn prop="length" :label="$t('label.length')">
       <template #default="scope">
-        <ElInput v-if="editable[scope.row.id]" v-model="scope.row.length" />
+        <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.length`"
+          :rules="[{ required: true, trigger: 'blur' }]">
+          <ElInput v-if="editable[scope.row.id]" v-model="scope.row.length" style="width: 100px;" />
+        </ElFormItem>
         <span v-else>{{ scope.row.length }}</span>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn prop="required" :label="$t('label.required')">
+      <template #default="scope">
+        <ElSwitch :disabled="!editable[scope.row.id]" v-model="scope.row.required" />
       </template>
     </ElTableColumn>
     <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
       <template #default="scope">
         <div class="items-center w-15">
-          <ElButton title="remove" circle size="small" type="danger" plain @click="removeRow(scope.$index)">
+          <ElButton title="remove" circle size="small" type="danger" plain @click="removeRow(scope.row.id)">
             <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />
           </ElButton>
-          <ElButton v-if="editable[scope.row.id]" title="confirm" circle size="small" type="success" plain
-            @click="confirmRow(scope.row)">
+          <ElButton v-if="editable[scope.row.id]" v-loading="saveLoading" title="confirm" circle size="small"
+            type="success" plain @click="confirmRow(scope.row)">
             <Icon icon="material-symbols:check-rounded" width="1.25em" height="1.25em" />
           </ElButton>
           <ElButton v-else title="modify" circle size="small" type="primary" plain @click="modifyRow(scope.row.id)">

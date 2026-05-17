@@ -210,3 +210,11 @@ export const sectionTypes: { [key: string]: 'primary' | 'success' | 'info' | 'wa
   TABLE: 'info',
   IMAGE: 'warning'
 }
+
+export const fieldTypes: { [key: string]: string } = {
+  STRING: 'String',
+  NUMBER: 'Number',
+  BOOLEAN: 'Boolean',
+  DATE: 'Date',
+  DATETIME: 'Datetime'
+}

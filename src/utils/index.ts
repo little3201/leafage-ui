@@ -61,7 +61,7 @@ export function formatDuration(ms: number): string {
     const msStr = msPart < 10
       ? msPart.toFixed(1).replace(/\.0$/, '')
       : Math.round(msPart).toString()
-    parts.push(msStr + 'ms')
+    parts.push(`${msStr}ms`)
   }
 
   return sign + (parts.length > 0 ? parts.join('') : '0ms')

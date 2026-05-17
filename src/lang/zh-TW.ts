@@ -80,6 +80,7 @@ export default {
     queryable: '可查詢',
     queryType: '查詢類型',
     editable: '可編輯',
+    required: '是否必須',
     sortable: '可排序',
     tables: '表',
     scope: '範圍',

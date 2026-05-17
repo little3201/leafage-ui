@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Section, SectionField } from 'src/types'
+import type { DynamicRow, Section, SectionField } from 'src/types'
 
 
 /**
@@ -57,6 +57,15 @@ export const createSectionField = (row: SectionField) => {
 }
 
 /**
+ * Create a new row
+ * @param row Row data
+ * @returns Created row
+ */
+export const createSectionData = (row: DynamicRow) => {
+  return api.post(`${SERVER_URL.SECTION}/datas`, row)
+}
+
+/**
  * Modify an existing row
  * @param id Row ID
  * @param row Updated row data
@@ -77,6 +86,16 @@ export const modifySectionField = (id: number, row: SectionField) => {
 }
 
 /**
+ * Modify an existing row
+ * @param id Row ID
+ * @param row Updated row data
+ * @returns Modified row
+ */
+export const modifySectionData = (id: number, row: DynamicRow) => {
+  return api.put(`${SERVER_URL.SECTION}/datas/${id}`, row)
+}
+
+/**
  * Enable or Disable an existing row
  * @param id Row ID
  * @returns Enable or Disable result
@@ -92,4 +111,22 @@ export const enableSection = (id: number) => {
  */
 export const removeSection = (id: number) => {
   return api.delete(`${SERVER_URL.SECTION}/${id}`)
+}
+
+/**
+ * Remove a row
+ * @param id Row ID
+ * @returns Deletion status
+ */
+export const removeSectionField = (id: number) => {
+  return api.delete(`${SERVER_URL.SECTION}/fields/${id}`)
+}
+
+/**
+ * Remove a row
+ * @param id Row ID
+ * @returns Deletion status
+ */
+export const removeSectionData = (id: number) => {
+  return api.delete(`${SERVER_URL.SECTION}/datas/${id}`)
 }
