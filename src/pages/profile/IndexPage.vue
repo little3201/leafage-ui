@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { useUserStore } from 'stores/user-store'
+import { useUserStore } from 'src/stores/user'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 

@@ -5,7 +5,7 @@ import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { signOut } from 'src/api/authentication'
 import logo from 'src/assets/logo.svg'
-import { useUserStore } from 'stores/user-store'
+import { useUserStore } from 'src/stores/user'
 import { useRouter } from 'vue-router'
 
 

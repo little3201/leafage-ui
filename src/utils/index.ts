@@ -1,5 +1,5 @@
+import { useUserStore } from 'src/stores/user'
 import type { Filters, PrivilegeTreeNode, Section } from 'src/types'
-import { useUserStore } from 'stores/user-store'
 import type { RouteRecordNameGeneric } from 'vue-router'
 import * as XLSX from 'xlsx'
 

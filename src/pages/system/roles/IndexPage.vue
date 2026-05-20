@@ -22,9 +22,9 @@ import {
 } from 'src/api/system/roles'
 import { retrieveUsers } from 'src/api/system/users'
 import { actionIcons, actionTypes } from 'src/constants'
+import { useUserStore } from 'src/stores/user'
 import type { Filters, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
