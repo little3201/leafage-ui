@@ -18,7 +18,7 @@
 
 |   分支   | 认证模式|                 组件库                      |              预览地址       |
 |----------|--------|--------------------------------------------|-----------------------------|
-| element  |  BFF   | [Element plus](https://element-plus.org)   | https://preivew.leafage.top |
+| element  |  BFF   | [Element plus](https://element-plus.org)   | https://preview.leafage.top |
 | develop  |  PKCE  | [Quasar framework](https://quasar.dev)     | https://console.leafage.top |
 | react    |  JWT   | [Material UI](https://mui.com/material-ui) |              -              |
 
@@ -46,6 +46,9 @@
 ### 目录结构
 
 ```
+├── .husky/                 # husky
+│   ├── commit-msg          # Commit msg
+│   └── pre-commit          # Commit script before execute
 ├── public/                 # Public static assets
 │   ├── icons/              # Public icons
 │   └── svgs/               # Public svgs
@@ -63,19 +66,21 @@
 │   ├── router/             # vue router
 │   ├── stores/             # Pinia
 │   ├── utils/              # Utils
+│   ├── types/              # Types
 │   ├── App.vue             # Root component
 │   ├── env.d.ts            # Env.d
-│   ├── main.ts             # main
-│   └── types.d.ts          # Types.d
+│   └── main.ts             # main
 ├── test/                   # Test with vitest
 │   └── utils.test.ts       # utils test
-├── index.html              # Entry HTML file
 ├── .env.development        # Env for dev
 ├── .env.production         # Env for prod
-├── postcss.config.js       # Postcss configuration
-├── eslint.config.js        # Eslint configuration
 ├── commitlint.config.js    # Commitlint configuration
+├── eslint.config.js        # Eslint configuration
+├── index.html              # Entry HTML file
 ├── lint-staged.config.js   # Lint staged configuration
-├── vite.config.ts          # Vite configuration
-└── vitest.config.ts        # Vitest configuration
+├── package.json            # Package define
+├── tsconfig.app.json       # Ts config for app
+├── tsconfig.json           # Ts config
+├── tsconfig.node.json      # Ts config for node
+└── vite.config.mts          # Vite configuration
 ```
