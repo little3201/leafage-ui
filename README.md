@@ -18,8 +18,8 @@
 
 |   分支   | 认证模式|                 组件库                      |              预览地址       |
 |----------|--------|--------------------------------------------|-----------------------------|
-| element  |  BFF   | [Element plus](https://element-plus.org)   | https://preview.leafage.top |
-| develop  |  PKCE  | [Quasar framework](https://quasar.dev)     | https://console.leafage.top |
+| element  |  BFF   | [Element plus](https://element-plus.org)   | <a href="https://preview.leafage.top" target="_blank">https://preview.leafage.top</a> |
+| develop  |  PKCE  | [Quasar framework](https://quasar.dev)     | <a href="https://console.leafage.top" target="_blank">https://console.leafage.top</a> |
 | react    |  JWT   | [Material UI](https://mui.com/material-ui) |              -              |
 
 ### 特性
@@ -33,7 +33,7 @@
 
 开发框架：Vue3/React、TypeScript、Vite、Element-Plus/Quasar、Tailwind CSS
 
-代码规范：Eslint、Prettier、Stylelint、Husky、Lint-staged、cz-git
+代码规范：Eslint、Husky、Lint-staged、commitlint
 
 ## 页面预览
 
