@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createSectionData, modifySectionData, removeSectionData, retrieveSectionDatas, retrieveSectionFields } from 'src/api/docs/sections'
-import type { DynamicRow, SectionField } from 'src/types'
+import type { SectionData, SectionField } from 'src/types'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -10,7 +10,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const props = defineProps<{
-  sectionId: number
+  sectionId: number | null
   readOnly: boolean
 }>()
 
@@ -18,7 +18,7 @@ const fields = ref<Array<SectionField>>([])
 const visibleFields = computed(() =>
   fields.value.filter(field => field.field !== 'id')
 )
-const datas = ref<Array<DynamicRow>>([])
+const datas = ref<Array<SectionData>>([])
 const saveLoading = ref(false)
 const editable = ref<Record<number, boolean>>({})
 
@@ -54,6 +54,8 @@ async function loadDatas() {
 }
 
 function addRow() {
+  if (!props.sectionId) return
+
   const data: Record<string, unknown> = {}
   fields.value.forEach(field => {
     if (field.type === 'number') {
@@ -62,7 +64,7 @@ function addRow() {
       data[field.field] = ''
     }
   })
-  datas.value.push({ sectionId: props.sectionId, data })
+  datas.value.push({ id: null, sectionId: props.sectionId, data })
 }
 
 function modifyRow(id: number) {
@@ -90,7 +92,9 @@ async function removeRow(id: number) {
   })
 }
 
-async function confirmRow(row: DynamicRow) {
+async function confirmRow(row: SectionData) {
+  if (!props.sectionId) return
+
   saveLoading.value = true
   try {
     row.sectionId = props.sectionId

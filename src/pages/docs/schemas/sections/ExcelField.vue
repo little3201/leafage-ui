@@ -10,7 +10,7 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const props = defineProps<{
-  sectionId: number
+  sectionId: number | null
   readOnly: boolean
 }>()
 
@@ -88,6 +88,8 @@ async function removeRow(id: number) {
  * 表单提交
  */
 async function confirmRow(row: SectionField) {
+  if (!props.sectionId) return
+
   saveLoading.value = true
   try {
     row.sectionId = props.sectionId

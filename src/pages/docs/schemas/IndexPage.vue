@@ -351,7 +351,7 @@ async function onSectionSave() {
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.type')" prop="type">
-            <ElSelect v-model="form.type" :disabled="form.id !== null"
+            <ElSelect v-model="form.type" :disabled="form.id != null"
               :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
               <ElOption v-for="(_, value) in schemaTypes" :key="value" :label="value" :value="value" />
             </ElSelect>
@@ -380,7 +380,7 @@ async function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <SchemaSection ref="sectionRef" :owner-id="form.id!" owner-type="SCHEMA" :schema-type="form.type" />
+    <SchemaSection ref="sectionRef" :owner-id="form.id" owner-type="SCHEMA" :schema-type="form.type" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -394,7 +394,7 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <SchemaSection :owner-id="form.id!" owner-type="SCHEMA" :schema-type="form.type" :read-only="true" />
+    <SchemaSection :owner-id="form.id" owner-type="SCHEMA" :schema-type="form.type" :read-only="true" />
   </ElDialog>
 
   <!-- import -->

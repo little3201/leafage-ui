@@ -17,7 +17,7 @@ const uploadLoading = ref<boolean>(false)
 const datas = ref<Array<FileRecord>>([])
 const total = ref<number>(0)
 const expandRows = ref<Array<FileRecord>>([])
-const currentRow = ref<FileRecord>()
+const currentRowId = ref<number | null>(null)
 
 const pagination = reactive<Pagination>({
   page: 1,
@@ -25,7 +25,7 @@ const pagination = reactive<Pagination>({
 })
 
 const filter = reactive<Filters<FileRecord>>({
-  superiorId: { op: 'eq', value: currentRow.value?.id },
+  superiorId: { op: 'eq', value: currentRowId.value },
   name: { op: 'like', value: undefined }
 })
 
@@ -131,7 +131,7 @@ function onSubmit(uploadEl: UploadInstance) {
 }
 
 function onUpload(options: UploadRequestOptions) {
-  return uploadFile(options.file, currentRow.value ? currentRow.value.id : null)
+  return uploadFile(options.file, currentRowId.value)
 }
 
 /**
@@ -161,8 +161,10 @@ async function removeRow(id: number) {
 }
 
 async function onRowClick(row: FileRecord) {
+  if (!row.id) return
+
   if (row.directory) {
-    currentRow.value = row
+    currentRowId.value = row.id
     if (row) {
       expandRows.value.push(row)
     }
@@ -178,13 +180,13 @@ async function handleBreadcrumbClick(index: number) {
   if (index === -1) {
     // 点击"全部文件夹"，回到根目录
     expandRows.value = []
-    currentRow.value = undefined
+    currentRowId.value = null
   } else {
     // 截断面包屑数组，保留点击位置及之前的部分
     expandRows.value = expandRows.value.slice(0, index + 1)
-    currentRow.value = expandRows.value[index]
+    currentRowId.value = expandRows.value[index]?.id || null
   }
-  filter.superiorId!.value = currentRow.value?.id
+  filter.superiorId!.value = currentRowId.value
   await load()
 }
 
@@ -254,7 +256,7 @@ function onUploadError() {
               <ElBreadcrumbItem @click="handleBreadcrumbClick(-1)">
                 {{ $t('label.all') }}
               </ElBreadcrumbItem>
-              <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="row.id!" @click="handleBreadcrumbClick(index)">
+              <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="index" @click="handleBreadcrumbClick(index)">
                 {{ row.name }}
               </ElBreadcrumbItem>
             </ElBreadcrumb>

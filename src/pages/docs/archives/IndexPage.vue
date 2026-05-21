@@ -159,7 +159,9 @@ async function saveRow(id?: number) {
  * 章节
  * @param id 主键
  */
-function configSection(id: number) {
+function configSection(id: number | null) {
+  if (!id) return
+
   form.value.id = id
   configVisible.value = true
 }
@@ -336,7 +338,7 @@ async function onSectionSave() {
             }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'section')" title="section" :type="actionTypes['section']" link
-            @click="configSection(scope.row.id!)">
+            @click="configSection(scope.row.id)">
             <Icon :icon="`material-symbols:${actionIcons['section']}-rounded`" width="1.25em" height="1.25em" />
             {{ $t('action.section') }}
           </ElButton>
@@ -370,7 +372,7 @@ async function onSectionSave() {
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.template')" prop="schemaId">
-            <ElSelect v-model="form.schemaId" :disabled="form.id !== null"
+            <ElSelect v-model="form.schemaId" :disabled="form.id != null"
               :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
               <ElOption v-for="(item, index) in schemas" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
@@ -398,7 +400,7 @@ async function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <Section ref="sectionRef" :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="ARCHIVE" schema-type="WORD" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -412,7 +414,7 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <Section :owner-id="form.id!" owner-type="ARCHIVE" schema-type="WORD" :read-only="true" />
+    <Section :owner-id="form.id" owner-type="ARCHIVE" schema-type="WORD" :read-only="true" />
   </ElDialog>
 
   <!-- import -->

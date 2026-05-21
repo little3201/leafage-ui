@@ -24,7 +24,7 @@ import WordContent from './WordContent.vue'
 
 const { t } = useI18n()
 const props = withDefaults(defineProps<{
-  ownerId: number
+  ownerId: number | null
   ownerType: 'REPORT' | 'ARCHIVE' | 'SCHEMA'
   schemaType: 'WORD' | 'EXCEL',
   readOnly?: boolean,
@@ -91,6 +91,7 @@ async function onCurrentChange(data: TreeNodeData) {
  */
 async function loadTree() {
   if (!props.ownerId) return
+
   treeLoading.value = true
   try {
     const res = await retrieveSectionTree(props.ownerId, props.ownerType)
@@ -266,8 +267,8 @@ defineExpose({
       <div v-if="treeSelected">
         <WordContent v-if="props.schemaType === 'WORD'" ref="wordContentRef" :body="form.body" :read-only="readOnly" />
         <template v-else>
-          <ExcelContent v-if="excelMode" :section-id="form.id!" :read-only="readOnly" />
-          <ExcelField v-else :section-id="form.id!" :read-only="readOnly" />
+          <ExcelContent v-if="excelMode" :section-id="form.id" :read-only="readOnly" />
+          <ExcelField v-else :section-id="form.id" :read-only="readOnly" />
         </template>
       </div>
       <ElEmpty v-else />

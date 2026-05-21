@@ -336,12 +336,12 @@ function formatSchemas(cellValue: number): string {
               $t('action.modify') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'field')" title="config" :type="actionTypes['field']" link
-            @click="configSection(scope.row.id!)">
+            @click="configSection(scope.row.id)">
             <Icon :icon="`material-symbols:${actionIcons['field']}-rounded`" width="1.25em" height="1.25em" />
             {{ $t('action.field') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'data')" title="data" :type="actionTypes['data']" link
-            @click="configData(scope.row.id!)">
+            @click="configData(scope.row.id)">
             <Icon :icon="`material-symbols:${actionIcons['data']}-rounded`" width="1.25em" height="1.25em" />
             {{ $t('action.data') }}
           </ElButton>
@@ -375,7 +375,7 @@ function formatSchemas(cellValue: number): string {
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.template')" prop="schemaId">
-            <ElSelect v-model="form.schemaId" :disabled="form.id !== null"
+            <ElSelect v-model="form.schemaId" :disabled="form.id != null"
               :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
               <ElOption v-for="(item, index) in schemas" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
@@ -396,17 +396,17 @@ function formatSchemas(cellValue: number): string {
 
   <!-- field -->
   <ElDialog v-model="fieldVisible" :title="$t('action.field')" align-center>
-    <Section ref="sectionRef" :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" schema-type="EXCEL" />
   </ElDialog>
 
   <!-- data -->
   <ElDialog v-model="contentVisible" :title="$t('action.data')" align-center>
-    <Section ref="sectionRef" :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" :excel-mode="true" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" schema-type="EXCEL" :excel-mode="true" />
   </ElDialog>
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <Section :owner-id="form.id!" owner-type="REPORT" schema-type="EXCEL" :excel-mode="true" :read-only="true" />
+    <Section :owner-id="form.id" owner-type="REPORT" schema-type="EXCEL" :excel-mode="true" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
