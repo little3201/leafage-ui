@@ -1,4 +1,4 @@
-import type { AudtiMetadata } from '../global'
+import type { AudtiMetadata } from './global'
 
 export interface Region extends AudtiMetadata {
   name: string

@@ -1,4 +1,4 @@
-import type { AudtiMetadata } from '../global'
+import type { AudtiMetadata } from './global'
 
 export interface FileRecord extends AudtiMetadata {
   superiorId: number | null

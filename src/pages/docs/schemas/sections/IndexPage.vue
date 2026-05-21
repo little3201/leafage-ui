@@ -184,10 +184,12 @@ async function onSubmit() {
  * 修改章节内容
  */
 async function modifySectionContent() {
+  if (!form.value.id) return
+
   const blocks = await wordContentRef.value?.saveData()
   form.value.body = JSON.stringify(blocks)
   try {
-    await modifySection(form.value.id!, form.value)
+    await modifySection(form.value.id, form.value)
 
     ElMessage.success(t('message.success', { action: t('action.modify') }))
   } catch (error) {
