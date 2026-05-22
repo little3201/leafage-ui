@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatDuration } from '../../utils/index'
+import { formatDuration } from '../index'
 
 describe('utils', () => {
   it('formatDuration', () => {
