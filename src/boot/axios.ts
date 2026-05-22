@@ -1,15 +1,9 @@
 import { defineBoot } from '#q-app/wrappers'
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import { i18n } from 'boot/i18n'
-import { Notify } from 'quasar'
 import { signIn } from 'src/api/authentication'
-import { SERVER_URL } from 'src/constants'
-import { useUserStore } from 'src/stores/user'
-import type { ComposerTranslation } from 'vue-i18n'
 
 
-const { t } = i18n.global as { t: ComposerTranslation }
 const abortControllerMap: Map<string, AbortController> = new Map()
 
 const api: AxiosInstance = axios.create({
@@ -18,16 +12,10 @@ const api: AxiosInstance = axios.create({
   withCredentials: true
 })
 
-export default defineBoot(({ store }) => {
+export default defineBoot(() => {
   api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      const userStore = useUserStore(store)
-      if (userStore.accessToken) {
-        config.headers.Authorization = `Bearer ${userStore.accessToken}`
-      } else {
-        delete config.headers.Authorization
-      }
-
+      // 创建 AbortController 实例
       const controller = new AbortController()
       const uniqueKey = generateUniqueKey(config)
       config.signal = controller.signal
@@ -36,41 +24,22 @@ export default defineBoot(({ store }) => {
       return config
     },
     (error: AxiosError) => {
-      Notify.create({ type: 'negative', message: error.message })
       return Promise.reject(error)
     }
   )
 
+  // 响应拦截器
   api.interceptors.response.use(
     (response: AxiosResponse) => {
       const uniqueKey = generateUniqueKey(response.config)
       abortControllerMap.delete(uniqueKey)
 
-      const { config, status } = response
-      if (status >= 200 && status < 300 && config.method !== 'get' && config.url !== SERVER_URL.TOKEN) {
-        Notify.create({ type: 'positive', message: t('successful') })
-      }
       return response
     },
-    async (error: AxiosError) => {
-      const status = error.response?.status
-      switch (status) {
-        case 401:
-          cancelAllRequest()
-          await signIn()
-          return
-        case 403:
-          cancelAllRequest()
-          Notify.create({ type: 'forbidden', message: t('message.error') })
-          break
-        case 404:
-          Notify.create({ type: 'negative', message: t('message.notFound') })
-          break
-        case 500:
-          Notify.create({ type: 'negative', message: t('message.serverError') })
-          break
-        default:
-          Notify.create({ type: 'negative', message: t('message.error') })
+    (error: AxiosError) => {
+      if (error.response?.status === 401) {
+        cancelAllRequest()
+        void signIn()
       }
       return Promise.reject(error)
     }

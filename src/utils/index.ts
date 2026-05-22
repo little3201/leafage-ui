@@ -1,20 +1,8 @@
-import type { QTableProps } from 'quasar'
-import { Notify, exportFile } from 'quasar'
-import type { Filter } from 'src/types'
+export * from './action'
+export * from './file'
+export * from './generate'
+export * from './request'
 
-/**
- * Resolve a child path relative to a parent path
- * @param {string} parentPath - The parent path
- * @param {string} path - The child path
- * @returns {string} - The resolved path
- */
-export function pathResolve(parentPath: string | undefined, path: string | undefined): string {
-  if (!path) {
-    return ''
-  }
-  const childPath = path.startsWith('/') ? path : `/${path}`
-  return `${parentPath}${childPath}`.replaceAll(/\/\//g, '/').trim()
-}
 
 /**
  * Format a duration given in milliseconds into a human-readable string
@@ -66,24 +54,6 @@ export function visibleArray<T extends string | number>(array: T[], count: numbe
   return []
 }
 
-export function download(data: Blob, filename: string, mimeType?: string): void {
-  // 创建一个新的 Blob 对象，指定 MIME 类型
-  const blob = new Blob([data], { type: mimeType || 'application/octet-stream' })
-
-  // 创建一个临时的下载链接
-  const url = globalThis.URL.createObjectURL(blob)
-
-  // 创建一个 <a> 元素并触发点击事件来启动下载
-  const link = document.createElement('a')
-  link.href = url
-  link.setAttribute('download', filename) // 设置下载的文件名
-  document.body.appendChild(link)
-  link.click() // 执行点击，触发下载
-  link.remove() // 清除临时元素
-
-  // 释放创建的 URL 对象
-  globalThis.URL.revokeObjectURL(url)
-}
 
 /**
  * 数据分组
@@ -106,118 +76,4 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
   }, {} as { [key: string]: T[] })
 }
 
-function base64UrlEncode(array: Uint8Array) {
-  return btoa(String.fromCodePoint(...array))
-    .replaceAll(/\+/g, '-').replaceAll(/\//g, '_').replace(/=+$/, '')
-}
 
-export function generateVerifier(): string {
-  const array = new Uint8Array(32)
-  globalThis.crypto.getRandomValues(array)
-  return base64UrlEncode(array)
-}
-
-export async function generateCodeChallenge(codeVerifier: string) {
-  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
-    .then(buffer => base64UrlEncode(new Uint8Array(buffer)))
-}
-
-export function dealFilters<T>(filters?: Filter<T>): string | undefined {
-  if (!filters || Object.keys(filters).length === 0) {
-    return undefined
-  }
-
-  const conditions: string[] = []
-
-  // 使用 keyof T 来遍历，但因为是 Partial，所以要用 keyof typeof filters
-  for (const field in filters) {
-    const cond = filters[field]
-    if (!cond) continue
-
-    const { op, value } = cond
-
-    // 跳过无效值
-    if (value == null || value === '') {
-      continue
-    }
-
-    let valueStr: string
-
-    // 根据 op 处理 value 的字符串化方式
-    if (op === 'in' || op === 'notIn') {
-      // 假设 value 是数组类型（实际使用时应匹配实体字段类型）
-      valueStr = Array.isArray(value) ? value.join(',') : String(value)
-    } else if (op === 'between' || op === 'notBetween') {
-      // 假设 value 是 [any, any] 形式的数组
-      valueStr = Array.isArray(value) && value.length === 2
-        ? value.join(',')
-        : String(value)
-    } else {
-      valueStr = String(value).trim()
-    }
-
-    // 只在有有效值时加入
-    if (valueStr) {
-      conditions.push(`${field}:${op}:${valueStr}`)
-    }
-  }
-
-  return conditions.length > 0 ? conditions.join(',') : undefined
-}
-
-/**
- * wrap csv value
- * @param val value
- * @param formatFn format function
- * @param row data row
- * @returns result
- */
-function wrapCsvValue(val: string, formatFn?: (val: string, row?: string) => string, row?: string) {
-  let formatted = formatFn ? formatFn(val, row) : val ?? ''
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-
-  return `"${formatted}"`
-}
-
-/**
- * export table data to csv file
- * @param columns columns
- * @param rows rows
- * @returns result
- */
-export function exportTable(columns: QTableProps['columns'], rows: QTableProps['rows']) {
-  if (!columns?.length || !rows?.length) {
-    // Handle the case where columns or rows are undefined or empty
-    return
-  }
-  // 生成表头的 CSV 内容
-  const header = columns.map(col => wrapCsvValue(col.label))
-
-  // 生成表格内容的 CSV 行
-  const rowsContent = rows.map(row => {
-    return columns.map(col => {
-      // 处理 col.field 可能是函数的情况
-      const value = typeof col.field === 'function'
-        ? col.field(row)
-        : row[col.field ?? col.name]
-
-      return wrapCsvValue(value, col.format, row)
-    }).join(',')
-  }).join('\r\n')
-
-  // 合并表头和表格内容
-  const content = [header.join(','), rowsContent].join('\r\n')
-
-  const status = exportFile('table-export.csv', content, 'text/csv')
-
-  if (status !== true) {
-    Notify.create({
-      message: 'Browser denied file download...',
-      color: 'negative',
-      icon: 'warning'
-    })
-  }
-}
