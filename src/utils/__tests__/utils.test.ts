@@ -1,5 +1,5 @@
 import { assert, describe, expect, it } from 'vitest'
-import { isNumber, formatDuration } from '../src/utils/index.ts'
+import { formatDuration, isNumber } from '../index.ts'
 
 describe('utils', () => {
   it('isNumber', () => {
@@ -16,6 +16,6 @@ describe('utils', () => {
     expect(formatDuration(1500)).toBe('1.5s')
     expect(formatDuration(500)).toBe('500ms')
 
-    expect(formatDuration(0)).toMatchSnapshot('"0ms"')
+    expect(formatDuration(0)).toBe('0ms')
   })
 })

@@ -4,7 +4,7 @@ import type { TableInstance } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { clearOperationLogs, fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/logs/operation-logs'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Filters, OperationLog, Pagination } from 'src/types'
+import type { Filter, OperationLog, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -22,7 +22,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filter = reactive<Filters<OperationLog>>({
+const filter = reactive<Filter<OperationLog>>({
   module: { op: 'eq', value: undefined }
 })
 

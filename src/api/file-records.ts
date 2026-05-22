@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { FileRecord, Filters, Pagination } from 'src/types'
+import type { FileRecord, Filter, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,7 +9,7 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveFiles = (pagination: Pagination, filter?: Filters<FileRecord>) => {
+export const retrieveFiles = (pagination: Pagination, filter?: Filter<FileRecord>) => {
   const filters = dealFilters(filter)
   return api.get(SERVER_URL.FILE, { params: { ...pagination, page: pagination.page - 1, filters } })
 }

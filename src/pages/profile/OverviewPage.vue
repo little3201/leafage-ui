@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { actionIcons } from 'src/constants'
-import { useUserStore } from 'src/stores/user'
 import type { User } from 'src/types'
+import { useUserStore } from 'stores/user'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

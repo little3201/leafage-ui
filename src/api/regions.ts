@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Pagination, Region } from 'src/types'
+import type { Filter, Pagination, Region } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,7 +9,7 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveRegions = (pagination: Pagination, filter?: Filters<Region>) => {
+export const retrieveRegions = (pagination: Pagination, filter?: Filter<Region>) => {
   const filters = dealFilters(filter)
   return api.get(SERVER_URL.REGION, { params: { ...pagination, page: pagination.page - 1, filters } })
 }

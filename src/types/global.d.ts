@@ -11,7 +11,7 @@ type FilterOperator =
   | 'between' | 'notBetween'
   | 'isNull' | 'isNotNull'
 
-export type Filters<T> = Partial<{
+export type Filter<T> = Partial<{
   [K in keyof T]: {
     op: T[K] extends string | null | undefined
     ? 'eq' | 'neq' | 'like' | 'ilike' | 'notLike' | 'in' | 'notIn' | 'isNull' | 'isNotNull'

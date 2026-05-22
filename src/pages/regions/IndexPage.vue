@@ -11,7 +11,7 @@ import {
   retrieveRegions, retrieveRegionSubset
 } from 'src/api/regions'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Filters, Pagination, Region } from 'src/types'
+import type { Filter, Pagination, Region } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -42,7 +42,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Region>>({
+const filter = reactive<Filter<Region>>({
   superiorId: { op: 'eq', value: null },
   name: { op: 'like', value: undefined }
 })

@@ -10,7 +10,7 @@ import {
   removeSchema, retrieveSchemas
 } from 'src/api/docs/schemas'
 import { actionIcons, actionTypes, schemaStatus, schemaTypes } from 'src/constants'
-import type { Filters, Pagination, Schema } from 'src/types'
+import type { Filter, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -39,7 +39,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Schema>>({
+const filter = reactive<Filter<Schema>>({
   name: { op: 'like', value: undefined }
 })
 

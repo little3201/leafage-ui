@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Pagination, Role } from 'src/types'
+import type { Filter, Pagination, Role } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,7 +9,7 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveRoles = (pagination: Pagination, filter?: Filters<Role>) => {
+export const retrieveRoles = (pagination: Pagination, filter?: Filter<Role>) => {
   const filters = dealFilters(filter)
   return api.get(SERVER_URL.ROLE, { params: { ...pagination, page: pagination.page - 1, filters } })
 }

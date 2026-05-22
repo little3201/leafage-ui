@@ -4,7 +4,7 @@ import type { TableInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { clearAccessLogs, fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/logs/access-logs'
 import { actionIcons, actionTypes, httpMethods } from 'src/constants'
-import type { AccessLog, Filters, Pagination } from 'src/types'
+import type { AccessLog, Filter, Pagination } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -23,7 +23,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filter = reactive<Filters<AccessLog>>({
+const filter = reactive<Filter<AccessLog>>({
   url: { op: 'eq', value: undefined }
 })
 

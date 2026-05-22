@@ -22,9 +22,9 @@ import {
 import { retrieveRoles } from 'src/api/system/roles'
 import { retrieveUsers } from 'src/api/system/users'
 import { actionIcons, actionTypes } from 'src/constants'
-import { useUserStore } from 'src/stores/user'
-import type { Filters, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Privilege, Role, TreeNode, User } from 'src/types'
+import type { Filter, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Privilege, Role, TreeNode, User } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
+import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -71,7 +71,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Group>>({
+const filter = reactive<Filter<Group>>({
   superiorId: { op: 'eq', value: null },
   name: { op: 'like', value: undefined }
 })

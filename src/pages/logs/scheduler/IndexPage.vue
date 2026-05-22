@@ -4,7 +4,7 @@ import type { TableInstance } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { clearSchedulerLogs, fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
 import { actionIcons, actionTypes, shceduleStatus, shceduleStatusIcon } from 'src/constants'
-import type { Filters, Pagination, SchedulerLog } from 'src/types'
+import type { Filter, Pagination, SchedulerLog } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -23,7 +23,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filter = reactive<Filters<SchedulerLog>>({
+const filter = reactive<Filter<SchedulerLog>>({
   name: { op: 'eq', value: undefined }
 })
 

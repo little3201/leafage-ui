@@ -4,7 +4,7 @@ import type { UploadInstance, UploadRequestOptions } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { downloadFile, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { FileRecord, Filters, Pagination } from 'src/types'
+import type { FileRecord, Filter, Pagination } from 'src/types'
 import { download, formatFileSize, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -24,7 +24,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filter = reactive<Filters<FileRecord>>({
+const filter = reactive<Filter<FileRecord>>({
   superiorId: { op: 'eq', value: currentRowId.value },
   name: { op: 'like', value: undefined }
 })

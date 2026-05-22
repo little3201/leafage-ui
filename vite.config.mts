@@ -1,3 +1,4 @@
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
@@ -5,7 +6,6 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig, loadEnv } from 'vite'
 import checker from 'vite-plugin-checker'
-import { configDefaults } from 'vitest/config'
 
 
 // https://vitejs.dev/config/
@@ -14,15 +14,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     resolve: {
-      alias: {
-        'src': fileURLToPath(new URL('src', import.meta.url)),
-        'components': fileURLToPath(new URL('src/components', import.meta.url)),
-        'layouts': fileURLToPath(new URL('src/layouts', import.meta.url)),
-        'pages': fileURLToPath(new URL('src/pages', import.meta.url)),
-        'assets': fileURLToPath(new URL('src/assets', import.meta.url)),
-        'boot': fileURLToPath(new URL('src/boot', import.meta.url)),
-        'stores': fileURLToPath(new URL('src/stores', import.meta.url))
-      }
+      tsconfigPaths: true,
     },
     plugins: [
       vue(),
@@ -36,10 +28,13 @@ export default defineConfig(({ mode }) => {
       }),
       // https://tailwindcss.com/docs/installation/using-vite
       tailwindcss(),
+      VueI18nPlugin({
+        include: [fileURLToPath(new URL('./src/lang', import.meta.url))]
+      }),
       checker({
         vueTsc: true,
         eslint: {
-          lintCommand: 'eslint',
+          lintCommand: 'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
           useFlatConfig: true
         }
       })
@@ -54,9 +49,6 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
-    },
-    test: {
-      exclude: [...configDefaults.exclude, '**/dist/**']
     }
   }
 })

@@ -16,7 +16,7 @@ import {
 } from 'src/api/docs/archives'
 import { retrieveSchemas } from 'src/api/docs/schemas'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Archive, Filters, Pagination, Schema } from 'src/types'
+import type { Archive, Filter, Pagination, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -49,7 +49,7 @@ const formRef = ref<FormInstance>()
 const sectionRef = ref<InstanceType<typeof Section>>()
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Archive>>({
+const filter = reactive<Filter<Archive>>({
   title: { op: 'like', value: undefined }
 })
 
@@ -106,7 +106,7 @@ async function load() {
  * 加载列表
  */
 async function loadSchemas() {
-  const filter: Filters<Schema> = {
+  const filter: Filter<Schema> = {
     type: { op: 'eq', value: 'WORD' }
   }
   const res = await retrieveSchemas({ page: 1, size: 99 }, filter)

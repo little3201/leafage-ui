@@ -4,7 +4,7 @@ import type { TableInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/logs/audit-logs'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { AuditLog, Filters, Pagination } from 'src/types'
+import type { AuditLog, Filter, Pagination } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -23,7 +23,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const filter = reactive<Filters<AuditLog>>({
+const filter = reactive<Filter<AuditLog>>({
   module: { op: 'eq', value: undefined }
 })
 

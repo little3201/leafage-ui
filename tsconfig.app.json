@@ -4,11 +4,7 @@
     "src/**/*", 
     "src/**/*.ts", 
     "src/**/*.vue", 
-    "*.d.ts", 
-    "test/*.test.ts"
-  ],
-  "exclude": [
-    "src/**/__tests__/*"
+    "*.d.ts"
   ],
   "compilerOptions": {
     "composite": true,

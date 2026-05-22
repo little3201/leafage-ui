@@ -10,7 +10,7 @@ import {
   retrievePrivileges, retrievePrivilegeSubset
 } from 'src/api/system/privileges'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Dictionary, Filters, Pagination, Privilege } from 'src/types'
+import type { Dictionary, Filter, Pagination, Privilege } from 'src/types'
 import { exportToCSV, hasAction, visibleArray } from 'src/utils'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -36,7 +36,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Privilege>>({
+const filter = reactive<Filter<Privilege>>({
   name: { op: 'like', value: undefined }
 })
 

@@ -10,7 +10,7 @@ import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { createReport, fetchReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
 import { retrieveSchemas } from 'src/api/docs/schemas'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Filters, Pagination, Report, Schema } from 'src/types'
+import type { Filter, Pagination, Report, Schema } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -41,7 +41,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Report>>({
+const filter = reactive<Filter<Report>>({
   title: { op: 'like', value: undefined }
 })
 
@@ -101,7 +101,7 @@ async function load() {
  * 加载 schemas
  */
 async function loadSchemas() {
-  const filter: Filters<Schema> = {
+  const filter: Filter<Schema> = {
     type: { op: 'eq', value: 'EXCEL' }
   }
   const res = await retrieveSchemas({ page: 1, size: 99 }, filter)

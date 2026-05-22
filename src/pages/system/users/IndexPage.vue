@@ -6,7 +6,7 @@ import {
   createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser
 } from 'src/api/system/users'
 import { actionIcons, actionTypes, userStatus } from 'src/constants'
-import type { Filters, Pagination, User } from 'src/types'
+import type { Filter, Pagination, User } from 'src/types'
 import { exportToExcel, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -32,7 +32,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<User>>({
+const filter = reactive<Filter<User>>({
   username: { op: 'like', value: undefined }
 })
 

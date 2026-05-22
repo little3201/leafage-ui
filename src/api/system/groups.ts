@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filters, Group, Pagination } from 'src/types'
+import type { Filter, Group, Pagination } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,7 +9,7 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveGroups = (pagination: Pagination, filter?: Filters<Group>) => {
+export const retrieveGroups = (pagination: Pagination, filter?: Filter<Group>) => {
   const filters = dealFilters(filter)
   return api.get(SERVER_URL.GROUP, { params: { ...pagination, page: pagination.page - 1, filters } })
 }

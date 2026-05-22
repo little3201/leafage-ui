@@ -13,7 +13,7 @@ import {
   retrieveDictionarySubset
 } from 'src/api/system/dictionaries'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Dictionary, Filters, Pagination } from 'src/types'
+import type { Dictionary, Filter, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -44,7 +44,7 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filters<Dictionary>>({
+const filter = reactive<Filter<Dictionary>>({
   superiorId: { op: 'eq', value: null },
   name: { op: 'like', value: undefined }
 })

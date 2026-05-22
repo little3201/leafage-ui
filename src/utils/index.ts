@@ -1,19 +1,8 @@
-import { useUserStore } from 'src/stores/user'
-import type { Filters, PrivilegeTreeNode, Section } from 'src/types'
-import type { RouteRecordNameGeneric } from 'vue-router'
-import * as XLSX from 'xlsx'
+export * from './action'
+export * from './file'
+export * from './generate'
+export * from './request'
 
-/**
- * Resolve a child path relative to a parent path
- * @param {string} parentPath - The parent path
- * @param {string} path - The child path
- * @returns {string} - The resolved path
- */
-export function pathResolve(parentPath: string, path: string): string {
-  if (!path) return ''
-  const childPath = path.startsWith('/') ? path : `/${path}`
-  return `${parentPath}${childPath}`.replace(/\/\//g, '/').trim()
-}
 
 /**
  * Check if a value is a number
@@ -68,22 +57,6 @@ export function formatDuration(ms: number): string {
 }
 
 /**
- * Format a file size given in bytes into a human-readable string
- * @param {number} size - The file size in bytes
- * @returns {string} - The formatted file size
- */
-export function formatFileSize(size: number): string {
-  if (isNaN(size) || size <= 0) return '-'
-  const units = ['B', 'KB', 'MB', 'GB', 'TB']
-  let index = 0
-  while (size >= 1024 && index < units.length - 1) {
-    size /= 1024
-    index++
-  }
-  return `${size.toFixed(2)}${units[index]}`
-}
-
-/**
  * 数组截取、可展示数组长度
  * @param array 集合、数组
  * @param count 截取树
@@ -94,31 +67,6 @@ export function visibleArray<T extends string | number>(array: T[], count: numbe
     return array.length > count ? array.slice(0, count) : array
   }
   return []
-}
-
-/**
- * 下载
- * @param data 数据
- * @param filename 文件名
- * @param type 文件类型
- */
-export function download(data: Blob, filename: string, type?: string): void {
-  // 创建一个新的 Blob 对象，指定 MIME 类型
-  const blob = new Blob([data], { type: type || 'application/octet-stream' })
-
-  // 创建一个临时的下载链接
-  const url = globalThis.URL.createObjectURL(blob)
-
-  // 创建一个 <a> 元素并触发点击事件来启动下载
-  const link = document.createElement('a')
-  link.href = url
-  link.setAttribute('download', filename) // 设置下载的文件名
-  document.body.appendChild(link)
-  link.click() // 执行点击，触发下载
-  link.remove() // 清除临时元素
-
-  // 释放创建的 URL 对象
-  globalThis.URL.revokeObjectURL(url)
 }
 
 /**
@@ -140,166 +88,4 @@ export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[
 
     return acc
   }, {} as { [key: string]: T[] })
-}
-
-/**
- * 判断是否持有操作权限
- * @param page 页面路由
- * @param action 操作
- * @returns 是否持有操作权限
- */
-export function hasAction(page: RouteRecordNameGeneric, action: string) {
-  if (page) {
-    const privileges = useUserStore().privileges
-    const actions = findNodeByPath(privileges, page as string)
-
-    return actions.includes(action)
-  }
-  return false
-}
-
-/**
- * 导出excel
- * @param data 数据
- * @param fileName 
- */
-export function exportToExcel(data: object[], fileName: string, sheetName?: string) {
-  const ws = XLSX.utils.json_to_sheet(data)
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, sheetName && sheetName.length ? sheetName : 'Sheet1')
-
-  // 导出 Excel 文件
-  XLSX.writeFile(wb, fileName.replace(/\.[^/.]+$/, '') + '.xlsx')
-}
-
-/**
- * 导出csv
- * @param data 数据
- * @param fileName 
- */
-export function exportToCSV(data: object[], fileName: string) {
-  const ws = XLSX.utils.json_to_sheet(data)
-  const csv = XLSX.utils.sheet_to_csv(ws)
-
-  // 创建 Blob 对象并触发下载
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-  link.download = fileName.replace(/\.[^/.]+$/, '') + '.csv'
-
-  link.click()
-}
-
-// 递归查找权限节点
-function findNodeByPath(privileges: PrivilegeTreeNode[], name: string): string[] {
-  for (const node of privileges) {
-    if (node.name === name) {
-      return node.meta.actions || []
-    }
-    if (node.children) {
-      const result = findNodeByPath(node.children, name)
-      if (result.length > 0) return result
-    }
-  }
-  return []
-}
-
-export function dealFilters<T>(filters: Filters<T> | undefined): string | undefined {
-  if (!filters || Object.keys(filters).length === 0) {
-    return undefined
-  }
-
-  const conditions: string[] = []
-
-  // 使用 keyof T 来遍历，但因为是 Partial，所以要用 keyof typeof filters
-  for (const field in filters) {
-    const cond = filters[field]
-    if (!cond) continue
-
-    const { op, value } = cond
-
-    // 跳过无效值
-    if (value == null || value === '') {
-      continue
-    }
-
-    let valueStr: string
-
-    // 根据 op 处理 value 的字符串化方式
-    if (op === 'in' || op === 'notIn') {
-      // 假设 value 是数组类型（实际使用时应匹配实体字段类型）
-      valueStr = Array.isArray(value) ? value.join(',') : String(value)
-    } else if (op === 'between' || op === 'notBetween') {
-      // 假设 value 是 [any, any] 形式的数组
-      valueStr = Array.isArray(value) && value.length === 2
-        ? value.join(',')
-        : String(value)
-    } else {
-      valueStr = String(value).trim()
-    }
-
-    // 只在有有效值时加入
-    if (valueStr) {
-      conditions.push(`${field}:${op}:${valueStr}`)
-    }
-  }
-
-  return conditions.length > 0 ? conditions.join(',') : undefined
-}
-
-// 工具函数：根据父级章节递归生成编号
-export function generateNumbering(section: Section, numberingFormat: 'number' | 'alphabet', allSections: Section[]): string {
-  let prefix = ''
-
-  // 如果 level 为 null 或 undefined，设置默认值
-  const level = section.level ?? 1
-
-  if (numberingFormat === 'number') {
-    prefix = generateNumber(section, allSections, level)
-  } else if (numberingFormat === 'alphabet') {
-    prefix = generateAlphabet(section, allSections, level)
-  }
-
-  return `${prefix} ${section.name}`
-}
-
-function generateNumber(section: Section, allSections: Section[], level: number): string {
-  let numbering = ''
-  const parentSections = getParentSections(section, allSections)
-
-  parentSections.forEach((_, index) => {
-    numbering += (index + 1) + '.'
-  })
-
-  return numbering + level
-}
-
-function generateAlphabet(section: Section, allSections: Section[], level: number): string {
-  let alphabet = ''
-  const parentSections = getParentSections(section, allSections)
-
-  parentSections.forEach((_, index) => {
-    alphabet += String.fromCharCode(65 + index) + '.' // 从 A 开始
-  })
-
-  return alphabet + String.fromCharCode(65 + level - 1) // 当前章节的字母编号
-}
-
-/**
- * 获取父级章节（递归或通过superiorId查找）
- * @param section 当前章节
- * @param allSections 所有章节数据
- * @returns 父级章节数组
- */
-function getParentSections(section: Section, allSections: Section[]): Section[] {
-  const parentSections: Section[] = []
-  let currentSection = section
-
-  while (currentSection.superiorId !== null) {
-    // 获取父级章节
-    currentSection = allSections.find(s => s.id === currentSection.superiorId)!
-    parentSections.unshift(currentSection) // 逆序保存父级章节
-  }
-
-  return parentSections
 }

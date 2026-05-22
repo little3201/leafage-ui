@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import logo from 'assets/logo.svg'
 import EssentialList from 'components/EssentialList.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { signOut } from 'src/api/authentication'
-import logo from 'src/assets/logo.svg'
-import { useUserStore } from 'src/stores/user'
+import { useUserStore } from 'stores/user'
 import { useRouter } from 'vue-router'
 
 
