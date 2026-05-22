@@ -16,8 +16,6 @@ for (let i = 1; i < 28; i++) {
     size: Math.floor(Math.random() * 100000),
     path: '/path/to/test' + i,
     directory: false,
-    regularFile: true,
-    symbolicLink: false,
     lastModifiedDate: new Date()
   }
   datas.push(data)

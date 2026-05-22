@@ -1,8 +1,8 @@
 import { defineBoot } from '#q-app/wrappers'
 import { getUserInfo, signIn } from 'src/api/authentication'
-import { retrievePrivilegeTree } from 'src/api/privileges'
+import { retrievePrivilegeTree } from 'src/api/system/privileges'
+import { useUserStore } from 'src/stores/user'
 import type { PrivilegeTreeNode } from 'src/types'
-import { useUserStore } from 'stores/user-store'
 import type { RouteRecordRaw } from 'vue-router'
 
 

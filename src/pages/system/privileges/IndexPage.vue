@@ -133,12 +133,12 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { retrieveDictionarySubset } from 'src/api/dictionaries'
-import { enablePrivilege, fetchPrivilege, importPrivileges, modifyPrivilege, retrievePrivileges, retrievePrivilegeSubset } from 'src/api/privileges'
+import { retrieveDictionarySubset } from 'src/api/system/dictionaries'
+import { enablePrivilege, fetchPrivilege, importPrivileges, modifyPrivilege, retrievePrivileges, retrievePrivilegeSubset } from 'src/api/system/privileges'
 import { actions } from 'src/constants'
+import { useUserStore } from 'src/stores/user'
 import type { Dictionary, Filter, Pagination, Privilege } from 'src/types'
 import { exportTable, visibleArray } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 import SubPage from './SubPage.vue'
 

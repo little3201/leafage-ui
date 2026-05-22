@@ -89,7 +89,7 @@
 
 
 <script setup lang="ts">
-import { useUserStore } from 'stores/user-store'
+import { useUserStore } from 'src/stores/user'
 import { ref } from 'vue'
 
 import EssentialList from 'components/EssentialList.vue'

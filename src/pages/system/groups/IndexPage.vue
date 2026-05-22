@@ -109,10 +109,10 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { createGroup, enableGroup, fetchGroup, importGroups, modifyGroup, removeGroup, retrieveGroups } from 'src/api/groups'
+import { createGroup, enableGroup, fetchGroup, importGroups, modifyGroup, removeGroup, retrieveGroups } from 'src/api/system/groups'
+import { useUserStore } from 'src/stores/user'
 import type { Filter, Group, Pagination } from 'src/types'
 import { exportTable, visibleArray } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 
 

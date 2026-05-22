@@ -109,7 +109,7 @@
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { date } from 'quasar'
-import { fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/scheduler-logs'
+import { fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
 import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { Filter, Pagination, SchedulerLog } from 'src/types'
 import { exportTable, formatDuration } from 'src/utils'

@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn } from 'quasar'
-import { enablePrivilege, fetchPrivilege, modifyPrivilege, retrievePrivilegeSubset } from 'src/api/privileges'
+import { enablePrivilege, fetchPrivilege, modifyPrivilege, retrievePrivilegeSubset } from 'src/api/system/privileges'
 import { actions } from 'src/constants'
 import type { Dictionary, Privilege } from 'src/types'
 import { visibleArray } from 'src/utils'

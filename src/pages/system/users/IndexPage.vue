@@ -119,11 +119,11 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/users'
+import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/system/users'
 import { userStatus } from 'src/constants'
+import { useUserStore } from 'src/stores/user'
 import type { Filter, Pagination, User } from 'src/types'
 import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 
 

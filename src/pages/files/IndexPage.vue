@@ -172,8 +172,8 @@
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { date, format } from 'quasar'
 import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import { useUserStore } from 'src/stores/user'
 import type { FileRecord, Filter, Pagination } from 'src/types'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 
 
@@ -198,7 +198,8 @@ const initialValues: FileRecord = {
   superiorId: null,
   name: '',
   size: 0,
-  path: ''
+  path: '',
+  directory: false
 }
 const row = ref<FileRecord>({ ...initialValues })
 
@@ -307,13 +308,17 @@ function onSubmit() {
 }
 
 function onRowClick(evt: Event, row: FileRecord) {
+  if (!row.id) return
+
   if (row?.directory) {
     currentRowId.value = row.id
     if (row) {
       expandRows.value.push(row)
     }
+    // 设置 filter的superiorId为当前row的id
+    filter.superiorId!.value = row?.id
     refresh()
-  } else if (row?.regularFile && row.id) {
+  } else {
     void showRow(row.id)
   }
 }

@@ -114,7 +114,7 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/access-logs'
+import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/logs/access-logs'
 import { httpMethods } from 'src/constants'
 import type { AccessLog, Filter, Pagination } from 'src/types'
 import { exportTable, formatDuration } from 'src/utils'

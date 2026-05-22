@@ -9,10 +9,10 @@
 </template>
 
 <script setup lang="ts">
+import { handleCallback, signIn } from 'src/api/authentication'
+import { useUserStore } from 'src/stores/user'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from 'stores/user-store'
-import { signIn, handleCallback } from 'src/api/authentication'
 
 
 const router = useRouter()

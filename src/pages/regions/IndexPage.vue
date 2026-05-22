@@ -115,9 +115,9 @@ import {
   createRegion, enableRegion, fetchRegion, importRegions, modifyRegion,
   removeRegion, retrieveRegions, retrieveRegionSubset
 } from 'src/api/regions'
+import { useUserStore } from 'src/stores/user'
 import type { Filter, Pagination, Region, TreeNode } from 'src/types'
 import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 
 

@@ -5,7 +5,7 @@ import { i18n } from 'boot/i18n'
 import { Notify } from 'quasar'
 import { signIn } from 'src/api/authentication'
 import { SERVER_URL } from 'src/constants'
-import { useUserStore } from 'src/stores/user-store'
+import { useUserStore } from 'src/stores/user'
 import type { ComposerTranslation } from 'vue-i18n'
 
 

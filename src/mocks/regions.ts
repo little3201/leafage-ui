@@ -11,8 +11,8 @@ for (let i = 1; i < 34; i++) {
     id: i,
     name: 'region_' + i,
     superiorId: superiorId,
-    areaCode: Math.floor(Math.random() * 100).toString(),
-    postalCode: Math.floor(Math.random() * 3000).toString(),
+    areaCode: Math.floor(Math.random() * 100),
+    postalCode: Math.floor(Math.random() * 3000),
     enabled: i % 3 > 0,
     count: i,
     description: 'This is region description about xxx'

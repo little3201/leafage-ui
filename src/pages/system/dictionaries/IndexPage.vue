@@ -101,10 +101,10 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { createDictionary, enableDictionary, fetchDictionary, importDictionaries, modifyDictionary, retrieveDictionaries, retrieveDictionarySubset } from 'src/api/dictionaries'
+import { createDictionary, enableDictionary, fetchDictionary, importDictionaries, modifyDictionary, retrieveDictionaries, retrieveDictionarySubset } from 'src/api/system/dictionaries'
+import { useUserStore } from 'src/stores/user'
 import type { Dictionary, Filter, Pagination, TreeNode } from 'src/types'
 import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
 import { onMounted, reactive, ref } from 'vue'
 
 

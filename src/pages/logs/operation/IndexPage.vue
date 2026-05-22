@@ -107,7 +107,7 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/operation-logs'
+import { fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/logs/operation-logs'
 import type { Filter, OperationLog, Pagination } from 'src/types'
 import { exportTable, formatDuration } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'

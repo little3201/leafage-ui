@@ -11,8 +11,8 @@
 
         <q-card-section>
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('label.resource') }}</strong>
-              {{ row.resource }}
+            <p><strong>{{ $t('label.module') }}</strong>
+              {{ row.module }}
             </p>
             <p><strong>{{ $t('label.action') }}</strong>{{ row.action }}</p>
             <p>
@@ -51,7 +51,7 @@
       :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
       binary-state-sort @request="onRequest" class="full-width">
       <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter.resource!.value" placeholder="Search">
+        <q-input dense debounce="300" v-model="filter.module!.value" placeholder="Search">
           <template v-slot:append>
             <q-icon name="sym_r_search" />
           </template>
@@ -104,7 +104,7 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/audit-logs'
+import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/logs/audit-logs'
 import type { AuditLog, Filter, Pagination } from 'src/types'
 import { exportTable, formatDuration } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -115,7 +115,7 @@ const visible = ref<boolean>(false)
 const tableRef = ref<QTable>()
 const rows = ref<Array<AuditLog>>([])
 const filter = reactive<Filter<AuditLog>>({
-  resource: { op: 'eq', value: undefined },
+  module: { op: 'eq', value: undefined },
   action: { op: 'eq', value: undefined }
 })
 const loading = ref<boolean>(false)
@@ -123,7 +123,7 @@ const loading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: null,
   action: '',
-  resource: '',
+  module: '',
   ip: ''
 }
 const row = ref<AuditLog>({ ...initialValues })
@@ -139,7 +139,7 @@ const pagination = ref({
 const selected = ref([])
 
 const columns: QTableColumn<AuditLog>[] = [
-  { name: 'resource', label: 'resource', align: 'left', field: 'resource' },
+  { name: 'module', label: 'module', align: 'left', field: 'module' },
   { name: 'action', label: 'action', align: 'left', field: 'action' },
   { name: 'oldValue', label: 'oldValue', align: 'left', field: 'oldValue' },
   { name: 'newValue', label: 'newValue', align: 'center', field: 'newValue' },
