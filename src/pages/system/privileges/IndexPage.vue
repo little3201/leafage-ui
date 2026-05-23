@@ -5,7 +5,7 @@
       <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('page.privileges') }}</div>
+            <div class="text-h6">{{ $t('action.modify') }}</div>
           </q-card-section>
 
           <q-card-section>
@@ -133,16 +133,19 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { Notify } from 'quasar'
 import { retrieveDictionarySubset } from 'src/api/system/dictionaries'
 import { enablePrivilege, fetchPrivilege, importPrivileges, modifyPrivilege, retrievePrivileges, retrievePrivilegeSubset } from 'src/api/system/privileges'
 import { actions } from 'src/constants'
-import { useUserStore } from 'src/stores/user'
 import type { Dictionary, Filter, Pagination, Privilege } from 'src/types'
 import { exportTable, visibleArray } from 'src/utils'
+import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import SubPage from './SubPage.vue'
 
 
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
@@ -201,8 +204,6 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-
-
   const params: Pagination = { page, size: rowsPerPage }
   if (sortBy) {
     params.sortBy = sortBy
@@ -219,7 +220,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -234,12 +238,8 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  try {
-    await enablePrivilege(id)
-    refresh()
-  } catch (error) {
-    return error
-  }
+  await enablePrivilege(id)
+  refresh()
 }
 
 async function saveRow(id: number) {
@@ -251,7 +251,9 @@ async function saveRow(id: number) {
       form.value = res.data
       subset.value = subRes.data
     } catch (error) {
-      return error
+      form.value = { ...initialValues }
+      subset.value = []
+      throw error
     }
   }
   visible.value = true
@@ -261,10 +263,19 @@ async function onSubmit() {
   if (form.value.id) {
     try {
       await modifyPrivilege(form.value.id, form.value)
-      refresh()
       visible.value = false
+      Notify.create({
+        message: t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }),
+        type: 'positive',
+      })
+
+      refresh()
     } catch (error) {
-      return error
+      Notify.create({
+        message: t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }),
+        type: 'negative',
+      })
+      throw error
     }
   }
 }
@@ -276,10 +287,19 @@ async function onUpload(files: readonly File[]) {
   try {
     const res = await importPrivileges(files[0])
     importVisible.value = false
+    Notify.create({
+      message: t('message.success', { action: t('action.import') }),
+      type: 'positive',
+    })
+
     refresh()
     return res.data
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.import') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 </script>

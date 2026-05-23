@@ -108,14 +108,16 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { date } from 'quasar'
+import { date, Notify } from 'quasar'
 import { fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
 import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { Filter, Pagination, SchedulerLog } from 'src/types'
 import { exportTable, formatDuration } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const visible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
@@ -163,8 +165,6 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-
-
   const params: Pagination = { page, size: rowsPerPage }
   if (sortBy) {
     params.sortBy = sortBy
@@ -181,7 +181,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -197,7 +200,8 @@ async function showRow(id: number) {
     const res = await fetchSchedulerLog(id)
     row.value = res.data
   } catch (error) {
-    return error
+    row.value = { ...initialValues }
+    throw error
   }
   visible.value = true
 }
@@ -206,8 +210,16 @@ async function removeRow(id: number) {
   try {
     await removeSchedulerLog(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 </script>

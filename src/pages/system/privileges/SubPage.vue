@@ -97,13 +97,16 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn } from 'quasar'
+import { Notify } from 'quasar'
 import { enablePrivilege, fetchPrivilege, modifyPrivilege, retrievePrivilegeSubset } from 'src/api/system/privileges'
 import { actions } from 'src/constants'
 import type { Dictionary, Privilege } from 'src/types'
 import { visibleArray } from 'src/utils'
 import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const props = withDefaults(defineProps<{
   title: string
   superiorId: number | null
@@ -157,7 +160,8 @@ async function onRequest() {
       const res = await retrievePrivilegeSubset(props.superiorId)
       rows.value = res.data
     } catch (error) {
-      return error
+      rows.value = []
+      throw error
     } finally {
       loading.value = false
     }
@@ -169,12 +173,8 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  try {
-    await enablePrivilege(id)
-    refresh()
-  } catch (error) {
-    return error
-  }
+  await enablePrivilege(id)
+  refresh()
 }
 
 async function saveRow(id: number) {
@@ -185,7 +185,8 @@ async function saveRow(id: number) {
       const res = await fetchPrivilege(id)
       form.value = res.data
     } catch (error) {
-      return error
+      form.value = { ...initialValues }
+      throw error
     }
   }
   visible.value = true
@@ -195,10 +196,19 @@ async function onSubmit() {
   if (form.value.id) {
     try {
       await modifyPrivilege(form.value.id, form.value)
-      refresh()
       visible.value = false
+      Notify.create({
+        message: t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }),
+        type: 'positive',
+      })
+
+      refresh()
     } catch (error) {
-      return error
+      Notify.create({
+        message: t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }),
+        type: 'negative',
+      })
+      throw error
     }
   }
 }

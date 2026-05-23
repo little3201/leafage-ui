@@ -119,14 +119,17 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { Notify } from 'quasar'
 import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/system/users'
 import { userStatus } from 'src/constants'
-import { useUserStore } from 'src/stores/user'
 import type { Filter, Pagination, User } from 'src/types'
 import { exportTable } from 'src/utils'
+import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
@@ -174,8 +177,6 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-
-
   const params: Pagination = { page, size: rowsPerPage }
   if (sortBy) {
     params.sortBy = sortBy
@@ -192,7 +193,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -207,20 +211,24 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  try {
-    await enableUser(id)
-    refresh()
-  } catch (error) {
-    return error
-  }
+  await enableUser(id)
+  refresh()
 }
 
 async function unlockRow(id: number) {
   try {
     await unlockUser(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.unlock') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.unlock') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -231,21 +239,27 @@ async function saveRow(id?: number) {
       const res = await fetchUser(id)
       form.value = res.data
     } catch (error) {
-      return error
+      form.value = { ...initialValues }
+      throw error
     }
   }
   visible.value = true
 }
 
 async function removeRow(id: number) {
-  loading.value = true
   try {
     await removeUser(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
-  } finally {
-    loading.value = false
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -257,8 +271,18 @@ async function onSubmit() {
       await createUser(form.value)
     }
     visible.value = false
+    Notify.create({
+      message: t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'positive',
+    })
+
+    refresh()
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -269,10 +293,19 @@ async function onUpload(files: readonly File[]) {
   try {
     const res = await importUsers(files[0])
     importVisible.value = false
+    Notify.create({
+      message: t('message.success', { action: t('action.import') }),
+      type: 'positive',
+    })
+
     refresh()
     return res.data
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.import') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 </script>

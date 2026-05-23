@@ -170,13 +170,15 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { date, format } from 'quasar'
+import { date, format, Notify } from 'quasar'
 import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
-import { useUserStore } from 'src/stores/user'
 import type { FileRecord, Filter, Pagination } from 'src/types'
+import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const { humanStorageSize } = format
 const userStore = useUserStore()
 const visible = ref<boolean>(false)
@@ -230,7 +232,6 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-
   const params: Pagination = { page, size: rowsPerPage }
   if (sortBy) {
     params.sortBy = sortBy
@@ -248,7 +249,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -264,7 +268,8 @@ async function showRow(id: number | undefined) {
       const res = await fetchFile(id)
       row.value = res.data
     } catch (error) {
-      return error
+      row.value = { ...initialValues }
+      throw error
     }
   }
   visible.value = true
@@ -278,18 +283,38 @@ async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
     throw new Error('No file provided')
   }
-  const res = await uploadFile(files[0])
+  try {
+    const res = await uploadFile(files[0])
+    uploadVisible.value = false
+    Notify.create({
+      message: t('message.success', { action: t('action.import') }),
+      type: 'positive',
+    })
 
-  uploadVisible.value = false
-  refresh()
-  return res.data
+    refresh()
+    return res.data
+  } catch (error) {
+    Notify.create({
+      message: t('message.error', { action: t('action.import') }),
+      type: 'negative',
+    })
+    throw error
+  }
 }
 
 async function downloadRow(id: number) {
   try {
     await download(id)
+    Notify.create({
+      message: t('message.success', { action: t('action.download') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.download') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -297,8 +322,16 @@ async function removeRow(id: number) {
   try {
     await removeFile(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 

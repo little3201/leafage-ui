@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { handleCallback, signIn } from 'src/api/authentication'
-import { useUserStore } from 'src/stores/user'
+import { useUserStore } from 'stores/user'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 

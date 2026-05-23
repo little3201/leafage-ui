@@ -4,7 +4,8 @@
 export default {
   label: {
     no: '序號',
-    action: '操作',
+    title: '標題',
+    template: '模板',
     actions: '操作',
     name: '名稱',
     id: '主鍵',
@@ -56,7 +57,6 @@ export default {
     duration: '耗時',
     response: '響應',
     record: '日誌',
-    resource: '資源',
     targetId: '對象主鍵',
     oldValue: '舊值',
     newValue: '新值',
@@ -71,6 +71,7 @@ export default {
     size: '大小',
     length: '長度',
     contentType: '類型',
+    field: '屬性',
     fieldType: '屬性類型',
     formType: '表單類型',
     tsType: 'TS類型',
@@ -79,6 +80,7 @@ export default {
     queryable: '可查詢',
     queryType: '查詢類型',
     editable: '可編輯',
+    required: '是否必須',
     sortable: '可排序',
     tables: '表',
     scope: '範圍',
@@ -99,6 +101,8 @@ export default {
     filePath: '文件路徑',
     imports: '引用',
     attachment: '附件',
+    owner: '所有者',
+    all: '全部'
   },
 
   action: {
@@ -110,13 +114,12 @@ export default {
     submit: '提交',
     confirm: '確定',
     cancel: '取消',
-    create: '添加',
+    create: '創建',
     modify: '修改',
     details: '詳情',
     remove: '刪除',
     refresh: '刷新',
     children: '子級',
-    reset: '重置',
     clear: '清空',
     upload: '上傳',
     download: '下載',
@@ -133,11 +136,14 @@ export default {
     view: '視圖',
     save: '保存',
     goHome: '返回首頁',
-    signin: '登 錄',
-    signup: '註 冊',
+    signin: '登錄',
+    signup: '註冊',
     signout: '退出登錄',
     back: '返回',
-    continue: '繼續'
+    continue: '繼續',
+    data: '数据',
+    addItem: '新增項目',
+    section: '章節'
   },
 
   page: {
@@ -156,7 +162,7 @@ export default {
     connections: '連接',
     schemes: '方案',
     scripts: '腳本',
-    templates: '模板管理',
+    codes: '代碼',
     samples: '樣板',
     modules: '模板',
     fragments: '片段',
@@ -165,6 +171,11 @@ export default {
     accessLogs: '訪問紀錄',
     auditLogs: '審計日誌',
     schedulerLogs: '調度日誌',
+    docs: '文檔管理',
+    reports: '報告',
+    archives: '檔案',
+    schemas: '模板',
+    sections: '章節',
   },
 
   github: 'Github',
@@ -176,25 +187,27 @@ export default {
   placeholder: {
     inputText: '請輸入{field}',
     selectText: '請選擇{field}',
+    search: '請輸入關鍵詞',
     lengthRange: '長度在 {min} 到 {max} 個字元',
   },
 
   message: {
     selectedTotal: '已選擇 {total} 條',
-    removeConfirm: '是否確定要刪除這條數據？',
-    signinTo: '登錄您的帳戶',
-    alreadyExists: '數據已存在',
     forbidden: '您沒有訪問此資源的權限，請聯繫管理員。',
     notFound: '未找到您請求的資源。請檢查URL是否正確，或返回首頁。',
-    serverError: '系統內部錯誤。我們正在努力修復，請稍後再試！',
-    error: '請求無效。請檢查您的輸入或聯繫技術支援。',
+    success: '{action}成功。',
+    error: '{action}失敗！',
+    networkError: '網路錯誤或超時'
   },
 
   tips: {
+    signinTo: '登錄您的帳戶',
     drop2Here: '將檔案拖放到此處，或',
     click2Upload: '點擊上傳',
     fileSizeLimit: '檔案小於 {size}。',
 
+    removeConfirm: '是否確定要刪除這條數據？',
+    actionConfirm: '操作確認',
     welcome: '嗨！歡迎回來',
     subtitle: '請填寫您的帳號和密碼，讓我們繼續探索',
     forgotPassword: '忘記密碼 ？'

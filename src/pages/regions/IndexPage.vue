@@ -5,7 +5,7 @@
       <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('page.regions') }}</div>
+            <div class="text-h6">{{ form.id ? $t('action.modify') : $t('action.create') }}</div>
           </q-card-section>
 
           <q-card-section>
@@ -111,16 +111,19 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { Notify } from 'quasar'
 import {
   createRegion, enableRegion, fetchRegion, importRegions, modifyRegion,
   removeRegion, retrieveRegions, retrieveRegionSubset
 } from 'src/api/regions'
-import { useUserStore } from 'src/stores/user'
 import type { Filter, Pagination, Region, TreeNode } from 'src/types'
 import { exportTable } from 'src/utils'
+import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
@@ -183,7 +186,6 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-
   const params: Pagination = { page, size: rowsPerPage }
   if (sortBy) {
     params.sortBy = sortBy
@@ -201,7 +203,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -227,7 +232,6 @@ async function onLazyLoad({ node, key, done }: { node: TreeNode, key: string, do
     })))
     refresh()
   }
-
 }
 
 function importRow() {
@@ -239,12 +243,8 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  try {
-    await enableRegion(id)
-    refresh()
-  } catch (error) {
-    return error
-  }
+  await enableRegion(id)
+  refresh()
 }
 
 async function saveRow(id?: number) {
@@ -256,20 +256,26 @@ async function saveRow(id?: number) {
       form.value = res.data
     }
   } catch (error) {
-    return error
+    form.value = { ...initialValues }
+    throw error
   }
   visible.value = true
 }
 
 async function removeRow(id: number) {
-  loading.value = true
   try {
     await removeRegion(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
-  } finally {
-    loading.value = false
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -283,8 +289,18 @@ async function onSubmit() {
       await createRegion(form.value)
     }
     visible.value = false
+    Notify.create({
+      message: t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'positive',
+    })
+
+    refresh()
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -295,10 +311,19 @@ async function onUpload(files: readonly File[]) {
   try {
     const res = await importRegions(files[0])
     importVisible.value = false
+    Notify.create({
+      message: t('message.success', { action: t('action.import') }),
+      type: 'positive',
+    })
+
     refresh()
     return res.data
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.import') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 </script>
