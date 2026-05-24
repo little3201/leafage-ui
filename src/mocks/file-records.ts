@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { FileRecord } from 'src/types'
+import { applyFilters } from './util'
 
 const datas: FileRecord[] = [
 ]
@@ -9,13 +10,12 @@ for (let i = 1; i < 28; i++) {
   const randomIndex = Math.floor(Math.random() * 6)
   const data: FileRecord = {
     id: i,
-    name: 'file_name_' + i + (i % 3 > 0 ? '.zip' : '.jpg'),
-    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || 'unknown',
+    superiorId: Math.floor(Math.random() * 6) || null,
+    name: 'file_name_' + i + ['.jpg', '.png', '.pdf', '.zip', '.txt', '.gif'][randomIndex] || '',
+    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/octet-stream', 'image/gif'][randomIndex] || 'unknown',
     size: Math.floor(Math.random() * 100000),
     path: '/path/to/test' + i,
     directory: false,
-    regularFile: true,
-    symbolicLink: false,
     lastModifiedDate: new Date()
   }
   datas.push(data)
@@ -34,11 +34,15 @@ export const fileRecordsHandlers = [
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
+
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: datas.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
-      totalElements: datas.length
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      totalElements: filtered.length
     }
 
     return HttpResponse.json(data)

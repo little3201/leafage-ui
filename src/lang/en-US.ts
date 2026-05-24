@@ -4,7 +4,8 @@
 export default {
   label: {
     no: 'NO.',
-    action: 'Action',
+    title: 'Title',
+    template: 'Schema',
     actions: 'Actions',
     name: 'Name',
     id: 'ID',
@@ -37,6 +38,8 @@ export default {
     httpMethod: 'Http Method',
     url: 'URL',
     params: 'Params',
+    key: 'Key',
+    value: 'Value',
     body: 'Body',
     request: {
       body: 'Request Body',
@@ -54,7 +57,6 @@ export default {
     duration: 'Duration',
     response: 'Response',
     record: 'Record',
-    resource: 'Resource',
     targetId: 'Target ID',
     oldValue: 'Old Value',
     newValue: 'New Value',
@@ -69,6 +71,7 @@ export default {
     size: 'Size',
     length: 'Leng',
     contentType: 'Content Type',
+    field: 'Field',
     fieldType: 'Field Type',
     formType: 'Form Type',
     tsType: 'TS Type',
@@ -77,6 +80,7 @@ export default {
     queryable: 'Queryable',
     queryType: 'Query Type',
     editable: 'Editable',
+    required: 'Required',
     sortable: 'Sortable',
     tables: 'Tables',
     scope: 'Scope',
@@ -96,6 +100,9 @@ export default {
     language: 'Language',
     filePath: 'File Path',
     imports: 'Imports',
+    attachment: 'Attachment',
+    owner: 'Owner',
+    all: 'All'
   },
 
   action: {
@@ -113,7 +120,6 @@ export default {
     remove: 'Remove',
     refresh: 'Refresh',
     children: 'Children',
-    reset: 'Reset',
     clear: 'Clear',
     upload: 'Upload',
     download: 'Download',
@@ -133,6 +139,11 @@ export default {
     signin: 'Sign In',
     signup: 'Sign Up',
     signout: 'Sign Out',
+    back: 'Back',
+    continue: 'Continue',
+    data: 'Data',
+    addItem: 'Add Item',
+    section: 'Section'
   },
 
   page: {
@@ -144,12 +155,12 @@ export default {
     users: 'Users',
     dictionaries: 'Dictionaries',
     regions: 'Regions',
-
+    faq: 'FAQ',
     files: 'Files',
     profile: 'Profile',
     exploiters: 'Exploiters',
     connections: 'Connections',
-    templates: 'Templates',
+    codes: 'Codes',
     schemes: 'Schemes',
     modules: 'Modules',
     fragments: 'Fragments',
@@ -160,6 +171,11 @@ export default {
     accessLogs: 'Access Log',
     auditLogs: 'Audit Log',
     schedulerLogs: 'Scheduler Log',
+    docs: 'Docs',
+    reports: 'Reports',
+    archives: 'Archives',
+    schemas: 'Schemas',
+    sections: 'Sections',
   },
 
   github: 'Github',
@@ -171,25 +187,25 @@ export default {
   placeholder: {
     inputText: 'Please input {field}',
     selectText: 'Please select {field}',
+    search: 'Please input keywords',
     lengthRange: 'The length must between {min} and {max}',
   },
 
   message: {
     selectedTotal: '{total} items selected',
-    removeConfirm: 'Are you sure to delete this?',
-    signinTo: 'Sign in to your account',
-    alreadyExists: 'The data already exists',
-    forbidden: 'You don\'t have permission to access this resource, please contact the administrator.',
-    notFound: 'The resource not be found. Please check if the URL is correct or return to the homepage.',
-    serverError: 'Internal server error. We are working hard to fix it. Please try again later!',
-    error: 'Invalid request. Please check your input or contact technical support.',
+    success: '{action} successful.',
+    error: '{action} failed!',
+    networkError: 'Network Error.'
   },
 
   tips: {
+    signinTo: 'Sign in to your account',
     drop2Here: 'Drop file here or ',
     click2Upload: 'click to upload',
     fileSizeLimit: 'File with a size less than {size}.',
 
+    removeConfirm: 'Are you sure you want to delete the data?',
+    actionConfirm: 'Action Confirm',
     welcome: 'Hi! Welcome Back.',
     subtitle: 'Please sign in to continue exploring.',
     forgotPassword: 'Forgot The Password ?'

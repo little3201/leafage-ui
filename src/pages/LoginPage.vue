@@ -20,7 +20,7 @@
         <figure class="absolute bg-negative-gradient"
           style="height: 21em;  width: 21em; bottom: -16em; left: 14em; border-radius: 50%;" />
 
-        <q-card bordered class="row justify-center items-center q-col-gutter-x-xl shadow-12 overflow-hidden"
+        <q-card bordered class="row justify-center items-center shadow-12 overflow-hidden"
           style="height: 60vh; border-radius: 20px;" :style="{ width: $q.screen.lt.sm ? '100%' : '60vw' }">
           <q-card-section horizontal :class="[$q.screen.lt.md ? 'hidden' : 'col-6']">
             <transition appear enter-active-class="animated slideInLeft" leave-active-class="animated slideOutLeft">
@@ -48,7 +48,7 @@
                 <div class="text-h6 text-center q-mb-xs">
                   {{ $t('message.signinTo') }}
                 </div>
-                <q-form @submit="onSubmit" class="q-mt-md q-px-xl" style="width: 600px;">
+                <q-form @submit="onSubmit" class="full-width q-mt-md q-px-xl">
                   <q-input :disable="loading" dense no-error-icon v-model.trim="form.username"
                     :placeholder="$t('label.username')"
                     :rules="[(val) => (val && val.length >= 5 && val.length <= 12) || $t('label.username')]">

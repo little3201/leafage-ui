@@ -1,10 +1,10 @@
 <template>
   <q-page padding>
     <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em">
+      <q-card style="width: 34em;">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('page.users') }}</div>
+            <div class="text-h6">{{ form.id ? $t('action.modify') : $t('action.create') }}</div>
           </q-card-section>
 
           <q-card-section>
@@ -19,6 +19,8 @@
               :rules="[(val, rules) => rules.email(val) || $t('placeholder.inputText')]" />
           </q-card-section>
 
+          <q-separator />
+
           <q-card-actions align="right">
             <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
             <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
@@ -27,19 +29,21 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.users')" selection="multiple" v-model:selected="selected" :rows="rows"
-      :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter.username" placeholder="Search">
-          <template v-slot:append>
+    <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
+      row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+      @request="onRequest" class="full-width">
+      <template v-slot:top-left>
+        <q-input dense debounce="300" filled v-model="filter.username!.value" placeholder="Search">
+          <template v-slot:prepend>
             <q-icon name="sym_r_search" />
           </template>
         </q-input>
-        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
-          @click="saveRow()" />
         <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
           icon="sym_r_refresh" @click="refresh" />
+      </template>
+      <template v-slot:top-right>
+        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
+          @click="saveRow()" />
         <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
           icon="sym_r_database_upload" @click="importRow" />
         <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
@@ -59,7 +63,7 @@
         <q-td :props="props">
           <div class="row items-center">
             <q-avatar size="32px">
-              <img alt="avatar" :src="`https://cdn.leafage.top//${props.row.username}`" />
+              <img alt="avatar" :src="`https://cdn.leafage.top/${props.row.username}`" />
             </q-avatar>
             <div class="column q-ml-sm">
               <span class="text-subtitle">
@@ -72,8 +76,8 @@
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-badge :color="props.row.nullable ? 'positive' : 'primary'" rounded class="q-mr-sm" />
-          {{ props.row.nullable ? 'Y' : 'N' }}
+          <q-badge :color="userStatus[props.row.status]" rounded class="q-mr-sm" />
+          {{ props.row.status }}
         </q-td>
       </template>
       <template v-slot:body-cell-enabled="props">
@@ -115,13 +119,17 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/users'
-import type { User } from 'src/types'
+import { Notify } from 'quasar'
+import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/system/users'
+import { userStatus } from 'src/constants'
+import type { Filter, Pagination, User } from 'src/types'
 import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
-import { onMounted, ref } from 'vue'
+import { useUserStore } from 'stores/user'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
@@ -129,8 +137,8 @@ const importVisible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
 const rows = ref<Array<User>>([])
-const filter = ref({
-  username: ''
+const filter = reactive<Filter<User>>({
+  username: { op: 'like', value: undefined }
 })
 const loading = ref<boolean>(false)
 
@@ -144,7 +152,7 @@ const initialValues: User = {
 const form = ref<User>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: true,
   page: 1,
   rowsPerPage: 7,
@@ -169,12 +177,14 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
-
-  const params = { page, size: rowsPerPage, sortBy, descending }
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
   try {
-    const res = await retrieveUsers({ ...params }, filter)
+    const res = await retrieveUsers(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -183,7 +193,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -198,20 +211,24 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  try {
-    await enableUser(id)
-    refresh()
-  } catch (error) {
-    return error
-  }
+  await enableUser(id)
+  refresh()
 }
 
 async function unlockRow(id: number) {
   try {
     await unlockUser(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.unlock') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.unlock') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -222,21 +239,27 @@ async function saveRow(id?: number) {
       const res = await fetchUser(id)
       form.value = res.data
     } catch (error) {
-      return error
+      form.value = { ...initialValues }
+      throw error
     }
   }
   visible.value = true
 }
 
 async function removeRow(id: number) {
-  loading.value = true
   try {
     await removeUser(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
-  } finally {
-    loading.value = false
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -248,8 +271,18 @@ async function onSubmit() {
       await createUser(form.value)
     }
     visible.value = false
+    Notify.create({
+      message: t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'positive',
+    })
+
+    refresh()
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -260,10 +293,19 @@ async function onUpload(files: readonly File[]) {
   try {
     const res = await importUsers(files[0])
     importVisible.value = false
+    Notify.create({
+      message: t('message.success', { action: t('action.import') }),
+      type: 'positive',
+    })
+
     refresh()
     return res.data
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.import') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 </script>

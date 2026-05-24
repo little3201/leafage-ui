@@ -46,7 +46,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered :width="220">
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :width="240">
       <q-list>
         <q-item exact to="/">
           <q-item-section side>
@@ -89,7 +89,7 @@
 
 
 <script setup lang="ts">
-import { useUserStore } from 'stores/user-store'
+import { useUserStore } from 'stores/user'
 import { ref } from 'vue'
 
 import EssentialList from 'components/EssentialList.vue'

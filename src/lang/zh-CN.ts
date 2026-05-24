@@ -4,7 +4,8 @@
 export default {
   label: {
     no: '序号',
-    action: '操作',
+    title: '标题',
+    template: '模板',
     actions: '操作',
     name: '名称',
     id: '主键',
@@ -37,6 +38,8 @@ export default {
     httpMethod: 'Http方法',
     url: '接口',
     params: '参数',
+    key: '键',
+    value: '值',
     body: '内容',
     request: {
       body: '请求体',
@@ -54,7 +57,6 @@ export default {
     duration: '耗时',
     record: '日志',
     response: '响应',
-    resource: '资源',
     targetId: '对象主键',
     oldValue: '旧值',
     newValue: '新值',
@@ -69,6 +71,7 @@ export default {
     size: '大小',
     length: '长度',
     contentType: '类型',
+    field: '属性',
     fieldType: '属性类型',
     formType: '表单类型',
     tsType: 'TS类型',
@@ -77,6 +80,7 @@ export default {
     queryable: '可查询',
     queryType: '查询类型',
     editable: '可编辑',
+    required: '是否必须',
     sortable: '可排序',
     tables: '表',
     scope: '范围',
@@ -96,6 +100,9 @@ export default {
     language: '语言',
     filePath: '文件路径',
     imports: '引用',
+    attachment: '附件',
+    owner: '所有者',
+    all: '全部'
   },
 
   action: {
@@ -107,18 +114,17 @@ export default {
     submit: '提交',
     confirm: '确定',
     cancel: '取消',
-    create: '添加',
+    create: '创建',
     modify: '修改',
     details: '详情',
     remove: '删除',
     refresh: '刷新',
     children: '子级',
-    reset: '重置',
     clear: '清空',
     upload: '上传',
     download: '下载',
     config: '配置',
-    fields: '属性',
+    field: '属性',
     execute: '执行',
     sync: '同步',
     preview: '预览',
@@ -130,9 +136,14 @@ export default {
     view: '视图',
     save: '保存',
     goHome: '返回首页',
-    signin: '登 录',
-    signup: '注 册',
+    signin: '登录',
+    signup: '注册',
     signout: '退出登录',
+    back: '返回',
+    continue: '继续',
+    data: '数据',
+    addItem: '添加项目',
+    section: '章节'
   },
 
   page: {
@@ -144,13 +155,13 @@ export default {
     users: '用户',
     dictionaries: '字典',
     regions: '行政区划',
-
+    faq: '常见问题',
     files: '文件管理',
     exploiters: '开发工具',
     connections: '连接',
     schemes: '方案',
     scripts: '脚本',
-    templates: '模板管理',
+    codes: '代码',
     samples: '样板',
     modules: '模块',
     fragments: '片段',
@@ -160,6 +171,11 @@ export default {
     accessLogs: '访问日志',
     auditLogs: '审计日志',
     schedulerLogs: '调度日志',
+    docs: '文档管理',
+    reports: '报告',
+    archives: '档案',
+    schemas: '模板',
+    sections: '章节',
   },
 
   github: 'Github',
@@ -171,25 +187,25 @@ export default {
   placeholder: {
     inputText: '请输入{field}',
     selectText: '请选择{field}',
+    search: '请输入关键词',
     lengthRange: '长度在 {min} 到 {max} 个字符',
   },
 
   message: {
     selectedTotal: '已选择 {total} 条',
-    removeConfirm: '是否确定要删除这条数据？',
-    signinTo: '登录您的帐户',
-    alreadyExists: '数据已存在',
-    forbidden: '您没有访问此资源的权限，请联系管理员。',
-    notFound: '未找到您请求的资源。请检查URL是否正确，或返回首页。',
-    serverError: '系统内部错误。我们正在努力修复，请稍后再试！',
-    error: '请求无效。请检查您的输入或联系技术支持。',
+    success: '{action}成功。',
+    error: '{action}失败！',
+    networkError: '网络错误或超时'
   },
 
   tips: {
+    signinTo: '登录您的帐户',
     drop2Here: '将文件拖放到此处，或',
     click2Upload: '点击上传',
     fileSizeLimit: '文件小于 {size}。',
 
+    removeConfirm: '是否确定要删除这条数据？',
+    actionConfirm: '操作确认',
     welcome: '嗨！欢迎回来',
     subtitle: '请填写您的账号和密码，让我们继续探索',
     forgotPassword: '忘记密码 ？'

@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Pagination, Region } from 'src/types'
+import type { Filter, Pagination, Region } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,10 +9,8 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveRegions = (pagination: Pagination, filters?: object | string) => {
-  if (filters) {
-    filters = dealFilters(filters)
-  }
+export const retrieveRegions = (pagination: Pagination, filter?: Filter<Region>) => {
+  const filters = dealFilters(filter)
   return api.get(SERVER_URL.REGION, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
@@ -21,8 +19,8 @@ export const retrieveRegions = (pagination: Pagination, filters?: object | strin
  * @param id Row ID
  * @returns Subset data
  */
-export const retrieveRegionSubset = (id: number) => {
-  return api.get(`${SERVER_URL.REGION}/${id}/subset`)
+export const retrieveRegionSubset = (id: number | null) => {
+  return api.get(`${SERVER_URL.REGION}/subset`, { params: { id } })
 }
 
 /**

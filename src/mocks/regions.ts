@@ -1,43 +1,40 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
 import type { Region } from 'src/types'
+import { applyFilters } from './util'
 
 const datas: Region[] = []
-const subDatas: Region[] = []
 
 for (let i = 1; i < 34; i++) {
+  const superiorId = Math.floor(Math.random() * 12) || null
   const data: Region = {
     id: i,
     name: 'region_' + i,
-    superiorId: null,
-    areaCode: Math.floor(Math.random() * 100).toString(),
-    postalCode: Math.floor(Math.random() * 3000).toString(),
+    superiorId: superiorId,
+    areaCode: Math.floor(Math.random() * 100),
+    postalCode: Math.floor(Math.random() * 3000),
     enabled: i % 3 > 0,
+    count: i,
     description: 'This is region description about xxx'
   }
-  for (let j = 1; j < i; j++) {
-    const subData: Region = {
-      id: 100 + j,
-      name: 'region_' + i + '_' + j,
-      superiorId: i,
-      areaCode: Math.floor(Math.random() * 1000).toString(),
-      postalCode: Math.floor(Math.random() * 3000) + j * 100 + '',
-      enabled: j % 2 > 0,
-      description: 'This is region description about xxx'
-    }
-    subDatas.push(subData)
-  }
+
   datas.push(data)
 }
 
 export const regionsHandlers = [
+  http.get(`/api${SERVER_URL.REGION}/subset`, ({ request }) => {
+    const searchParams = new URL(request.url).searchParams
+    const id = searchParams.get('id')
+    if (id) {
+      return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
+    } else {
+      return HttpResponse.json(datas.filter(item => item.superiorId === null))
+    }
+  }),
   http.get(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
-      let res = datas.find(item => item.id === Number(id))
-      if (!res) {
-        res = subDatas.find(item => item.id === Number(id))
-      }
+      const res = datas.find(item => item.id === Number(id))
       return HttpResponse.json(res)
     } else {
       return HttpResponse.json()
@@ -47,15 +44,13 @@ export const regionsHandlers = [
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
+
     // Construct a JSON response with the list of all Row
     // as the response body.
-    let filtered = []
-    const superiorId = url.searchParams.get('superiorId')
-    if (superiorId) {
-      filtered = subDatas.filter(item => item.superiorId === Number(superiorId))
-    } else {
-      filtered = datas
-    }
+
     const data = {
       content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
       totalElements: datas.length

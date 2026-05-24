@@ -2,14 +2,20 @@
   <q-page padding>
 
     <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em">
+      <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ $t('page.regions') }}</div>
+            <div class="text-h6">{{ form.id ? $t('action.modify') : $t('action.create') }}</div>
           </q-card-section>
 
           <q-card-section>
             <q-input outlined dense v-model="form.name" :label="$t('label.name')" lazy-rules
+              :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
+
+            <q-input outlined dense v-model="form.postalCode" :label="$t('label.postalCode')" lazy-rules
+              :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
+
+            <q-input outlined dense v-model="form.areaCode" :label="$t('label.areaCode')" lazy-rules
               :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
 
             <q-input outlined dense v-model="form.description" :label="$t('label.description')" type="textarea" />
@@ -24,61 +30,67 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.regions')" selection="multiple" v-model:selected="selected"
-      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="sym_r_search" />
+    <div class="row q-gutter-md">
+      <div class="col-3">
+        <q-card flat>
+          <q-card-section>
+            <q-tree :nodes="treeDatas" node-key="id" label-key="name" v-model:selected="treeSelected"
+              @update:selected="refresh()" @lazy-load="onLazyLoad" />
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col">
+        <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
+          row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+          @request="onRequest" class="full-width">
+          <template v-slot:top-left>
+            <q-input dense debounce="300" filled v-model="filter.name!.value" placeholder="Search">
+              <template v-slot:prepend>
+                <q-icon name="sym_r_search" />
+              </template>
+            </q-input>
+            <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
+              icon="sym_r_refresh" @click="refresh" />
           </template>
-        </q-input>
-        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
-          @click="saveRow()" />
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
-        <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_database_upload" @click="importRow" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
-          @click="exportTable(columns, rows)" />
-      </template>
+          <template v-slot:top-right>
+            <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
+              @click="saveRow()" />
+            <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
+              icon="sym_r_database_upload" @click="importRow" />
+            <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
+              @click="exportTable(columns, rows)" />
+          </template>
 
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(`label.${col.label}`) }}
-          </q-th>
-        </q-tr>
-      </template>
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th v-for="col in props.cols" :key="col.name" :props="props">
+                {{ $t(`label.${col.label}`) }}
+              </q-th>
+            </q-tr>
+          </template>
 
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-btn title="expand" round flat dense @click="props.expand = !props.expand"
-              :icon="props.expand ? 'sym_r_keyboard_arrow_down' : 'sym_r_keyboard_arrow_right'" />
-          </q-td>
-          <q-td v-for="col in props.cols" :key="col.name">
-            <div v-if="col.name === 'id'" class="text-right">
-              <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-                @click="saveRow(props.row.id)" />
-              <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-                @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
-            </div>
-            <div v-else-if="col.name === 'enabled'" class="text-center">
-              <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
-                color="positive" />
-            </div>
-            <span v-else>{{ col.value }}</span>
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%" class="q-pr-none">
-            <sub-page v-if="props.expand" :title="props.row.name" :superior-id="props.row.id" />
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
+          <template v-slot:body="props">
+            <q-tr :props="props">
+
+              <q-td v-for="col in props.cols" :key="col.name">
+                <div v-if="col.name === 'id'" class="text-right">
+                  <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
+                    @click="saveRow(props.row.id)" />
+                  <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
+                    @click="removeRow(props.row.id)" class="q-mt-none q-ml-sm" />
+                </div>
+                <div v-else-if="col.name === 'enabled'" class="text-center">
+                  <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
+                    color="positive" />
+                </div>
+                <span v-else>{{ col.value }}</span>
+              </q-td>
+            </q-tr>
+
+          </template>
+        </q-table>
+      </div>
+    </div>
 
     <!-- import -->
     <q-dialog v-model="importVisible" persistent>
@@ -101,23 +113,35 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { createRegion, enableRegion, fetchRegion, importRegions, modifyRegion, removeRegion, retrieveRegions } from 'src/api/regions'
-import type { Region } from 'src/types'
+import { Notify } from 'quasar'
+import {
+  createRegion, enableRegion, fetchRegion, importRegions, modifyRegion,
+  removeRegion, retrieveRegions, retrieveRegionSubset
+} from 'src/api/regions'
+import type { Filter, Pagination, Region, TreeNode } from 'src/types'
 import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
-import { onMounted, ref } from 'vue'
-import SubPage from './SubPage.vue'
+import { useUserStore } from 'stores/user'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const userStore = useUserStore()
 
 const visible = ref<boolean>(false)
 const importVisible = ref<boolean>(false)
 
+const treeSelected = ref('')
+const treeDatas = ref<Array<TreeNode>>([])
+
 const tableRef = ref<QTable>()
 const rows = ref<Array<Region>>([])
-const filter = ref('')
+const filter = reactive<Filter<Region>>({
+  superiorId: { op: 'eq', value: null },
+  name: { op: 'like', value: undefined }
+})
 const loading = ref<boolean>(false)
+
 
 const initialValues: Region = {
   id: null,
@@ -128,7 +152,7 @@ const initialValues: Region = {
 const form = ref<Region>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: false,
   page: 1,
   rowsPerPage: 7,
@@ -146,8 +170,20 @@ const columns: QTableColumn<Region>[] = [
   { name: 'id', label: 'actions', field: 'id' }
 ]
 
-onMounted(() => {
+onMounted(async () => {
   refresh()
+
+  try {
+    const res = await retrieveRegionSubset(null)
+    treeDatas.value = res.data.map((item: Region) => ({
+      id: item.id!,
+      name: item.name,
+      lazy: (item.count ?? 0) > 0
+    }))
+  } catch (error) {
+    treeDatas.value = []
+    throw error
+  }
 })
 
 /**
@@ -157,12 +193,15 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
-  const params = { page, size: rowsPerPage, sortBy, descending }
-
+  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
   try {
-    const res = await retrieveRegions({ ...params }, filter)
+    const res = await retrieveRegions(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -171,9 +210,34 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
+  }
+}
+
+/**
+ * lazy load children nodes
+ * @param node current node
+ * @param key node key, which is the id of region in this case
+ */
+async function onLazyLoad({ node, key, done }: { node: TreeNode, key: string, done: (children?: readonly TreeNode[]) => void }) {
+  if (!key) {
+    done([])
+    return
+  }
+
+  if (node.id) {
+    const res = await retrieveRegionSubset(node.id)
+    done(res.data.map((item: Region) => ({
+      id: item.id!,
+      name: item.name,
+      lazy: (item.count ?? 0) > 0
+    })))
+    refresh()
   }
 }
 
@@ -186,12 +250,8 @@ function refresh() {
 }
 
 async function enableRow(id: number) {
-  try {
-    await enableRegion(id)
-    refresh()
-  } catch (error) {
-    return error
-  }
+  await enableRegion(id)
+  refresh()
 }
 
 async function saveRow(id?: number) {
@@ -203,20 +263,26 @@ async function saveRow(id?: number) {
       form.value = res.data
     }
   } catch (error) {
-    return error
+    form.value = { ...initialValues }
+    throw error
   }
   visible.value = true
 }
 
 async function removeRow(id: number) {
-  loading.value = true
   try {
     await removeRegion(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
-  } finally {
-    loading.value = false
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -225,11 +291,23 @@ async function onSubmit() {
     if (form.value.id) {
       await modifyRegion(form.value.id, form.value)
     } else {
+      // create region, set superiorId to null if treeSelected is empty
+      form.value.superiorId = treeSelected.value ? Number(treeSelected.value) : null
       await createRegion(form.value)
     }
     visible.value = false
+    Notify.create({
+      message: t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'positive',
+    })
+
+    refresh()
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -240,10 +318,19 @@ async function onUpload(files: readonly File[]) {
   try {
     const res = await importRegions(files[0])
     importVisible.value = false
+    Notify.create({
+      message: t('message.success', { action: t('action.import') }),
+      type: 'positive',
+    })
+
     refresh()
     return res.data
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.import') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 </script>

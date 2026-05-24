@@ -52,17 +52,19 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.accessLogs')" selection="multiple" v-model:selected="selected"
-      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
+    <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
+      row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+      @request="onRequest" class="full-width">
+      <template v-slot:top-left>
+        <q-input dense debounce="300" filled v-model="filter.url!.value" placeholder="Search">
+          <template v-slot:prepend>
             <q-icon name="sym_r_search" />
           </template>
         </q-input>
         <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
           icon="sym_r_refresh" @click="refresh" />
+      </template>
+      <template v-slot:top-right>
         <q-btn title="clear" round padding="xs" flat color="negative" class="q-mx-sm" icon="sym_r_clear_all" />
         <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
           @click="exportTable(columns, rows)" />
@@ -114,18 +116,24 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/access-logs'
+import { Notify } from 'quasar'
+import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/logs/access-logs'
 import { httpMethods } from 'src/constants'
-import type { AccessLog } from 'src/types'
+import type { AccessLog, Filter, Pagination } from 'src/types'
 import { exportTable, formatDuration } from 'src/utils'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
 const visible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
 const rows = ref<Array<AccessLog>>([])
-const filter = ref('')
+const filter = reactive<Filter<AccessLog>>({
+  url: { op: 'eq', value: undefined },
+  statusCode: { op: 'eq', value: undefined }
+})
 const loading = ref<boolean>(false)
 
 const initialValues: AccessLog = {
@@ -137,7 +145,7 @@ const initialValues: AccessLog = {
 const row = ref<AccessLog>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: true,
   page: 1,
   rowsPerPage: 7,
@@ -168,12 +176,14 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const filter = props.filter
-
-  const params = { page, size: rowsPerPage, sortBy, descending }
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
   try {
-    const res = await retrieveAccessLogs({ ...params }, filter)
+    const res = await retrieveAccessLogs(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -182,7 +192,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -197,7 +210,8 @@ async function showRow(id: number) {
     const res = await fetchAccessLog(id)
     row.value = res.data
   } catch (error) {
-    return error
+    row.value = { ...initialValues }
+    throw error
   }
   visible.value = true
 }
@@ -206,8 +220,16 @@ async function removeRow(id: number) {
   try {
     await removeAccessLog(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 </script>

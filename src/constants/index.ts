@@ -41,10 +41,16 @@ export const SERVER_URL = {
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat('/samples'), // 样板
   MODULE: SERVER_PREFIX.HYPERVISOR.concat('/modules'), // 模块
   FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat('/fragments'), // 片段
-  CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections') // 连接
+  CONNECTION: SERVER_PREFIX.HYPERVISOR.concat('/connections'), // 连接
+
+  // docs
+  ARCHIVE: SERVER_PREFIX.HYPERVISOR.concat('/archives'), // 档案
+  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 模板
+  SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections'), // 章节
+  REPORT: SERVER_PREFIX.HYPERVISOR.concat('/reports') // 报表
 }
 
-export const actions: { [key: string]: string } = {
+export const actions: { [key: string]: 'primary' | 'secondary' | 'positive' | 'info' | 'warning' | 'negative' } = {
   create: 'primary',
   modify: 'primary',
   upload: 'primary',
@@ -64,7 +70,7 @@ export const actions: { [key: string]: string } = {
   detail: 'info'
 }
 
-export const httpMethods: { [key: string]: string } = {
+export const httpMethods: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
   GET: 'positive',
   POST: 'warning',
   PUT: 'primary',
@@ -105,27 +111,27 @@ export const shceduleStatusIcon: { [key: string]: string } = {
   CANCELED: 'cancel'
 }
 
-export const userStatus: { [key: string]: 'primary' | 'success' | 'info' | 'warning' | 'danger' } = {
-  ACTIVE: 'success',
+export const userStatus: { [key: string]: 'primary' | 'positive' | 'info' | 'warning' | 'negative' } = {
+  ACTIVE: 'positive',
   LOCKED: 'primary',
   EXPIRED: 'info',
   CREDENTIALS_EXPIRED: 'warning',
-  DISABLED: 'danger'
+  DISABLED: 'negative'
 }
 
-export const schemeScope: { [key: string]: 'primary' | 'success' } = {
-  ALL: 'success',
-  PARTIAL: 'primary'
-}
+export const schemeScope = [
+  { label: 'All', value: 'ALL' },
+  { label: 'Partial', value: 'PARTIAL' }
+]
 
 export const databaseType: { [key: string]: string } = {
   POSTGRESQL: 'postgresql',
   MYSQL: 'mysql'
 }
 
-export const sampleType: { [key: string]: 'primary' | 'success' } = {
+export const sampleType: { [key: string]: 'primary' | 'positive' } = {
   SINGLE: 'primary',
-  COMBINE: 'success'
+  COMBINE: 'positive'
 }
 
 export const languages = [
@@ -140,3 +146,14 @@ export const languages = [
   { label: 'vue', value: 'VUE' },
   { label: 'react', value: 'REACT' }
 ]
+
+export const osTypes = [
+  { label: 'Linux', value: 'LINUX', dictionary: 800 },
+  { label: 'Windows', value: 'WINDOWS', dictionary: 900 },
+  { label: 'MacOS', value: 'MACOS', dictionary: 1000 }
+]
+
+export const scriptModes: { [key: string]: 'Server' | 'Docker' } = {
+  SERVER: 'Server',
+  DOCKER: 'Docker'
+}

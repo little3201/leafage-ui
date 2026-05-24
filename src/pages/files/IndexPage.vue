@@ -2,7 +2,7 @@
   <q-page padding>
 
     <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em">
+      <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section class="flex items-center q-pb-none">
             <div class="text-h6">{{ $t('page.files') }}</div>
@@ -21,7 +21,7 @@
                 {{ row.name }}
               </p>
               <p><strong>{{ $t('label.size') }}</strong>
-                {{ formatFileSize(row.size) }}
+                {{ humanStorageSize(row.size) }}
               </p>
               <p><strong>{{ $t('label.contentType') }}</strong>
                 {{ row.contentType }}
@@ -36,7 +36,7 @@
     </q-dialog>
 
     <q-dialog v-model="uploadVisible" persistent>
-      <q-card style="min-width: 25em">
+      <q-card style="min-width: 25em;">
         <q-form @submit="onSubmit">
           <q-card-section>
             <div class="text-h6">{{ $t('page.files') }}</div>
@@ -99,9 +99,9 @@
       </div>
 
       <div class="col">
-        <q-table ref="tableRef" flat :title="$t('page.files')" :rows="rows" :columns="columns" row-key="id"
-          v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort @request="onRequest"
-          class="full-width" @row-click="onRowClick">
+        <q-table ref="tableRef" flat :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination"
+          :loading="loading" :filter="filter" binary-state-sort @request="onRequest" class="full-width"
+          @row-click="onRowClick">
           <template v-slot:top-left>
             <q-breadcrumbs class="cursor-pointer">
               <template v-slot:separator>
@@ -113,7 +113,7 @@
             </q-breadcrumbs>
           </template>
           <template v-slot:top-right>
-            <q-input dense debounce="300" v-model="filter.name" placeholder="Search">
+            <q-input dense debounce="300" filled v-model="filter.name!.value" placeholder="Search">
               <template v-slot:append>
                 <q-icon name="sym_r_search" />
               </template>
@@ -146,7 +146,7 @@
           </template>
           <template v-slot:body-cell-size="props">
             <q-td :props="props">
-              {{ formatFileSize(props.row.size) }}
+              {{ humanStorageSize(props.row.size) }}
             </q-td>
           </template>
           <template v-slot:body-cell-lastModifiedDate="props">
@@ -170,44 +170,48 @@
 
 <script setup lang="ts">
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { date } from 'quasar'
-import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/files'
-import type { FileRecord } from 'src/types'
-import { formatFileSize } from 'src/utils'
-import { useUserStore } from 'stores/user-store'
-import { onMounted, ref } from 'vue'
+import { date, format, Notify } from 'quasar'
+import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import type { FileRecord, Filter, Pagination } from 'src/types'
+import { useUserStore } from 'stores/user'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 
+const { t } = useI18n()
+const { humanStorageSize } = format
 const userStore = useUserStore()
 const visible = ref<boolean>(false)
 const uploadVisible = ref<boolean>(false)
 
 const tableRef = ref<QTable>()
 const rows = ref<Array<FileRecord>>([])
-const filter = ref({
-  superiorId: null as string | null,
-  name: null
+
+const expandRows = ref<Array<FileRecord>>([])
+const currentRowId = ref<number | null>(null)
+const filter = reactive<Filter<FileRecord>>({
+  superiorId: { op: 'eq', value: currentRowId.value },
+  name: { op: 'like', value: undefined }
 })
 const loading = ref<boolean>(false)
 
 const initialValues: FileRecord = {
   id: null,
+  superiorId: null,
   name: '',
   size: 0,
-  path: ''
+  path: '',
+  directory: false
 }
 const row = ref<FileRecord>({ ...initialValues })
 
 const pagination = ref({
-  sortBy: 'id',
+  sortBy: '',
   descending: true,
   page: 1,
   rowsPerPage: 7,
   rowsNumber: 0
 })
-
-const expandRows = ref<Array<FileRecord>>([])
-const currentRow = ref<FileRecord | null>(null)
 
 const columns: QTableColumn<FileRecord>[] = [
   { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
@@ -228,13 +232,15 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
   loading.value = true
 
   const { page, rowsPerPage, sortBy, descending } = props.pagination
+  const params: Pagination = { page, size: rowsPerPage }
+  if (sortBy) {
+    params.sortBy = sortBy
+    params.descending = descending
+  }
 
-  props.filter.superiorId = currentRow.value ? `eq:${currentRow.value.id}` : null
-  const filter = props.filter
-  const params = { page, size: rowsPerPage, sortBy, descending }
-
+  filter.superiorId!.value = currentRowId.value ?? null
   try {
-    const res = await retrieveFiles({ ...params }, filter)
+    const res = await retrieveFiles(params, filter)
     pagination.value.page = page
     pagination.value.rowsPerPage = rowsPerPage
     pagination.value.sortBy = sortBy
@@ -243,7 +249,10 @@ async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>
     rows.value = res.data.content
     pagination.value.rowsNumber = res.data.totalElements
   } catch (error) {
-    return error
+    rows.value = []
+    pagination.value.rowsNumber = 0
+
+    throw error
   } finally {
     loading.value = false
   }
@@ -259,7 +268,8 @@ async function showRow(id: number | undefined) {
       const res = await fetchFile(id)
       row.value = res.data
     } catch (error) {
-      return error
+      row.value = { ...initialValues }
+      throw error
     }
   }
   visible.value = true
@@ -273,18 +283,38 @@ async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
     throw new Error('No file provided')
   }
-  const res = await uploadFile(files[0])
+  try {
+    const res = await uploadFile(files[0])
+    uploadVisible.value = false
+    Notify.create({
+      message: t('message.success', { action: t('action.import') }),
+      type: 'positive',
+    })
 
-  uploadVisible.value = false
-  refresh()
-  return res.data
+    refresh()
+    return res.data
+  } catch (error) {
+    Notify.create({
+      message: t('message.error', { action: t('action.import') }),
+      type: 'negative',
+    })
+    throw error
+  }
 }
 
 async function downloadRow(id: number) {
   try {
     await download(id)
+    Notify.create({
+      message: t('message.success', { action: t('action.download') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.download') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -292,8 +322,16 @@ async function removeRow(id: number) {
   try {
     await removeFile(id)
     refresh()
+    Notify.create({
+      message: t('message.success', { action: t('action.remove') }),
+      type: 'positive',
+    })
   } catch (error) {
-    return error
+    Notify.create({
+      message: t('message.error', { action: t('action.remove') }),
+      type: 'negative',
+    })
+    throw error
   }
 }
 
@@ -303,14 +341,18 @@ function onSubmit() {
 }
 
 function onRowClick(evt: Event, row: FileRecord) {
+  if (!row.id) return
+
   if (row?.directory) {
-    currentRow.value = row
+    currentRowId.value = row.id
     if (row) {
       expandRows.value.push(row)
     }
+    // 设置 filter的superiorId为当前row的id
+    filter.superiorId!.value = row?.id
     refresh()
-  } else if (row?.regularFile) {
-    void showRow(row.id!)
+  } else {
+    void showRow(row.id)
   }
 }
 
@@ -318,13 +360,14 @@ function handleBreadcrumbClick(index: number) {
   if (index === -1) {
     // 点击"全部文件夹"，回到根目录
     expandRows.value = []
-    currentRow.value = null
+    currentRowId.value = null
   } else {
     // 点击中间层级的面包屑
     // 截断面包屑数组，保留点击位置及之前的部分
     expandRows.value = expandRows.value.slice(0, index + 1)
-    currentRow.value = expandRows.value[index] ?? null
+    currentRowId.value = expandRows.value[index]?.id ?? null
   }
+  filter.superiorId!.value = currentRowId.value
   refresh()
 }
 </script>
