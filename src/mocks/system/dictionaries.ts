@@ -27,6 +27,15 @@ for (let i = 1; i < 28; i++) {
 }
 
 export const dictionariesHandlers = [
+  http.get(`/api${SERVER_URL.DICTIONARY}/subset`, ({ request }) => {
+    const url = new URL(request.url)
+    const id = url.searchParams.get('id')
+    if (id) {
+      return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
+    } else {
+      return HttpResponse.json(datas.filter(item => item.superiorId === null))
+    }
+  }),
   http.get(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -35,11 +44,6 @@ export const dictionariesHandlers = [
     } else {
       return HttpResponse.json()
     }
-  }),
-  http.get(`/api${SERVER_URL.DICTIONARY}/:id/subset`, ({ params }) => {
-    const { id } = params
-    const filtered = datas.filter(item => item.superiorId === Number(id))
-    return HttpResponse.json(filtered)
   }),
   http.get(`/api${SERVER_URL.DICTIONARY}`, ({ request }) => {
     const url = new URL(request.url)

@@ -99,9 +99,9 @@
       </div>
 
       <div class="col">
-        <q-table ref="tableRef" flat :title="$t('page.files')" :rows="rows" :columns="columns" row-key="id"
-          v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort @request="onRequest"
-          class="full-width" @row-click="onRowClick">
+        <q-table ref="tableRef" flat :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination"
+          :loading="loading" :filter="filter" binary-state-sort @request="onRequest" class="full-width"
+          @row-click="onRowClick">
           <template v-slot:top-left>
             <q-breadcrumbs class="cursor-pointer">
               <template v-slot:separator>
@@ -113,7 +113,7 @@
             </q-breadcrumbs>
           </template>
           <template v-slot:top-right>
-            <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
+            <q-input dense debounce="300" filled v-model="filter.name!.value" placeholder="Search">
               <template v-slot:append>
                 <q-icon name="sym_r_search" />
               </template>

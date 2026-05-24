@@ -19,16 +19,8 @@ export const retrieveDictionaries = (pagination: Pagination, filter?: Filter<Dic
  * @param id Row ID
  * @returns Subset data
  */
-export const retrieveDictionarySubset = (id: number) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/${id}/subset`)
-}
-
-/**
- * Fetch row tree structure
- * @returns tree data
- */
-export const retrieveDictionaryTree = () => {
-  return api.get(`${SERVER_URL.DICTIONARY}/tree`)
+export const retrieveDictionarySubset = (id: number | null) => {
+  return api.get(`${SERVER_URL.DICTIONARY}/subset`, { params: { id } })
 }
 
 /**

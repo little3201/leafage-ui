@@ -48,17 +48,19 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat :title="$t('page.operationLogs')" selection="multiple" v-model:selected="selected"
-      :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter"
-      binary-state-sort @request="onRequest" class="full-width">
-      <template v-slot:top-right>
-        <q-input dense debounce="300" v-model="filter.module!.value" placeholder="Search">
-          <template v-slot:append>
+    <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
+      row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+      @request="onRequest" class="full-width">
+      <template v-slot:top-left>
+        <q-input dense debounce="300" filled v-model="filter.module!.value" placeholder="Search">
+          <template v-slot:prepend>
             <q-icon name="sym_r_search" />
           </template>
         </q-input>
         <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
           icon="sym_r_refresh" @click="refresh" />
+      </template>
+      <template v-slot:top-right>
         <q-btn title="clear" round padding="xs" flat color="negative" class="q-mx-sm" icon="sym_r_clear_all" />
         <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
           @click="exportTable(columns, rows)" />

@@ -40,19 +40,21 @@
         </q-card>
       </div>
       <div class="col">
-        <q-table ref="tableRef" flat :title="$t('page.regions')" selection="multiple" v-model:selected="selected"
-          :rows="rows" :columns="columns" row-key="id" v-model:pagination="pagination" :loading="loading"
-          :filter="filter" binary-state-sort @request="onRequest" class="full-width">
-          <template v-slot:top-right>
-            <q-input dense debounce="300" v-model="filter.name!.value" placeholder="Search">
-              <template v-slot:append>
+        <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
+          row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
+          @request="onRequest" class="full-width">
+          <template v-slot:top-left>
+            <q-input dense debounce="300" filled v-model="filter.name!.value" placeholder="Search">
+              <template v-slot:prepend>
                 <q-icon name="sym_r_search" />
               </template>
             </q-input>
+            <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
+              icon="sym_r_refresh" @click="refresh" />
+          </template>
+          <template v-slot:top-right>
             <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
               @click="saveRow()" />
-            <q-btn title="refresh" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-              icon="sym_r_refresh" @click="refresh" />
             <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
               icon="sym_r_database_upload" @click="importRow" />
             <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
@@ -171,12 +173,17 @@ const columns: QTableColumn<Region>[] = [
 onMounted(async () => {
   refresh()
 
-  const res = await retrieveRegions({ page: 1, size: 34, sortBy: 'id', descending: false }, filter)
-  treeDatas.value = res.data.content.map((item: Region) => ({
-    id: item.id!,
-    name: item.name,
-    lazy: (item.count ?? 0) > 0
-  }))
+  try {
+    const res = await retrieveRegionSubset(null)
+    treeDatas.value = res.data.map((item: Region) => ({
+      id: item.id!,
+      name: item.name,
+      lazy: (item.count ?? 0) > 0
+    }))
+  } catch (error) {
+    treeDatas.value = []
+    throw error
+  }
 })
 
 /**
