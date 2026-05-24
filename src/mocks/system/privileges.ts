@@ -203,8 +203,8 @@ const subDatas: Privilege[] = [
   {
     id: 20,
     superiorId: 16,
-    path: 'templates',
-    name: 'templates',
+    path: 'codes',
+    name: 'codes',
     component: '#',
     count: 1,
     enabled: true,
@@ -216,7 +216,7 @@ const subDatas: Privilege[] = [
     superiorId: 20,
     path: 'modules',
     name: 'modules',
-    component: 'exploiters/templates/modules',
+    component: 'exploiters/codes/modules',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
@@ -240,7 +240,7 @@ const subDatas: Privilege[] = [
     superiorId: 20,
     path: 'fragments',
     name: 'fragments',
-    component: 'exploiters/templates/fragments',
+    component: 'exploiters/codes/fragments',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'enable'],
     count: 0,
     enabled: true,
@@ -417,9 +417,9 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 20,
-        name: 'templates',
+        name: 'codes',
         meta: {
-          path: 'templates',
+          path: 'codes',
           component: '#',
           redirect: 'schemes',
           icon: 'folder_code',
@@ -430,7 +430,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             name: 'modules',
             meta: {
               path: 'modules',
-              component: 'exploiters/templates/modules',
+              component: 'exploiters/codes/modules',
               icon: 'modeling',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
             }
@@ -440,7 +440,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             name: 'samples',
             meta: {
               path: 'samples',
-              component: 'exploiters/templates/samples',
+              component: 'exploiters/codes/samples',
               icon: 'code_blocks',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
             }
@@ -450,7 +450,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             name: 'fragments',
             meta: {
               path: 'fragments',
-              component: 'exploiters/templates/fragments',
+              component: 'exploiters/codes/fragments',
               icon: 'code',
               actions: ['create', 'modify', 'remove', 'import', 'export', 'enable']
             }
