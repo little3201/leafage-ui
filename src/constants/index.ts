@@ -45,7 +45,7 @@ export const SERVER_URL = {
 
   // docs
   ARCHIVE: SERVER_PREFIX.HYPERVISOR.concat('/archives'), // 档案
-  SCHEMA: SERVER_PREFIX.HYPERVISOR.concat('/schemas'), // 模板
+  TEMPLATE: SERVER_PREFIX.HYPERVISOR.concat('/templates'), // 模板
   SECTION: SERVER_PREFIX.HYPERVISOR.concat('/sections'), // 章节
   REPORT: SERVER_PREFIX.HYPERVISOR.concat('/reports') // 报表
 }

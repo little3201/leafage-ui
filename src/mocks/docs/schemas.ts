@@ -1,12 +1,12 @@
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { Schema } from 'src/types'
+import type { Template } from 'src/types'
 import { applyFilters } from '../util'
 
-const datas: Schema[] = []
+const datas: Template[] = []
 
 for (let i = 1; i < 28; i++) {
-  const row: Schema = {
+  const row: Template = {
     id: i,
     name: 'Name_' + i,
     type: (['WORD', 'EXCEL'] as const)[Math.floor(Math.random() * 2)] as 'WORD' | 'EXCEL',
@@ -20,7 +20,7 @@ for (let i = 1; i < 28; i++) {
 
 
 export const schemasHandlers = [
-  http.get(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.get(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       const filtered = datas.find(item => item.id === Number(id))
@@ -29,7 +29,7 @@ export const schemasHandlers = [
       return HttpResponse.json()
     }
   }),
-  http.get(`/api${SERVER_URL.SCHEMA}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.TEMPLATE}`, ({ request }) => {
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
@@ -45,7 +45,7 @@ export const schemasHandlers = [
     }
     return HttpResponse.json(data)
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.TEMPLATE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData()
     const file = data.get('file')
@@ -61,9 +61,9 @@ export const schemasHandlers = [
     }
     return HttpResponse.json()
   }),
-  http.post(`/api${SERVER_URL.SCHEMA}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.TEMPLATE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Schema
+    const newData = await request.json() as Template
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -72,10 +72,10 @@ export const schemasHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 })
   }),
-  http.put(`/api${SERVER_URL.SCHEMA}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.TEMPLATE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Schema
+    const newData = await request.json() as Template
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
@@ -86,7 +86,7 @@ export const schemasHandlers = [
     }
 
   }),
-  http.patch(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
       return HttpResponse.json()
@@ -94,7 +94,7 @@ export const schemasHandlers = [
       return HttpResponse.error()
     }
   }),
-  http.delete(`/api${SERVER_URL.SCHEMA}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params

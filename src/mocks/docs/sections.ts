@@ -13,7 +13,7 @@ for (let i = 1; i < 28; i++) {
     name: 'Title_' + i,
     body: 'This is body content about xxx',
     ownerId: Math.floor(Math.random() * 10) || null,
-    ownerType: ['REPORT', 'SCHEMA'][Math.floor(Math.random() * 2)] || null,
+    ownerType: ['REPORT', 'TEMPLATE'][Math.floor(Math.random() * 2)] || null,
     sequence: i,
     count: Math.floor(Math.random() * 2) || 0
   }
