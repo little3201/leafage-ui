@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <div class="container mx-auto">
       <h1 class="text-center">使用条款</h1>
       <div class="space-y-10 text-gray-700">

@@ -151,7 +151,7 @@ async function clearRows() {
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <ElRow :gutter="20" justify="space-between" class="mb-4">
       <ElCol :span="12">
         <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
@@ -231,7 +231,7 @@ async function clearRows() {
   </ElCard>
 
   <!-- detail -->
-  <ElDialog v-model="visible" :title="$t('action.details')" align-center width="600">
+  <ElDialog v-model="visible" :title="$t('action.details')" width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.startTime')">

@@ -25,7 +25,7 @@ const items = ref([
 <template>
   <ElRow class="mb-4">
     <ElCol :span="24">
-      <ElCard shadow="never" body-class="flex items-center">
+      <ElCard body-class="flex items-center">
         <ElAvatar :size="80" :src="`https://cdn.leafage.top/${me.username}`" />
         <div class="ml-4 flex-1">
           <span class="text-lg my-1">
@@ -42,7 +42,7 @@ const items = ref([
 
   <ElRow :gutter="16">
     <ElCol :span="5" :xl="4">
-      <ElCard shadow="never">
+      <ElCard>
         <ElMenu router :default-active="currentRoute.fullPath">
           <ElMenuItem v-for="item in items" :key="item.name" :index="`/profile${item.router}`">
             <Icon :icon="`material-symbols:${item.icon}-rounded`" width="20" height="20" class="mr-2" />
@@ -53,7 +53,7 @@ const items = ref([
     </ElCol>
 
     <ElCol :span="19" :xl="20">
-      <ElCard shadow="never">
+      <ElCard>
         <RouterView />
       </ElCard>
     </ElCol>

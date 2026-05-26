@@ -1,3 +1,4 @@
+import BlankLayout from 'layouts/BlankLayout.vue'
 import MainLayout from 'layouts/MainLayout.vue'
 import type { RouteRecordRaw } from 'vue-router'
 
@@ -50,21 +51,28 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
         name: 'faq',
         component: () => import('pages/faq/IndexPage.vue')
       },
+    ]
+  },
+  {
+    path: '/legal',
+    name: 'legal',
+    component: BlankLayout,
+    children: [
       {
-        path: 'legal',
-        name: 'legal',
+        path: '',
+        name: 'info',
         component: () => import('pages/legal/IndexPage.vue'),
       },
       {
-        path: 'privacy',
+        path: '/privacy',
         name: 'privacy',
         component: () => import('pages/legal/privacy/IndexPage.vue')
       },
       {
-        path: 'terms',
+        path: '/terms',
         name: 'terms',
         component: () => import('pages/legal/terms/IndexPage.vue')
-      }
+      },
     ]
   },
   {

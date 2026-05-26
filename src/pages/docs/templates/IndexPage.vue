@@ -239,7 +239,7 @@ async function onSectionSave() {
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <ElRow :gutter="20" justify="space-between" class="mb-4">
       <ElCol :span="12">
         <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
@@ -339,8 +339,8 @@ async function onSectionSave() {
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
-    :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
+    width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -380,7 +380,7 @@ async function onSectionSave() {
   </ElDialog>
 
   <!-- config -->
-  <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
+  <ElDialog v-model="configVisible" :title="$t('action.config')" :show-close="false">
     <SchemaSection ref="sectionRef" :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
@@ -394,12 +394,12 @@ async function onSectionSave() {
   </ElDialog>
 
   <!-- preview -->
-  <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
+  <ElDialog v-model="previewVisible" :title="$t('action.preview')">
     <SchemaSection :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/templates.xlsx`" :download="$t('page.templates') + '.xlsx'">
         {{ $t('page.templates') }}.xlsx

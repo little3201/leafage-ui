@@ -79,7 +79,9 @@ declare module 'vue' {
     LanguageSelector: typeof import('./src/components/LanguageSelector.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SheetRender: typeof import('./src/components/SheetRender.vue')['default']
     ThemeToogle: typeof import('./src/components/ThemeToogle.vue')['default']
+    UniverRender: typeof import('./src/components/UniverRender.vue')['default']
   }
   export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

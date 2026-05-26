@@ -129,7 +129,7 @@ async function removeRow(id: number) {
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <ElRow :gutter="20" justify="space-between" class="mb-4">
       <ElCol :span="12">
         <ElInput v-model="filter.module!.value" clearable style="width: 240px" class="mr-4"
@@ -203,7 +203,7 @@ async function removeRow(id: number) {
   </ElCard>
 
   <!-- detail -->
-  <ElDialog v-model="visible" :title="$t('action.details')" align-center width="600">
+  <ElDialog v-model="visible" :title="$t('action.details')" width="600">
     <ElDescriptions v-loading="detailLoading" border>
       <ElDescriptionsItem :label="$t('label.module')">{{ row.module }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.actions')">

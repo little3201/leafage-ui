@@ -341,7 +341,7 @@ function rowSelected(row: Privilege) {
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <ElRow :gutter="20" justify="space-between" class="mb-4">
       <ElCol :span="12">
         <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
@@ -423,8 +423,8 @@ function rowSelected(row: Privilege) {
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
-    :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
+    width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -454,7 +454,7 @@ function rowSelected(row: Privilege) {
   </ElDialog>
 
   <!-- relation -->
-  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center width="640">
+  <ElDialog v-model="relationVisible" :title="$t('action.relation')" width="640">
     <div style="text-align: center">
       <ElTransfer v-model="relations" :props="{ key: 'username', label: 'fullName' }"
         :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="members"
@@ -463,7 +463,7 @@ function rowSelected(row: Privilege) {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center>
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')">
     <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
       <ElTableColumn type="selection" />
       <ElTableColumn prop="name" :label="$t('label.name')">
@@ -486,7 +486,7 @@ function rowSelected(row: Privilege) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/roles.xlsx`" :download="$t('page.roles') + '.xlsx'">
         {{ $t('page.roles') }}.xlsx

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <div class="container mx-auto">
       <h1 class="text-center">隐私政策</h1>
 

@@ -16,9 +16,12 @@
   },
   "dependencies": {
     "@editorjs/editorjs": "^2.31.6",
+    "@editorjs/image": "^2.10.3",
     "@editorjs/list": "^2.0.9",
     "@editorjs/table": "^2.4.5",
     "@iconify/vue": "^5.0.1",
+    "@univerjs/preset-sheets-core": "^0.24.0",
+    "@univerjs/presets": "^0.24.0",
     "@vueuse/core": "^14.3.0",
     "apexcharts": "^5.12.0",
     "axios": "^1.16.1",

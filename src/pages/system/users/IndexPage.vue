@@ -237,7 +237,7 @@ function onUpload(options: UploadRequestOptions) {
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <ElRow :gutter="20" justify="space-between" class="mb-4">
       <ElCol :span="12">
         <ElInput v-model="filter.username!.value" clearable style="width: 240px" class="mr-4"
@@ -331,8 +331,8 @@ function onUpload(options: UploadRequestOptions) {
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
-    :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
+    width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol :span="12">
@@ -369,7 +369,7 @@ function onUpload(options: UploadRequestOptions) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/users.xlsx`" :download="$t('page.users') + '.xlsx'">
         {{ $t('page.users') }}.xlsx

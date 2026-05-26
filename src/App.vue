@@ -23,7 +23,7 @@ const lang = computed(() => {
 </script>
 
 <template>
-  <ElConfigProvider :locale="lang">
+  <ElConfigProvider :locale="lang" :card="{ shadow: 'never' }" :dialog="{ alignCenter: true }">
     <RouterView />
   </ElConfigProvider>
 </template>

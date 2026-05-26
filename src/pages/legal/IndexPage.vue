@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <div class="container mx-auto text-center">
       <h1>法律信息</h1>
 

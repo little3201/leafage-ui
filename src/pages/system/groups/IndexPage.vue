@@ -437,7 +437,7 @@ const rowSelected = (row: Privilege) => {
 <template>
   <ElRow :gutter="16">
     <ElCol :span="6" :xl="4">
-      <ElCard shadow="never">
+      <ElCard>
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
@@ -454,7 +454,7 @@ const rowSelected = (row: Privilege) => {
     </ElCol>
 
     <ElCol :span="18" :xl="20">
-      <ElCard shadow="never">
+      <ElCard>
         <ElRow :gutter="20" justify="space-between" class="mb-4">
           <ElCol :span="12">
             <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
@@ -541,8 +541,8 @@ const rowSelected = (row: Privilege) => {
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
-    :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
+    width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -572,7 +572,7 @@ const rowSelected = (row: Privilege) => {
   </ElDialog>
 
   <!-- relation -->
-  <ElDialog v-model="relationVisible" :title="$t('action.relation')" align-center width="640">
+  <ElDialog v-model="relationVisible" :title="$t('action.relation')" width="640">
     <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
       <ElTabPane :label="$t('page.users')" name="user" style="text-align: center">
         <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
@@ -589,7 +589,7 @@ const rowSelected = (row: Privilege) => {
   </ElDialog>
 
   <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" align-center width="57em">
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" width="57em">
     <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
       <ElTableColumn type="selection" />
       <ElTableColumn prop="name" :label="$t('label.name')">
@@ -612,7 +612,7 @@ const rowSelected = (row: Privilege) => {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/groups.xlsx`" :download="$t('page.groups') + '.xlsx'">
         {{ $t('page.groups') }}.xlsx

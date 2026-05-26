@@ -13,7 +13,7 @@ const faqList = [
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <div class="container mx-auto">
       <div class="text-center pb-8">
         <h2>常见问题解答（FAQ）</h2>

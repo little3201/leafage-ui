@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import SheetRender from 'components/SheetRender.vue'
 import type {
-  FormInstance,
-  FormRules,
-  TableInstance,
-  UploadInstance, UploadRequestOptions
+  FormInstance, FormRules, TableInstance, UploadInstance, UploadRequestOptions
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
-import { createReport, fetchReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
+import { createReport, fetchReport, fetchReportTemplate, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
 import { retrieveSchemas } from 'src/api/docs/templates'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, Pagination, Report, Template } from 'src/types'
@@ -35,6 +33,7 @@ const visible = ref<boolean>(false)
 const previewVisible = ref<boolean>(false)
 const fieldVisible = ref<boolean>(false)
 const contentVisible = ref<boolean>(false)
+const exportVisible = ref<boolean>(false)
 
 const importVisible = ref<boolean>(false)
 const importLoading = ref<boolean>(false)
@@ -264,10 +263,15 @@ function formatSchemas(cellValue: number): string {
   const matched = templates.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
+
+async function reportExport(id: number) {
+  await fetchReportTemplate(id)
+  exportVisible.value = true
+}
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <ElRow :gutter="20" justify="space-between" class="mb-4">
       <ElCol :span="12">
         <ElInput v-model="filter.title!.value" clearable style="width: 240px" class="mr-4"
@@ -351,6 +355,12 @@ function formatSchemas(cellValue: number): string {
               $t('action.remove')
             }}
           </ElButton>
+          <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" link
+            @click="reportExport(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.export')
+            }}
+          </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>
@@ -362,8 +372,8 @@ function formatSchemas(cellValue: number): string {
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
-    :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
+    width="400">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -395,22 +405,27 @@ function formatSchemas(cellValue: number): string {
   </ElDialog>
 
   <!-- field -->
-  <ElDialog v-model="fieldVisible" :title="$t('action.field')" align-center>
+  <ElDialog v-model="fieldVisible" :title="$t('action.field')">
     <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" />
   </ElDialog>
 
   <!-- data -->
-  <ElDialog v-model="contentVisible" :title="$t('action.data')" align-center>
+  <ElDialog v-model="contentVisible" :title="$t('action.data')">
     <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" :excel-mode="true" />
   </ElDialog>
 
+  <!-- export -->
+  <ElDialog v-model="exportVisible" :title="$t('action.export')" :z-index="10">
+    <SheetRender />
+  </ElDialog>
+
   <!-- preview -->
-  <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
+  <ElDialog v-model="previewVisible" :title="$t('action.preview')">
     <Section :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" :excel-mode="true" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/sections.xlsx`" :download="$t('page.sections') + '.xlsx'">
         {{ $t('page.sections') }}.xlsx

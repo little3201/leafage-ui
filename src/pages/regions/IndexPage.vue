@@ -294,7 +294,7 @@ async function removeRow(id: number) {
 <template>
   <ElRow :gutter="16">
     <ElCol :span="6" :xl="4">
-      <ElCard shadow="never">
+      <ElCard>
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
@@ -311,7 +311,7 @@ async function removeRow(id: number) {
     </ElCol>
 
     <ElCol :span="18" :xl="20">
-      <ElCard shadow="never">
+      <ElCard>
         <ElRow :gutter="20" justify="space-between" class="mb-4">
           <ElCol :span="12">
             <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
@@ -385,8 +385,8 @@ async function removeRow(id: number) {
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
-    :show-close="false" width="480">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
+    width="480">
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
@@ -430,7 +430,7 @@ async function removeRow(id: number) {
   </ElDialog>
 
   <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
+  <ElDialog v-model="importVisible" :title="$t('action.import')" :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
       <a :href="`templates/regions.xlsx`" :download="$t('page.regions') + '.xlsx'">
         {{ $t('page.regions') }}.xlsx

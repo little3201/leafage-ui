@@ -81,7 +81,7 @@ async function onSubmit() {
     </ElHeader>
     <ElMain class="items-center justify-center z-10">
       <Transition appear name="el-zoom-in-center">
-        <ElCard class="w-full lg:w-1/2 xl:w-2/3" style="height: 70vh;border-radius: 1.5rem;"
+        <ElCard shadow="always" class="w-full lg:w-1/2 xl:w-2/3" style="height: 70vh;border-radius: 1.5rem;"
           body-class="flex items-center !p-0 h-full">
           <div class="hidden xl:flex flex-col items-center h-full w-1/2  ">
             <div class="inline-flex grow flex-col items-center justify-center w-full">
@@ -148,10 +148,14 @@ async function onSubmit() {
         </ElCard>
       </Transition>
     </ElMain>
-    <ElFooter class="z-10" height="50px">
-      <p class="text-sm text-center">
-        Copyright &copy; {{ new Date().getFullYear() }} Leafage. All Rights Reserved.
-      </p>
+    <ElFooter class="ml-(--el-aside-width) text-center">
+      <div class="text-sm mb-2 space-x-4">
+        <a href="/privacy" class="text-(--el-text-color-regular) no-underline hover:underline">隐私政策</a>
+        <a href="/terms" class="text-(--el-text-color-regular) no-underline hover:underline">使用条款</a>
+        <a href="/legal" class="text-(--el-text-color-regular) no-underline hover:underline">法律信息</a>
+      </div>
+      <span class="text-sm text-(--el-text-color-regular)">Copyright &copy; 2018-{{ new Date().getFullYear() }}
+        Leafage. All Rights Reserved.</span>
     </ElFooter>
   </ElContainer>
 </template>

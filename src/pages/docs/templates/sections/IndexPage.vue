@@ -232,7 +232,7 @@ defineExpose({
 <template>
   <ElRow :gutter="16">
     <ElCol :span="8" :xl="6">
-      <ElCard shadow="never">
+      <ElCard>
         <div class="flex items-center space-x-4 mb-4">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
@@ -279,8 +279,8 @@ defineExpose({
   </ElRow>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" align-center
-    :show-close="false" width="400">
+  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
+    width="400">
     <SectionContent ref="sectionContentRef" :row="form" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">

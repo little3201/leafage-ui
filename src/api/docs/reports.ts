@@ -24,6 +24,15 @@ export const fetchReport = (id: number) => {
 }
 
 /**
+ * Fetch a specific row
+ * @param id Row ID
+ * @returns Row data
+ */
+export const fetchReportTemplate = (id: number) => {
+  return api.get(`${SERVER_URL.REPORT}/${id}/template`)
+}
+
+/**
  * Create a new row
  * @param row Row data
  * @returns Created row

@@ -203,7 +203,7 @@ function onUploadError() {
 <template>
   <ElRow :gutter="16">
     <ElCol :span="6" :xl="4">
-      <ElCard shadow="never">
+      <ElCard>
         <p class="mt-0"><strong>Space Usage</strong></p>
         <div class="text-center my-6">
           <ElProgress type="dashboard" :percentage="46" :stroke-width="16" :width="200">
@@ -249,7 +249,7 @@ function onUploadError() {
     </ElCol>
 
     <ElCol :span="18" :xl="20">
-      <ElCard shadow="never">
+      <ElCard>
         <ElRow>
           <ElCol :span="23" class="text-left">
             <ElBreadcrumb class="cursor-pointer font-bold">
@@ -333,7 +333,7 @@ function onUploadError() {
   </ElRow>
 
   <!-- details -->
-  <ElDialog v-model="visible" :title="$t('action.details')" align-center width="400">
+  <ElDialog v-model="visible" :title="$t('action.details')" width="400">
     <div class="text-center">
       <ElImage v-if="row.contentType && row.contentType.includes('image')" :src="row.path"
         class="w-full h-52 overflow-hidden" />
@@ -350,7 +350,7 @@ function onUploadError() {
   </ElDialog>
 
   <!-- upload -->
-  <ElDialog v-model="uploadVisible" :title="$t('action.upload')" align-center width="480">
+  <ElDialog v-model="uploadVisible" :title="$t('action.upload')" width="480">
     <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" @success="onUploadSuccess"
       @error="onUploadError">
       <div class="el-icon--upload inline-flex justify-center">

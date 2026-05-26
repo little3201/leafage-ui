@@ -18,7 +18,7 @@ const activities = ref([
   <ElTimeline>
     <ElTimelineItem v-for="activity in activities" :key="activity.id" :type="actionTypes[activity.action]"
       :timestamp="activity.lastModifiedDate" placement="top">
-      <ElCard shadow="never">
+      <ElCard>
         <h4 class="my-0">{{ activity.name }}</h4>
         <p class="mb-0">{{ activity.description }}</p>
       </ElCard>

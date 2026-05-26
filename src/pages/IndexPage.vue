@@ -30,11 +30,11 @@ async function load(month: number) {
 
 <template>
   <ElSpace direction="vertical" fill size="large">
-    <ElCard shadow="never">
+    <ElCard>
       <ChartView :options="lineOptionsData" />
     </ElCard>
 
-    <ElCard shadow="never">
+    <ElCard>
       <ElCalendar v-model="today">
         <template #date-cell="{ data }">
           <span>{{ data.date.getDate() }}</span>

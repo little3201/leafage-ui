@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { OutputData } from '@editorjs/editorjs'
 import EditorJS from '@editorjs/editorjs'
+import Image from '@editorjs/image'
 import List from '@editorjs/list'
 import Table from '@editorjs/table'
 import {
@@ -17,14 +18,14 @@ const props = defineProps<{
 }>()
 
 const editorRef = ref<HTMLElement>()
-let editor: EditorJS | null = null
+const editor = ref()
 
 
 onMounted(async () => {
   await nextTick()
 
-  editor = new EditorJS({
-    holder: editorRef.value!,
+  editor.value = new EditorJS({
+    holder: editorRef.value,
     placeholder: 'Type text or paste content here...',
     readOnly: props.readOnly,
 
@@ -33,34 +34,38 @@ onMounted(async () => {
         class: List,
         inlineToolbar: true
       },
+      image: {
+        class: Image,
+        inlineToolbar: true
+      },
       table: Table
     }
   })
 
-  await editor.isReady
+  await editor.value.isReady
 
   if (props.body) {
     const data: OutputData = {
       time: Date.now(),
       blocks: JSON.parse(props.body),
-      version: '2.30.0'
+      version: '2.31.6'
     }
 
-    await editor.render(data)
+    await editor.value.render(data)
   }
 })
 
 onBeforeUnmount(() => {
-  editor?.destroy()
-  editor = null
+  editor.value?.destroy()
+  editor.value = null
 })
 
 watch(
   () => props.body,
   async (newVal) => {
-    if (!editor || !newVal) return
+    if (!editor.value || !newVal) return
 
-    await editor.isReady
+    await editor.value.isReady
 
     const data: OutputData = {
       time: Date.now(),
@@ -68,16 +73,16 @@ watch(
       version: '2.31.6'
     }
 
-    await editor.render(data)
+    await editor.value.render(data)
   }
 )
 
 async function saveData() {
-  if (!editor) return []
+  if (!editor.value) return []
 
-  await editor.isReady
+  await editor.value.isReady
 
-  const output = await editor.save()
+  const output = await editor.value.save()
 
   return output.blocks
 }
@@ -88,7 +93,7 @@ defineExpose({
 </script>
 
 <template>
-  <ElCard shadow="never">
+  <ElCard>
     <div ref="editorRef" class="w-full h-full"></div>
   </ElCard>
 </template>

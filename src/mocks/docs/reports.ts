@@ -17,6 +17,15 @@ for (let i = 1; i < 28; i++) {
 }
 
 export const reportsHandlers = [
+  http.get(`/api${SERVER_URL.REPORT}/:id/template`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      const filtered = datas.find(item => item.id === Number(id))
+      return HttpResponse.json(filtered)
+    } else {
+      return HttpResponse.json()
+    }
+  }),
   http.get(`/api${SERVER_URL.REPORT}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
