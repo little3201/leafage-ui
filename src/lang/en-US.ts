@@ -204,8 +204,11 @@ export default {
     click2Upload: 'click to upload',
     fileSizeLimit: 'File with a size less than {size}.',
 
-    removeConfirm: 'Are you sure you want to delete the data?',
-    actionConfirm: 'Action Confirm',
+    confirm: 'Are you sure ?',
+    removeWarning: 'This action cannot be undone. This will permanently remove the <strong>{module}/{data}</strong>.',
+    removeButtonText: 'I understand, remove it.',
+    clearWarning: 'This action cannot be undone. This will permanently remove all items.',
+    clearButtonText: 'I understand, remove all.',
     welcome: 'Hi! Welcome Back.',
     subtitle: 'Please sign in to continue exploring.',
     forgotPassword: 'Forgot The Password ?'

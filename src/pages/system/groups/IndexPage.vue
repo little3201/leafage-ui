@@ -121,7 +121,9 @@ async function onCurrentChange(data: TreeNode) {
     return
   }
   treeSelected.value = String(data.id)
-  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
+  if (filter.superiorId) {
+    filter.superiorId.value = treeSelected.value ? Number(treeSelected.value) : null
+  }
   pagination.page = 1
   await load()
 }
@@ -178,7 +180,9 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true
-  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
+  if (filter.superiorId) {
+    filter.superiorId.value = treeSelected.value ? Number(treeSelected.value) : null
+  }
 
   try {
     const res = await retrieveGroups(pagination, filter)
@@ -288,14 +292,19 @@ async function onSubmit(formEl: FormInstance) {
 /**
  * 删除
  * @param id 主键
+ * @param name 名称
  */
-async function removeRow(id: number) {
+async function removeRow(id: number, name: string) {
   // 弹出确认框
   await ElMessageBox.confirm(
-    t('tips.removeConfirm'),
-    t('tips.actionConfirm'),
+    t('tips.removeWarning', { module: t('page.groups'), data: name }),
+    t('tips.confirm'),
     {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
       confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.removeButtonText'),
       type: 'warning'
     }
   ).then(async () => {
@@ -524,7 +533,7 @@ const rowSelected = (row: Privilege) => {
                 }}
               </ElButton>
               <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
-                @click="removeRow(scope.row.id)">
+                @click="removeRow(scope.row.id, scope.row.name)">
                 <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
                 {{ $t('action.remove') }}
               </ElButton>

@@ -156,7 +156,7 @@ export default {
     dictionaries: '字典',
     regions: '行政區劃',
     faq: '常見問題',
-    files: '文檔管理',
+    files: '文件記錄',
     profile: '個人中心',
     exploiters: '開發工具',
     connections: '連接',
@@ -206,8 +206,11 @@ export default {
     click2Upload: '點擊上傳',
     fileSizeLimit: '檔案小於 {size}。',
 
-    removeConfirm: '是否確定要刪除這條數據？',
-    actionConfirm: '操作確認',
+    confirm: '是否確定？',
+    removeWarning: '此操作無法撤銷。這將永久移除 <strong>{module}/{data}</strong>。',
+    removeButtonText: '我明白，移除它！',
+    clearWarning: '此操作無法撤銷。這將永久移除所有項目。',
+    clearButtonText: '我明白，移除所有項目。',
     welcome: '嗨！歡迎回來',
     subtitle: '請填寫您的帳號和密碼，讓我們繼續探索',
     forgotPassword: '忘記密碼 ？'

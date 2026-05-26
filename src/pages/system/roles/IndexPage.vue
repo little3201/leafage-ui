@@ -221,14 +221,19 @@ async function onSubmit(formEl: FormInstance) {
 /**
  * 删除
  * @param id 主键
+ * @param name 名称
  */
-async function removeRow(id: number) {
+async function removeRow(id: number, name: string) {
   // 弹出确认框
   await ElMessageBox.confirm(
-    t('tips.removeConfirm'),
-    t('tips.actionConfirm'),
+    t('tips.removeWarning', { module: t('page.roles'), data: name }),
+    t('tips.confirm'),
     {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
       confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.removeButtonText'),
       type: 'warning'
     }
   ).then(async () => {
@@ -407,7 +412,7 @@ function rowSelected(row: Privilege) {
               $t('action.authorize') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
-            @click="removeRow(scope.row.id)">
+            @click="removeRow(scope.row.id, scope.row.name)">
             <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.remove')
             }}

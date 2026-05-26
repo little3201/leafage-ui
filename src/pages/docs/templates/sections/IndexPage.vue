@@ -201,27 +201,35 @@ async function modifySectionContent() {
 /**
  * 删除
  * @param id 主键
+ * @param name 名称
  */
-async function removeRow(id: number) {
+async function removeRow(id: number, name: string) {
   // 弹出确认框
-  await ElMessageBox.confirm(t('tips.removeConfirm'), t('tips.actionConfirm'),
+  await ElMessageBox.confirm(
+    t('tips.removeWarning', { module: t('page.sections'), data: name }),
+    t('tips.confirm'),
     {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
       confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.removeButtonText'),
       type: 'warning'
-    }).then(async () => {
-      try {
-        await removeSection(id)
-        const node = treeRef.value?.getNode(id)
-        if (node) {
-          treeRef.value?.remove(node?.data)
-        }
-
-        ElMessage.success(t('message.success', { action: t('action.remove') }))
-      } catch (error) {
-        ElMessage.error(t('message.error', { action: t('action.remove') }))
-        throw error
+    }
+  ).then(async () => {
+    try {
+      await removeSection(id)
+      const node = treeRef.value?.getNode(id)
+      if (node) {
+        treeRef.value?.remove(node?.data)
       }
-    })
+
+      ElMessage.success(t('message.success', { action: t('action.remove') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.remove') }))
+      throw error
+    }
+  })
 }
 
 defineExpose({
@@ -255,7 +263,7 @@ defineExpose({
                   <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" />
                 </ElButton>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
-                  @click="removeRow(data.id)">
+                  @click="removeRow(data.id, data.name)">
                   <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" />
                 </ElButton>
               </div>

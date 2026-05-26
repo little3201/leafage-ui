@@ -63,12 +63,21 @@ function modifyRow(id: number) {
   editable.value[id] = true
 }
 
-async function removeRow(id: number) {
+/**
+ * 删除
+ * @param id 主键
+ * @param name 名称
+ */
+async function removeRow(id: number, name: string) {
   await ElMessageBox.confirm(
-    t('tips.removeConfirm'),
-    t('tips.actionConfirm'),
+    t('tips.removeWarning', { module: t('action.field'), data: name }),
+    t('tips.confirm'),
     {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
       confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.removeButtonText'),
       type: 'warning'
     }
   ).then(async () => {
@@ -160,7 +169,8 @@ async function confirmRow(row: SectionField) {
     <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
       <template #default="scope">
         <div class="items-center w-15">
-          <ElButton title="remove" circle size="small" type="danger" plain @click="removeRow(scope.row.id)">
+          <ElButton title="remove" circle size="small" type="danger" plain
+            @click="removeRow(scope.row.id, scope.row.name)">
             <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />
           </ElButton>
           <ElButton v-if="editable[scope.row.id]" v-loading="saveLoading" title="confirm" circle size="small"

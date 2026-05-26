@@ -73,10 +73,14 @@ function modifyRow(id: number) {
 
 async function removeRow(id: number) {
   await ElMessageBox.confirm(
-    t('tips.removeConfirm'),
-    t('tips.actionConfirm'),
+    t('tips.removeWarning', { module: t('action.data'), data: id }),
+    t('tips.confirm'),
     {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
       confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.removeButtonText'),
       type: 'warning'
     }
   ).then(async () => {

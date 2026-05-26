@@ -103,14 +103,20 @@ async function showRow(id: number) {
 /**
  * 删除
  * @param id 主键
+ * @param name 名称
+ * @param startTime 开始时间
  */
-async function removeRow(id: number) {
+async function removeRow(id: number, name: string, startTime: string) {
   // 弹出确认框
   await ElMessageBox.confirm(
-    t('tips.removeConfirm'),
-    t('tips.actionConfirm'),
+    t('tips.removeWarning', { module: t('page.schedulerLogs'), data: name + ' (start: ' + dayjs(startTime).format('YYYY-MM-DD HH:mm') + ')' }),
+    t('tips.confirm'),
     {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
       confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.removeButtonText'),
       type: 'warning'
     }
   ).then(async () => {
@@ -131,10 +137,14 @@ async function removeRow(id: number) {
 async function clearRows() {
   // 弹出确认框
   await ElMessageBox.confirm(
-    t('tips.removeConfirm'),
-    t('tips.actionConfirm'),
+    t('tips.clearWarning'),
+    t('tips.confirm'),
     {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
       confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.clearButtonText'),
       type: 'warning'
     }
   ).then(async () => {
@@ -215,7 +225,7 @@ async function clearRows() {
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
-            @click="removeRow(scope.row.id)">
+            @click="removeRow(scope.row.id, scope.row.name, scope.row.startTime)">
             <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.remove')
             }}

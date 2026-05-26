@@ -156,7 +156,7 @@ export default {
     dictionaries: '字典',
     regions: '行政区划',
     faq: '常见问题',
-    files: '文件管理',
+    files: '文件记录',
     exploiters: '开发工具',
     connections: '连接',
     schemes: '方案',
@@ -204,8 +204,11 @@ export default {
     click2Upload: '点击上传',
     fileSizeLimit: '文件小于 {size}。',
 
-    removeConfirm: '是否确定要删除这条数据？',
-    actionConfirm: '操作确认',
+    confirm: '是否确定？',
+    removeWarning: '当前操作无法撤销，将永久移除 <strong>{module}/{data}</strong>。',
+    removeButtonText: '我明白，移除它！',
+    clearWarning: '此操作无法撤销。这将永久移除所有项目。',
+    clearButtonText: '我明白，移除所有项目。',
     welcome: '嗨！欢迎回来',
     subtitle: '请填写您的账号和密码，让我们继续探索',
     forgotPassword: '忘记密码 ？'
