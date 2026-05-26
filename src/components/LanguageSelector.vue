@@ -24,7 +24,7 @@ function changeLang(lang: string) {
 </script>
 
 <template>
-  <ElDropdown trigger="click" @command="changeLang">
+  <ElDropdown trigger="click" @command="changeLang" placement="bottom-end">
     <ElButton title="language" type="default" link>
       <Icon icon="material-symbols:translate" class="text-white" width="1.5em" height="1.5em" />
     </ElButton>

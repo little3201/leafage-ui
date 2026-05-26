@@ -72,11 +72,18 @@ async function onSubmit() {
     </figure>
 
     <ElHeader class="flex flex-nowrap items-center z-10" height="50px">
-      <div class="inline-flex flex-1 justify-end items-center space-x-4">
-        <!-- language -->
-        <LanguageSelector />
-        <!-- theme -->
-        <ThemeToogle />
+      <div class="inline-flex grow justify-between">
+        <div class="inline-flex items-center">
+          <ElImage :src="logo" alt="avatar" class="w-8 h-8" />
+          <h3 class="ml-3">Project Management</h3>
+        </div>
+
+        <div class="inline-flex justify-end items-center space-x-4">
+          <!-- language -->
+          <LanguageSelector />
+          <!-- theme -->
+          <ThemeToogle />
+        </div>
       </div>
     </ElHeader>
     <ElMain class="items-center justify-center z-10">
@@ -148,7 +155,7 @@ async function onSubmit() {
         </ElCard>
       </Transition>
     </ElMain>
-    <ElFooter class="ml-(--el-aside-width) text-center">
+    <ElFooter class="text-center">
       <div class="text-sm mb-2 space-x-4">
         <a href="/privacy" class="text-(--el-text-color-regular) no-underline hover:underline">隐私政策</a>
         <a href="/terms" class="text-(--el-text-color-regular) no-underline hover:underline">使用条款</a>
