@@ -174,7 +174,7 @@ export default {
     docs: '文檔管理',
     reports: '報告',
     archives: '檔案',
-    schemas: '模板',
+    templates: '模板',
     sections: '章節',
   },
 

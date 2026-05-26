@@ -1,6 +1,6 @@
 import type { AudtiMetadata } from '../global'
 
-export interface Schema extends AudtiMetadata {
+export interface Template extends AudtiMetadata {
   name: string
   type: 'WORD' | 'EXCEL'
   version: number

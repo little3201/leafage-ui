@@ -14,13 +14,13 @@ import {
   removeArchive,
   retrieveArchives
 } from 'src/api/docs/archives'
-import { retrieveSchemas } from 'src/api/docs/schemas'
+import { retrieveSchemas } from 'src/api/docs/templates'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Archive, Filter, Pagination, Schema } from 'src/types'
+import type { Archive, Filter, Pagination, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Section from '../schemas/sections/IndexPage.vue'
+import Section from '../templates/sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -38,7 +38,7 @@ const pagination = reactive<Pagination>({
   size: 10
 })
 
-const schemas = ref<Array<Schema>>([])
+const templates = ref<Array<Template>>([])
 
 const visible = ref<boolean>(false)
 const configVisible = ref<boolean>(false)
@@ -106,11 +106,11 @@ async function load() {
  * 加载列表
  */
 async function loadSchemas() {
-  const filter: Filter<Schema> = {
+  const filter: Filter<Template> = {
     type: { op: 'eq', value: 'WORD' }
   }
   const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
-  schemas.value = res.data.content
+  templates.value = res.data.content
 }
 
 /**
@@ -252,11 +252,11 @@ async function removeRow(id: number) {
 }
 
 /**
- * format schemas
+ * format templates
  * @param cellValue cell value
  */
 function formatSchemas(cellValue: number): string {
-  const matched = schemas.value.find(item => item.id === cellValue)
+  const matched = templates.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
 
@@ -374,7 +374,7 @@ async function onSectionSave() {
           <ElFormItem :label="$t('label.template')" prop="schemaId">
             <ElSelect v-model="form.schemaId" :disabled="form.id != null"
               :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
-              <ElOption v-for="(item, index) in schemas" :key="index" :label="item.name" :value="item.id!" />
+              <ElOption v-for="(item, index) in templates" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
           </ElFormItem>
         </ElCol>
@@ -400,7 +400,7 @@ async function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <Section ref="sectionRef" :owner-id="form.id" owner-type="ARCHIVE" schema-type="WORD" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="ARCHIVE" template-type="WORD" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -414,13 +414,13 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <Section :owner-id="form.id" owner-type="ARCHIVE" schema-type="WORD" :read-only="true" />
+    <Section :owner-id="form.id" owner-type="ARCHIVE" template-type="WORD" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/reports.xlsx`" :download="$t('page.reports') + '.xlsx'">
+      <a :href="`templates/reports.xlsx`" :download="$t('page.reports') + '.xlsx'">
         {{ $t('page.reports') }}.xlsx
       </a>
     </p>

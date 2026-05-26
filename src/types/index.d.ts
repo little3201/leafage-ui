@@ -24,8 +24,8 @@ export * from './exploiters/script'
 // docs
 export * from './docs/archive'
 export * from './docs/report'
-export * from './docs/schema'
 export * from './docs/section'
+export * from './docs/template'
 
 // region
 export * from './region'

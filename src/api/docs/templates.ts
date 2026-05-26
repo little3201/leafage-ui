@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, Schema } from 'src/types'
+import type { Filter, Pagination, Template } from 'src/types'
 import { dealFilters } from 'src/utils'
 
 /**
@@ -9,9 +9,9 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSchemas = (pagination: Pagination, filter?: Filter<Schema>) => {
+export const retrieveSchemas = (pagination: Pagination, filter?: Filter<Template>) => {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.SCHEMA, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.TEMPLATE, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
@@ -20,7 +20,7 @@ export const retrieveSchemas = (pagination: Pagination, filter?: Filter<Schema>)
  * @returns Row data
  */
 export const fetchSchema = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.get(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
 /**
@@ -28,8 +28,8 @@ export const fetchSchema = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSchema = (row: Schema) => {
-  return api.post(SERVER_URL.SCHEMA, row)
+export const createSchema = (row: Template) => {
+  return api.post(SERVER_URL.TEMPLATE, row)
 }
 
 /**
@@ -38,8 +38,8 @@ export const createSchema = (row: Schema) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySchema = (id: number, row: Schema) => {
-  return api.put(`${SERVER_URL.SCHEMA}/${id}`, row)
+export const modifySchema = (id: number, row: Template) => {
+  return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row)
 }
 
 /**
@@ -48,7 +48,7 @@ export const modifySchema = (id: number, row: Schema) => {
  * @returns Enable or Disable result
  */
 export const enableSchema = (id: number) => {
-  return api.patch(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.patch(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
 /**
@@ -57,7 +57,7 @@ export const enableSchema = (id: number) => {
  * @returns Deletion status
  */
 export const removeSchema = (id: number) => {
-  return api.delete(`${SERVER_URL.SCHEMA}/${id}`)
+  return api.delete(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
 /**
@@ -66,5 +66,5 @@ export const removeSchema = (id: number) => {
  * @returns
  */
 export const importSchemas = (file: File) => {
-  return api.postForm(`${SERVER_URL.SCHEMA}/import`, { file: file })
+  return api.postForm(`${SERVER_URL.TEMPLATE}/import`, { file: file })
 }

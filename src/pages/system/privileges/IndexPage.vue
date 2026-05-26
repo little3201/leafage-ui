@@ -421,7 +421,7 @@ function handleInputConfirm() {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/privileges.xlsx`" :download="$t('page.privileges') + '.xlsx'">
+      <a :href="`templates/privileges.xlsx`" :download="$t('page.privileges') + '.xlsx'">
         {{ $t('page.privileges') }}.xlsx
       </a>
     </p>

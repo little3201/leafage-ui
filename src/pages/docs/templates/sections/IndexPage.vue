@@ -25,8 +25,8 @@ import WordContent from './WordContent.vue'
 const { t } = useI18n()
 const props = withDefaults(defineProps<{
   ownerId: number | null
-  ownerType: 'REPORT' | 'ARCHIVE' | 'SCHEMA'
-  schemaType: 'WORD' | 'EXCEL',
+  ownerType: 'REPORT' | 'ARCHIVE' | 'TEMPLATE'
+  templateType: 'WORD' | 'EXCEL',
   readOnly?: boolean,
   excelMode?: boolean
 }>(), { readOnly: false, data: false })
@@ -267,7 +267,8 @@ defineExpose({
 
     <ElCol :span="16" :xl="18">
       <div v-if="treeSelected">
-        <WordContent v-if="props.schemaType === 'WORD'" ref="wordContentRef" :body="form.body" :read-only="readOnly" />
+        <WordContent v-if="props.templateType === 'WORD'" ref="wordContentRef" :body="form.body"
+          :read-only="readOnly" />
         <template v-else>
           <ExcelContent v-if="excelMode" :section-id="form.id" :read-only="readOnly" />
           <ExcelField v-else :section-id="form.id" :read-only="readOnly" />

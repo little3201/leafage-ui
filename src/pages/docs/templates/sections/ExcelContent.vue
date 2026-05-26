@@ -22,8 +22,8 @@ const datas = ref<Array<SectionData>>([])
 const saveLoading = ref(false)
 const editable = ref<Record<number, boolean>>({})
 
-watch(() => props.sectionId, async (newVal) => {
-  if (newVal) {
+watch(() => props.sectionId, async (newVal, oldVal) => {
+  if (newVal != null && newVal !== oldVal) {
     await loadFields()
     await loadDatas()
   }

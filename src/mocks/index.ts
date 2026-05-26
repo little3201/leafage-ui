@@ -2,8 +2,8 @@ import { authenticationHandlers } from './authentication'
 import { calendarEventHandlers } from './calendar-events'
 import { archivesHandlers } from './docs/archives'
 import { reportsHandlers } from './docs/reports'
-import { schemasHandlers } from './docs/schemas'
 import { sectionsHandlers } from './docs/sections'
+import { templatesHandlers } from './docs/templates'
 import { connectionsHandlers } from './exploiters/connections'
 import { fragmentsHandlers } from './exploiters/fragments'
 import { modulesHandlers } from './exploiters/modules'
@@ -45,5 +45,5 @@ export const handlers = [
   ...usersHandlers,
   ...archivesHandlers,
   ...reportsHandlers,
-  ...schemasHandlers
+  ...templatesHandlers
 ]

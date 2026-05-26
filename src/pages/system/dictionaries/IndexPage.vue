@@ -94,7 +94,7 @@ async function onCurrentChange(data: TreeNodeData) {
     return
   }
   treeSelected.value = String(data.id)
-  filter.superiorId!.value = treeSelected.value ? Number(treeSelected.value) : null
+  filter.superiorId = { op: 'eq', value: treeSelected.value ? Number(treeSelected.value) : null }
   pagination.page = 1
   await load()
 }
@@ -417,7 +417,7 @@ function onUpload(options: UploadRequestOptions) {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
+      <a :href="`templates/dictionaries.xlsx`" :download="$t('dictionaries') + '.xlsx'">
         {{ $t('dictionaries') }}.xlsx
       </a>
     </p>

@@ -283,10 +283,10 @@ const subDatas: Privilege[] = [
   },
   {
     id: 24,
-    name: 'schemas',
+    name: 'templates',
     superiorId: 22,
-    path: 'schemas',
-    component: 'docs/schemas',
+    path: 'templates',
+    component: 'docs/templates',
     icon: 'assignment-add-outline',
     actions: ['create', 'modify', 'remove', 'import', 'export', 'section'],
     count: 0,
@@ -547,10 +547,10 @@ const treeNodes: PrivilegeTreeNode[] = [
       },
       {
         id: 24,
-        name: 'schemas',
+        name: 'templates',
         meta: {
-          path: 'schemas',
-          component: 'docs/schemas',
+          path: 'templates',
+          component: 'docs/templates',
           icon: 'assignment-add-outline',
           actions: ['create', 'modify', 'remove', 'import', 'export', 'section']
         },

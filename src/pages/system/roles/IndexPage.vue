@@ -488,7 +488,7 @@ function rowSelected(row: Privilege) {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/roles.xlsx`" :download="$t('page.roles') + '.xlsx'">
+      <a :href="`templates/roles.xlsx`" :download="$t('page.roles') + '.xlsx'">
         {{ $t('page.roles') }}.xlsx
       </a>
     </p>

@@ -8,13 +8,13 @@ import type {
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { createReport, fetchReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
-import { retrieveSchemas } from 'src/api/docs/schemas'
+import { retrieveSchemas } from 'src/api/docs/templates'
 import { actionIcons, actionTypes } from 'src/constants'
-import type { Filter, Pagination, Report, Schema } from 'src/types'
+import type { Filter, Pagination, Report, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Section from '../schemas/sections/IndexPage.vue'
+import Section from '../templates/sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -22,7 +22,7 @@ const loading = ref<boolean>(false)
 const datas = ref<Array<Report>>([])
 const total = ref<number>(0)
 
-const schemas = ref<Array<Schema>>([])
+const templates = ref<Array<Template>>([])
 
 const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
@@ -98,14 +98,14 @@ async function load() {
 }
 
 /**
- * 加载 schemas
+ * 加载 templates
  */
 async function loadSchemas() {
-  const filter: Filter<Schema> = {
+  const filter: Filter<Template> = {
     type: { op: 'eq', value: 'EXCEL' }
   }
   const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
-  schemas.value = res.data.content
+  templates.value = res.data.content
 }
 
 /**
@@ -257,11 +257,11 @@ function onUpload(options: UploadRequestOptions) {
 }
 
 /**
-   * format schemas
+   * format templates
    * @param cellValue cell value
    */
 function formatSchemas(cellValue: number): string {
-  const matched = schemas.value.find(item => item.id === cellValue)
+  const matched = templates.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
 </script>
@@ -377,7 +377,7 @@ function formatSchemas(cellValue: number): string {
           <ElFormItem :label="$t('label.template')" prop="schemaId">
             <ElSelect v-model="form.schemaId" :disabled="form.id != null"
               :placeholder="$t('placeholder.selectText', { field: $t('label.template') })">
-              <ElOption v-for="(item, index) in schemas" :key="index" :label="item.name" :value="item.id!" />
+              <ElOption v-for="(item, index) in templates" :key="index" :label="item.name" :value="item.id!" />
             </ElSelect>
           </ElFormItem>
         </ElCol>
@@ -396,23 +396,23 @@ function formatSchemas(cellValue: number): string {
 
   <!-- field -->
   <ElDialog v-model="fieldVisible" :title="$t('action.field')" align-center>
-    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" schema-type="EXCEL" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" />
   </ElDialog>
 
   <!-- data -->
   <ElDialog v-model="contentVisible" :title="$t('action.data')" align-center>
-    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" schema-type="EXCEL" :excel-mode="true" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" :excel-mode="true" />
   </ElDialog>
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <Section :owner-id="form.id" owner-type="REPORT" schema-type="EXCEL" :excel-mode="true" :read-only="true" />
+    <Section :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" :excel-mode="true" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/sections.xlsx`" :download="$t('page.sections') + '.xlsx'">
+      <a :href="`templates/sections.xlsx`" :download="$t('page.sections') + '.xlsx'">
         {{ $t('page.sections') }}.xlsx
       </a>
     </p>

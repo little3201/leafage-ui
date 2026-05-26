@@ -614,7 +614,7 @@ const rowSelected = (row: Privilege) => {
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/groups.xlsx`" :download="$t('page.groups') + '.xlsx'">
+      <a :href="`templates/groups.xlsx`" :download="$t('page.groups') + '.xlsx'">
         {{ $t('page.groups') }}.xlsx
       </a>
     </p>

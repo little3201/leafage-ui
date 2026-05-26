@@ -8,9 +8,9 @@ import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import {
   createSchema, fetchSchema, importSchemas, modifySchema,
   removeSchema, retrieveSchemas
-} from 'src/api/docs/schemas'
+} from 'src/api/docs/templates'
 import { actionIcons, actionTypes, schemaStatus, schemaTypes } from 'src/constants'
-import type { Filter, Pagination, Schema } from 'src/types'
+import type { Filter, Pagination, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -20,7 +20,7 @@ import SchemaSection from './sections/IndexPage.vue'
 const { t } = useI18n()
 
 const loading = ref<boolean>(false)
-const datas = ref<Array<Schema>>([])
+const datas = ref<Array<Template>>([])
 const total = ref<number>(0)
 
 const tableRef = ref<TableInstance>()
@@ -39,19 +39,19 @@ const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const importRef = ref<UploadInstance>()
 
-const filter = reactive<Filter<Schema>>({
+const filter = reactive<Filter<Template>>({
   name: { op: 'like', value: undefined }
 })
 
 const sectionRef = ref<InstanceType<typeof SchemaSection>>()
 const formRef = ref<FormInstance>()
-const initialValues: Schema = {
+const initialValues: Template = {
   id: null,
   name: '',
   type: 'WORD',
   version: 1
 }
-const form = ref<Schema>({ ...initialValues })
+const form = ref<Template>({ ...initialValues })
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
@@ -119,8 +119,9 @@ async function saveRow(id?: number) {
  * 配置
  * @param id 主键
  */
-async function configSection(id: number) {
-  await loadOne(id)
+function configSection(id: number, type: 'WORD' | 'EXCEL') {
+  form.value.id = id
+  form.value.type = type
   configVisible.value = true
 }
 
@@ -207,7 +208,7 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'schemas')
+    exportToCSV(selectedRows, 'templates')
   }
   exportLoading.value = false
 }
@@ -316,7 +317,7 @@ async function onSectionSave() {
             }}
           </ElButton>
           <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'section')" title="section"
-            type="success" link @click="configSection(scope.row.id)">
+            type="success" link @click="configSection(scope.row.id, scope.row.type)">
             <Icon :icon="`material-symbols:${actionIcons['section']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.section')
             }}
@@ -380,7 +381,7 @@ async function onSectionSave() {
 
   <!-- config -->
   <ElDialog v-model="configVisible" :title="$t('action.config')" align-center :show-close="false">
-    <SchemaSection ref="sectionRef" :owner-id="form.id" owner-type="SCHEMA" :schema-type="form.type" />
+    <SchemaSection ref="sectionRef" :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -394,14 +395,14 @@ async function onSectionSave() {
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')" align-center>
-    <SchemaSection :owner-id="form.id" owner-type="SCHEMA" :schema-type="form.type" :read-only="true" />
+    <SchemaSection :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" :read-only="true" />
   </ElDialog>
 
   <!-- import -->
   <ElDialog v-model="importVisible" :title="$t('action.import')" align-center :show-close="false" width="480">
     <p>{{ $t('action.download') }}：
-      <a :href="`schemas/schemas.xlsx`" :download="$t('page.schemas') + '.xlsx'">
-        {{ $t('page.schemas') }}.xlsx
+      <a :href="`templates/templates.xlsx`" :download="$t('page.templates') + '.xlsx'">
+        {{ $t('page.templates') }}.xlsx
       </a>
     </p>
     <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
