@@ -3,6 +3,22 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "types": ["vite/client"],
+    "paths": {
+      "src": ["./src"],
+      "src/*": ["./src/*"],
+      "components": ["./src/components"],
+      "components/*": ["./src/components/*"],
+      "layouts": ["./src/layouts"],
+      "layouts/*": ["./src/layouts/*"],
+      "pages": ["./src/pages"],
+      "pages/*": ["./src/pages/*"],
+      "assets": ["./src/assets"],
+      "assets/*": ["./src/assets/*"],
+      "boot": ["./src/boot" ],
+      "boot/*": ["./src/boot/*" ],
+      "stores": ["./src/stores"],
+      "stores/*": ["./src/stores/*"],
+    },
 
     /* Linting */
     "noUnusedLocals": true,

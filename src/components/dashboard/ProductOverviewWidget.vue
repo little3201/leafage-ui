@@ -99,13 +99,13 @@ const deleteProduct = () => {
     price: 0,
     status: ''
   }
-  toast.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 })
+  toast.add({ severity: 'success', summary: 'Delete Successful', detail: 'Product Deleted', life: 3000 })
 }
 const deleteSelectedProducts = () => {
   products.value = products.value.filter(val => !selectedProducts.value.includes(val))
   deleteProductsDialog.value = false
   selectedProducts.value = []
-  toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 })
+  toast.add({ severity: 'success', summary: 'Delete Successful', detail: 'Products Deleted', life: 3000 })
 }
 </script>
 

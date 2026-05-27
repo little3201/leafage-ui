@@ -1,3 +1,4 @@
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import { PrimeVueResolver } from '@primevue/auto-import-resolver'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
@@ -25,6 +26,9 @@ export default defineConfig({
       resolvers: [
         PrimeVueResolver()
       ]
-    })
+    }),
+    VueI18nPlugin({
+      include: [fileURLToPath(new URL('./src/lang', import.meta.url))]
+    }),
   ],
 })

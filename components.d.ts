@@ -27,5 +27,6 @@ declare module 'vue' {
     SalesTrendWidget: typeof import('./src/components/dashboard/SalesTrendWidget.vue')['default']
     StatsWidget: typeof import('./src/components/dashboard/StatsWidget.vue')['default']
     Tag: typeof import('primevue/tag')['default']
+    Toast: typeof import('primevue/toast')['default']
   }
 }
