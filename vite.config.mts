@@ -1,4 +1,6 @@
+import type { PluginOption } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import tailwindcss from '@tailwindcss/vite'
 import Vue from '@vitejs/plugin-vue'
 import Fonts from 'unplugin-fonts/vite'
@@ -32,13 +34,15 @@ export default defineConfig({
     Vue({
       template: { transformAssetUrls },
     }),
-    tailwindcss(),
-    // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
+    tailwindcss() as PluginOption,
     Vuetify({
       autoImport: true,
       styles: {
-        configFile: 'src/styles/settings.scss'
-      }
+        configFile: 'src/styles/settings.scss',
+      },
+    }),
+    VueI18nPlugin({
+      include: [fileURLToPath(new URL('src/lang', import.meta.url))],
     }),
     Fonts({
       fontsource: {
@@ -50,10 +54,10 @@ export default defineConfig({
           {
             name: 'Roboto',
             weights: [100, 300, 400, 500, 700, 900],
-            styles: ['normal', 'italic']
-          }
-        ]
-      }
-    })
-  ]
+            styles: ['normal', 'italic'],
+          },
+        ],
+      },
+    }),
+  ],
 })
