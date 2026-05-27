@@ -1,5 +1,3 @@
-import * as XLSX from 'xlsx'
-
 /**
  * Format a file size given in bytes into a human-readable string
  * @param {number} size - The file size in bytes
@@ -39,36 +37,4 @@ export function download(data: Blob, filename: string, type?: string): void {
 
   // 释放创建的 URL 对象
   globalThis.URL.revokeObjectURL(url)
-}
-
-/**
- * 导出excel
- * @param data 数据
- * @param fileName 
- */
-export function exportToExcel(data: object[], fileName: string, sheetName?: string) {
-  const ws = XLSX.utils.json_to_sheet(data)
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, sheetName && sheetName.length ? sheetName : 'Sheet1')
-
-  // 导出 Excel 文件
-  XLSX.writeFile(wb, fileName.replace(/\.[^/.]+$/, '') + '.xlsx')
-}
-
-/**
- * 导出csv
- * @param data 数据
- * @param fileName 
- */
-export function exportToCSV(data: object[], fileName: string) {
-  const ws = XLSX.utils.json_to_sheet(data)
-  const csv = XLSX.utils.sheet_to_csv(ws)
-
-  // 创建 Blob 对象并触发下载
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-  link.download = fileName.replace(/\.[^/.]+$/, '') + '.csv'
-
-  link.click()
 }
