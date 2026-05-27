@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "lint:lint-staged": "lint-staged"
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint -c ./eslint.config.js \"./src/**/*.{js,mjs,cjs,ts,vue}\"",
+    "lint:lint-staged": "lint-staged",
+    "prepare": "husky"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
@@ -25,6 +28,7 @@
     "@eslint/js": "^10.0.1",
     "@primevue/auto-import-resolver": "^4.5.5",
     "@tailwindcss/vite": "^4.3.0",
+    "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.12.4",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/eslint-config-typescript": "^14.7.0",
