@@ -1,33 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
-const count = ref(0)
+import AppFooter from 'components/AppFooter.vue'
+import AppTopbar from 'components/AppTopbar.vue'
+import ProductOverviewWidget from 'components/dashboard/ProductOverviewWidget.vue'
+import RecentActivityWidget from 'components/dashboard/RecentActivityWidget.vue'
+import SalesTrendWidget from 'components/dashboard/SalesTrendWidget.vue'
+import StatsWidget from 'components/dashboard/StatsWidget.vue'
 </script>
 
 <template>
-  <section id="center">
-    <div>
-      <h1>Get started</h1>
-      <p>Edit <code>src/App.vue</code> and save to test <code>HMR</code></p>
+  <div class="bg-surface-50 dark:bg-surface-950 min-h-screen p-8 flex flex-col gap-6">
+    <AppTopbar />
+    <div class="flex flex-col w-full  gap-6 flex-1">
+      <StatsWidget />
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <SalesTrendWidget />
+        <RecentActivityWidget />
+      </div>
+      <ProductOverviewWidget />
     </div>
-    <button type="button" class="counter" @click="count++">
-      Count is {{ count }}
-    </button>
-  </section>
-
-  <div class="ticks"></div>
-
-  <section id="next-steps">
-    <div id="docs">
-      <!-- <svg class="icon" role="presentation" aria-hidden="true">
-        <use href="/icons.svg#documentation-icon"></use>
-      </svg> -->
-      <h2>Documentation</h2>
-      <p>Your questions, answered</p>
-    </div>
-
-  </section>
-
-  <div class="ticks"></div>
-  <section id="spacer"></section>
+    <AppFooter />
+  </div>
 </template>

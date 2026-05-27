@@ -1,5 +1,5 @@
-import MainLayout from 'layouts/MainLayout.vue'
 import type { RouteRecordRaw } from 'vue-router'
+import MainLayout from '../layouts/MainLayout.vue'
 
 
 export const constantRouterMap: Array<RouteRecordRaw> = [

@@ -1,5 +1,5 @@
-import { useUserStore } from 'src/stores/user'
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '../stores/user'
 import { constantRouterMap } from './routes'
 
 // Create router instance
