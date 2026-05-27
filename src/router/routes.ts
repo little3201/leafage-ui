@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
-import MainLayout from 'layouts/MainLayout.vue'
+import MainLayout from '../layouts/MainLayout.vue'
+
 
 export const constantRouterMap: Array<RouteRecordRaw> = [
   {
@@ -10,7 +11,7 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
       {
         path: '',
         name: 'index',
-        component: () => import('pages/index.vue'),
+        component: () => import('pages/IndexPage.vue')
       },
       {
         path: 'system',
@@ -20,15 +21,15 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
           {
             path: 'users',
             name: 'users',
-            component: () => import('pages/system/users/index.vue'),
-          },
-        ],
+            component: () => import('pages/system/users/IndexPage.vue'),
+          }
+        ]
       },
-    ],
+    ]
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import('pages/login.vue'),
-  },
+    component: () => import('pages/LoginPage.vue')
+  }
 ]

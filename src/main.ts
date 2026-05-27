@@ -1,4 +1,4 @@
-import i18n from 'boot/i18n'
+import {i18n} from 'boot/i18n'
 import vuetify from 'boot/vuetify'
 import { createPinia } from 'pinia'
 import router from 'src/router'

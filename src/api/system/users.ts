@@ -1,108 +1,79 @@
-import type { Filter, Pagination, User } from 'src/types'
+import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import { buildQuery, dealFilters } from 'src/utils'
+import type { Filter, Pagination, User } from 'src/types'
+import { dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
+ * @param pagination Pagination and sort parameters
+ * @param filter Optional filter or sort parameters
+ * @returns Rows data
  */
-export async function retrieveUsers (pagination: Pagination, filter?: Filter<User>) {
+export const retrieveUsers = (pagination: Pagination, filter?: Filter<User>) => {
   const filters = dealFilters(filter)
-  const query = buildQuery({ ...pagination, page: pagination.page - 1, filters })
-  const res = await fetch(`/api${SERVER_URL.USER}?${query}`)
-  return res.json()
+  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
  * Fetch a specific row
+ * @param id Row ID
+ * @returns Row data
  */
-export async function fetchUser (id: number) {
-  const res = await fetch(`/api${SERVER_URL.USER}/${id}`)
-  return res.json()
+export const fetchUser = (id: number) => {
+  return api.get(`${SERVER_URL.USER}/${id}`)
 }
 
 /**
  * Create a new row
+ * @param row Row data
+ * @returns Created row
  */
-export async function createUser (row: User) {
-  const res = await fetch(`/api${SERVER_URL.USER}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(row),
-  })
-  return res.json()
+export const createUser = (row: User) => {
+  return api.post(SERVER_URL.USER, row)
 }
 
 /**
  * Modify an existing row
+ * @param id Row ID
+ * @param row Updated row data
+ * @returns Modified row
  */
-export async function modifyUser (id: number, row: User) {
-  const res = await fetch(`/api${SERVER_URL.USER}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(row),
-  })
-  return res.json()
+export const modifyUser = (id: number, row: User) => {
+  return api.put(`${SERVER_URL.USER}/${id}`, row)
 }
 
 /**
  * Enable or Disable an existing row
+ * @param id Row ID
+ * @returns Enable or Disable result
  */
-export async function enableUser (id: number) {
-  const res = await fetch(`/api${SERVER_URL.USER}/${id}`, { method: 'PATCH' })
-  return res.text()
+export const enableUser = (id: number) => {
+  return api.patch(`${SERVER_URL.USER}/${id}`)
 }
 
 /**
  * Unlock an existing row
+ * @param id Row ID
+ * @returns Unlock result
  */
-export async function unlockUser (id: number) {
-  const res = await fetch(`/api${SERVER_URL.USER}/${id}/unlock`, { method: 'PATCH' })
-  return res.text()
+export const unlockUser = (id: number) => {
+  return api.patch(`${SERVER_URL.USER}/${id}/unlock`)
 }
 
 /**
  * Remove a row
+ * @param id Row ID
+ * @returns Deletion status
  */
-export async function removeUser (id: number) {
-  const res = await fetch(`/api${SERVER_URL.USER}/${id}`, { method: 'DELETE' })
-  return res.json()
-}
-
-/**
- * Relation privileges for a specific row
- */
-export async function relationUsersPrivileges (privilegeId: number, relations: { key: number | string, actions: string[] }[]) {
-  const datas = relations.map(item => ({ username: item.key, actions: item.actions }))
-  const res = await fetch(`/api${SERVER_URL.USER}/privileges/${privilegeId}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(datas),
-  })
-  return res.json()
-}
-
-/**
- * Remove privileges for a specific row
- */
-export async function removeUsersPrivileges (username: string, privilegeId: number, actions?: string[]) {
-  let url = `/api${SERVER_URL.USER}/${username}/privileges/${privilegeId}`
-  if (actions && actions.length > 0) {
-    const query = buildQuery({ actions: actions.join(',') })
-    url += `?${query}`
-  }
-  const res = await fetch(url, { method: 'DELETE' })
-  return res.json()
+export const removeUser = (id: number) => {
+  return api.delete(`${SERVER_URL.USER}/${id}`)
 }
 
 /**
  * Import rows
+ * @param file file
+ * @returns
  */
-export async function importUsers (file: File) {
-  const formData = new FormData()
-  formData.append('file', file)
-  const res = await fetch(`/api${SERVER_URL.USER}/import`, {
-    method: 'POST',
-    body: formData,
-  })
-  return res.json()
+export const importUsers = (file: File) => {
+  return api.postForm(`${SERVER_URL.USER}/import`, { file: file })
 }

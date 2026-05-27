@@ -1,0 +1,87 @@
+import { http, HttpResponse } from 'msw'
+import { SERVER_URL } from 'src/constants'
+import type { FileRecord } from 'src/types'
+import { applyFilters } from './util'
+
+const datas: FileRecord[] = [
+]
+
+for (let i = 1; i < 18; i++) {
+  const randomIndex = Math.floor(Math.random() * 6)
+  const data: FileRecord = {
+    id: i,
+    superiorId: randomIndex || null,
+    name: 'test' + i + ['.jpg', '.png', '.pdf', '.zip', '.docx', '.xlsx'][randomIndex] || '',
+    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || '',
+    size: Math.floor(Math.random() * 100000),
+    path: '/path/to/test' + i,
+    directory: randomIndex === null ? true : false,
+    lastModifiedDate: new Date()
+  }
+  datas.push(data)
+}
+
+export const fileRecordsHandlers = [
+  http.get(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
+    const { id } = params
+    if (id) {
+      const filtered = datas.find(item => item.id === Number(id))
+      return HttpResponse.json(filtered)
+    } else {
+      return HttpResponse.json()
+    }
+  }),
+  http.get(`/api${SERVER_URL.FILE}`, ({ request }) => {
+    const url = new URL(request.url)
+    const page = url.searchParams.get('page')
+    const size = url.searchParams.get('size')
+
+    const filtersStr = url.searchParams.get('filters')
+    const filtered = applyFilters(datas, filtersStr)
+
+    const data = {
+      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      page: {
+        totalElements: filtered.length
+      }
+    }
+
+    return HttpResponse.json(data)
+  }),
+  http.post(`/api${SERVER_URL.FILE}/upload`, async ({ request }) => {
+    const data = await request.formData()
+    const file = data.get('file')
+
+    if (!file) {
+      return new HttpResponse('Missing document', { status: 400 })
+    }
+
+    if (!(file instanceof File)) {
+      return new HttpResponse('Uploaded document is not a File', {
+        status: 400,
+      })
+    }
+
+    return HttpResponse.json(datas[0])
+  }),
+  http.delete(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
+    // All request path params are provided in the "params"
+    // argument of the response resolver.
+    const { id } = params
+
+    // Let's attempt to grab the Row by its ID.
+    const deletedData = datas.filter(item => item.id === Number(id))
+
+    // Respond with a "404 Not Found" response if the given
+    // Row ID does not exist.
+    if (!deletedData) {
+      return new HttpResponse(null, { status: 404 })
+    }
+
+    // Delete the Row from the "allRow" map.
+    datas.pop()
+
+    // Respond with a "200 OK" response and the deleted Row.
+    return HttpResponse.json()
+  })
+]

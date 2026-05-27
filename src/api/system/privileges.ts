@@ -1,18 +1,17 @@
+import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, Privilege } from 'src/types'
-import { buildQuery, dealFilters } from 'src/utils'
+import type { Filter, Pagination, Privilege, PrivilegeAction } from 'src/types'
+import { dealFilters } from 'src/utils'
 
 /**
  * Retrieve rows
  * @param pagination Pagination and sort parameters
- * @param filters Optional filter or sort parameters
+ * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export async function retrievePrivileges(pagination: Pagination, filter?: Filter<Privilege>) {
+export const retrievePrivileges = (pagination: Pagination, filter?: Filter<Privilege>) => {
   const filters = dealFilters(filter)
-  const query = buildQuery({ ...pagination, page: pagination.page - 1, filters })
-  const res = await fetch(`/api${SERVER_URL.USER}?${query}`)
-  return res.json()
+  return api.get(`${SERVER_URL.PRIVILEGE}`, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
 
 /**
@@ -20,18 +19,24 @@ export async function retrievePrivileges(pagination: Pagination, filter?: Filter
  * @param id Row ID
  * @returns Subset data
  */
-export async function retrievePrivilegeSubset(id: number) {
-  const res = await fetch(`/api${SERVER_URL.PRIVILEGE}/${id}/subset`)
-  return res.json()
+export const retrievePrivilegeSubset = (id: number) => {
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/subset`)
 }
 
 /**
  * Fetch row tree structure
  * @returns tree data
  */
-export async function retrievePrivilegeTree () {
-  const res = await fetch(`/api${SERVER_URL.PRIVILEGE}/tree`)
-  return res.json()
+export const retrievePrivilegeTree = () => {
+  return api.get(`${SERVER_URL.PRIVILEGE}/tree`)
+}
+
+/**
+ * Fetch row actions
+ * @returns Row actions
+ */
+export const retrievePrivilegeActions = (id: number) => {
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/actions`)
 }
 
 /**
@@ -39,9 +44,17 @@ export async function retrievePrivilegeTree () {
  * @param id Row ID
  * @returns Row data
  */
-export async function fetchPrivilege(id: number) {
-  const res = await fetch(`/api${SERVER_URL.PRIVILEGE}/${id}`)
-  return res.json()
+export const fetchPrivilege = (id: number) => {
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}`)
+}
+
+/**
+ * Fetch a specific row
+ * @param id Row ID
+ * @returns Row data
+ */
+export const fetchPrivilegeAction = (id: number, actionId: number) => {
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/actions/${actionId}`)
 }
 
 /**
@@ -50,13 +63,28 @@ export async function fetchPrivilege(id: number) {
  * @param row Updated row data
  * @returns Modified row
  */
-export async function modifyPrivilege(id: number, row: Privilege) {
-  const res = await fetch(`/api${SERVER_URL.PRIVILEGE}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(row),
-  })
-  return res.json()
+export const createPrivilegeAction = (id: number, row: PrivilegeAction) => {
+  return api.post(`${SERVER_URL.PRIVILEGE}/${id}/actions`, row)
+}
+
+/**
+ * Modify an existing row
+ * @param id Row ID
+ * @param row Updated row data
+ * @returns Modified row
+ */
+export const modifyPrivilege = (id: number, row: Privilege) => {
+  return api.put(`${SERVER_URL.PRIVILEGE}/${id}`, row)
+}
+
+/**
+ * Modify an existing row
+ * @param id Row ID
+ * @param row Updated row data
+ * @returns Modified row
+ */
+export const modifyPrivilegeAction = (id: number, row: PrivilegeAction) => {
+  return api.put(`${SERVER_URL.PRIVILEGE}/${id}/actions/${row.id}`, row)
 }
 
 /**
@@ -64,9 +92,18 @@ export async function modifyPrivilege(id: number, row: Privilege) {
  * @param id Row ID
  * @returns Enable or Disable result
  */
-export async function enablePrivilege(id: number) {
-  const res = await fetch(`/api${SERVER_URL.PRIVILEGE}/${id}`, { method: 'PATCH' })
-  return res.text()
+export const enablePrivilege = (id: number) => {
+  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}`)
+}
+
+/**
+ * Enable or Disable an existing row
+ * @param id Row ID
+ * @param action Action to enable or disable
+ * @returns Enable or Disable result
+ */
+export const enablePrivilegeAction = (id: number, actionId: number) => {
+  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/actions/${actionId}`)
 }
 
 /**
@@ -74,10 +111,6 @@ export async function enablePrivilege(id: number) {
  * @param file file
  * @returns
  */
-export const importPrivileges = async (file: File) => {
-  const res = await fetch(`/api${SERVER_URL.PRIVILEGE}/import`, {
-    method: 'POST',
-    body: JSON.stringify({ file: file }),
-  })
-  return res.json()
+export const importPrivileges = (file: File) => {
+  return api.postForm(`${SERVER_URL.PRIVILEGE}/import`, { file: file })
 }

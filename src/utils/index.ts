@@ -1,78 +1,91 @@
-import type { Filter } from 'src/types'
+export * from './action'
+export * from './file'
+export * from './generate'
+export * from './request'
+
 
 /**
- * Resolve a child path relative to a parent path
- * @param {string} parentPath - The parent path
- * @param {string} path - The child path
- * @returns {string} - The resolved path
+ * Check if a value is a number
+ * @param {unknown} val - The value to check
+ * @returns {boolean} - True if the value is a number, otherwise false
  */
-export function pathResolve(parentPath: string | undefined, path: string | undefined): string {
-  if (!path) {
-    return ''
-  }
-  const childPath = path.startsWith('/') ? path : `/${path}`
-  return `${parentPath}${childPath}`.replaceAll(/\/\//g, '/').trim()
+export const isNumber = (val: unknown): val is number => {
+  return typeof val === 'number' && isFinite(val)
 }
 
 /**
- * Helper to build query string
- * @param params Object containing query parameters
- * @returns Query string
+ * Format a duration given in milliseconds into a human-readable string
+ * @param {number} milliseconds - The duration in milliseconds
+ * @returns {string} - The formatted duration
  */
-export function buildQuery (params: Record<string, any>) {
-  const query = new URLSearchParams()
-  for (const key of Object.keys(params)) {
-    if (params[key] !== undefined && params[key] !== null) {
-      query.append(key, params[key])
-    }
-  }
-  return query.toString()
-}
+export function formatDuration(ms: number): string {
+  if (ms === 0) return '0ms'
 
-/**
- * Process filters for API requests
- * @param filters Filter object
- * @returns Processed filter string or undefined
- */
-export function dealFilters<T>(filters?: Filter<T>): string | undefined {
-  if (!filters || Object.keys(filters).length === 0) {
-    return undefined
-  }
+  const sign = ms < 0 ? '-' : ''
+  const abs = Math.abs(ms)
 
-  const conditions: string[] = []
+  const h = Math.floor(abs / 3600000)
+  const m = Math.floor((abs % 3600000) / 60000)
+  const s = (abs % 60000) / 1000
+  const msPart = abs % 1000
 
-  // 使用 keyof T 来遍历，但因为是 Partial，所以要用 keyof typeof filters
-  for (const field in filters) {
-    const cond = filters[field]
-    if (!cond) continue
+  const parts: string[] = []
 
-    const { op, value } = cond
+  if (h > 0) parts.push(`${h}h`)
+  if (m > 0) parts.push(`${m}min`)
 
-    // 跳过无效值
-    if (value == null || value === '') {
-      continue
-    }
-
-    let valueStr: string
-
-    // 根据 op 处理 value 的字符串化方式
-    if (op === 'in' || op === 'notIn') {
-      // 假设 value 是数组类型（实际使用时应匹配实体字段类型）
-      valueStr = Array.isArray(value) ? value.join(',') : String(value)
-    } else if (op === 'between' || op === 'notBetween') {
-      // 假设 value 是 [any, any] 形式的数组
-      valueStr = Array.isArray(value) && value.length === 2
-        ? value.join(',')
-        : String(value)
+  // 只有当秒 >= 1 时才显示秒
+  if (s >= 1) {
+    let secStr: string
+    if (s >= 10) {
+      secStr = s.toFixed(1).replace(/\.0$/, '')
     } else {
-      valueStr = String(value).trim()
+      secStr = s.toFixed(2).replace(/\.?0+$/, '')
     }
-
-    // 只在有有效值时加入
-    if (valueStr) {
-      conditions.push(`${field}:${op}:${valueStr}`)
-    }
+    parts.push(`${secStr}s`)
+  }
+  // 小于 1 秒且前面没有更高单位，才显示毫秒
+  else if (parts.length === 0) {
+    if (msPart === 0) return '0ms'
+    const msStr = msPart < 10
+      ? msPart.toFixed(1).replace(/\.0$/, '')
+      : Math.round(msPart).toString()
+    parts.push(`${msStr}ms`)
   }
 
-  return conditions.length > 0 ? conditions.join(',') : undefined
+  return sign + (parts.length > 0 ? parts.join('') : '0ms')
+}
+
+/**
+ * 数组截取、可展示数组长度
+ * @param array 集合、数组
+ * @param count 截取树
+ * @returns 截取后的数组、集合
+ */
+export function visibleArray<T extends string | number>(array: T[], count: number): T[] {
+  if (array && array.length) {
+    return array.length > count ? array.slice(0, count) : array
+  }
+  return []
+}
+
+/**
+ * 数据分组
+ * @param array 分组数据
+ * @param typeKey 分组依据
+ * @returns 分组后的数据
+ */
+export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[] } {
+  return array.reduce((acc: { [key: string]: T[] }, curr: T) => {
+    const typeValue = curr[typeKey] as string | number // 允许 `string` 或 `number` 类型
+    if (!typeValue) { return acc }
+    const groupKey = String(typeValue) // 确保转换为字符串，以便作为对象键
+
+    if (!acc[groupKey]) {
+      acc[groupKey] = []
+    }
+    acc[groupKey].push(curr)
+
+    return acc
+  }, {} as { [key: string]: T[] })
 }

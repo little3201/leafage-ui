@@ -1,51 +1,57 @@
-import { useUserStore } from 'src/stores/user'
+import { getUserInfo, signIn } from 'src/api/authentication'
 import { retrievePrivilegeTree } from 'src/api/system/privileges'
+import type { PrivilegeTreeNode } from 'src/types'
+import { useUserStore } from 'stores/user'
+import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteLocation, RouteRecordRaw } from 'vue-router'
-import type {PrivilegeTreeNode} from 'src/types'
-import BlankLayout from 'layouts/BlankLayout.vue'
 import { constantRouterMap } from './routes'
+// Lazy load layout
+const BlankLayout = () => import('layouts/BlankLayout.vue')
+
 
 const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
 
 // Create router instance
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: constantRouterMap,
+  scrollBehavior: () => ({ left: 0, top: 0 })
 })
 
-router.beforeEach(async (to: RouteLocation, from: RouteLocation) => {
-  if (['/login'].includes(to.path)) {
-    return true
-  }
+
+router.beforeEach(async (to, from) => {
+  if (['/login'].includes(to.path)) return true
 
   const userStore = useUserStore()
-  // if (!userStore.accessToken) {
-  //   await signIn()
-  //   return false
-  // }
 
-  // if (!userStore.username) {
-  //   try {
-  //     const res = await getUserInfo()
-  //     userStore.$patch({
-  //       username: res.data.sub,
-  //       fullName: res.data.name,
-  //     })
-  //   } catch {
-  //     userStore.$reset()
-  //     // await signIn()
-  //     return false
-  //   }
-  // }
-
-  if (!userStore.privileges.length) {
+  // 加载用户信息
+  if (!userStore.username) {
     try {
-      const privileges = await retrievePrivilegeTree()
-      userStore.$patch({ privileges: privileges })
+      const res = await getUserInfo()
+      if (res && res.data) {
+        userStore.$patch({
+          username: res.data.sub,
+          fullName: res.data.name,
+          email: res.data.email
+        })
+      }
     } catch {
       userStore.$reset()
-      // await signIn()
+      signIn()
+      return false
+    }
+  }
+
+  // 加载权限信息
+  if (!userStore.privileges.length) {
+    try {
+      const res = await retrievePrivilegeTree()
+      if (res && res.data) {
+        userStore.$patch({ privileges: res.data })
+      }
+    } catch {
+      userStore.$reset()
+      signIn()
       return false
     }
   }
@@ -53,15 +59,14 @@ router.beforeEach(async (to: RouteLocation, from: RouteLocation) => {
   // 动态注册路由
   if (!userStore.routesAdded) {
     generateRoutes(userStore.privileges).forEach((route) => {
-        router.addRoute('home', route)
-      }
-    )
+      router.addRoute('home', route)
+    })
 
-    if (!router.hasRoute('error')) {
+    if (!router.hasRoute('ErrorNotFound')) {
       router.addRoute({
         path: '/:cacheAll(.*)*',
-        name: 'error',
-        component: () => import('pages/error.vue'),
+        name: 'ErrorNotFound',
+        component: () => import('pages/ErrorNotFound.vue'),
       })
     }
 
@@ -75,13 +80,18 @@ router.beforeEach(async (to: RouteLocation, from: RouteLocation) => {
 })
 
 
+/**
+ * Generate routes dynamically based on user privileges
+ * @param {PrivilegeTreeNode[]} routes - Array of privilege tree nodes
+ * @returns {RouteRecordRaw[]} - Array of route records
+ */
 export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] => {
   const res: RouteRecordRaw[] = []
   for (const route of routes) {
     const item: RouteRecordRaw = {
       path: route.meta.path,
       name: route.name,
-      redirect: route.meta.redirect as string,
+      redirect: route.meta.redirect,
       component: null,
       children: []
     }
@@ -89,13 +99,11 @@ export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] =>
       const comModule = modules[`../pages/${route.meta.component}/IndexPage.vue`]
       const component = route.meta.component
       if (comModule) {
-        // 动态加载路由文件
         item.component = comModule
       } else if (component.includes('#')) {
         item.component = BlankLayout
       }
     }
-    // recursive child routes
     if (route.children) {
       item.children = generateRoutes(route.children)
     }

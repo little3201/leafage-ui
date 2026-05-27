@@ -174,8 +174,8 @@ async function loadItems ({ page, itemsPerPage, sortBy }: { page: number, itemsP
     pagination.descending = sortBy[0].order === 'desc'
   }
   const res = await retrieveUsers(pagination, filter)
-  items.value = res.content
-  totalItems.value = res.totalElements
+  items.value = res.data.content
+  totalItems.value = res.data.page.totalElements
   loading.value = false
 }
 
@@ -188,7 +188,7 @@ async function saveRow (id?: number) {
   if (id) {
     try {
       const res = await fetchUser(id)
-      form.value = res
+      form.value = res.data
     } catch (error) {
       return error
     }

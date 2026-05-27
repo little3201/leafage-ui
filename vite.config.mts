@@ -7,34 +7,6 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    Vue({
-      template: { transformAssetUrls },
-    }),
-    // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
-    Vuetify({
-      autoImport: true,
-      styles: {
-        configFile: 'src/styles/settings.scss',
-      },
-    }),
-    Fonts({
-      fontsource: {
-        families: [
-          {
-            name: 'Roboto Mono',
-            weights: [400, 700],
-          },
-          {
-            name: 'Roboto',
-            weights: [100, 300, 400, 500, 700, 900],
-            styles: ['normal', 'italic'],
-          },
-        ],
-      },
-    }),
-  ],
   define: { 'process.env': {} },
   resolve: {
     alias: {
@@ -56,4 +28,32 @@ export default defineConfig({
       '.vue',
     ],
   },
+  plugins: [
+    Vue({
+      template: { transformAssetUrls },
+    }),
+    tailwindcss(),
+    // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
+    Vuetify({
+      autoImport: true,
+      styles: {
+        configFile: 'src/styles/settings.scss'
+      }
+    }),
+    Fonts({
+      fontsource: {
+        families: [
+          {
+            name: 'Roboto Mono',
+            weights: [400, 700],
+          },
+          {
+            name: 'Roboto',
+            weights: [100, 300, 400, 500, 700, 900],
+            styles: ['normal', 'italic']
+          }
+        ]
+      }
+    })
+  ]
 })
