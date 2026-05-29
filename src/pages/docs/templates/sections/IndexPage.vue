@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import DocRender from 'components/DocRender.vue'
 import type {
   TreeData, TreeInstance, TreeNodeData
 } from 'element-plus'
@@ -19,7 +20,6 @@ import { useI18n } from 'vue-i18n'
 import ExcelContent from './ExcelContent.vue'
 import ExcelField from './ExcelField.vue'
 import SectionContent from './SectionContent.vue'
-import WordContent from './WordContent.vue'
 
 
 const { t } = useI18n()
@@ -40,7 +40,7 @@ const filterText = ref('')
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const wordContentRef = ref<InstanceType<typeof WordContent>>()
+const docRenderRef = ref<InstanceType<typeof DocRender>>()
 const sectionContentRef = ref<InstanceType<typeof SectionContent>>()
 
 const initialValues: Section = {
@@ -49,7 +49,7 @@ const initialValues: Section = {
   ownerType: props.ownerType,
   name: '',
   superiorId: null,
-  body: ''
+  body: { dataStream: '' },
 }
 const form = ref<Section>({ ...initialValues })
 
@@ -186,8 +186,9 @@ async function onSubmit() {
 async function modifySectionContent() {
   if (!form.value.id) return
 
-  const blocks = await wordContentRef.value?.saveData()
-  form.value.body = JSON.stringify(blocks)
+  const sectionData = await docRenderRef.value?.save()
+  if (!sectionData) return
+  form.value.body = JSON.parse(JSON.stringify(sectionData))
   try {
     await modifySection(form.value.id, form.value)
 
@@ -274,14 +275,13 @@ defineExpose({
     </ElCol>
 
     <ElCol :span="16" :xl="18">
-      <div v-if="treeSelected">
-        <WordContent v-if="props.templateType === 'WORD'" ref="wordContentRef" :body="form.body"
-          :read-only="readOnly" />
+      <ElCard v-if="treeSelected">
+        <DocRender v-if="props.templateType === 'WORD'" ref="docRenderRef" :data="form.body" :read-only="readOnly" />
         <template v-else>
           <ExcelContent v-if="excelMode" :section-id="form.id" :read-only="readOnly" />
           <ExcelField v-else :section-id="form.id" :read-only="readOnly" />
         </template>
-      </div>
+      </ElCard>
       <ElEmpty v-else />
     </ElCol>
   </ElRow>

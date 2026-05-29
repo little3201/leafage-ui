@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ChartView: typeof import('./src/components/ChartView.vue')['default']
     CodeRender: typeof import('./src/components/CodeRender.vue')['default']
+    DocRender: typeof import('./src/components/DocRender.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
@@ -80,6 +81,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SheetRender: typeof import('./src/components/SheetRender.vue')['default']
+    SpreadRender: typeof import('./src/components/SpreadRender.vue')['default']
     ThemeToogle: typeof import('./src/components/ThemeToogle.vue')['default']
     UniverRender: typeof import('./src/components/UniverRender.vue')['default']
   }

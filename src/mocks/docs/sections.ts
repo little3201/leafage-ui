@@ -11,7 +11,33 @@ for (let i = 1; i < 28; i++) {
     id: i,
     superiorId: superiorId || null,
     name: 'Title_' + i,
-    body: 'This is body content about xxx',
+    body: {
+      'dataStream': '这里写的是内容，你知道吗？\r' + '这是第' + i + '行内容\r',
+      'textRuns': [],
+      'customBlocks': [],
+      'tables': [],
+      'paragraphs': [
+        {
+          'startIndex': 8,
+          'paragraphStyle': {
+            'spaceAbove': {
+              'v': 5
+            },
+            'lineSpacing': 1,
+            'spaceBelow': {
+              'v': 0
+            }
+          }
+        }
+      ],
+      'sectionBreaks': [
+        {
+          'startIndex': 9
+        }
+      ],
+      'customRanges': [],
+      'customDecorations': []
+    },
     ownerId: Math.floor(Math.random() * 10) || null,
     ownerType: ['REPORT', 'TEMPLATE'][Math.floor(Math.random() * 2)] || null,
     sequence: i,

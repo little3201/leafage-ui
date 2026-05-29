@@ -7,7 +7,7 @@ import {
 } from 'src/api/system/users'
 import { actionIcons, actionTypes, userStatus } from 'src/constants'
 import type { Filter, Pagination, User } from 'src/types'
-import { exportToExcel, hasAction } from 'src/utils'
+import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -108,7 +108,7 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToExcel(selectedRows, 'users')
+    exportToCSV(selectedRows, 'users')
   }
   exportLoading.value = false
 }

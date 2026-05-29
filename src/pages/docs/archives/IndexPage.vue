@@ -403,8 +403,8 @@ async function onSectionSave() {
     </template>
   </ElDialog>
 
-  <!-- config -->
-  <ElDialog v-model="configVisible" :title="$t('action.config')" :show-close="false">
+  <!-- section -->
+  <ElDialog v-model="configVisible" :title="$t('action.section')" :show-close="false" :z-index="10">
     <Section ref="sectionRef" :owner-id="form.id" owner-type="ARCHIVE" template-type="WORD" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">

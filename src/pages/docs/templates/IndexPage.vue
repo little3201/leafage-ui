@@ -14,7 +14,7 @@ import type { Filter, Pagination, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SchemaSection from './sections/IndexPage.vue'
+import Section from './sections/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -43,7 +43,7 @@ const filter = reactive<Filter<Template>>({
   name: { op: 'like', value: undefined }
 })
 
-const sectionRef = ref<InstanceType<typeof SchemaSection>>()
+const sectionRef = ref<InstanceType<typeof Section>>()
 const formRef = ref<FormInstance>()
 const initialValues: Template = {
   id: null,
@@ -384,9 +384,9 @@ async function onSectionSave() {
     </template>
   </ElDialog>
 
-  <!-- config -->
-  <ElDialog v-model="configVisible" :title="$t('action.config')" :show-close="false">
-    <SchemaSection ref="sectionRef" :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" />
+  <!-- section -->
+  <ElDialog v-model="configVisible" :title="$t('action.section')" :show-close="false" :z-index="10">
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
@@ -399,8 +399,8 @@ async function onSectionSave() {
   </ElDialog>
 
   <!-- preview -->
-  <ElDialog v-model="previewVisible" :title="$t('action.preview')">
-    <SchemaSection :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" :read-only="true" />
+  <ElDialog v-model="previewVisible" :title="$t('action.preview')" :z-index="10">
+    <Section :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" :read-only="true" />
   </ElDialog>
 
   <!-- import -->

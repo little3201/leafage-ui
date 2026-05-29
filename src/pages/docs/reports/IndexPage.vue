@@ -44,13 +44,14 @@ const filter = reactive<Filter<Report>>({
   title: { op: 'like', value: undefined }
 })
 
-const sectionRef = ref<InstanceType<typeof Section>>()
+const sheetRenderRef = ref<InstanceType<typeof SheetRender>>()
+const sectionData = ref<Record<string, unknown>>({})
+
 const formRef = ref<FormInstance>()
 const initialValues: Report = {
   id: null,
   title: '',
-  schemaId: null,
-  body: ''
+  schemaId: null
 }
 const form = ref<Report>({ ...initialValues })
 
@@ -272,6 +273,12 @@ function formatSchemas(cellValue: number): string {
 async function reportExport(id: number) {
   await fetchReportTemplate(id)
   exportVisible.value = true
+
+}
+
+function onExportSubmit() {
+  sheetRenderRef.value?.save()
+  exportLoading.value = false
 }
 </script>
 
@@ -420,8 +427,17 @@ async function reportExport(id: number) {
   </ElDialog>
 
   <!-- export -->
-  <ElDialog v-model="exportVisible" :title="$t('action.export')" :z-index="10">
-    <SheetRender />
+  <ElDialog v-model="exportVisible" :title="$t('action.export')" :z-index="10" :show-close="false">
+    <SheetRender ref="sheetRenderRef" :data="sectionData" />
+    <template #footer>
+      <ElButton title="cancel" @click="exportVisible = false">
+        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+      </ElButton>
+      <ElButton title="submit" type="primary" :loading="exportLoading" @click="onExportSubmit">
+        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+          $t('action.submit') }}
+      </ElButton>
+    </template>
   </ElDialog>
 
   <!-- preview -->

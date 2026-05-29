@@ -1,18 +1,20 @@
-<script setup lang="ts">
-import { UniverSheetsCorePreset } from '@univerjs/preset-sheets-core'
-import UniverPresetSheetsCoreEnUS from '@univerjs/preset-sheets-core/locales/en-US'
-import UniverPresetSheetsCoreZhCN from '@univerjs/preset-sheets-core/locales/zh-CN'
-import UniverPresetSheetsCoreZhTW from '@univerjs/preset-sheets-core/locales/zh-TW'
-import type { FUniver, IWorkbookData, Univer } from '@univerjs/presets'
+<script lang="ts" setup>
+import { UniverDocsCorePreset } from '@univerjs/preset-docs-core'
+import UniverPresetDocsCoreEnUS from '@univerjs/preset-docs-core/locales/en-US'
+import UniverPresetDocsCoreZhCN from '@univerjs/preset-docs-core/locales/zh-CN'
+import UniverPresetDocsCoreZhTW from '@univerjs/preset-docs-core/locales/zh-TW'
+import type { FUniver, IDocumentBody, Univer } from '@univerjs/presets'
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets'
 import { useDark } from '@vueuse/core'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import '@univerjs/preset-sheets-core/lib/index.css'
+
+import '@univerjs/preset-docs-core/lib/index.css'
 
 const props = defineProps<{
-  data: Partial<IWorkbookData>
+  data: IDocumentBody,
+  readOnly?: boolean
 }>()
 
 const { locale } = useI18n({ useScope: 'global' })
@@ -40,9 +42,16 @@ watch(locale, (newVal, oldVal) => {
   }
 })
 
-watch(() => props.data, (newVal) => {
+watch(() => props.data.dataStream, async (newVal, oldVal) => {
   if (!newVal || !univerAPIInstance) return
-  univerAPIInstance?.createWorkbook(newVal)
+
+  const document = univerAPIInstance.getActiveDocument()
+  // 设置光标
+  document?.setSelection(0, oldVal?.length ?? 1)
+  // 删除历史数据
+  await univerAPIInstance.executeCommand('doc.command.delete-left')
+  // 添加新数据
+  await document?.appendText(newVal)
 })
 
 onMounted(() => {
@@ -51,23 +60,23 @@ onMounted(() => {
     locale: locales[locale.value] || LocaleType.ZH_CN,
     locales: {
       [LocaleType.ZH_CN]: mergeLocales(
-        UniverPresetSheetsCoreZhCN,
+        UniverPresetDocsCoreZhCN,
       ),
       [LocaleType.ZH_TW]: mergeLocales(
-        UniverPresetSheetsCoreZhTW
+        UniverPresetDocsCoreZhTW
       ),
       [LocaleType.EN_US]: mergeLocales(
-        UniverPresetSheetsCoreEnUS
+        UniverPresetDocsCoreEnUS
       )
     },
     presets: [
-      UniverSheetsCorePreset({
+      UniverDocsCorePreset({
         container: container.value as HTMLElement
       })
     ]
   })
 
-  univerAPI.createWorkbook({})
+  univerAPI.createUniverDoc({})
 
   univerInstance = univer
   univerAPIInstance = univerAPI
@@ -83,10 +92,10 @@ onBeforeUnmount(() => {
 function save() {
   if (!univerAPIInstance) return
 
-  const workbook = univerAPIInstance.getActiveWorkbook()
-  if (!workbook) return
+  const document = univerAPIInstance.getActiveDocument()
+  if (!document) return
 
-  return workbook.save()
+  return document.getSnapshot()
 }
 
 defineExpose({

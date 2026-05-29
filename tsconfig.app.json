@@ -1,11 +1,5 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": [
-    "src/**/*.ts", 
-    "src/**/*.tsx", 
-    "src/**/*.vue", 
-    "*.d.ts"
-  ],
   "compilerOptions": {
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
@@ -26,6 +20,15 @@
       "stores/*": ["./src/stores/*"],
     }
   },
+  "include": [
+    "src/**/*.ts", 
+    "src/**/*.tsx", 
+    "src/**/*.vue", 
+    "*.d.ts"
+  ],
+  "exclude": [
+    "src/**/__tests__/*"
+  ],
   "vueCompilerOptions": {
     "plugins": [
       "vue-router/volar/sfc-typed-router",

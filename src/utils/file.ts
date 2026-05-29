@@ -1,5 +1,3 @@
-import * as XLSX from 'xlsx'
-
 /**
  * Format a file size given in bytes into a human-readable string
  * @param {number} size - The file size in bytes
@@ -42,33 +40,71 @@ export function download(data: Blob, filename: string, type?: string): void {
 }
 
 /**
- * 导出excel
- * @param data 数据
- * @param fileName 
- */
-export function exportToExcel(data: object[], fileName: string, sheetName?: string) {
-  const ws = XLSX.utils.json_to_sheet(data)
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, sheetName && sheetName.length ? sheetName : 'Sheet1')
-
-  // 导出 Excel 文件
-  XLSX.writeFile(wb, fileName.replace(/\.[^/.]+$/, '') + '.xlsx')
-}
-
-/**
  * 导出csv
  * @param data 数据
  * @param fileName 
  */
 export function exportToCSV(data: object[], fileName: string) {
-  const ws = XLSX.utils.json_to_sheet(data)
-  const csv = XLSX.utils.sheet_to_csv(ws)
+  if (!data.length) {
+    return
+  }
 
-  // 创建 Blob 对象并触发下载
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  // 获取表头
+  const headers = Object.keys(data[0])
+
+  // 转义 CSV 字段
+  const escapeCSV = (value: unknown) => {
+    if (value == null) {
+      return ''
+    }
+
+    let str: string
+
+    if (typeof value === 'string') {
+      str = value
+    }
+    else if (
+      typeof value === 'number'
+      || typeof value === 'boolean'
+      || typeof value === 'bigint'
+    ) {
+      str = value.toString()
+    }
+    else if (value instanceof Date) {
+      str = value.toISOString()
+    }
+    else {
+      // 对象/数组转 JSON
+      str = JSON.stringify(value)
+    }
+
+    // CSV 转义
+    if (/[",\n]/.test(str)) {
+      return `"${str.replace(/"/g, '""')}"`
+    }
+
+    return str
+  }
+
+  // 生成 CSV 内容
+  const rows = data.map(row =>
+    headers.map(header => escapeCSV((row as Record<string, unknown>)[header])).join(',')
+  )
+
+  const csv = [headers.join(','), ...rows].join('\n')
+
+  // UTF-8 BOM，避免 Excel 中文乱码
+  const blob = new Blob(['\uFEFF' + csv], {
+    type: 'text/csv;charset=utf-8;'
+  })
+
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
   link.download = fileName.replace(/\.[^/.]+$/, '') + '.csv'
 
+  document.body.appendChild(link)
   link.click()
+  document.body.removeChild(link)
+
+  URL.revokeObjectURL(link.href)
 }

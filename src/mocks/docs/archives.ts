@@ -25,7 +25,33 @@ for (let i = 1; i < 28; i++) {
     name: 'Section_' + i,
     superiorId: Math.floor(Math.random() * 27) + 1,
     ownerType: 'ARCHIVE',
-    body: 'This is body of section ' + i,
+    body: {
+      'dataStream': '这里写的是内容，你知道吗？\n' + '这是第' + i + '行内容\r\n',
+      'textRuns': [],
+      'customBlocks': [],
+      'tables': [],
+      'paragraphs': [
+        {
+          'startIndex': 8,
+          'paragraphStyle': {
+            'spaceAbove': {
+              'v': 5
+            },
+            'lineSpacing': 1,
+            'spaceBelow': {
+              'v': 0
+            }
+          }
+        }
+      ],
+      'sectionBreaks': [
+        {
+          'startIndex': 9
+        }
+      ],
+      'customRanges': [],
+      'customDecorations': []
+    },
     ownerId: Math.floor(Math.random() * 27) + 1
   }
   sections.push(row)

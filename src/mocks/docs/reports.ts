@@ -10,8 +10,7 @@ for (let i = 1; i < 28; i++) {
     id: i,
     schemaId: Math.floor(Math.random() * 5) + 1,
     title: 'Title_' + i,
-    version: Math.floor(Math.random() * 10),
-    body: 'This is body content about xxx'
+    version: Math.floor(Math.random() * 10)
   }
   datas.push(row)
 }
