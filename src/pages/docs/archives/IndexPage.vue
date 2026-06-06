@@ -8,7 +8,6 @@ import type {
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import {
   createArchive,
-  fetchArchive,
   importArchives,
   modifyArchive,
   removeArchive,
@@ -129,23 +128,21 @@ function exportRows() {
 }
 
 /**
- * 预览
- * @param id 主键
+ * 详情
+ * @param row 数据
  */
-function previewRow(id: number) {
-  form.value.id = id
+function showRow(row: Archive) {
+  form.value = { ...row }
+
   previewVisible.value = true
 }
 
 /**
  * 弹出框
- * @param id 主键
+ * @param row 数据
  */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
+function saveRow(row?: Archive) {
+  form.value = row ? { ...row } : { ...initialValues }
 
   visible.value = true
 }
@@ -159,20 +156,6 @@ function configSection(id: number | null) {
 
   form.value.id = id
   configVisible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchArchive(id)
-    form.value = res.data
-  } catch (error) {
-    form.value = { ...initialValues }
-    throw error
-  }
 }
 
 /**
@@ -301,7 +284,7 @@ async function onSectionSave() {
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="title" :label="$t('label.title')">
         <template #default="scope">
-          <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
+          <ElButton title="details" type="primary" link @click="showRow(scope.row)">
             {{ scope.row.title }}
           </ElButton>
         </template>
@@ -325,7 +308,7 @@ async function onSectionSave() {
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
-            @click="saveRow(scope.row.id)">
+            @click="saveRow(scope.row)">
             <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.modify')
             }}

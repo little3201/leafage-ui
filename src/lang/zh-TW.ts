@@ -102,7 +102,8 @@ export default {
     imports: '引用',
     attachment: '附件',
     owner: '所有者',
-    all: '全部'
+    all: '全部',
+    mode: '模式'
   },
 
   action: {

@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
-import { clearSchedulerLogs, fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
+import { clearSchedulerLogs, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
 import { actionIcons, actionTypes, shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { Filter, Pagination, SchedulerLog } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
@@ -27,13 +27,12 @@ const filter = reactive<Filter<SchedulerLog>>({
   name: { op: 'eq', value: undefined }
 })
 
-const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: SchedulerLog = {
   id: null,
   name: ''
 }
-const row = ref<SchedulerLog>({ ...initialValues })
+const data = ref<SchedulerLog>({ ...initialValues })
 
 const visible = ref<boolean>(false)
 
@@ -65,19 +64,6 @@ async function load() {
 }
 
 /**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  detailLoading.value = true
-
-  const res = await fetchSchedulerLog(id)
-  row.value = res.data
-
-  detailLoading.value = false
-}
-
-/**
  * 导出
  */
 function exportRows() {
@@ -94,11 +80,11 @@ function exportRows() {
 
 /**
  * 详情
- * @param id 主键
+ * @param row 数据
  */
-async function showRow(id: number) {
-  row.value = { ...initialValues }
-  await loadOne(id)
+function showRow(row: SchedulerLog) {
+  data.value = row ? { ...row } : { ...initialValues }
+
   visible.value = true
 }
 
@@ -178,8 +164,9 @@ async function clearRows() {
         </ElButton>
       </ElCol>
 
-      <ElCol :span="12" class="inline-flex! justify-end space-x-3">
-        <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
+      <ElCol :span="12" class="text-right">
+        <ElButton v-if="hasAction($route.name, 'clear')" title="clear" :type="actionTypes['clear']" plain
+          @click="clearRows">
           <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
         </ElButton>
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
@@ -195,7 +182,7 @@ async function clearRows() {
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
         <template #default="scope">
-          <ElButton title="name" type="primary" link @click="showRow(scope.row.id)">
+          <ElButton title="name" type="primary" link @click="showRow(scope.row)">
             {{ scope.row.name }}
           </ElButton>
         </template>
@@ -244,26 +231,26 @@ async function clearRows() {
 
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" width="600">
-    <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
+    <ElDescriptions border>
+      <ElDescriptionsItem :label="$t('label.name')">{{ data.name }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.startTime')">
-        {{ dayjs(row.startTime).format('YYYY-MM-DD HH:mm') }}
+        {{ dayjs(data.startTime).format('YYYY-MM-DD HH:mm') }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.status')">
-        <ElTag :type="shceduleStatus[row.status || '']" round>
-          <Icon :icon="`material-symbols:${shceduleStatusIcon[row.status || '']}`"
-            :class="[row.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="1.25em" height="1.25em" />
-          {{ row.status }}
+        <ElTag :type="shceduleStatus[data.status || '']" round>
+          <Icon :icon="`material-symbols:${shceduleStatusIcon[data.status || '']}`"
+            :class="[data.status === 'RUNNING' ? 'spin' : '', 'mr-1']" width="1.25em" height="1.25em" />
+          {{ data.status }}
         </ElTag>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.duration')">
-        {{ row.duration ? formatDuration(row.duration) : '-' }}
+        {{ data.duration ? formatDuration(data.duration) : '-' }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.nextExecuteTime')" :span="2">
-        {{ dayjs(row.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}
+        {{ dayjs(data.nextExecuteTime).format('YYYY-MM-DD HH:mm') }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.record')" :span="3">
-        {{ row.record }}
+        {{ data.record }}
       </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>

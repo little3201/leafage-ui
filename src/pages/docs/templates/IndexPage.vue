@@ -6,10 +6,11 @@ import type {
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import {
-  createSchema, fetchSchema, importSchemas, modifySchema,
+  createSchema,
+  importSchemas, modifySchema,
   removeSchema, retrieveSchemas
 } from 'src/api/docs/templates'
-import { actionIcons, actionTypes, schemaStatus, schemaTypes } from 'src/constants'
+import { actionIcons, actionTypes, schemaStatus, templateTypes } from 'src/constants'
 import type { Filter, Pagination, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -94,23 +95,22 @@ async function load() {
 }
 
 /**
- * 预览
- * @param id 主键
+ * 详情
+ * @param row 数据
  */
-async function previewRow(id: number) {
-  await loadOne(id)
+function showRow(row: Template) {
+  form.value = { ...row }
+
   previewVisible.value = true
 }
 
 /**
- * 新增、编辑弹出框
- * @param id 主键
+ * 弹出框
+ * @param row 数据
  */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
+function saveRow(row?: Template) {
+  form.value = row ? { ...row } : { ...initialValues }
+
   visible.value = true
 }
 
@@ -122,20 +122,6 @@ function configSection(id: number, type: 'WORD' | 'EXCEL') {
   form.value.id = id
   form.value.type = type
   configVisible.value = true
-}
-
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchSchema(id)
-    form.value = res.data
-  } catch (error) {
-    form.value = { ...initialValues }
-    throw error
-  }
 }
 
 /**
@@ -196,7 +182,6 @@ async function removeRow(id: number, name: string) {
     }
   })
 }
-
 
 /**
  * 导出
@@ -272,15 +257,15 @@ async function onSectionSave() {
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
         <template #default="scope">
-          <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
+          <ElButton title="details" type="primary" link @click="showRow(scope.row)">
             {{ scope.row.name }}
           </ElButton>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="type" :label="$t('label.type')">
         <template #default="scope">
-          <ElBadge is-dot :type="schemaTypes[scope.row.type]" class="mr-1" />
-          <ElText :type="schemaTypes[scope.row.type]">{{ scope.row.type }}</ElText>
+          <ElBadge is-dot :type="templateTypes[scope.row.type]" class="mr-1" />
+          <ElText :type="templateTypes[scope.row.type]">{{ scope.row.type }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="version" :label="$t('label.version')">
@@ -303,7 +288,7 @@ async function onSectionSave() {
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
-            @click="saveRow(scope.row.id)">
+            @click="saveRow(scope.row)">
             <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.modify')
             }}
@@ -346,7 +331,7 @@ async function onSectionSave() {
           <ElFormItem :label="$t('label.type')" prop="type">
             <ElSelect v-model="form.type" :disabled="form.id != null"
               :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
-              <ElOption v-for="(_, value) in schemaTypes" :key="value" :label="value" :value="value" />
+              <ElOption v-for="(_, value) in templateTypes" :key="value" :label="value" :value="value" />
             </ElSelect>
           </ElFormItem>
         </ElCol>

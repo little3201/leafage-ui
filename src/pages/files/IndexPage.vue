@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { UploadInstance, UploadRequestOptions } from 'element-plus'
+import type { UploadRequestOptions } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
-import { downloadFile, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import { downloadFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { FileRecord, Filter, Pagination } from 'src/types'
 import { download, formatFileSize, hasAction } from 'src/utils'
@@ -37,10 +37,8 @@ const initialValues: FileRecord = {
   path: '',
   directory: false,
 }
-const row = ref<FileRecord>({ ...initialValues })
+const data = ref<FileRecord>({ ...initialValues })
 const visible = ref<boolean>(false)
-const uploadVisible = ref<boolean>(false)
-const uploadRef = ref<UploadInstance>()
 
 onMounted(async () => {
   await load()
@@ -77,35 +75,13 @@ async function load() {
 }
 
 /**
- * 查询
+ * 详情
  * @param id 主键
  */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchFile(id)
-    row.value = res.data
-  } catch (error) {
-    row.value = { ...initialValues }
-    throw error
-  }
-}
+function showRow(row: FileRecord) {
+  data.value = row ? { ...row } : { ...initialValues }
 
-/**
- * 查看弹出框
- * @param id 主键
- */
-async function showRow(id: number | null) {
-  if (id) {
-    await loadOne(id)
-  }
   visible.value = true
-}
-
-/**
- * 上传
- */
-function uploadRow() {
-  uploadVisible.value = true
 }
 
 /**
@@ -120,16 +96,6 @@ async function downloadRow(id: number, name: string, type: string) {
 /**
  * 提交
  */
-function onSubmit(uploadEl: UploadInstance) {
-  if (!uploadEl) return
-  uploadLoading.value = true
-
-  uploadRef.value!.submit()
-
-  uploadLoading.value = false
-  uploadVisible.value = false
-}
-
 function onUpload(options: UploadRequestOptions) {
   return uploadFile(options.file, currentRowId.value)
 }
@@ -179,7 +145,7 @@ async function onRowClick(row: FileRecord) {
     }
     await load()
   } else {
-    await showRow(row.id)
+    showRow(row)
   }
 }
 
@@ -197,11 +163,6 @@ async function handleBreadcrumbClick(index: number) {
     filter.superiorId.value = currentRowId.value
   }
   await load()
-}
-
-async function onUploadSuccess() {
-  await load()
-  ElMessage.success(t('message.success', { action: t('action.upload') }))
 }
 
 function onUploadError() {
@@ -266,13 +227,13 @@ function onUploadError() {
                 {{ $t('label.all') }}
               </ElBreadcrumbItem>
               <ElBreadcrumbItem v-for="(row, index) in expandRows" :key="index" @click="handleBreadcrumbClick(index)">
-                {{ row.name }}
+                {{ data.name }}
               </ElBreadcrumbItem>
             </ElBreadcrumb>
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="20" class="my-4">
+        <ElRow :gutter="20" class="mt-4">
           <ElCol :span="12">
             <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
               :placeholder="$t('placeholder.search')">
@@ -287,9 +248,12 @@ function onUploadError() {
           </ElCol>
 
           <ElCol :span="12" class="inline-flex! justify-end space-x-3">
-            <ElButton v-if="hasAction($route.name, 'upload')" title="upload" type="primary" @click="uploadRow">
-              <Icon icon="material-symbols:upload" width="1.25em" height="1.25em" />{{ $t('action.upload') }}
-            </ElButton>
+            <ElUpload multiple :auto-upload="false" :http-request="onUpload" :on-success="() => load()"
+              :on-error="onUploadError">
+              <ElButton v-if="hasAction($route.name, 'upload')" v-loading="uploadLoading" title="upload" type="primary">
+                <Icon icon="material-symbols:upload" width="1.25em" height="1.25em" />{{ $t('action.upload') }}
+              </ElButton>
+            </ElUpload>
           </ElCol>
         </ElRow>
 
@@ -344,44 +308,17 @@ function onUploadError() {
   <!-- details -->
   <ElDialog v-model="visible" :title="$t('action.details')" width="400">
     <div class="text-center">
-      <ElImage v-if="row.contentType && row.contentType.includes('image')" :src="row.path"
+      <ElImage v-if="data.contentType && data.contentType.includes('image')" :src="data.path"
         class="w-full h-52 overflow-hidden" />
       <Icon v-else icon="material-symbols:docs-outline-rounded" width="80" height="80" />
     </div>
-    <ElDescriptions v-loading="loading" :column="1" class="mt-4">
-      <ElDescriptionsItem :label="$t('label.name')">{{ row.name }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.size')">{{ formatFileSize(row.size) }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.contentType')">{{ row.contentType }}</ElDescriptionsItem>
+    <ElDescriptions :column="1" class="mt-4">
+      <ElDescriptionsItem :label="$t('label.name')">{{ data.name }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.size')">{{ formatFileSize(data.size) }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.contentType')">{{ data.contentType }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.lastModifiedDate')">
-        {{ row.lastModifiedDate ? dayjs(row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
+        {{ data.lastModifiedDate ? dayjs(data.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
       </ElDescriptionsItem>
     </ElDescriptions>
-  </ElDialog>
-
-  <!-- upload -->
-  <ElDialog v-model="uploadVisible" :title="$t('action.upload')" width="480">
-    <ElUpload ref="uploadRef" multiple drag :auto-upload="false" :http-request="onUpload" @success="onUploadSuccess"
-      @error="onUploadError">
-      <div class="el-icon--upload inline-flex justify-center">
-        <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
-      </div>
-      <div class="el-upload__text">
-        {{ $t('tips.drop2Here') }}<em>{{ $t('tips.click2Upload') }}</em>
-      </div>
-      <template #tip>
-        <div class="el-upload__tip">
-          {{ $t('tips.fileSizeLimit', { size: '50MB' }) }}
-        </div>
-      </template>
-    </ElUpload>
-    <template #footer>
-      <ElButton title="cancel" @click="uploadVisible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
-      </ElButton>
-      <ElButton title="submit" type="primary" :loading="uploadLoading" @click="onSubmit(uploadRef!)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
-          $t('action.submit') }}
-      </ElButton>
-    </template>
   </ElDialog>
 </template>

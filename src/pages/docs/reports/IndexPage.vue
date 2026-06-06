@@ -6,7 +6,7 @@ import type {
   UploadRequestOptions
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
-import { createReport, fetchReport, fetchReportTemplate, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
+import { createReport, fetchReportTemplate, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
 import { retrieveSchemas } from 'src/api/docs/templates'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, Pagination, Report, Template } from 'src/types'
@@ -109,38 +109,23 @@ async function loadSchemas() {
 }
 
 /**
- * 预览
+ * 详情
  * @param id 主键
  */
-function previewRow(id: number) {
-  form.value.id = id
+function showRow(row: Report) {
+  form.value = { ...row }
+
   previewVisible.value = true
 }
 
 /**
- * 新增、编辑弹出框
- * @param id 主键
+ * 弹出框
+ * @param row 数据
  */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
-  visible.value = true
-}
+function saveRow(row?: Report) {
+  form.value = row ? { ...row } : { ...initialValues }
 
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchReport(id)
-    form.value = res.data
-  } catch (error) {
-    form.value = { ...initialValues }
-    throw error
-  }
+  visible.value = true
 }
 
 /**
@@ -223,7 +208,6 @@ async function removeRow(id: number, title: string) {
     }
   })
 }
-
 
 /**
  * 导出
@@ -312,7 +296,7 @@ function onExportSubmit() {
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="title" :label="$t('label.title')">
         <template #default="scope">
-          <ElButton title="details" type="primary" link @click="previewRow(scope.row.id)">
+          <ElButton title="details" type="primary" link @click="showRow(scope.row)">
             {{ scope.row.title }}
           </ElButton>
         </template>
@@ -335,7 +319,7 @@ function onExportSubmit() {
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
-            @click="saveRow(scope.row.id)">
+            @click="saveRow(scope.row)">
             <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.modify') }}
           </ElButton>

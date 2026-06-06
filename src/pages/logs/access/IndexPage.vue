@@ -2,8 +2,8 @@
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { clearAccessLogs, fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/logs/access-logs'
-import { actionIcons, actionTypes, httpMethods } from 'src/constants'
+import { clearAccessLogs, removeAccessLog, retrieveAccessLogs } from 'src/api/logs/access-logs'
+import { actionIcons, actionTypes, httpTypes } from 'src/constants'
 import type { AccessLog, Filter, Pagination } from 'src/types'
 import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
@@ -27,7 +27,6 @@ const filter = reactive<Filter<AccessLog>>({
   url: { op: 'eq', value: undefined }
 })
 
-const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: AccessLog = {
   id: null,
@@ -35,7 +34,7 @@ const initialValues: AccessLog = {
   httpMethod: '',
   ip: '',
 }
-const row = ref<AccessLog>({ ...initialValues })
+const data = ref<AccessLog>({ ...initialValues })
 
 const visible = ref<boolean>(false)
 
@@ -68,19 +67,6 @@ async function load() {
 }
 
 /**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  detailLoading.value = true
-
-  const res = await fetchAccessLog(id)
-  row.value = res.data
-
-  detailLoading.value = false
-}
-
-/**
  * 导出
  */
 function exportRows() {
@@ -97,11 +83,11 @@ function exportRows() {
 
 /**
  * 详情
- * @param id 主键
+ * @param row 数据
  */
-async function showRow(id: number) {
-  row.value = { ...initialValues }
-  await loadOne(id)
+function showRow(row: AccessLog) {
+  data.value = row ? { ...row } : { ...initialValues }
+
   visible.value = true
 }
 
@@ -181,8 +167,9 @@ async function clearRows() {
         </ElButton>
       </ElCol>
 
-      <ElCol :span="12" class="inline-flex! justify-end space-x-3">
-        <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
+      <ElCol :span="12" class="text-right">
+        <ElButton v-if="hasAction($route.name, 'clear')" title="clear" :type="actionTypes['clear']" plain
+          @click="clearRows">
           <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
         </ElButton>
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
@@ -198,8 +185,8 @@ async function clearRows() {
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="url" :label="$t('label.url')" sortable>
         <template #default="scope">
-          <ElButton title="url" type="primary" link @click="showRow(scope.row.id)">
-            <ElTag :type="httpMethods[scope.row.httpMethod]" size="small" class="mr-2">
+          <ElButton title="url" type="primary" link @click="showRow(scope.row)">
+            <ElTag :type="httpTypes[scope.row.httpMethod]" size="small" class="mr-2">
               {{ scope.row.httpMethod }}
             </ElTag>
             {{ scope.row.url }}
@@ -245,31 +232,31 @@ async function clearRows() {
 
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" width="600">
-    <ElDescriptions v-loading="detailLoading" border>
+    <ElDescriptions border>
       <ElDescriptionsItem :label="$t('label.url')">
-        <ElTag :type="httpMethods[row.httpMethod]" size="small" class="mr-2">
-          {{ row.httpMethod }}
+        <ElTag :type="httpTypes[data.httpMethod]" size="small" class="mr-2">
+          {{ data.httpMethod }}
         </ElTag>
-        {{ row.url }}
+        {{ data.url }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.statusCode')">
-        <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>
-          {{ row.statusCode }}
+        <ElTag v-if="data.statusCode && (data.statusCode >= 200 && data.statusCode < 300)" type="success" round>
+          {{ data.statusCode }}
         </ElTag>
-        <ElTag v-else-if="row.statusCode && row.statusCode >= 500" type="warning" round>
-          {{ row.statusCode }}
+        <ElTag v-else-if="data.statusCode && data.statusCode >= 500" type="warning" round>
+          {{ data.statusCode }}
         </ElTag>
-        <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
+        <ElTag v-else type="danger" round>{{ data.statusCode }}</ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.duration')">{{ row.duration ? formatDuration(row.duration) :
+      <ElDescriptionsItem :label="$t('label.duration')">{{ data.duration ? formatDuration(data.duration) :
         '-' }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ row.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem v-if="row.body" :label="$t('label.request.body')" :span="3">{{ row.body }}
+      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ data.params }}</ElDescriptionsItem>
+      <ElDescriptionsItem v-if="data.body" :label="$t('label.request.body')" :span="3">{{ data.body }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.ip')" :span="3">{{ row.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.ip')" :span="3">{{ data.ip }}</ElDescriptionsItem>
 
-      <ElDescriptionsItem :label="$t('label.response')" :span="3">{{ row.response }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.response')" :span="3">{{ data.response }}</ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
 </template>

@@ -4,7 +4,6 @@ import type { FormInstance, FormRules, InputInstance, TableInstance, UploadReque
 import { ElMessage } from 'element-plus'
 import {
   enablePrivilege,
-  fetchPrivilege,
   importPrivileges,
   modifyPrivilege,
   retrievePrivileges, retrievePrivilegeSubset
@@ -126,33 +125,22 @@ const refreshChildren = async (rowKey: number) => {
 
 /**
  * 弹出框
- * @param id 主键
+ * @param row 数据
  */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues, id: id || null }
+async function saveRow(row?: Privilege) {
+  form.value = row ? { ...row } : { ...initialValues }
 
-  if (id) {
-    await loadOne(id)
-    const res = await retrievePrivilegeSubset(id)
+  if (row && row.id) {
+    const res = await retrievePrivilegeSubset(row.id)
     subset.value = res.data
   }
   visible.value = true
 }
 
 /**
- * 加载
+ * 启用、停用
  * @param id 主键
  */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchPrivilege(id)
-    form.value = res.data
-  } catch (error) {
-    form.value = { ...initialValues }
-    throw error
-  }
-}
-
 async function enableChange(id: number) {
   await enablePrivilege(id)
   await load()
@@ -308,7 +296,7 @@ function handleInputConfirm() {
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
-            @click="saveRow(scope.row.id)">
+            @click="saveRow(scope.row)">
             <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.modify')
             }}

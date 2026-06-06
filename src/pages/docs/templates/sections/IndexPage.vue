@@ -105,14 +105,12 @@ async function loadTree() {
 }
 
 /**
- * 新增、编辑弹出框
- * @param id 主键
+ * 弹出框
+ * @param row 数据
  */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
+function saveRow(row?: Section) {
+  form.value = row ? { ...row } : { ...initialValues }
+
   visible.value = true
 }
 
@@ -260,7 +258,7 @@ defineExpose({
             <div class="flex flex-1 items-center justify-between ">
               <span>{{ data.meta!.sequence! }}. {{ data.name }}</span>
               <div>
-                <ElButton type="primary" link @click="saveRow(data.id)">
+                <ElButton type="primary" link @click="saveRow(data)">
                   <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" />
                 </ElButton>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link

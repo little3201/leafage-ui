@@ -102,7 +102,8 @@ export default {
     imports: 'Imports',
     attachment: 'Attachment',
     owner: 'Owner',
-    all: 'All'
+    all: 'All',
+    mode: 'Mode'
   },
 
   action: {

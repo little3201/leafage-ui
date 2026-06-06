@@ -7,7 +7,8 @@ import {
   addPrivilege,
   addRoles,
   createGroup,
-  enableGroup, fetchGroup, importGroups,
+  enableGroup,
+  importGroups,
   modifyGroup,
   removeGroup,
   removeMembers,
@@ -226,26 +227,10 @@ async function authorizeRow(id: number) {
  * 新增、编辑弹出框
  * @param id 主键
  */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
-  visible.value = true
-}
+function saveRow(row?: Group) {
+  form.value = row ? { ...row } : { ...initialValues }
 
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchGroup(id)
-    form.value = res.data
-  } catch (error) {
-    form.value = { ...initialValues }
-    throw error
-  }
+  visible.value = true
 }
 
 /**
@@ -502,7 +487,7 @@ const rowSelected = (row: Privilege) => {
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
               <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
-                @click="saveRow(scope.row.id)">
+                @click="saveRow(scope.row)">
                 <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.modify') }}
               </ElButton>

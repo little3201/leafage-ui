@@ -3,7 +3,8 @@ import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules, TableInstance, UploadRequestOptions } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser
+  createUser, enableUser,
+  importUsers, modifyUser, removeUser, retrieveUsers, unlockUser
 } from 'src/api/system/users'
 import { actionIcons, actionTypes, userStatus } from 'src/constants'
 import type { Filter, Pagination, User } from 'src/types'
@@ -107,28 +108,12 @@ function exportRows() {
 
 /**
  * 弹出框
- * @param id 主键
+ * @param row 数据
  */
-async function saveRow(id?: number) {
-  form.value = { ...initialValues }
-  if (id) {
-    await loadOne(id)
-  }
-  visible.value = true
-}
+function saveRow(row?: User) {
+  form.value = row ? { ...row } : { ...initialValues }
 
-/**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  try {
-    const res = await fetchUser(id)
-    form.value = res.data
-  } catch (error) {
-    form.value = { ...initialValues }
-    throw error
-  }
+  visible.value = true
 }
 
 /**
@@ -296,13 +281,13 @@ function onUpload(options: UploadRequestOptions) {
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
-            @click="saveRow(scope.row.id)">
+            @click="saveRow(scope.row)">
             <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.modify')
             }}
           </ElButton>
           <ElButton v-if="scope.row.status == 'LOCKED' && hasAction($route.name, 'unlock')" title="unlock"
-            type="success" link @click="unlockRow(scope.row.id)">
+            :type="actionTypes['unlock']" link @click="unlockRow(scope.row.id)">
             <Icon icon="material-symbols:lock-open-outline-rounded" width="1.25em" height="1.25em" />{{
               $t('action.unlock') }}
           </ElButton>

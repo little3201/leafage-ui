@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
-import { clearOperationLogs, fetchOperationLog, removeOperationLog, retrieveOperationLogs } from 'src/api/logs/operation-logs'
+import { clearOperationLogs, removeOperationLog, retrieveOperationLogs } from 'src/api/logs/operation-logs'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, OperationLog, Pagination } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
@@ -26,7 +26,6 @@ const filter = reactive<Filter<OperationLog>>({
   module: { op: 'eq', value: undefined }
 })
 
-const detailLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
 const initialValues: OperationLog = {
   id: null,
@@ -34,7 +33,7 @@ const initialValues: OperationLog = {
   action: '',
   params: ''
 }
-const row = ref<OperationLog>({ ...initialValues })
+const data = ref<OperationLog>({ ...initialValues })
 
 const visible = ref<boolean>(false)
 
@@ -66,19 +65,6 @@ async function load() {
 }
 
 /**
- * 加载
- * @param id 主键
- */
-async function loadOne(id: number) {
-  detailLoading.value = true
-
-  const res = await fetchOperationLog(id)
-  row.value = res.data
-
-  detailLoading.value = false
-}
-
-/**
  * 导出
  */
 function exportRows() {
@@ -95,11 +81,11 @@ function exportRows() {
 
 /**
  * 详情
- * @param id 主键
+ * @param row 数据
  */
-async function showRow(id: number) {
-  row.value = { ...initialValues }
-  await loadOne(id)
+function showRow(row: OperationLog) {
+  data.value = row ? { ...row } : { ...initialValues }
+
   visible.value = true
 }
 
@@ -179,8 +165,9 @@ async function clearRows() {
         </ElButton>
       </ElCol>
 
-      <ElCol :span="12" class="inline-flex! justify-end space-x-3">
-        <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
+      <ElCol :span="12" class="text-right">
+        <ElButton v-if="hasAction($route.name, 'clear')" title="clear" :type="actionTypes['clear']" plain
+          @click="clearRows">
           <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
         </ElButton>
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
@@ -196,7 +183,7 @@ async function clearRows() {
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="module" :label="$t('label.module')" sortable>
         <template #default="scope">
-          <ElButton title="module" type="primary" link @click="showRow(scope.row.id)">
+          <ElButton title="module" type="primary" link @click="showRow(scope.row)">
             {{ scope.row.module }}
           </ElButton>
         </template>
@@ -247,29 +234,29 @@ async function clearRows() {
 
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" width="600">
-    <ElDescriptions v-loading="detailLoading" border>
-      <ElDescriptionsItem :label="$t('label.module')">{{ $t(`page.${row.module}`) }}</ElDescriptionsItem>
+    <ElDescriptions border>
+      <ElDescriptionsItem :label="$t('label.module')">{{ $t(`page.${data.module}`) }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.actions')">
-        <ElBadge is-dot :type="actionTypes[row.action]" class="mr-1" />
-        <ElText :type="actionTypes[row.action]">{{ $t(`action.${row.action}`) }}</ElText>
+        <ElBadge is-dot :type="actionTypes[data.action]" class="mr-1" />
+        <ElText :type="actionTypes[data.action]">{{ $t(`action.${data.action}`) }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.statusCode')">
-        <ElTag v-if="row.statusCode && (row.statusCode >= 200 && row.statusCode < 300)" type="success" round>
-          {{ row.statusCode }}
+        <ElTag v-if="data.statusCode && (data.statusCode >= 200 && data.statusCode < 300)" type="success" round>
+          {{ data.statusCode }}
         </ElTag>
-        <ElTag v-else-if="row.statusCode && row.statusCode >= 500" type="warning" round>
-          {{ row.statusCode }}
+        <ElTag v-else-if="data.statusCode && data.statusCode >= 500" type="warning" round>
+          {{ data.statusCode }}
         </ElTag>
-        <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
+        <ElTag v-else type="danger" round>{{ data.statusCode }}</ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ row.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.request.body')" :span="3">{{ row.body }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.ip')">{{ row.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.sessionId')" :span="2">{{ row.sessionId }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.userAgent')" :span="3">{{ row.userAgent }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.operator')" :span="3">{{ row.operator }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ data.params }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.request.body')" :span="3">{{ data.body }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.ip')">{{ data.ip }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.sessionId')" :span="2">{{ data.sessionId }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.userAgent')" :span="3">{{ data.userAgent }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.operator')" :span="3">{{ data.operator }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.operatedAt')" :span="3">
-        {{ row.operatedAt ? dayjs(row.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}
+        {{ data.operatedAt ? dayjs(data.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}
       </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
