@@ -286,7 +286,7 @@ function onUploadError() {
             </ElButton>
           </ElCol>
 
-          <ElCol :span="12" class="text-right">
+          <ElCol :span="12" class="inline-flex! justify-end space-x-3">
             <ElButton v-if="hasAction($route.name, 'upload')" title="upload" type="primary" @click="uploadRow">
               <Icon icon="material-symbols:upload" width="1.25em" height="1.25em" />{{ $t('action.upload') }}
             </ElButton>

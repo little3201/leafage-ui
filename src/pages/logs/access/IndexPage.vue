@@ -89,6 +89,8 @@ function exportRows() {
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
     exportToCSV(selectedRows, 'access-logs')
+  } else {
+    exportToCSV(datas.value, 'access-logs')
   }
   exportLoading.value = false
 }
@@ -179,7 +181,7 @@ async function clearRows() {
         </ElButton>
       </ElCol>
 
-      <ElCol :span="12" class="text-right">
+      <ElCol :span="12" class="inline-flex! justify-end space-x-3">
         <ElButton v-if="hasAction($route.name, 'clear')" title="clear" type="danger" plain @click="clearRows">
           <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
         </ElButton>

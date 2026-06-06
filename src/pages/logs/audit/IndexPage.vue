@@ -88,6 +88,8 @@ function exportRows() {
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
     exportToCSV(selectedRows, 'audit-logs')
+  } else {
+    exportToCSV(datas.value, 'audit-logs')
   }
   exportLoading.value = false
 }
@@ -150,7 +152,7 @@ async function removeRow(id: number, module: string, action: string) {
         </ElButton>
       </ElCol>
 
-      <ElCol :span="12" class="text-right">
+      <ElCol :span="12" class="inline-flex! justify-end space-x-3">
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
           @click="exportRows" :loading="exportLoading">
           <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{

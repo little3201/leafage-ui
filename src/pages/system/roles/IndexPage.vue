@@ -2,7 +2,8 @@
 import { Icon } from '@iconify/vue'
 import type {
   FormInstance, FormRules, TableInstance, TransferDataItem,
-  TransferDirection, TransferKey, UploadInstance, UploadRequestOptions
+  TransferDirection, TransferKey,
+  UploadRequestOptions
 } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -57,10 +58,8 @@ const authorities = ref<Array<{
 }>>([])
 const authoritiesMap = reactive<Record<number, string[]>>({})
 
-const importVisible = ref<boolean>(false)
 const importLoading = ref<boolean>(false)
 const exportLoading = ref<boolean>(false)
-const importRef = ref<UploadInstance>()
 
 const filter = reactive<Filter<Role>>({
   name: { op: 'like', value: undefined }
@@ -250,13 +249,6 @@ async function removeRow(id: number, name: string) {
 }
 
 /**
- * 导入
- */
-function importRows() {
-  importVisible.value = true
-}
-
-/**
  * 导出
  */
 function exportRows() {
@@ -265,23 +257,15 @@ function exportRows() {
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
     exportToCSV(selectedRows, 'roles')
+  } else {
+    exportToCSV(datas.value, 'roles')
   }
   exportLoading.value = false
 }
 
 /**
- * 导入提交
+ * 导入
  */
-function onImportSubmit(importEl: UploadInstance) {
-  if (!importEl) return
-  importLoading.value = true
-
-  importEl.submit()
-
-  importLoading.value = false
-  importVisible.value = false
-}
-
 function onUpload(options: UploadRequestOptions) {
   return importRoles(options.file)
 }
@@ -361,18 +345,22 @@ function rowSelected(row: Privilege) {
         </ElButton>
       </ElCol>
 
-      <ElCol :span="12" class="text-right">
+      <ElCol :span="12" class="inline-flex! justify-end space-x-3">
         <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
           @click="saveRow()">
           <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
             $t('action.create') }}
         </ElButton>
-        <ElButton v-if="hasAction($route.name, 'import')" title="import" :type="actionTypes['import']" plain
-          @click="importRows">
-          <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
-            $t('action.import')
-          }}
-        </ElButton>
+
+        <ElUpload :limit="1" :auto-upload="false" :http-request="onUpload" :on-success="load"
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+          <ElButton v-if="hasAction($route.name, 'import')" v-loading="importLoading" title="import"
+            :type="actionTypes['import']" plain>
+            <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.import') }}
+          </ElButton>
+        </ElUpload>
+
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
           @click="exportRows" :loading="exportLoading">
           <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
@@ -488,39 +476,6 @@ function rowSelected(row: Privilege) {
         </template>
       </ElTableColumn>
     </ElTable>
-  </ElDialog>
-
-  <!-- import -->
-  <ElDialog v-model="importVisible" :title="$t('action.import')" :show-close="false" width="480">
-    <p>{{ $t('action.download') }}：
-      <a :href="`templates/roles.xlsx`" :download="$t('page.roles') + '.xlsx'">
-        {{ $t('page.roles') }}.xlsx
-      </a>
-    </p>
-    <ElUpload ref="importRef" :limit="1" drag :auto-upload="false" :http-request="onUpload" :on-success="load"
-      accept=".xls,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
-      <div class="el-icon--upload inline-flex justify-center">
-        <Icon icon="material-symbols:upload-rounded" width="48" height="48" />
-      </div>
-      <div class="el-upload__text">
-        {{ $t('tips.drop2Here') }}<em>{{ $t('tips.click2Upload') }}</em>
-      </div>
-      <template #tip>
-        <div class="el-upload__tip">
-          {{ $t('tips.fileSizeLimit', { size: '50MB' }) }}
-        </div>
-      </template>
-    </ElUpload>
-
-    <template #footer>
-      <ElButton title="cancel" @click="importVisible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
-      </ElButton>
-      <ElButton title="submit" type="primary" :loading="importLoading" @click="onImportSubmit(importRef!)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
-          $t('action.submit') }}
-      </ElButton>
-    </template>
   </ElDialog>
 </template>
 

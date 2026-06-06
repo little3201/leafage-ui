@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { langOptions } from 'boot/i18n'
-import Cookies from 'universal-cookie'
+import Cookies from 'js-cookie'
 import { useI18n } from 'vue-i18n'
 
 
 const { locale } = useI18n({ useScope: 'global' })
-const cookies = new Cookies(null, { path: '/' })
-locale.value = cookies.get('lang') || 'zh-CN'
+locale.value = Cookies.get('lang') || 'zh-CN'
 
 
 function changeLang(lang: string) {
   locale.value = lang
   // 设置lang
-  cookies.set('lang', lang, { secure: true, sameSite: 'lax' })
+  Cookies.set('lang', lang, { secure: true, sameSite: 'lax' })
   // 修改html中lang
   const htmlElement = document.querySelector('html')
 
