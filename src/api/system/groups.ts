@@ -75,12 +75,21 @@ export const modifyGroup = (id: number, row: Group) => {
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
 export const enableGroup = (id: number) => {
-  return api.patch(`${SERVER_URL.GROUP}/${id}`)
+  return api.patch(`${SERVER_URL.GROUP}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export const disableGroup = (id: number) => {
+  return api.patch(`${SERVER_URL.GROUP}/${id}/disable`)
 }
 
 /**

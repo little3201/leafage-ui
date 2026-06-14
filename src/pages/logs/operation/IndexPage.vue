@@ -195,19 +195,19 @@ async function clearRows() {
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
-      <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.request.body')" />
-      <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
-      <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
+      <ElTableColumn show-overflow-tooltip prop="result" :label="$t('label.result')" />
+      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
         <template #default="scope">
-          <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
-            {{ scope.row.statusCode }}
+          <ElTag v-if="scope.row.status >= 200 && scope.row.status < 300" type="success" round>
+            {{ scope.row.status }}
           </ElTag>
-          <ElTag v-else-if="scope.row.statusCode >= 500" type="warning" round>
-            {{ scope.row.statusCode }}
+          <ElTag v-else-if="scope.row.status >= 500" type="warning" round>
+            {{ scope.row.status }}
           </ElTag>
-          <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
+          <ElTag v-else type="danger" round>{{ scope.row.status }}</ElTag>
         </template>
       </ElTableColumn>
+      <ElTableColumn prop="duration" :label="$t('label.duration')" sortable />
       <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
       <ElTableColumn prop="operatedAt" :label="$t('label.operatedAt')" sortable>
         <template #default="scope">
@@ -240,20 +240,12 @@ async function clearRows() {
         <ElBadge is-dot :type="actionTypes[data.action]" class="mr-1" />
         <ElText :type="actionTypes[data.action]">{{ $t(`action.${data.action}`) }}</ElText>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.statusCode')">
-        <ElTag v-if="data.statusCode && (data.statusCode >= 200 && data.statusCode < 300)" type="success" round>
-          {{ data.statusCode }}
-        </ElTag>
-        <ElTag v-else-if="data.statusCode && data.statusCode >= 500" type="warning" round>
-          {{ data.statusCode }}
-        </ElTag>
-        <ElTag v-else type="danger" round>{{ data.statusCode }}</ElTag>
+      <ElDescriptionsItem :label="$t('label.status')">
+        <ElTag :type="data.status == 1 ? 'success' : 'danger'" round>{{ data.status }}</ElTag>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ data.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.request.body')" :span="3">{{ data.body }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.ip')">{{ data.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.sessionId')" :span="2">{{ data.sessionId }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.userAgent')" :span="3">{{ data.userAgent }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.result')" :span="3">{{ data.result }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.duration')">{{ data.duration }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.operator')" :span="3">{{ data.operator }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.operatedAt')" :span="3">
         {{ data.operatedAt ? dayjs(data.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}

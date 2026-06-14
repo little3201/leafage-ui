@@ -89,8 +89,13 @@ function showRow(row: FileRecord) {
  * @param id 主键
  */
 async function downloadRow(id: number, name: string, type: string) {
-  const res = await downloadFile(id)
-  download(res.data, name, type)
+  try {
+    const res = await downloadFile(id)
+    download(res.data, name, type)
+  } catch (error) {
+    ElMessage.error(t('message.error', { action: t('action.download') }))
+    throw error
+  }
 }
 
 /**

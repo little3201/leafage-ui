@@ -7,6 +7,7 @@ import {
   addPrivilege,
   addRoles,
   createGroup,
+  disableGroup,
   enableGroup,
   importGroups,
   modifyGroup,
@@ -234,12 +235,46 @@ function saveRow(row?: Group) {
 }
 
 /**
- * 启用、停用
+ * 启用
  * @param id 主键
  */
-async function enableChange(id: number) {
-  await enableGroup(id)
-  await load()
+async function enableRow(id: number) {
+  try {
+    await enableGroup(id)
+    await load()
+    ElMessage.success(t('message.success', { action: t('action.enable') }))
+  } catch (error) {
+    ElMessage.error(t('message.error', { action: t('action.enable') }))
+    throw error
+  }
+}
+
+/**
+ * 停用
+ * @param id 主键
+ */
+async function disableRow(id: number) {
+  await ElMessageBox.confirm(
+    t('tips.disableWarning', { module: t('page.groups'), data: name }),
+    t('tips.confirm'),
+    {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
+      confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.disableButtonText'),
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await disableGroup(id)
+      await load()
+      ElMessage.success(t('message.success', { action: t('action.disable') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.disable') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -278,7 +313,6 @@ async function onSubmit(formEl: FormInstance) {
  * @param name 名称
  */
 async function removeRow(id: number, name: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t('tips.removeWarning', { module: t('page.groups'), data: name }),
     t('tips.confirm'),
@@ -477,10 +511,10 @@ const rowSelected = (row: Privilege) => {
           <ElTableColumn prop="name" :label="$t('label.name')" />
           <ElTableColumn prop="members" :label="$t('label.members')" />
           <ElTableColumn prop="roles" :label="$t('label.roles')" />
-          <ElTableColumn prop="enabled" :label="$t('label.enabled')" align="center" sortable>
+          <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
             <template #default="scope">
-              <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
-                style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
+              <ElBadge is-dot :type="scope.row.enabled ? 'success' : 'info'" class="mr-1" />
+              <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
             </template>
           </ElTableColumn>
           <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
@@ -490,6 +524,16 @@ const rowSelected = (row: Privilege) => {
                 @click="saveRow(scope.row)">
                 <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.modify') }}
+              </ElButton>
+              <ElButton v-if="scope.row.enabled && hasAction($route.name, 'disable')" title="disable"
+                :type="actionTypes['disable']" link @click="disableRow(scope.row.id)">
+                <Icon :icon="`material-symbols:${actionIcons['disable']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.disable') }}
+              </ElButton>
+              <ElButton v-else-if="hasAction($route.name, 'enable')" title="enable" :type="actionTypes['enable']" link
+                @click="enableRow(scope.row.id)">
+                <Icon :icon="`material-symbols:${actionIcons['enable']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.enable') }}
               </ElButton>
               <ElButton v-if="hasAction($route.name, 'relation')" title="relation" :type="actionTypes['relation']" link
                 @click="relationRow(scope.row.id)">

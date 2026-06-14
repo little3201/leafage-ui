@@ -133,6 +133,7 @@ export default {
     authorize: 'Authorize',
     more: 'More',
     enable: 'Enable',
+    disable: 'Disable',
     unlock: 'Unlock',
     view: 'View',
     save: 'Save',

@@ -4,11 +4,9 @@ export interface OperationLog extends AudtiMetadata {
   module: string
   action: string
   params: string
-  body?: string
-  ip?: string
-  sessionId?: string
-  userAgent?: string
-  statusCode?: number
+  result?: string
+  status?: number
+  duration?: number
   operator?: string
   operatedAt?: Date
 }
