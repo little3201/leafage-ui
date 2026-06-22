@@ -7,7 +7,7 @@ import type {
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { createReport, fetchReportTemplate, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
-import { retrieveSchemas } from 'src/api/docs/templates'
+import { retrieveTemplates } from 'src/api/docs/templates'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, Pagination, Report, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
@@ -63,7 +63,7 @@ const rules = reactive<FormRules<typeof form>>({
 
 onMounted(async () => {
   await load()
-  await loadSchemas()
+  await loadTemplates()
 })
 
 /**
@@ -100,11 +100,11 @@ async function load() {
 /**
  * 加载 templates
  */
-async function loadSchemas() {
+async function loadTemplates() {
   const filter: Filter<Template> = {
     type: { op: 'eq', value: 'EXCEL' }
   }
-  const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
+  const res = await retrieveTemplates({ page: 1, size: 99 }, filter)
   templates.value = res.data.content
 }
 
@@ -217,9 +217,9 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'sections')
+    exportToCSV(selectedRows, 'sections', t)
   } else {
-    exportToCSV(datas.value, 'sections')
+    exportToCSV(datas.value, 'sections', t)
   }
   exportLoading.value = false
 }
@@ -240,7 +240,7 @@ function formatSchemas(cellValue: number): string {
   return matched ? matched.name : ''
 }
 
-async function reportExport(id: number) {
+async function generateRow(id: number) {
   await fetchReportTemplate(id)
   exportVisible.value = true
 
@@ -339,10 +339,10 @@ function onExportSubmit() {
               $t('action.remove')
             }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" link
-            @click="reportExport(scope.row.id)">
-            <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.export')
+          <ElButton v-if="hasAction($route.name, 'generate')" title="generate" :type="actionTypes['generate']" link
+            @click="generateRow(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['generate']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.generate')
             }}
           </ElButton>
         </template>
@@ -395,7 +395,8 @@ function onExportSubmit() {
 
   <!-- data -->
   <ElDialog v-model="contentVisible" :title="$t('action.data')">
-    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" :excel-mode="true" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" read-only template-type="EXCEL"
+      :excel-mode="true" />
   </ElDialog>
 
   <!-- export -->

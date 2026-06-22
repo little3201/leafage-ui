@@ -108,8 +108,10 @@ export default {
 
   action: {
     search: '搜索',
-    retrieve: '查询',
+    retrieve: '分页查询',
     fetch: '获取',
+    tree: '树查询',
+    subset: '查询子节点',
     import: '导入',
     export: '导出',
     submit: '提交',

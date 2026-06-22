@@ -60,12 +60,21 @@ export const modifyDictionary = (id: number, row: Dictionary) => {
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
 export const enableDictionary = (id: number) => {
-  return api.patch(`${SERVER_URL.DICTIONARY}/${id}`)
+  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export const disableDictionary = (id: number) => {
+  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/disable`)
 }
 
 /**

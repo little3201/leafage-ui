@@ -20,7 +20,8 @@ const total = ref<number>(0)
 const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
   page: 1,
-  size: 10
+  size: 10,
+  descending: true
 })
 
 const filter = reactive<Filter<AccessLog>>({
@@ -186,10 +187,10 @@ async function clearRows() {
       <ElTableColumn prop="url" :label="$t('label.url')" sortable>
         <template #default="scope">
           <ElButton title="url" type="primary" link @click="showRow(scope.row)">
-            <ElTag :type="httpTypes[scope.row.httpMethod]" size="small" class="mr-2">
+            {{ scope.row.url }}
+            <ElTag :type="httpTypes[scope.row.httpMethod]" size="small" class="ml-2">
               {{ scope.row.httpMethod }}
             </ElTag>
-            {{ scope.row.url }}
           </ElButton>
         </template>
       </ElTableColumn>
@@ -234,10 +235,10 @@ async function clearRows() {
   <ElDialog v-model="visible" :title="$t('action.details')" width="600">
     <ElDescriptions border>
       <ElDescriptionsItem :label="$t('label.url')">
-        <ElTag :type="httpTypes[data.httpMethod]" size="small" class="mr-2">
+        {{ data.url }}
+        <ElTag :type="httpTypes[data.httpMethod]" size="small" class="ml-2">
           {{ data.httpMethod }}
         </ElTag>
-        {{ data.url }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.statusCode')">
         <ElTag v-if="data.statusCode && (data.statusCode >= 200 && data.statusCode < 300)" type="success" round>

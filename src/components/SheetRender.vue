@@ -40,9 +40,18 @@ watch(locale, (newVal, oldVal) => {
   }
 })
 
-watch(() => props.data, (newVal) => {
-  if (!newVal || !univerAPIInstance) return
-  univerAPIInstance?.createWorkbook(newVal)
+watch(() => props.data, (newVal, oldVal) => {
+  if (!univerAPIInstance || !newVal) return
+  //避免深度监听造成的死循环
+  if (JSON.stringify(newVal) === JSON.stringify(oldVal)) return
+
+  const workbook = univerAPIInstance.getActiveWorkbook()
+  if (!workbook) return
+
+  const sheets = workbook.getSheets()
+  sheets.forEach(sheet => {
+    workbook.create(sheet.getSheetName(), sheet.getMaxRows(), sheet.getMaxColumns())
+  })
 })
 
 onMounted(() => {

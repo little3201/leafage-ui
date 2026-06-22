@@ -20,7 +20,8 @@ const total = ref<number>(0)
 const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
   page: 1,
-  size: 10
+  size: 10,
+  descending: true
 })
 
 const filter = reactive<Filter<AuditLog>>({
@@ -31,8 +32,7 @@ const exportLoading = ref<boolean>(false)
 const initialValues: AuditLog = {
   id: null,
   module: '',
-  action: '',
-  ip: ''
+  action: ''
 }
 const data = ref<AuditLog>({ ...initialValues })
 
@@ -166,15 +166,15 @@ async function removeRow(id: number, module: string, action: string) {
       <ElTableColumn show-overflow-tooltip prop="oldValue" :label="$t('label.oldValue')" />
       <ElTableColumn show-overflow-tooltip prop="newValue" :label="$t('label.newValue')" />
       <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
-      <ElTableColumn prop="statusCode" :label="$t('label.statusCode')" sortable>
+      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
         <template #default="scope">
-          <ElTag v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300" type="success" round>
-            {{ scope.row.statusCode }}
+          <ElTag v-if="scope.row.status >= 200 && scope.row.status < 300" type="success" round>
+            {{ scope.row.status }}
           </ElTag>
-          <ElTag v-else-if="scope.row.statusCode >= 500" type="warning" round>
-            {{ scope.row.statusCode }}
+          <ElTag v-else-if="scope.row.status >= 500" type="warning" round>
+            {{ scope.row.status }}
           </ElTag>
-          <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
+          <ElTag v-else type="danger" round>{{ scope.row.status }}</ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
@@ -204,14 +204,8 @@ async function removeRow(id: number, module: string, action: string) {
         <ElBadge is-dot :type="actionTypes[data.action]" class="mr-1" />
         <ElText :type="actionTypes[data.action]">{{ $t(`action.${data.action}`) }}</ElText>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.statusCode')">
-        <ElTag v-if="data.statusCode && (data.statusCode >= 200 && data.statusCode < 300)" type="success" round>
-          {{ data.statusCode }}
-        </ElTag>
-        <ElTag v-else-if="data.statusCode && data.statusCode >= 500" type="warning" round>
-          {{ data.statusCode }}
-        </ElTag>
-        <ElTag v-else type="danger" round>{{ data.statusCode }}</ElTag>
+      <ElDescriptionsItem :label="$t('label.status')">
+        <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>{{ data.status }}</ElTag>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.targetId')" :span="3">{{ data.targetId }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.oldValue')" :span="3">{{ data.oldValue }}</ElDescriptionsItem>

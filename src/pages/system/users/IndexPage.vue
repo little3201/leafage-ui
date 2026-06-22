@@ -3,7 +3,9 @@ import { Icon } from '@iconify/vue'
 import type { FormInstance, FormRules, TableInstance, UploadRequestOptions } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
-  createUser, enableUser,
+  createUser,
+  disableUser,
+  enableUser,
   importUsers, modifyUser, removeUser, retrieveUsers, unlockUser
 } from 'src/api/system/users'
 import { actionIcons, actionTypes, userStatus } from 'src/constants'
@@ -117,12 +119,46 @@ function saveRow(row?: User) {
 }
 
 /**
- * 启用、停用
+ * 启用
  * @param id 主键
  */
-async function enableChange(id: number) {
-  await enableUser(id)
-  await load()
+async function enableRow(id: number) {
+  try {
+    await enableUser(id)
+    await load()
+    ElMessage.success(t('message.success', { action: t('action.enable') }))
+  } catch (error) {
+    ElMessage.error(t('message.error', { action: t('action.enable') }))
+    throw error
+  }
+}
+
+/**
+ * 停用
+ * @param id 主键
+ */
+async function disableRow(id: number) {
+  await ElMessageBox.confirm(
+    t('tips.disableWarning'),
+    t('tips.confirm'),
+    {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
+      confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.disableButtonText'),
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await disableUser(id)
+      await load()
+      ElMessage.success(t('message.success', { action: t('action.disable') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.disable') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -266,16 +302,16 @@ function onUpload(options: UploadRequestOptions) {
       <ElTableColumn show-overflow-tooltip prop="email" :label="$t('label.email')" />
       <ElTableColumn prop="groups" :label="$t('label.groups')" />
       <ElTableColumn prop="roles" :label="$t('label.roles')" />
-      <ElTableColumn prop="status" :label="$t('label.status')" align="center" sortable>
+      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
         <template #default="scope">
           <ElBadge is-dot :type="userStatus[scope.row.status]" class="mr-1" />
           <ElText :type="userStatus[scope.row.status]">{{ scope.row.status }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="enabled" :label="$t('label.enabled')" align="center" sortable>
+      <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
         <template #default="scope">
-          <ElSwitch size="small" v-model="scope.row.enabled" @change="enableChange(scope.row.id)"
-            style="--el-switch-on-color: var(--el-color-success);" :disabled="!hasAction($route.name, 'enable')" />
+          <ElBadge is-dot :type="scope.row.enabled ? 'success' : 'info'" class="mr-1" />
+          <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
@@ -285,6 +321,16 @@ function onUpload(options: UploadRequestOptions) {
             <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
               $t('action.modify')
             }}
+          </ElButton>
+          <ElButton v-if="scope.row.enabled && hasAction($route.name, 'disable')" title="disable"
+            :type="actionTypes['disable']" link @click="disableRow(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['disable']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.disable') }}
+          </ElButton>
+          <ElButton v-else-if="hasAction($route.name, 'enable')" title="enable" :type="actionTypes['enable']" link
+            @click="enableRow(scope.row.id)">
+            <Icon :icon="`material-symbols:${actionIcons['enable']}-rounded`" width="1.25em" height="1.25em" />{{
+              $t('action.enable') }}
           </ElButton>
           <ElButton v-if="scope.row.status == 'LOCKED' && hasAction($route.name, 'unlock')" title="unlock"
             :type="actionTypes['unlock']" link @click="unlockRow(scope.row.id)">

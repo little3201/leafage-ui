@@ -1,3 +1,5 @@
+
+
 /**
  * Format a file size given in bytes into a human-readable string
  * @param {number} size - The file size in bytes
@@ -40,71 +42,67 @@ export function download(data: Blob, filename: string, type?: string): void {
 }
 
 /**
+ * 转义 CSV 字段
+ * @param value 数据
+ * @returns  结果
+ */
+function escapeCSV(value: unknown) {
+  if (value == null) {
+    return ''
+  }
+
+  let str: string
+
+  if (typeof value === 'string') {
+    str = value
+  } else if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    str = value.toString()
+  } else if (value instanceof Date) {
+    str = value.toISOString()
+  } else {
+    // 对象/数组转 JSON
+    str = JSON.stringify(value)
+  }
+
+  // CSV 转义
+  if (/[",\n]/.test(str)) {
+    return `"${str.replace(/"/g, '""')}"`
+  }
+
+  return str
+}
+
+/**
  * 导出csv
  * @param data 数据
- * @param fileName 
+ * @param fileName 文件名
+ * @param t 转换函数
  */
-export function exportToCSV(data: object[], fileName: string) {
+export function exportToCSV(data: object[], fileName: string, t?: (key: string) => string) {
   if (!data.length) {
     return
   }
 
   // 获取表头
   const headers = Object.keys(data[0])
-
-  // 转义 CSV 字段
-  const escapeCSV = (value: unknown) => {
-    if (value == null) {
-      return ''
-    }
-
-    let str: string
-
-    if (typeof value === 'string') {
-      str = value
-    }
-    else if (
-      typeof value === 'number'
-      || typeof value === 'boolean'
-      || typeof value === 'bigint'
-    ) {
-      str = value.toString()
-    }
-    else if (value instanceof Date) {
-      str = value.toISOString()
-    }
-    else {
-      // 对象/数组转 JSON
-      str = JSON.stringify(value)
-    }
-
-    // CSV 转义
-    if (/[",\n]/.test(str)) {
-      return `"${str.replace(/"/g, '""')}"`
-    }
-
-    return str
-  }
+  // i18n 表头
+  const headerTitles = headers.map(field => {
+    return typeof t === 'function'
+      ? t(`label.${field}`) ?? field
+      : field
+  })
 
   // 生成 CSV 内容
   const rows = data.map(row =>
     headers.map(header => escapeCSV((row as Record<string, unknown>)[header])).join(',')
   )
 
-  const csv = [headers.join(','), ...rows].join('\n')
+  const csv = [headerTitles.join(','), ...rows].join('\n')
 
   // UTF-8 BOM，避免 Excel 中文乱码
   const blob = new Blob(['\uFEFF' + csv], {
     type: 'text/csv;charset=utf-8;'
   })
 
-  const link = document.createElement('a')
-  link.href = URL.createObjectURL(blob)
-  link.download = fileName.replace(/\.[^/.]+$/, '') + '.csv'
-
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-
-  URL.revokeObjectURL(link.href)
+  download(blob, fileName.replace(/\.[^/.]+$/, '') + '.csv')
 }

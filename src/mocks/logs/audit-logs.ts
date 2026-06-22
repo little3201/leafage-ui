@@ -15,7 +15,7 @@ for (let i = 1; i < 28; i++) {
     oldValue: ['create', 'modify', 'patch', 'relation', 'config'].includes(action) ? '{"theme:"light"}' : '',
     newValue: ['create', 'modify', 'patch', 'relation', 'config'].includes(action) ? '{"theme:"dark"}' : '',
     ip: '192.168.0.4',
-    statusCode: [200, 201, 400, 404, 500, 502][Math.floor(Math.random() * 6)] || 200,
+    status: ['SUCCEED', 'FAILED'][Math.floor(Math.random() * 2)] || '',
     duration: Math.floor(Math.random() * 1000),
   }
   datas.push(row)

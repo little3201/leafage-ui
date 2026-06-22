@@ -9,7 +9,7 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSchemas = (pagination: Pagination, filter?: Filter<Template>) => {
+export const retrieveTemplates = (pagination: Pagination, filter?: Filter<Template>) => {
   const filters = dealFilters(filter)
   return api.get(SERVER_URL.TEMPLATE, { params: { ...pagination, page: pagination.page - 1, filters } })
 }
@@ -19,7 +19,7 @@ export const retrieveSchemas = (pagination: Pagination, filter?: Filter<Template
  * @param id Row ID
  * @returns Row data
  */
-export const fetchSchema = (id: number) => {
+export const fetchTemplate = (id: number) => {
   return api.get(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
@@ -28,7 +28,7 @@ export const fetchSchema = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSchema = (row: Template) => {
+export const createTemplate = (row: Template) => {
   return api.post(SERVER_URL.TEMPLATE, row)
 }
 
@@ -38,17 +38,8 @@ export const createSchema = (row: Template) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySchema = (id: number, row: Template) => {
+export const modifyTemplate = (id: number, row: Template) => {
   return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row)
-}
-
-/**
- * Enable or Disable an existing row
- * @param id Row ID
- * @returns Enable or Disable result
- */
-export const enableSchema = (id: number) => {
-  return api.patch(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
 /**
@@ -56,7 +47,7 @@ export const enableSchema = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeSchema = (id: number) => {
+export const removeTemplate = (id: number) => {
   return api.delete(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
@@ -65,6 +56,6 @@ export const removeSchema = (id: number) => {
  * @param file file
  * @returns
  */
-export const importSchemas = (file: File) => {
+export const importTemplates = (file: File) => {
   return api.postForm(`${SERVER_URL.TEMPLATE}/import`, { file: file })
 }

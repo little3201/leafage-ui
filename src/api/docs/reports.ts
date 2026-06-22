@@ -52,15 +52,6 @@ export const modifyReport = (id: number, row: Report) => {
 }
 
 /**
- * Enable or Disable an existing row
- * @param id Row ID
- * @returns Enable or Disable result
- */
-export const enableReport = (id: number) => {
-  return api.patch(`${SERVER_URL.REPORT}/${id}`)
-}
-
-/**
  * Remove a row
  * @param id Row ID
  * @returns Deletion status

@@ -2,7 +2,7 @@
 import { Icon } from '@iconify/vue'
 import type { UploadRequestOptions } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
-import { downloadFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
+import { disableFile, downloadFile, enableFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { FileRecord, Filter, Pagination } from 'src/types'
 import { download, formatFileSize, hasAction } from 'src/utils'
@@ -82,6 +82,49 @@ function showRow(row: FileRecord) {
   data.value = row ? { ...row } : { ...initialValues }
 
   visible.value = true
+}
+
+/**
+ * 启用
+ * @param id 主键
+ */
+async function enableRow(id: number) {
+  try {
+    await enableFile(id)
+    await load()
+    ElMessage.success(t('message.success', { action: t('action.enable') }))
+  } catch (error) {
+    ElMessage.error(t('message.error', { action: t('action.enable') }))
+    throw error
+  }
+}
+
+/**
+ * 停用
+ * @param id 主键
+ */
+async function disableRow(id: number) {
+  await ElMessageBox.confirm(
+    t('tips.disableWarning'),
+    t('tips.confirm'),
+    {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
+      confirmButtonType: 'danger',
+      confirmButtonClass: 'w-full',
+      confirmButtonText: t('tips.disableButtonText'),
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      await disableFile(id)
+      await load()
+      ElMessage.success(t('message.success', { action: t('action.disable') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.disable') }))
+      throw error
+    }
+  })
 }
 
 /**
@@ -284,6 +327,12 @@ function onUploadError() {
             </template>
           </ElTableColumn>
           <ElTableColumn show-overflow-tooltip prop="contentType" :label="$t('label.contentType')" sortable />
+          <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
+            <template #default="scope">
+              <ElBadge is-dot :type="scope.row.enabled ? 'success' : 'info'" class="mr-1" />
+              <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
+            </template>
+          </ElTableColumn>
           <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
             <template #default="scope">
               {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
@@ -291,8 +340,18 @@ function onUploadError() {
           </ElTableColumn>
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
-              <ElButton v-if="hasAction($route.name, 'download')" title="download" type="success" link
-                @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
+              <ElButton v-if="scope.row.enabled && hasAction($route.name, 'disable')" title="disable"
+                :type="actionTypes['disable']" link @click="disableRow(scope.row.id)">
+                <Icon :icon="`material-symbols:${actionIcons['disable']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.disable') }}
+              </ElButton>
+              <ElButton v-else-if="hasAction($route.name, 'enable')" title="enable" :type="actionTypes['enable']" link
+                @click="enableRow(scope.row.id)">
+                <Icon :icon="`material-symbols:${actionIcons['enable']}-rounded`" width="1.25em" height="1.25em" />{{
+                  $t('action.enable') }}
+              </ElButton>
+              <ElButton v-if="scope.row.enabled && hasAction($route.name, 'download')" title="download" type="success"
+                link @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
                 <Icon icon="material-symbols:download" width="1.25em" height="1.25em" />{{ $t('action.download') }}
               </ElButton>
               <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link

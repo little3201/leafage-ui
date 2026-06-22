@@ -72,7 +72,7 @@ function logout() {
     </div>
   </ElHeader>
 
-  <ElAside class="fixed top-15">
+  <ElAside class="fixed top-15 h-screen bg-(--el-bg-color)">
     <ElScrollbar>
       <ElMenu router unique-opened :default-active="currentRoute.fullPath">
         <ElMenuItem :index="'/'">
@@ -91,11 +91,11 @@ function logout() {
     </ElScrollbar>
   </ElAside>
 
-  <ElMain class="bg-(--el-bg-color-page) min-h-[calc(100vh-120px)] ml-(--el-aside-width) mt-15">
+  <ElMain class="min-h-[calc(100vh-120px)] ml-(--el-aside-width) mt-15">
     <RouterView />
   </ElMain>
 
-  <ElFooter class="bg-(--el-bg-color-page) ml-(--el-aside-width) text-center">
+  <ElFooter class="ml-(--el-aside-width) text-center">
     <div class="text-sm mb-2 space-x-4">
       <a href="/privacy" class="text-(--el-text-color-regular) no-underline hover:underline">隐私政策</a>
       <a href="/terms" class="text-(--el-text-color-regular) no-underline hover:underline">使用条款</a>

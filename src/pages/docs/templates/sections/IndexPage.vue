@@ -49,7 +49,7 @@ const initialValues: Section = {
   ownerType: props.ownerType,
   name: '',
   superiorId: null,
-  body: { dataStream: '' },
+  body: { id: '', documentStyle: {} },
 }
 const form = ref<Section>({ ...initialValues })
 
@@ -246,7 +246,7 @@ defineExpose({
               <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
-          <ElButton v-if="hasAction($route.name, 'create')" title="create" circle plain size="small"
+          <ElButton v-if="!readOnly && hasAction($route.name, 'create')" title="create" circle plain size="small"
             :type="actionTypes['create']" @click="saveRow()">
             <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />
           </ElButton>
@@ -257,7 +257,7 @@ defineExpose({
           <template #default="{ data }">
             <div class="flex flex-1 items-center justify-between ">
               <span>{{ data.meta!.sequence! }}. {{ data.name }}</span>
-              <div>
+              <div v-if="!readOnly">
                 <ElButton type="primary" link @click="saveRow(data)">
                   <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" />
                 </ElButton>

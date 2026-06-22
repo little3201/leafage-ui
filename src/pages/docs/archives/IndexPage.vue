@@ -13,7 +13,7 @@ import {
   removeArchive,
   retrieveArchives
 } from 'src/api/docs/archives'
-import { retrieveSchemas } from 'src/api/docs/templates'
+import { retrieveTemplates } from 'src/api/docs/templates'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Archive, Filter, Pagination, Template } from 'src/types'
 import { exportToCSV, hasAction } from 'src/utils'
@@ -66,7 +66,7 @@ const rules = reactive<FormRules<typeof form>>({
 
 onMounted(async () => {
   await load()
-  await loadSchemas()
+  await loadTemplates()
 })
 
 /**
@@ -101,13 +101,13 @@ async function load() {
 }
 
 /**
- * 加载列表
+ * 加载 templates
  */
-async function loadSchemas() {
+async function loadTemplates() {
   const filter: Filter<Template> = {
     type: { op: 'eq', value: 'WORD' }
   }
-  const res = await retrieveSchemas({ page: 1, size: 99 }, filter)
+  const res = await retrieveTemplates({ page: 1, size: 99 }, filter)
   templates.value = res.data.content
 }
 
@@ -120,9 +120,9 @@ function exportRows() {
 
   const selectedRows = tableRef.value?.getSelectionRows()
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'reports')
+    exportToCSV(selectedRows, 'reports', t)
   } else {
-    exportToCSV(datas.value, 'reports')
+    exportToCSV(datas.value, 'reports', t)
   }
   exportLoading.value = false
 }

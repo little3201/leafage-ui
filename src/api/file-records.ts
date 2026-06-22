@@ -24,6 +24,24 @@ export const fetchFile = (id: number) => {
 }
 
 /**
+ * Enable an existing row
+ * @param id Row ID
+ * @returns Enable result
+ */
+export const enableFile = (id: number) => {
+  return api.patch(`${SERVER_URL.FILE}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export const disableFile = (id: number) => {
+  return api.patch(`${SERVER_URL.FILE}/${id}/disable`)
+}
+
+/**
  * Upload
  * @param file file
  * @returns Uploaded row

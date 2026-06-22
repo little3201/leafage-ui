@@ -255,7 +255,7 @@ async function enableRow(id: number) {
  */
 async function disableRow(id: number) {
   await ElMessageBox.confirm(
-    t('tips.disableWarning', { module: t('page.groups'), data: name }),
+    t('tips.disableWarning'),
     t('tips.confirm'),
     {
       dangerouslyUseHTMLString: true,
@@ -535,19 +535,21 @@ const rowSelected = (row: Privilege) => {
                 <Icon :icon="`material-symbols:${actionIcons['enable']}-rounded`" width="1.25em" height="1.25em" />{{
                   $t('action.enable') }}
               </ElButton>
-              <ElButton v-if="hasAction($route.name, 'relation')" title="relation" :type="actionTypes['relation']" link
-                @click="relationRow(scope.row.id)">
-                <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em" />
-                {{ $t('action.relation')
-                }}
-              </ElButton>
-              <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" :type="actionTypes['authorize']"
-                link @click="authorizeRow(scope.row.id)">
-                <Icon :icon="`material-symbols:${actionIcons['authorize']}-rounded`" width="1.25em" height="1.25em" />
-                {{
-                  $t('action.authorize')
-                }}
-              </ElButton>
+              <template v-if="scope.row.enabled">
+                <ElButton v-if="hasAction($route.name, 'relation')" title="relation" :type="actionTypes['relation']"
+                  link @click="relationRow(scope.row.id)">
+                  <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em" />
+                  {{ $t('action.relation')
+                  }}
+                </ElButton>
+                <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" :type="actionTypes['authorize']"
+                  link @click="authorizeRow(scope.row.id)">
+                  <Icon :icon="`material-symbols:${actionIcons['authorize']}-rounded`" width="1.25em" height="1.25em" />
+                  {{
+                    $t('action.authorize')
+                  }}
+                </ElButton>
+              </template>
               <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
                 @click="removeRow(scope.row.id, scope.row.name)">
                 <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />

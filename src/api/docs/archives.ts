@@ -43,15 +43,6 @@ export const modifyArchive = (id: number, row: Archive) => {
 }
 
 /**
- * Enable or Disable an existing row
- * @param id Row ID
- * @returns Enable or Disable result
- */
-export const enableArchive = (id: number) => {
-  return api.patch(`${SERVER_URL.ARCHIVE}/${id}`)
-}
-
-/**
  * Remove a row
  * @param id Row ID
  * @returns Deletion status

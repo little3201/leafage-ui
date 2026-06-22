@@ -43,12 +43,21 @@ export const modifyUser = (id: number, row: User) => {
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
 export const enableUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}`)
+  return api.patch(`${SERVER_URL.USER}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export const disableUser = (id: number) => {
+  return api.patch(`${SERVER_URL.USER}/${id}/disable`)
 }
 
 /**

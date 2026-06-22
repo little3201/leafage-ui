@@ -5,7 +5,7 @@ import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { clearOperationLogs, removeOperationLog, retrieveOperationLogs } from 'src/api/logs/operation-logs'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, OperationLog, Pagination } from 'src/types'
-import { exportToCSV, hasAction } from 'src/utils'
+import { exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -19,7 +19,8 @@ const total = ref<number>(0)
 const tableRef = ref<TableInstance>()
 const pagination = reactive<Pagination>({
   page: 1,
-  size: 10
+  size: 10,
+  descending: true
 })
 
 const filter = reactive<Filter<OperationLog>>({
@@ -194,20 +195,25 @@ async function clearRows() {
           <ElText :type="actionTypes[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
-      <ElTableColumn show-overflow-tooltip prop="result" :label="$t('label.result')" />
-      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
+      <ElTableColumn show-overflow-tooltip prop="targetId" :label="$t('label.targetId')" />
+      <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')">
         <template #default="scope">
-          <ElTag v-if="scope.row.status >= 200 && scope.row.status < 300" type="success" round>
-            {{ scope.row.status }}
-          </ElTag>
-          <ElTag v-else-if="scope.row.status >= 500" type="warning" round>
-            {{ scope.row.status }}
-          </ElTag>
-          <ElTag v-else type="danger" round>{{ scope.row.status }}</ElTag>
+          {{ JSON.stringify(scope.row.params, null, 2) }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="duration" :label="$t('label.duration')" sortable />
+      <ElTableColumn show-overflow-tooltip prop="response" :label="$t('label.response')" />
+      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
+        <template #default="scope">
+          <ElTag :type="scope.row.status == 'SUCCEED' ? 'success' : 'warning'" round>
+            {{ scope.row.status }}
+          </ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
+        <template #default="scope">
+          {{ scope.row.duration ? formatDuration(scope.row.duration) : '-' }}
+        </template>
+      </ElTableColumn>
       <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
       <ElTableColumn prop="operatedAt" :label="$t('label.operatedAt')" sortable>
         <template #default="scope">
@@ -241,11 +247,12 @@ async function clearRows() {
         <ElText :type="actionTypes[data.action]">{{ $t(`action.${data.action}`) }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.status')">
-        <ElTag :type="data.status == 1 ? 'success' : 'danger'" round>{{ data.status }}</ElTag>
+        <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>{{ data.status }}</ElTag>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ data.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.result')" :span="3">{{ data.result }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.duration')">{{ data.duration }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.response')" :span="3">{{ data.response }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.duration')"> {{ data.duration ? formatDuration(data.duration) : '-' }}
+      </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.operator')" :span="3">{{ data.operator }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.operatedAt')" :span="3">
         {{ data.operatedAt ? dayjs(data.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}

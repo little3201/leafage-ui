@@ -108,8 +108,10 @@ export default {
 
   action: {
     search: '搜索',
-    retrieve: '查詢',
+    retrieve: '分頁查詢',
     fetch: '獲取',
+    tree: '樹查詢',
+    subset: '查詢子節點',
     import: '導入',
     export: '導出',
     submit: '提交',

@@ -163,7 +163,7 @@ async function confirmRow(row: SectionField) {
     </ElTableColumn>
     <ElTableColumn prop="required" :label="$t('label.required')">
       <template #default="scope">
-        <ElSwitch :disabled="!editable[scope.row.id]" v-model="scope.row.required" />
+        <ElSwitch :disabled="!editable[scope.row.id]" v-model="scope.row.required" size="small" />
       </template>
     </ElTableColumn>
     <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">

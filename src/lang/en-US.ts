@@ -110,6 +110,8 @@ export default {
     search: 'Search',
     retrieve: 'Retrieve',
     fetch: 'Fetch',
+    tree: 'Retrieve Tree',
+    subset: 'Retrieve subset',
     import: 'Import',
     export: 'Export',
     submit: 'Submit',

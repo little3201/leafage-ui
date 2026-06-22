@@ -20,6 +20,7 @@ export const actionTypes: { [key: string]: 'primary' | 'success' | 'warning' | '
   export: 'warning',
   execute: 'warning',
   data: 'warning',
+  disable: 'warning',
 
   remove: 'danger',
   clear: 'danger',

@@ -8,4 +8,5 @@ export interface FileRecord extends AudtiMetadata {
   contentType?: string
   size: number
   directory: boolean
+  enabled?: boolean
 }

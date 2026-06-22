@@ -88,12 +88,21 @@ export const modifyPrivilegeAction = (id: number, row: PrivilegeAction) => {
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
 export const enablePrivilege = (id: number) => {
-  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}`)
+  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export const disablePrivilege = (id: number) => {
+  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/disable`)
 }
 
 /**

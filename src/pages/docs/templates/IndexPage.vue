@@ -6,9 +6,9 @@ import type {
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import {
-  createSchema,
-  importSchemas, modifySchema,
-  removeSchema, retrieveSchemas
+  createTemplate,
+  importTemplates, modifyTemplate,
+  removeTemplate, retrieveTemplates
 } from 'src/api/docs/templates'
 import { actionIcons, actionTypes, schemaStatus, templateTypes } from 'src/constants'
 import type { Filter, Pagination, Template } from 'src/types'
@@ -81,7 +81,7 @@ async function load() {
   loading.value = true
 
   try {
-    const res = await retrieveSchemas(pagination, filter)
+    const res = await retrieveTemplates(pagination, filter)
     datas.value = res.data.content
     total.value = res.data.page.totalElements
   } catch (error) {
@@ -135,9 +135,9 @@ async function onSubmit(formEl: FormInstance) {
     saveLoading.value = true
     try {
       if (form.value.id) {
-        await modifySchema(form.value.id, form.value)
+        await modifyTemplate(form.value.id, form.value)
       } else {
-        await createSchema(form.value)
+        await createTemplate(form.value)
       }
       visible.value = false
 
@@ -172,7 +172,7 @@ async function removeRow(id: number, name: string) {
     }
   ).then(async () => {
     try {
-      await removeSchema(id)
+      await removeTemplate(id)
       await load()
 
       ElMessage.success(t('message.success', { action: t('action.remove') }))
@@ -202,7 +202,7 @@ function exportRows() {
  * 导入
  */
 function onUpload(options: UploadRequestOptions) {
-  return importSchemas(options.file)
+  return importTemplates(options.file)
 }
 
 async function onSectionSave() {

@@ -52,12 +52,21 @@ export const modifyRegion = (id: number, row: Region) => {
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
 export const enableRegion = (id: number) => {
-  return api.patch(`${SERVER_URL.REGION}/${id}`)
+  return api.patch(`${SERVER_URL.REGION}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export const disableRegion = (id: number) => {
+  return api.patch(`${SERVER_URL.REGION}/${id}/disable`)
 }
 
 /**

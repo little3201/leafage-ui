@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { SERVER_URL } from 'src/constants'
-import type { DynamicRow, Section, SectionField } from 'src/types'
+import type { Section, SectionData, SectionField } from 'src/types'
 
 
 /**
@@ -61,7 +61,7 @@ export const createSectionField = (row: SectionField) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSectionData = (row: DynamicRow) => {
+export const createSectionData = (row: SectionData) => {
   return api.post(`${SERVER_URL.SECTION}/datas`, row)
 }
 
@@ -91,17 +91,8 @@ export const modifySectionField = (id: number, row: SectionField) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySectionData = (id: number, row: DynamicRow) => {
+export const modifySectionData = (id: number, row: SectionData) => {
   return api.put(`${SERVER_URL.SECTION}/datas/${id}`, row)
-}
-
-/**
- * Enable or Disable an existing row
- * @param id Row ID
- * @returns Enable or Disable result
- */
-export const enableSection = (id: number) => {
-  return api.patch(`${SERVER_URL.SECTION}/${id}`)
 }
 
 /**

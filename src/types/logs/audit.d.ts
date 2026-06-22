@@ -6,7 +6,7 @@ export interface AuditLog extends AudtiMetadata {
   targetId?: number
   oldValue?: string
   newValue?: string
-  ip: string
-  statusCode?: number
+  ip?: string
+  status?: string
   duration?: number
 }

@@ -29,22 +29,20 @@ async function load(month: number) {
 </script>
 
 <template>
-  <ElSpace direction="vertical" fill size="large">
-    <ElCard>
-      <ChartView :options="lineOptionsData" />
-    </ElCard>
+  <ElCard>
+    <ChartView :options="lineOptionsData" />
+  </ElCard>
 
-    <ElCard>
-      <ElCalendar v-model="today">
-        <template #date-cell="{ data }">
-          <span>{{ data.date.getDate() }}</span>
-          <div v-if="datas[data.date.getDate()]" class="flex-col overflow-y-auto h-14">
-            <ElText v-for="(item, index) in datas[data.date.getDate()]" :key="index" class="block" :type="item.type">
-              {{ item.title }}
-            </ElText>
-          </div>
-        </template>
-      </ElCalendar>
-    </ElCard>
-  </ElSpace>
+  <ElCard class="mt-4">
+    <ElCalendar v-model="today">
+      <template #date-cell="{ data }">
+        <span>{{ data.date.getDate() }}</span>
+        <div v-if="datas[data.date.getDate()]" class="flex-col overflow-y-auto h-14">
+          <ElText v-for="(item, index) in datas[data.date.getDate()]" :key="index" class="block" :type="item.type">
+            {{ item.title }}
+          </ElText>
+        </div>
+      </template>
+    </ElCalendar>
+  </ElCard>
 </template>
