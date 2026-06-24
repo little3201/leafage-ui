@@ -194,8 +194,22 @@ async function clearRows() {
           </ElButton>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')" />
-      <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.request.body')" />
+      <ElTableColumn prop="targetId" :label="$t('label.targetId')" />
+      <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')">
+        <template #default="scope">
+          <ElText class="w-56" truncated>{{ scope.row.params }}</ElText>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn show-overflow-tooltip prop="body" :label="$t('label.request.body')">
+        <template #default="scope">
+          <ElText class="w-56" truncated>{{ scope.row.body }}</ElText>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="response" :label="$t('label.response')">
+        <template #default="scope">
+          <ElText class="w-56" truncated>{{ scope.row.response }}</ElText>
+        </template>
+      </ElTableColumn>
       <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
       <ElTableColumn prop="statusCode" :label="$t('label.statusCode')">
         <template #default="scope">
@@ -252,12 +266,18 @@ async function clearRows() {
       <ElDescriptionsItem :label="$t('label.duration')">{{ data.duration ? formatDuration(data.duration) :
         '-' }}
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ data.params }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.params')" :span="3">
+        <ElText class="w-96" truncated>{{ data.response }}</ElText>
+      </ElDescriptionsItem>
       <ElDescriptionsItem v-if="data.body" :label="$t('label.request.body')" :span="3">{{ data.body }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.ip')" :span="3">{{ data.ip }}</ElDescriptionsItem>
-
-      <ElDescriptionsItem :label="$t('label.response')" :span="3">{{ data.response }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.response')" :span="3">
+        <ElText class="w-96" truncated>{{ data.response }}</ElText>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.userAgent')" :span="3">
+        <ElText class="w-96" truncated>{{ data.userAgent }}</ElText>
+      </ElDescriptionsItem>
     </ElDescriptions>
   </ElDialog>
 </template>

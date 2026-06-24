@@ -16,9 +16,10 @@
   },
   "dependencies": {
     "@iconify/vue": "^5.0.1",
-    "@univerjs/preset-docs-core": "^0.25.0",
-    "@univerjs/preset-sheets-core": "^0.25.0",
-    "@univerjs/presets": "^0.25.0",
+    "@univerjs/preset-docs-core": "~0.24.0",
+    "@univerjs/preset-docs-drawing": "~0.24.0",
+    "@univerjs/preset-sheets-core": "~0.24.0",
+    "@univerjs/presets": "~0.24.0",
     "@vueuse/core": "^14.3.0",
     "apexcharts": "^5.15.2",
     "axios": "^1.18.0",

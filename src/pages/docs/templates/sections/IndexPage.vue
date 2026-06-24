@@ -15,7 +15,7 @@ import {
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Section } from 'src/types'
 import { hasAction } from 'src/utils'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ExcelContent from './ExcelContent.vue'
 import ExcelField from './ExcelField.vue'
@@ -49,9 +49,13 @@ const initialValues: Section = {
   ownerType: props.ownerType,
   name: '',
   superiorId: null,
-  body: { id: '', documentStyle: {} },
+  body: {},
 }
 const form = ref<Section>({ ...initialValues })
+
+onMounted(async () => {
+  await loadTree()
+})
 
 /**
  * 监听tree
@@ -60,11 +64,13 @@ watch(() => filterText.value, (newVal, oldVal) => {
   if (newVal === oldVal) return
   treeRef.value!.filter(newVal)
 })
-watch(() => props.ownerId, async () => {
+watch([() => props.ownerId, () => props.ownerType], async ([newOwnerId, newOwnerType]) => {
   treeSelected.value = ''
-  form.value = { ...initialValues }
+
+  form.value.ownerId = newOwnerId
+  form.value.ownerType = newOwnerType
   await loadTree()
-}, { immediate: true })
+})
 
 /**
  * tree过滤

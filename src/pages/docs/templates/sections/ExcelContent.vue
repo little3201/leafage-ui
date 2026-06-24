@@ -3,7 +3,7 @@ import { Icon } from '@iconify/vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createSectionData, modifySectionData, removeSectionData, retrieveSectionDatas, retrieveSectionFields } from 'src/api/docs/sections'
 import type { SectionData, SectionField } from 'src/types'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
@@ -22,12 +22,17 @@ const datas = ref<Array<SectionData>>([])
 const saveLoading = ref(false)
 const editable = ref<Record<number, boolean>>({})
 
+onMounted(async () => {
+  await loadFields()
+  await loadDatas()
+})
+
 watch(() => props.sectionId, async (newVal, oldVal) => {
-  if (newVal != null && newVal !== oldVal) {
+  if (newVal !== oldVal) {
     await loadFields()
     await loadDatas()
   }
-}, { immediate: true })
+})
 
 async function loadFields() {
   if (!props.sectionId) return

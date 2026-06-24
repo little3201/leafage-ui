@@ -147,7 +147,8 @@ export default {
     continue: 'Continue',
     data: 'Data',
     addItem: 'Add Item',
-    section: 'Section'
+    section: 'Section',
+    generate: 'Generate'
   },
 
   page: {

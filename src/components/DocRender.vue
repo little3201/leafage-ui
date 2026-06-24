@@ -3,6 +3,10 @@ import { UniverDocsCorePreset } from '@univerjs/preset-docs-core'
 import UniverPresetDocsCoreEnUS from '@univerjs/preset-docs-core/locales/en-US'
 import UniverPresetDocsCoreZhCN from '@univerjs/preset-docs-core/locales/zh-CN'
 import UniverPresetDocsCoreZhTW from '@univerjs/preset-docs-core/locales/zh-TW'
+import { UniverDocsDrawingPreset } from '@univerjs/preset-docs-drawing'
+import UniverPresetDocsDrawingEnUS from '@univerjs/preset-docs-drawing/locales/en-US'
+import UniverPresetDocsDrawingZhCN from '@univerjs/preset-docs-drawing/locales/Zh-CN'
+import UniverPresetDocsDrawingZhTW from '@univerjs/preset-docs-drawing/locales/ZH-TW'
 import type { FUniver, IDocumentData, Univer } from '@univerjs/presets'
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets'
 import { useDark } from '@vueuse/core'
@@ -13,7 +17,7 @@ import { useI18n } from 'vue-i18n'
 import '@univerjs/preset-docs-core/lib/index.css'
 
 const props = defineProps<{
-  data: IDocumentData | undefined,
+  data: Partial<IDocumentData>,
   readOnly?: boolean
 }>()
 
@@ -47,24 +51,20 @@ watch(() => props.data, (newVal, oldVal) => {
   //避免深度监听造成的死循环
   if (JSON.stringify(newVal) === JSON.stringify(oldVal)) return
 
-  // const document = univerAPIInstance.getActiveDocument()
-  // if (!document) return
-
-  // const snapshot = document.getSnapshot()
-  // const textLength = snapshot.body?.dataStream.length || 0
-  // if (textLength > 0) {
-  //   document.setSelection(0, textLength - 1)
-  //   // 触发内部删除指令
-  //   await univerAPIInstance.executeCommand('doc.command.delete-left')
-  // }
-
-  // await document.appendText(newVal.body?.dataStream || '')
   initUniver(newVal)
 }, { deep: true })
 
+/**
+ * 创建 document
+ * @param documentData document 
+ */
+function initUniver(documentData: Partial<IDocumentData>) {
+  // 当前页面不重新创建
+  const document = univerAPIInstance?.getActiveDocument()
+  if (document && document.id === documentData.id) {
+    return
+  }
 
-function initUniver(documentData: IDocumentData) {
-  // 如果之前有实例，先彻底销毁核心实例和API实例
   if (univerInstance) {
     univerInstance.dispose()
     univerInstance = null
@@ -76,18 +76,21 @@ function initUniver(documentData: IDocumentData) {
     darkMode: isDark.value,
     locale: locales[locale.value] || LocaleType.ZH_CN,
     locales: {
-      [LocaleType.ZH_CN]: mergeLocales(UniverPresetDocsCoreZhCN),
-      [LocaleType.ZH_TW]: mergeLocales(UniverPresetDocsCoreZhTW),
-      [LocaleType.EN_US]: mergeLocales(UniverPresetDocsCoreEnUS)
+      [LocaleType.ZH_CN]: mergeLocales(UniverPresetDocsCoreZhCN, UniverPresetDocsDrawingZhCN),
+      [LocaleType.ZH_TW]: mergeLocales(UniverPresetDocsCoreZhTW, UniverPresetDocsDrawingZhTW),
+      [LocaleType.EN_US]: mergeLocales(UniverPresetDocsCoreEnUS, UniverPresetDocsDrawingEnUS)
     },
     presets: [
       UniverDocsCorePreset({
-        container: container.value as HTMLElement
-      })
+        container: container.value as HTMLElement,
+        toolbar: !props.readOnly,
+        contextMenu: !props.readOnly
+      }),
+      UniverDocsDrawingPreset()
     ]
   })
 
-  univerAPI.createUniverDoc(documentData.body ? documentData : {})
+  univerAPI.createUniverDoc(documentData || {})
 
   univerInstance = univer
   univerAPIInstance = univerAPI

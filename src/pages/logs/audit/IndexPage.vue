@@ -163,18 +163,20 @@ async function removeRow(id: number, module: string, action: string) {
         </template>
       </ElTableColumn>
       <ElTableColumn prop="targetId" :label="$t('label.targetId')" />
-      <ElTableColumn show-overflow-tooltip prop="oldValue" :label="$t('label.oldValue')" />
-      <ElTableColumn show-overflow-tooltip prop="newValue" :label="$t('label.newValue')" />
+      <ElTableColumn prop="oldValue" :label="$t('label.oldValue')">
+        <template #default="scope">
+          <ElText class="w-56" truncated>{{ scope.row.oldValue }}</ElText>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="newValue" :label="$t('label.newValue')">
+        <template #default="scope">
+          <ElText class="w-56" truncated>{{ scope.row.newValue }}</ElText>
+        </template>
+      </ElTableColumn>
       <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
       <ElTableColumn prop="status" :label="$t('label.status')" sortable>
         <template #default="scope">
-          <ElTag v-if="scope.row.status >= 200 && scope.row.status < 300" type="success" round>
-            {{ scope.row.status }}
-          </ElTag>
-          <ElTag v-else-if="scope.row.status >= 500" type="warning" round>
-            {{ scope.row.status }}
-          </ElTag>
-          <ElTag v-else type="danger" round>{{ scope.row.status }}</ElTag>
+          <ElTag :type="scope.row.status === 'SUCCEED' ? 'success' : 'danger'" round>{{ scope.row.status }}</ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
@@ -207,11 +209,15 @@ async function removeRow(id: number, module: string, action: string) {
       <ElDescriptionsItem :label="$t('label.status')">
         <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>{{ data.status }}</ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.targetId')" :span="3">{{ data.targetId }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.oldValue')" :span="3">{{ data.oldValue }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.newValue')" :span="3">{{ data.newValue }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.targetId')">{{ data.targetId }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.ip')" :span="2">{{ data.ip }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.duration')">
+      <ElDescriptionsItem :label="$t('label.oldValue')" :span="3">
+        <ElText class="w-96" truncated>{{ data.oldValue }}</ElText>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.newValue')" :span="3">
+        <ElText class="w-96" truncated>{{ data.newValue }}</ElText>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :span="3" :label="$t('label.duration')">
         {{ data.duration ? formatDuration(data.duration) : '' }}
       </ElDescriptionsItem>
     </ElDescriptions>

@@ -45,16 +45,27 @@ watch(() => props.data, (newVal, oldVal) => {
   //避免深度监听造成的死循环
   if (JSON.stringify(newVal) === JSON.stringify(oldVal)) return
 
-  const workbook = univerAPIInstance.getActiveWorkbook()
-  if (!workbook) return
+  initUniver(newVal)
+}, { deep: true })
 
-  const sheets = workbook.getSheets()
-  sheets.forEach(sheet => {
-    workbook.create(sheet.getSheetName(), sheet.getMaxRows(), sheet.getMaxColumns())
-  })
-})
+/**
+ * 创建 document
+ * @param workbookData workbook 
+ */
+function initUniver(workbookData: Partial<IWorkbookData>) {
+  // 当前页面不重新创建
+  const workbook = univerAPIInstance?.getActiveWorkbook()
+  if (workbook && workbook.id === workbookData.id) {
+    return
+  }
 
-onMounted(() => {
+  if (univerInstance) {
+    univerInstance.dispose()
+    univerInstance = null
+    univerAPIInstance = null
+  }
+
+  // 重新创建
   const { univer, univerAPI } = createUniver({
     darkMode: isDark.value,
     locale: locales[locale.value] || LocaleType.ZH_CN,
@@ -76,15 +87,22 @@ onMounted(() => {
     ]
   })
 
-  univerAPI.createWorkbook({})
+  univerAPI.createWorkbook(workbookData || {})
 
   univerInstance = univer
   univerAPIInstance = univerAPI
+}
+
+onMounted(() => {
+  if (props.data) {
+    initUniver(props.data)
+  }
 })
 
 onBeforeUnmount(() => {
   univerInstance?.dispose()
   univerAPIInstance?.dispose()
+
   univerInstance = null
   univerAPIInstance = null
 })

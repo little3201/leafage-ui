@@ -1,4 +1,3 @@
-import type { IDocumentData } from '@univerjs/presets'
 import type { AudtiMetadata, TreeNode } from '../global'
 
 export interface Section extends AudtiMetadata {
@@ -8,7 +7,7 @@ export interface Section extends AudtiMetadata {
   name: string
   sequence?: number
   level?: number
-  body: IDocumentData
+  body: Record<string, unknown>
   count?: number
 }
 

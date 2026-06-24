@@ -6,7 +6,8 @@ import type {
   UploadRequestOptions
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
-import { createReport, fetchReportTemplate, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
+import { createReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
+import { retrieveSectionDatas } from 'src/api/docs/sections.ts'
 import { retrieveTemplates } from 'src/api/docs/templates'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, Pagination, Report, Template } from 'src/types'
@@ -33,8 +34,8 @@ const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 const previewVisible = ref<boolean>(false)
 const fieldVisible = ref<boolean>(false)
-const contentVisible = ref<boolean>(false)
-const exportVisible = ref<boolean>(false)
+const dataVisible = ref<boolean>(false)
+const generateVisible = ref<boolean>(false)
 
 
 const importLoading = ref<boolean>(false)
@@ -147,7 +148,7 @@ function configData(id: number) {
   }
 
   form.value.id = id
-  contentVisible.value = true
+  dataVisible.value = true
 }
 
 /**
@@ -232,21 +233,26 @@ function onUpload(options: UploadRequestOptions) {
 }
 
 /**
-   * format templates
-   * @param cellValue cell value
-   */
+ * format templates
+ * @param cellValue cell value
+ */
 function formatSchemas(cellValue: number): string {
   const matched = templates.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
 
+/**
+ * Retrieve section datas
+ * @param id section id
+ */
 async function generateRow(id: number) {
-  await fetchReportTemplate(id)
-  exportVisible.value = true
+  const res = await retrieveSectionDatas(id)
+  sectionData.value = res.data
 
+  generateVisible.value = true
 }
 
-function onExportSubmit() {
+function onGenerateSubmit() {
   sheetRenderRef.value?.save()
   exportLoading.value = false
 }
@@ -394,19 +400,19 @@ function onExportSubmit() {
   </ElDialog>
 
   <!-- data -->
-  <ElDialog v-model="contentVisible" :title="$t('action.data')">
+  <ElDialog v-model="dataVisible" :title="$t('action.data')">
     <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" read-only template-type="EXCEL"
       :excel-mode="true" />
   </ElDialog>
 
-  <!-- export -->
-  <ElDialog v-model="exportVisible" :title="$t('action.export')" :z-index="10" :show-close="false">
-    <SheetRender ref="sheetRenderRef" :data="sectionData" />
+  <!-- generate -->
+  <ElDialog v-model="generateVisible" :title="$t('action.export')" :z-index="10" :show-close="false">
+    <SheetRender ref="sheetRenderRef" :data="{}" />
     <template #footer>
-      <ElButton title="cancel" @click="exportVisible = false">
+      <ElButton title="cancel" @click="generateVisible = false">
         <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="exportLoading" @click="onExportSubmit">
+      <ElButton title="submit" type="primary" :loading="exportLoading" @click="onGenerateSubmit">
         <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>

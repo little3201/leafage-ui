@@ -1,5 +1,3 @@
-
-
 /**
  * Format a file size given in bytes into a human-readable string
  * @param {number} size - The file size in bytes

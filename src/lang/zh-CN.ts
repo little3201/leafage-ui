@@ -147,7 +147,8 @@ export default {
     continue: '继续',
     data: '数据',
     addItem: '添加项目',
-    section: '章节'
+    section: '章节',
+    generate: '生成'
   },
 
   page: {

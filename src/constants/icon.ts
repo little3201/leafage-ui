@@ -19,7 +19,8 @@ export const actionIcons: Record<string, string> = {
   refresh: 'refresh',
   data: 'data-table-outline',
   field: 'plug-connect-outline',
-  section: 'plug-connect-outline'
+  section: 'plug-connect-outline',
+  generate: 'edit-document-outline'
 }
 
 export const shceduleStatusIcon: { [key: string]: string } = {

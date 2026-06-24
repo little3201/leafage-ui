@@ -196,12 +196,16 @@ async function clearRows() {
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip prop="targetId" :label="$t('label.targetId')" />
-      <ElTableColumn show-overflow-tooltip prop="params" :label="$t('label.params')">
+      <ElTableColumn prop="params" :label="$t('label.params')">
         <template #default="scope">
-          {{ JSON.stringify(scope.row.params, null, 2) }}
+          <ElText class="w-56" truncated>{{ scope.row.params }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="response" :label="$t('label.response')" />
+      <ElTableColumn prop="response" :label="$t('label.response')">
+        <template #default="scope">
+          <ElText class="w-56" truncated>{{ scope.row.response }}</ElText>
+        </template>
+      </ElTableColumn>
       <ElTableColumn prop="status" :label="$t('label.status')" sortable>
         <template #default="scope">
           <ElTag :type="scope.row.status == 'SUCCEED' ? 'success' : 'warning'" round>
@@ -249,8 +253,12 @@ async function clearRows() {
       <ElDescriptionsItem :label="$t('label.status')">
         <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>{{ data.status }}</ElTag>
       </ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.params')" :span="3">{{ data.params }}</ElDescriptionsItem>
-      <ElDescriptionsItem :label="$t('label.response')" :span="3">{{ data.response }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.params')" :span="3">
+        <ElText class="w-96" truncated>{{ data.params }}</ElText>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.response')" :span="3">
+        <ElText class="w-96" truncated>{{ data.response }}</ElText>
+      </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.duration')"> {{ data.duration ? formatDuration(data.duration) : '-' }}
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.operator')" :span="3">{{ data.operator }}</ElDescriptionsItem>

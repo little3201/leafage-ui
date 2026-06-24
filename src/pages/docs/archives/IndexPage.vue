@@ -41,7 +41,6 @@ const templates = ref<Array<Template>>([])
 
 const visible = ref<boolean>(false)
 const configVisible = ref<boolean>(false)
-
 const previewVisible = ref<boolean>(false)
 
 const formRef = ref<FormInstance>()
