@@ -49,7 +49,7 @@ watch(() => props.data, (newVal, oldVal) => {
 }, { deep: true })
 
 /**
- * 创建 document
+ * 创建 workbook
  * @param workbookData workbook 
  */
 function initUniver(workbookData: Partial<IWorkbookData>) {
