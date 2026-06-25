@@ -6,10 +6,8 @@ export interface Privilege extends AudtiMetadata {
   path: string
   component: string
   redirect?: string
-  icon: string
   actions?: string[]
   enabled?: boolean
-  description?: string
   count?: number
   hasChildren?: boolean
 }
@@ -17,7 +15,6 @@ export interface Privilege extends AudtiMetadata {
 export interface PrivilegeAction extends AudtiMetadata {
   privilegeId: number | null
   name: string
-  icon: string
   type: string | null
   enabled: boolean
 }

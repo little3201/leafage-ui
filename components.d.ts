@@ -16,6 +16,7 @@ declare module 'vue' {
     DocRender: typeof import('./src/components/DocRender.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
+    ElAvatarGroup: typeof import('element-plus/es')['ElAvatarGroup']
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']

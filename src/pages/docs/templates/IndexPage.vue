@@ -279,7 +279,6 @@ async function onSectionSave() {
           <ElText :type="schemaStatus[scope.row.status]">{{ scope.row.status }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
       <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
         <template #default="scope">
           {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
@@ -333,14 +332,6 @@ async function onSectionSave() {
               :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
               <ElOption v-for="(_, value) in templateTypes" :key="value" :label="value" :value="value" />
             </ElSelect>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>

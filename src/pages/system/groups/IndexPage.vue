@@ -25,7 +25,7 @@ import { retrieveRoles } from 'src/api/system/roles'
 import { retrieveUsers } from 'src/api/system/users'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Privilege, Role, TreeNode, User } from 'src/types'
-import { actionIcon, exportToCSV, hasAction } from 'src/utils'
+import { actionIcon, exportToCSV, hasAction, visibleArray } from 'src/utils'
 import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -54,7 +54,7 @@ const groupTree = ref<TreeNode[]>([])
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const activeTabName = ref<string>('user')
+const activeTabName = ref<string>('role')
 const relationVisible = ref<boolean>(false)
 const relationUsers = ref<Array<string>>([])
 const relationRoles = ref<Array<string>>([])
@@ -129,12 +129,12 @@ async function onCurrentChange(data: TreeNode) {
 }
 
 async function loadUsers() {
-  const res = await retrieveUsers({ page: 1, size: 99 })
+  const res = await retrieveUsers({ page: 1, size: 10 })
   members.value = res.data.content
 }
 
 async function loadRoles() {
-  const res = await retrieveRoles({ page: 1, size: 99 })
+  const res = await retrieveRoles({ page: 1, size: 10 })
   roles.value = res.data.content
 }
 
@@ -202,7 +202,8 @@ async function load() {
  * 关联弹出框
  * @param id 主键
  */
-async function relationRow(id: number) {
+async function memberRow(id: number) {
+  form.value.id = id
   await Promise.all([loadGroupUsers(id), loadUsers()])
 
   relationVisible.value = true
@@ -344,11 +345,17 @@ async function removeRow(id: number, name: string) {
  */
 async function handleTransferUserChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
   if (form.value.id) {
+    try {
+      if (direction === 'right') {
+        await addMembers(form.value.id, value as string[])
+      } else if (movedKeys.length) {
+        await removeMembers(form.value.id, movedKeys as string[])
+      }
 
-    if (direction === 'right') {
-      await addMembers(form.value.id, value as string[])
-    } else if (movedKeys.length) {
-      await removeMembers(form.value.id, movedKeys as string[])
+      await load()
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.member') }))
+      throw error
     }
   }
 }
@@ -360,11 +367,17 @@ async function handleTransferUserChange(value: TransferKey[], direction: Transfe
  */
 async function handleTransferRoleChange(value: TransferKey[], direction: TransferDirection, movedKeys: TransferKey[]) {
   if (form.value.id) {
+    try {
+      if (direction === 'right') {
+        await addRoles(form.value.id, value as number[])
+      } else if (movedKeys.length) {
+        await removeRoles(form.value.id, movedKeys as number[])
+      }
 
-    if (direction === 'right') {
-      await addRoles(form.value.id, value as number[])
-    } else if (movedKeys.length) {
-      await removeRoles(form.value.id, movedKeys as number[])
+      await load()
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: t('action.authorize') }))
+      throw error
     }
   }
 }
@@ -391,6 +404,10 @@ function onUpload(options: UploadRequestOptions) {
   return importGroups(options.file)
 }
 
+/**
+ * handle action check
+ * @param privilegeId privilege id
+ */
 async function handleActionsCheck(privilegeId: number) {
   if (!form.value.id) return
   const selectedActions = authoritiesMap[privilegeId]
@@ -426,6 +443,10 @@ async function handleActionsCheck(privilegeId: number) {
   }
 }
 
+/**
+ * handle tab change
+ * @param tab tab name
+ */
 async function tabChange(tab: TabPaneName) {
   activeTabName.value = tab.toString()
 
@@ -509,15 +530,40 @@ const rowSelected = (row: Privilege) => {
           <ElTableColumn type="selection" />
           <ElTableColumn type="index" :label="$t('label.no')" width="55" />
           <ElTableColumn prop="name" :label="$t('label.name')" />
-          <ElTableColumn prop="members" :label="$t('label.members')" />
-          <ElTableColumn prop="roles" :label="$t('label.roles')" />
+          <ElTableColumn prop="members" :label="$t('label.members')">
+            <template #default="scope">
+              <div class="flex items-center">
+                <ElAvatarGroup collapse-avatars :max-collapse-avatars="3" collapse-avatars-tooltip>
+                  <ElAvatar v-for="member in scope.row.members" :key="member.id"
+                    :src="`https://cdn.leafage.top/${member.username}`" />
+                </ElAvatarGroup>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="roles" :label="$t('label.roles')">
+            <template #default="scope">
+              <ElTag v-for="(item, index) in visibleArray(scope.row.roles, 3)" :key="index" type="primary" class="mr-2">
+                {{ item.name }}
+              </ElTag>
+              <ElPopover v-if="scope.row.roles && scope.row.roles.length > 3" placement="top-start" trigger="hover">
+                <template #reference>
+                  <ElTag type="primary">
+                    +{{ scope.row.roles.length - 3 }}
+                  </ElTag>
+                </template>
+                <ElTag v-for="(item, index) in scope.row.roles.slice(3)" :key="index" :type="actionTypes[item]"
+                  class="mb-2 mr-2">
+                  {{ item.name }}
+                </ElTag>
+              </ElPopover>
+            </template>
+          </ElTableColumn>
           <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
             <template #default="scope">
               <ElBadge is-dot :type="scope.row.enabled ? 'success' : 'info'" class="mr-1" />
               <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
             </template>
           </ElTableColumn>
-          <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
               <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
@@ -536,10 +582,10 @@ const rowSelected = (row: Privilege) => {
                   $t('action.enable') }}
               </ElButton>
               <template v-if="scope.row.enabled">
-                <ElButton v-if="hasAction($route.name, 'relation')" title="relation" :type="actionTypes['relation']"
-                  link @click="relationRow(scope.row.id)">
-                  <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em" />
-                  {{ $t('action.relation')
+                <ElButton v-if="hasAction($route.name, 'member')" title="member" :type="actionTypes['member']" link
+                  @click="memberRow(scope.row.id)">
+                  <Icon :icon="`material-symbols:${actionIcons['member']}-rounded`" width="1.25em" height="1.25em" />
+                  {{ $t('action.member')
                   }}
                 </ElButton>
                 <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" :type="actionTypes['authorize']"
@@ -578,14 +624,6 @@ const rowSelected = (row: Privilege) => {
           </ElFormItem>
         </ElCol>
       </ElRow>
-      <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
@@ -599,44 +637,48 @@ const rowSelected = (row: Privilege) => {
     </template>
   </ElDialog>
 
-  <!-- relation -->
-  <ElDialog v-model="relationVisible" :title="$t('action.relation')" width="640">
-    <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
-      <ElTabPane :label="$t('page.users')" name="user" style="text-align: center">
-        <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
-          :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="members"
-          @change="handleTransferUserChange" />
-      </ElTabPane>
+  <!-- member -->
+  <ElDialog v-model="relationVisible" :title="$t('action.member')" width="600">
+    <div style="text-align: center">
+      <ElTransfer v-model="relationUsers" :props="{ key: 'username', label: 'fullName' }"
+        :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="members"
+        @change="handleTransferUserChange" />
+    </div>
+  </ElDialog>
 
+  <!-- authorize -->
+  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" width="57em">
+    <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
       <ElTabPane :label="$t('page.roles')" name="role" style="text-align: center">
         <ElTransfer v-model="relationRoles" :props="{ key: 'id', label: 'name' }"
           :titles="[$t('label.unselected'), $t('label.selected')]" filterable :data="roles"
           @change="handleTransferRoleChange" />
       </ElTabPane>
-    </ElTabs>
-  </ElDialog>
 
-  <!-- authorize -->
-  <ElDialog v-model="authorizeVisible" :title="$t('action.authorize')" width="57em">
-    <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
-      <ElTableColumn type="selection" />
-      <ElTableColumn prop="name" :label="$t('label.name')">
-        <template #default="scope">
-          <Icon :icon="`material-symbols:${scope.row.meta.icon}-rounded`" style="vertical-align: -3.5px" width="1.25em"
-            height="1.25em" class="mr-2" />
-          {{ scope.row.name ? $t(`page.${scope.row.name}`) : '' }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="actions" :label="$t('label.actions')">
-        <template #default="scope">
-          <ElCheckboxGroup v-model="authoritiesMap[scope.row.id]" :disabled="!rowSelected(scope.row)"
-            @change="handleActionsCheck(scope.row.id)">
-            <ElCheckbox v-for="(item, index) in scope.row.meta.actions" :key="index" :label="$t(`action.${item}`)"
-              :value="item" />
-          </ElCheckboxGroup>
-        </template>
-      </ElTableColumn>
-    </ElTable>
+      <ElTabPane :label="$t('page.privileges')" name="privilege" style="text-align: center">
+        <ElTable ref="authorizeTableRef" :data="userStore.privileges" row-key="id" table-layout="auto">
+          <ElTableColumn type="selection" />
+          <ElTableColumn prop="name" :label="$t('label.name')">
+            <template #default="scope">
+              <Icon :icon="`material-symbols:${scope.row.meta.icon}-rounded`" style="vertical-align: -3.5px"
+                width="1.25em" height="1.25em" class="mr-2" />
+              {{ scope.row.name ? $t(`page.${scope.row.name}`) : '' }}
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="actions" :label="$t('label.actions')">
+            <template #default="scope">
+              <ElCheckboxGroup v-model="authoritiesMap[scope.row.id]" :disabled="!rowSelected(scope.row)"
+                @change="handleActionsCheck(scope.row.id)">
+                <ElCheckbox v-for="(item, index) in scope.row.meta.actions" :key="index" :label="$t(`action.${item}`)"
+                  :value="item" />
+              </ElCheckboxGroup>
+            </template>
+          </ElTableColumn>
+        </ElTable>
+      </ElTabPane>
+    </ElTabs>
+
+
   </ElDialog>
 </template>
 

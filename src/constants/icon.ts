@@ -9,6 +9,7 @@ export const actionIcons: Record<string, string> = {
   download: 'download',
   unlock: 'lock-open-outline',
   relation: 'link',
+  member: 'group-add-outline',
   authorize: 'privacy-tip-outline',
   config: 'plug-connect-outline',
   execute: 'motion-play-outline',

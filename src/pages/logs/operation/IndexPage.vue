@@ -189,7 +189,7 @@ async function clearRows() {
           </ElButton>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="action" :label="$t('label.actions')" sortable>
+      <ElTableColumn show-overflow-tooltip prop="action" :label="$t('label.actions')" sortable>
         <template #default="scope">
           <ElBadge is-dot :type="actionTypes[scope.row.action]" class="mr-1" />
           <ElText :type="actionTypes[scope.row.action]">{{ $t(`action.${scope.row.action}`) }}</ElText>
@@ -198,12 +198,12 @@ async function clearRows() {
       <ElTableColumn show-overflow-tooltip prop="targetId" :label="$t('label.targetId')" />
       <ElTableColumn prop="params" :label="$t('label.params')">
         <template #default="scope">
-          <ElText class="w-56" truncated>{{ scope.row.params }}</ElText>
+          <ElText class="w-20 2xl:w-56" truncated>{{ scope.row.params }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="response" :label="$t('label.response')">
         <template #default="scope">
-          <ElText class="w-56" truncated>{{ scope.row.response }}</ElText>
+          <ElText class="w-20 2xl:w-56" truncated>{{ scope.row.response }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="status" :label="$t('label.status')" sortable>
@@ -219,7 +219,7 @@ async function clearRows() {
         </template>
       </ElTableColumn>
       <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
-      <ElTableColumn prop="operatedAt" :label="$t('label.operatedAt')" sortable>
+      <ElTableColumn show-overflow-tooltip prop="operatedAt" :label="$t('label.operatedAt')" sortable>
         <template #default="scope">
           {{ scope.row.operatedAt ? dayjs(scope.row.operatedAt).format('YYYY-MM-DD HH:mm') : '-' }}
         </template>

@@ -45,7 +45,6 @@ const initialValues: Privilege = {
   superiorId: null,
   path: '',
   component: '',
-  icon: '',
   actions: []
 }
 const form = ref<Privilege>({ ...initialValues })
@@ -326,7 +325,6 @@ function handleInputConfirm() {
           <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
@@ -368,9 +366,6 @@ function handleInputConfirm() {
           <ElFormItem :label="$t('label.name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })"
               disabled>
-              <template #prefix>
-                <Icon :icon="`material-symbols:${form.icon}-rounded`" />
-              </template>
             </ElInput>
           </ElFormItem>
         </ElCol>
@@ -414,13 +409,6 @@ function handleInputConfirm() {
                 <Icon :icon="actionIcon('add')" width="1.25em" height="1.25em" />
               </ElButton>
             </div>
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea" :placeholder="$t('label.description')" />
           </ElFormItem>
         </ElCol>
       </ElRow>

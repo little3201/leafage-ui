@@ -12,7 +12,6 @@ for (let i = 1; i < 28; i++) {
     type: (['WORD', 'EXCEL'] as const)[Math.floor(Math.random() * 2)],
     version: Math.floor(Math.random() * 3) + 1,
     status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
-    description: 'this is description about xxx',
     lastModifiedDate: new Date()
   }
   datas.push(row)

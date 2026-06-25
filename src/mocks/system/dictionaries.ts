@@ -9,7 +9,6 @@ const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].
     superiorId: null,
     name: 'Name_' + item,
     enabled: true,
-    description: 'This is region description about xxx',
     count: 1
   }
 })
@@ -21,7 +20,6 @@ for (let i = 1; i < 28; i++) {
     superiorId: superiorId,
     name: 'Sub_Name_' + i,
     enabled: true,
-    description: 'This is region description about xxx'
   }
   datas.push(row)
 }

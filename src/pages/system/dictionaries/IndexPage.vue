@@ -369,7 +369,6 @@ function onUpload(options: UploadRequestOptions) {
               <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
             </template>
           </ElTableColumn>
-          <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
               <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
@@ -414,14 +413,6 @@ function onUpload(options: UploadRequestOptions) {
         <ElCol :span="24">
           <ElFormItem :label="$t('label.name')" prop="name">
             <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol :span="24">
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>

@@ -10,7 +10,6 @@ for (let i = 1; i < 28; i++) {
     id: i,
     name: 'Role_' + i,
     enabled: i % 3 > 0,
-    description: 'this is description for this row'
   }
   datas.push(data)
 }

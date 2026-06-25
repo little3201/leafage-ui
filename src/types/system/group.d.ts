@@ -1,12 +1,13 @@
 import type { AudtiMetadata } from '../global'
+import type { Role } from './role'
+import type { User } from './user'
 
 export interface Group extends AudtiMetadata {
   name: string
   superiorId: number | null
-  principal?: string
-  members?: string[]
+  members?: User[]
+  roles?: Role[]
   enabled?: boolean
-  description?: string
 }
 
 export interface GroupMembers {

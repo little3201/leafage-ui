@@ -300,8 +300,6 @@ function onUpload(options: UploadRequestOptions) {
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip prop="email" :label="$t('label.email')" />
-      <ElTableColumn prop="groups" :label="$t('label.groups')" />
-      <ElTableColumn prop="roles" :label="$t('label.roles')" />
       <ElTableColumn prop="status" :label="$t('label.status')" sortable>
         <template #default="scope">
           <ElBadge is-dot :type="userStatus[scope.row.status]" class="mr-1" />

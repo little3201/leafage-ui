@@ -68,7 +68,7 @@ export function formatDuration(ms: number): string {
  * @param count 截取树
  * @returns 截取后的数组、集合
  */
-export function visibleArray<T extends string | number>(array: T[], count: number): T[] {
+export function visibleArray<T extends object | string | number>(array: T[], count: number): T[] {
   if (array && array.length) {
     return array.length > count ? array.slice(0, count) : array
   }

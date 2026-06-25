@@ -374,7 +374,6 @@ async function removeRow(id: number, name: string) {
               <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
             </template>
           </ElTableColumn>
-          <ElTableColumn show-overflow-tooltip prop="description" :label="$t('label.description')" />
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
               <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
@@ -433,14 +432,6 @@ async function removeRow(id: number, name: string) {
           <ElFormItem :label="$t('label.postalCode')" prop="postalCode">
             <ElInput v-model="form.postalCode"
               :placeholder="$t('placeholder.inputText', { field: $t('label.postalCode') })" />
-          </ElFormItem>
-        </ElCol>
-      </ElRow>
-      <ElRow :gutter="20">
-        <ElCol>
-          <ElFormItem :label="$t('label.description')" prop="description">
-            <ElInput v-model="form.description" type="textarea"
-              :placeholder="$t('placeholder.inputText', { field: $t('label.description') })" />
           </ElFormItem>
         </ElCol>
       </ElRow>

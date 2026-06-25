@@ -148,7 +148,7 @@ export default {
     data: 'Data',
     addItem: 'Add Item',
     section: 'Section',
-    generate: 'Generate'
+    member: 'Member'
   },
 
   page: {

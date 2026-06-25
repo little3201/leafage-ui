@@ -97,10 +97,13 @@ for (const sectionId of uniqueSectionIds) {
   const sectionField = sectionfields.get(sectionId) || []
 
   // 为当前sectionId创建一个data对象，包含其所有字段的随机数据
-  const dataObj: Record<string, unknown> = {}
+  const dataObj: Record<string, string | number | boolean> = {}
   for (const field of sectionField) {
     // 使用field属性作为data对象的属性名，根据type生成相应的随机值
-    dataObj[field.field] = generateRandomValue(field.type, field.length)
+    const value = generateRandomValue(field.type, field.length)
+    if (value) {
+      dataObj[field.field] = value
+    }
   }
 
   const row: SectionData = {

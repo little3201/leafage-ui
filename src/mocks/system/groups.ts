@@ -12,7 +12,6 @@ for (let i = 1; i < 28; i++) {
     superiorId: superiorId,
     name: 'Group_' + i,
     enabled: true,
-    description: 'This is region description about xxx'
   }
   datas.push(row)
 }

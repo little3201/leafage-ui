@@ -99,7 +99,7 @@ async function loadTemplates() {
   const filter: Filter<Template> = {
     type: { op: 'eq', value: 'EXCEL' }
   }
-  const res = await retrieveTemplates({ page: 1, size: 99 }, filter)
+  const res = await retrieveTemplates({ page: 1, size: 10 }, filter)
   templates.value = res.data.content
 }
 
