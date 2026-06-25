@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import SheetRender from 'components/SheetRender.vue'
 import type {
   FormInstance, FormRules, TableInstance,
   UploadRequestOptions
 } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { createReport, importReports, modifyReport, removeReport, retrieveReports } from 'src/api/docs/reports'
-import { retrieveSectionDatas } from 'src/api/docs/sections.ts'
 import { retrieveTemplates } from 'src/api/docs/templates'
-import { actionIcons, actionTypes } from 'src/constants'
+import { actionTypes } from 'src/constants'
 import type { Filter, Pagination, Report, Template } from 'src/types'
-import { exportToCSV, hasAction } from 'src/utils'
+import { actionIcon, exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Section from '../templates/sections/IndexPage.vue'
@@ -35,7 +33,6 @@ const visible = ref<boolean>(false)
 const previewVisible = ref<boolean>(false)
 const fieldVisible = ref<boolean>(false)
 const dataVisible = ref<boolean>(false)
-const generateVisible = ref<boolean>(false)
 
 
 const importLoading = ref<boolean>(false)
@@ -44,9 +41,6 @@ const exportLoading = ref<boolean>(false)
 const filter = reactive<Filter<Report>>({
   title: { op: 'like', value: undefined }
 })
-
-const sheetRenderRef = ref<InstanceType<typeof SheetRender>>()
-const sectionData = ref<Record<string, unknown>>({})
 
 const formRef = ref<FormInstance>()
 const initialValues: Report = {
@@ -240,22 +234,6 @@ function formatSchemas(cellValue: number): string {
   const matched = templates.value.find(item => item.id === cellValue)
   return matched ? matched.name : ''
 }
-
-/**
- * Retrieve section datas
- * @param id section id
- */
-async function generateRow(id: number) {
-  const res = await retrieveSectionDatas(id)
-  sectionData.value = res.data
-
-  generateVisible.value = true
-}
-
-function onGenerateSubmit() {
-  sheetRenderRef.value?.save()
-  exportLoading.value = false
-}
 </script>
 
 <template>
@@ -265,11 +243,11 @@ function onGenerateSubmit() {
         <ElInput v-model="filter.title!.value" clearable style="width: 240px" class="mr-4"
           :placeholder="$t('placeholder.search')">
           <template #prefix>
-            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
           </template>
         </ElInput>
         <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
-          <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />{{
             $t('action.search') }}
         </ElButton>
       </ElCol>
@@ -277,20 +255,20 @@ function onGenerateSubmit() {
       <ElCol :span="12" class="inline-flex! justify-end space-x-3">
         <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
           @click="saveRow()">
-          <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('create')" width="1.25em" height="1.25em" />{{
             $t('action.create') }}
         </ElButton>
         <ElUpload :limit="1" :auto-upload="false" :http-request="onUpload" :on-success="load"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
           <ElButton v-if="hasAction($route.name, 'import')" v-loading="importLoading" title="import"
             :type="actionTypes['import']" plain>
-            <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('import')" width="1.25em" height="1.25em" />{{
               $t('action.import') }}
           </ElButton>
         </ElUpload>
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
           @click="exportRows" :loading="exportLoading">
-          <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('export')" width="1.25em" height="1.25em" />{{
             $t('action.export')
           }}
         </ElButton>
@@ -326,29 +304,23 @@ function onGenerateSubmit() {
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
             @click="saveRow(scope.row)">
-            <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />{{
               $t('action.modify') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'field')" title="config" :type="actionTypes['field']" link
             @click="configSection(scope.row.id)">
-            <Icon :icon="`material-symbols:${actionIcons['field']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('field')" width="1.25em" height="1.25em" />
             {{ $t('action.field') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'data')" title="data" :type="actionTypes['data']" link
             @click="configData(scope.row.id)">
-            <Icon :icon="`material-symbols:${actionIcons['data']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('data')" width="1.25em" height="1.25em" />
             {{ $t('action.data') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
             @click="removeRow(scope.row.id, scope.row.title)">
-            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />{{
               $t('action.remove')
-            }}
-          </ElButton>
-          <ElButton v-if="hasAction($route.name, 'generate')" title="generate" :type="actionTypes['generate']" link
-            @click="generateRow(scope.row.id)">
-            <Icon :icon="`material-symbols:${actionIcons['generate']}-rounded`" width="1.25em" height="1.25em" />{{
-              $t('action.generate')
             }}
           </ElButton>
         </template>
@@ -385,10 +357,11 @@ function onGenerateSubmit() {
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
     </template>
@@ -396,31 +369,17 @@ function onGenerateSubmit() {
 
   <!-- field -->
   <ElDialog v-model="fieldVisible" :title="$t('action.field')">
-    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" excel-mode="FIELD" />
   </ElDialog>
 
   <!-- data -->
   <ElDialog v-model="dataVisible" :title="$t('action.data')">
     <Section ref="sectionRef" :owner-id="form.id" owner-type="REPORT" read-only template-type="EXCEL"
-      :excel-mode="true" />
-  </ElDialog>
-
-  <!-- generate -->
-  <ElDialog v-model="generateVisible" :title="$t('action.export')" :z-index="10" :show-close="false">
-    <SheetRender ref="sheetRenderRef" :data="{}" />
-    <template #footer>
-      <ElButton title="cancel" @click="generateVisible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
-      </ElButton>
-      <ElButton title="submit" type="primary" :loading="exportLoading" @click="onGenerateSubmit">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
-          $t('action.submit') }}
-      </ElButton>
-    </template>
+      excel-mode="DATA" />
   </ElDialog>
 
   <!-- preview -->
   <ElDialog v-model="previewVisible" :title="$t('action.preview')">
-    <Section :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" :excel-mode="true" :read-only="true" />
+    <Section :owner-id="form.id" owner-type="REPORT" template-type="EXCEL" excel-mode="RENDER" :read-only="true" />
   </ElDialog>
 </template>

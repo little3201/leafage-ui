@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { globalIcons } from 'src/constants'
+import { loadIcon } from 'src/utils'
 import { ref } from 'vue'
 
 const sessions = ref([
@@ -26,7 +28,7 @@ function more(id: number) {
       <template #title>
         <div class="inline-flex items-center py-2 text-(--el-text-color-secondary)">
           <ElBadge :type="item.status === 'online' ? 'success' : 'info'" is-dot />
-          <Icon icon="material-symbols:desktop-windows-outline-rounded" width="32" height="32" class="mx-3" />
+          <Icon :icon="loadIcon(globalIcons['desktop'])" width="32" height="32" class="mx-3" />
           <div class="inline-flex flex-col">
             <span class="text-sm ">{{ item.location }}&emsp;●&emsp;{{ item.ip
             }}

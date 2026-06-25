@@ -8,9 +8,9 @@ import {
   enableUser,
   importUsers, modifyUser, removeUser, retrieveUsers, unlockUser
 } from 'src/api/system/users'
-import { actionIcons, actionTypes, userStatus } from 'src/constants'
+import { actionTypes, userStatus } from 'src/constants'
 import type { Filter, Pagination, User } from 'src/types'
-import { exportToCSV, hasAction } from 'src/utils'
+import { actionIcon, exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -251,18 +251,18 @@ function onUpload(options: UploadRequestOptions) {
         <ElInput v-model="filter.username!.value" clearable style="width: 240px" class="mr-4"
           :placeholder="$t('placeholder.search')">
           <template #prefix>
-            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
           </template>
         </ElInput>
         <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
-          <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />{{
             $t('action.search') }}
         </ElButton>
       </ElCol>
       <ElCol :span="12" class="inline-flex! justify-end space-x-3">
         <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
           @click="saveRow()">
-          <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('create')" width="1.25em" height="1.25em" />{{
             $t('action.create') }}
         </ElButton>
 
@@ -270,14 +270,14 @@ function onUpload(options: UploadRequestOptions) {
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
           <ElButton v-if="hasAction($route.name, 'import')" v-loading="importLoading" title="import"
             :type="actionTypes['import']" plain>
-            <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('import')" width="1.25em" height="1.25em" />{{
               $t('action.import') }}
           </ElButton>
         </ElUpload>
 
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
           @click="exportRows" :loading="exportLoading">
-          <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('export')" width="1.25em" height="1.25em" />{{
             $t('action.export') }}
         </ElButton>
       </ElCol>
@@ -318,28 +318,28 @@ function onUpload(options: UploadRequestOptions) {
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
             @click="saveRow(scope.row)">
-            <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />{{
               $t('action.modify')
             }}
           </ElButton>
           <ElButton v-if="scope.row.enabled && hasAction($route.name, 'disable')" title="disable"
             :type="actionTypes['disable']" link @click="disableRow(scope.row.id)">
-            <Icon :icon="`material-symbols:${actionIcons['disable']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('disable')" width="1.25em" height="1.25em" />{{
               $t('action.disable') }}
           </ElButton>
           <ElButton v-else-if="hasAction($route.name, 'enable')" title="enable" :type="actionTypes['enable']" link
             @click="enableRow(scope.row.id)">
-            <Icon :icon="`material-symbols:${actionIcons['enable']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('enable')" width="1.25em" height="1.25em" />{{
               $t('action.enable') }}
           </ElButton>
           <ElButton v-if="scope.row.status == 'LOCKED' && hasAction($route.name, 'unlock')" title="unlock"
             :type="actionTypes['unlock']" link @click="unlockRow(scope.row.id)">
-            <Icon icon="material-symbols:lock-open-outline-rounded" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('unlock')" width="1.25em" height="1.25em" />{{
               $t('action.unlock') }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
             @click="removeRow(scope.row.id, scope.row.username)">
-            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />{{
               $t('action.remove')
             }}
           </ElButton>
@@ -382,10 +382,11 @@ function onUpload(options: UploadRequestOptions) {
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
     </template>

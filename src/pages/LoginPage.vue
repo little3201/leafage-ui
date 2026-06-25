@@ -7,7 +7,8 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import hello from 'src/assets/hello_ccwj.svg'
 import logo from 'src/assets/logo.svg'
-import { SERVER_URL } from 'src/constants'
+import { SERVER_URL, globalIcons } from 'src/constants'
+import { loadIcon } from 'src/utils'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -120,7 +121,7 @@ async function onSubmit() {
                       <ElInput size="large" :disabled="loading" v-model="form.username"
                         :placeholder="$t('label.username')">
                         <template #prefix>
-                          <Icon icon="material-symbols:person-outline-rounded" width="1.25em" height="1.25em" />
+                          <Icon :icon="loadIcon(globalIcons['person'])" width="1.25em" height="1.25em" />
                         </template>
                       </ElInput>
                     </ElFormItem>
@@ -132,7 +133,7 @@ async function onSubmit() {
                       <ElInput size="large" :disabled="loading" type="password" v-model="form.password"
                         :placeholder="$t('label.password')" show-password>
                         <template #prefix>
-                          <Icon icon="material-symbols:key-vertical-outline-rounded" width="1.25em" height="1.25em" />
+                          <Icon :icon="loadIcon(globalIcons['key'])" width="1.25em" height="1.25em" />
                         </template>
                       </ElInput>
                     </ElFormItem>

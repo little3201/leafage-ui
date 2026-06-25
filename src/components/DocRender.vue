@@ -10,7 +10,8 @@ import UniverPresetDocsDrawingZhTW from '@univerjs/preset-docs-drawing/locales/Z
 import type { FUniver, IDocumentData, Univer } from '@univerjs/presets'
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets'
 import { useDark } from '@vueuse/core'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 
@@ -24,6 +25,8 @@ const props = defineProps<{
 const { locale } = useI18n({ useScope: 'global' })
 const isDark = useDark()
 const container = ref<HTMLElement | null>(null)
+
+const saveMethod = inject<Ref<(() => unknown) | undefined>>('saveData')
 
 let univerInstance: Univer | null = null
 let univerAPIInstance: FUniver | null = null
@@ -100,6 +103,9 @@ onMounted(() => {
   if (props.data) {
     initUniver(props.data)
   }
+  if (univerAPIInstance && saveMethod) {
+    saveMethod.value = save
+  }
 })
 
 onBeforeUnmount(() => {
@@ -118,10 +124,6 @@ function save() {
 
   return document.getSnapshot()
 }
-
-defineExpose({
-  save
-})
 </script>
 
 <template>

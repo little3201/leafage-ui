@@ -27,7 +27,6 @@ export interface PrivilegeTreeNode extends TreeNode {
     path: string
     component: string
     redirect?: string
-    icon: string
     actions?: string[]
   },
   children?: PrivilegeTreeNode[]

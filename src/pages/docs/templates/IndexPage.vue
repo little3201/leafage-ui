@@ -10,9 +10,9 @@ import {
   importTemplates, modifyTemplate,
   removeTemplate, retrieveTemplates
 } from 'src/api/docs/templates'
-import { actionIcons, actionTypes, schemaStatus, templateTypes } from 'src/constants'
+import { actionTypes, schemaStatus, templateTypes } from 'src/constants'
 import type { Filter, Pagination, Template } from 'src/types'
-import { exportToCSV, hasAction } from 'src/utils'
+import { actionIcon, exportToCSV, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Section from './sections/IndexPage.vue'
@@ -220,11 +220,11 @@ async function onSectionSave() {
         <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
           :placeholder="$t('placeholder.search')">
           <template #prefix>
-            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
           </template>
         </ElInput>
         <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
-          <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />{{
             $t('action.search') }}
         </ElButton>
       </ElCol>
@@ -232,20 +232,20 @@ async function onSectionSave() {
       <ElCol :span="12" class="inline-flex! justify-end space-x-3">
         <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
           @click="saveRow()">
-          <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('create')" width="1.25em" height="1.25em" />{{
             $t('action.create') }}
         </ElButton>
         <ElUpload :limit="1" :auto-upload="false" :http-request="onUpload" :on-success="load"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
           <ElButton v-if="hasAction($route.name, 'import')" v-loading="importLoading" title="import"
             :type="actionTypes['import']" plain>
-            <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('import')" width="1.25em" height="1.25em" />{{
               $t('action.import') }}
           </ElButton>
         </ElUpload>
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
           @click="exportRows" :loading="exportLoading">
-          <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('export')" width="1.25em" height="1.25em" />{{
             $t('action.export')
           }}
         </ElButton>
@@ -289,19 +289,19 @@ async function onSectionSave() {
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
             @click="saveRow(scope.row)">
-            <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />{{
               $t('action.modify')
             }}
           </ElButton>
           <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'section')" title="section"
             type="success" link @click="configSection(scope.row.id, scope.row.type)">
-            <Icon :icon="`material-symbols:${actionIcons['section']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('section')" width="1.25em" height="1.25em" />{{
               $t('action.section')
             }}
           </ElButton>
           <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
             @click="removeRow(scope.row.id, scope.row.name)">
-            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />{{
               $t('action.remove')
             }}
           </ElButton>
@@ -347,10 +347,11 @@ async function onSectionSave() {
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
     </template>
@@ -358,13 +359,14 @@ async function onSectionSave() {
 
   <!-- section -->
   <ElDialog v-model="configVisible" :title="$t('action.section')" :show-close="false" :z-index="10">
-    <Section ref="sectionRef" :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" />
+    <Section ref="sectionRef" :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" excel-mode="FIELD" />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t('action.cancel') }}
       </ElButton>
       <ElButton title="save" type="primary" @click="onSectionSave()">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
     </template>

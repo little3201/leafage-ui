@@ -5,6 +5,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { createSectionField, modifySectionField, removeSectionField, retrieveSectionFields } from 'src/api/docs/sections'
 import { fieldTypes } from 'src/constants'
 import type { SectionField } from 'src/types'
+import { actionIcon } from 'src/utils'
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -98,7 +99,7 @@ async function removeRow(id: number, name: string) {
 /**
  * 表单提交
  */
-async function confirmRow(row: SectionField) {
+async function onSubmit(row: SectionField) {
   if (!props.sectionId) return
 
   const valid = formRef.value?.validate()
@@ -178,14 +179,14 @@ async function confirmRow(row: SectionField) {
           <div class="items-center w-15">
             <ElButton title="remove" circle size="small" type="danger" plain
               @click="removeRow(scope.row.id, scope.row.name)">
-              <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />
+              <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />
             </ElButton>
             <ElButton v-if="editable[scope.row.id]" v-loading="saveLoading" title="confirm" circle size="small"
-              type="success" plain @click="confirmRow(scope.row)">
-              <Icon icon="material-symbols:check-rounded" width="1.25em" height="1.25em" />
+              type="success" plain @click="onSubmit(scope.row)">
+              <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
             </ElButton>
             <ElButton v-else title="modify" circle size="small" type="primary" plain @click="modifyRow(scope.row.id)">
-              <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />
+              <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />
             </ElButton>
           </div>
         </template>

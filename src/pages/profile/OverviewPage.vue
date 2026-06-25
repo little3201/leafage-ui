@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { actionIcons } from 'src/constants'
+import { globalIcons } from 'src/constants'
 import type { User } from 'src/types'
+import { actionIcon, loadIcon } from 'src/utils'
 import { useUserStore } from 'stores/user'
 import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 
-const { t } = useI18n()
 const userStore = useUserStore()
 
 const initialValues: User = {
@@ -23,10 +22,14 @@ const state = reactive({
   fullName: false
 })
 
+const items = [
+  { name: 'Github', link: null },
+  { name: 'Gitee', link: 'example@example.com' }
+]
 </script>
 
 <template>
-  <h3>{{ t('label.overview') }}</h3>
+  <h3>{{ $t('label.overview') }}</h3>
   <div class="flex flex-row">
     <div class="relative group mx-6">
       <ElAvatar :size="192" :src="`https://cdn.leafage.top/${form.username}`" />
@@ -34,23 +37,23 @@ const state = reactive({
         class="absolute inset-0 h-48 flex items-center justify-center gap-4 rounded-full bg-(--el-overlay-color-lighter) opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <ElUpload :limit="1" class="h-8">
           <ElButton title="upload" type="primary" circle>
-            <Icon icon="material-symbols:upload-rounded" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('upload')" width="1.25em" height="1.25em" />
           </ElButton>
         </ElUpload>
         <ElButton title="remove" circle>
-          <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+          <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />
         </ElButton>
       </div>
     </div>
 
-    <div class="inline-flex flex-col ml-8 w-full">
+    <div class="inline-flex flex-col ml-8 mt-1 ">
       <ElForm label-width="auto">
         <ElRow>
           <ElCol :span="20">
             <ElFormItem :label="$t('label.username')" prop="username">
               <ElInput v-model="form.username"
                 :placeholder="$t('placeholder.inputText', { field: $t('label.username') })" :maxLength="50" disabled />
-              <p class="my-0 text-xs text-gray-500">Your name may appear around GitHub where you contribute or are
+              <p class="mb-0 mt-1 text-xs text-gray-500">Your name may appear around GitHub where you contribute or are
                 mentioned.
               </p>
             </ElFormItem>
@@ -62,7 +65,7 @@ const state = reactive({
               <ElInput v-model="form.fullName"
                 :placeholder="$t('placeholder.inputText', { field: $t('label.fullName') })" :maxLength="50"
                 :disabled="!state.fullName" />
-              <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
+              <p class="mb-0 mt-1 text-xs text-gray-500">Get important notifications about you or activity
                 you've
                 missed.
               </p>
@@ -79,7 +82,7 @@ const state = reactive({
               <ElInput type="email" v-model="form.email"
                 :placeholder="$t('placeholder.inputText', { field: $t('label.email') })" :maxLength="50"
                 :disabled="!state.email" />
-              <p class="my-0 text-xs text-gray-500">Get important notifications about you or activity
+              <p class="mb-0 mt-1 text-xs text-gray-500">Get important notifications about you or activity
                 you've
                 missed.
               </p>
@@ -97,75 +100,23 @@ const state = reactive({
 
   <div class="mt-8">
     <h3>Third accouts authorize</h3>
-    <ul class="mt-4 px-4">
-      <li class="flex justify-between py-2">
+    <ul class="mt-4 pl-0">
+      <li v-for="item in items" :key="item.name" class="flex justify-between p-4 hover:bg-neutral-200 rounded-md">
         <div>
-          <div class="inline-flex items-center">
-            <Icon icon="simple-icons:github" width="24" height="24" class="mr-2" />
-            <label for="comments" class="font-medium text-gray-900">{{ $t('github') }}</label>
+          <div class="flex items-center">
+            <span class="font-bold text-xl">{{ item.name }}</span>
+            <template v-if="item.link">
+              <Icon :icon="loadIcon(globalIcons['link'])" width="1.25em" height="1.25em" class="mx-3" />
+              <ElLink type="primary" href="https://www.gitee.com/" target="_blank">{{ item.link }}</ElLink>
+            </template>
           </div>
-          <p class="mt-0 text-xs text-(--el-text-color-secondary)">No account relation.
+          <p class="mb-0 mt-1 text-xs text-(--el-text-color-secondary)">
+            {{ item.link ?
+              'Last used within the last 2 years.' :
+              'No account relation.' }}
           </p>
         </div>
-        <ElButton link type="primary">绑定</ElButton>
-      </li>
-      <li class="flex justify-between py-2">
-        <div>
-          <div class="inline-flex items-center">
-            <Icon icon="simple-icons:gitee" width="24" height="24" class="mr-2" />
-            <label for="candidates" class="font-medium text-gray-900">{{ $t('gitee') }}
-            </label>
-            <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em"
-              class="mx-3" />
-            <ElLink type="primary" href="https://www.gitee.com/" target="_blank">example@example.com</ElLink>
-          </div>
-
-          <p class="mt-0 text-xs text-(--el-text-color-secondary)">Last used within the last 2 years.</p>
-        </div>
-        <ElButton link type="danger">解绑</ElButton>
-      </li>
-      <li class="flex justify-between py-2">
-        <div>
-          <div class="inline-flex items-center">
-            <Icon icon="simple-icons:youtube" width="24" height="24" class="mr-2" />
-            <label for="candidates" class="font-medium text-gray-900">{{ $t('youtube') }}</label>
-            <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em"
-              class="mx-3" />
-            <ElLink type="primary" href="https://www.youtube.com/" target="_blank">example@example.com</ElLink>
-          </div>
-          <p class="mt-0 text-xs text-(--el-text-color-secondary)">Last used within the last 2 years.
-          </p>
-        </div>
-        <ElButton link type="danger">解绑</ElButton>
-      </li>
-      <li class="flex justify-between py-2">
-        <div>
-          <div class="inline-flex items-center">
-            <Icon icon="simple-icons:x" width="24" height="24" class="mr-2" />
-            <label for="candidates" class="font-medium text-gray-900">{{ $t('x') }}
-            </label>
-            <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em"
-              class="mx-3" />
-            <ElLink type="primary" href="https://www.x.com/" target="_blank">example@example.com</ElLink>
-          </div>
-          <p class="mt-0 text-xs text-(--el-text-color-secondary)">Last used within the last 2 years.
-          </p>
-        </div>
-        <ElButton link type="danger">解绑</ElButton>
-      </li>
-      <li class="flex justify-between py-2">
-        <div>
-          <div class="inline-flex items-center">
-            <Icon icon="simple-icons:xiaohongshu" width="24" height="24" class="mr-2" />
-            <label for="candidates" class="font-medium text-gray-900">{{ $t('rednote') }}</label>
-            <Icon :icon="`material-symbols:${actionIcons['relation']}-rounded`" width="1.25em" height="1.25em"
-              class="mx-3" />
-            <ElLink type="primary" href="https://www.xiaohongshu.com/" target="_blank">example@example.com</ElLink>
-          </div>
-          <p class="mt-0 text-xs text-(--el-text-color-secondary)">Last used within the last 2 years.
-          </p>
-        </div>
-        <ElButton link type="danger">解绑</ElButton>
+        <ElButton link :type="item.link ? 'danger' : 'primary'">{{ item.link ? '解绑' : '绑定' }}</ElButton>
       </li>
     </ul>
   </div>

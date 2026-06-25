@@ -3,9 +3,9 @@ import { Icon } from '@iconify/vue'
 import type { TableInstance } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { clearSchedulerLogs, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
-import { actionIcons, actionTypes, shceduleStatus, shceduleStatusIcon } from 'src/constants'
+import { actionTypes, shceduleStatus, shceduleStatusIcon } from 'src/constants'
 import type { Filter, Pagination, SchedulerLog } from 'src/types'
-import { exportToCSV, formatDuration, hasAction } from 'src/utils'
+import { actionIcon, exportToCSV, formatDuration, hasAction } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -156,11 +156,11 @@ async function clearRows() {
         <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
           :placeholder="$t('placeholder.search')">
           <template #prefix>
-            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
           </template>
         </ElInput>
         <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
-          <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />{{
             $t('action.search') }}
         </ElButton>
       </ElCol>
@@ -168,11 +168,11 @@ async function clearRows() {
       <ElCol :span="12" class="text-right">
         <ElButton v-if="hasAction($route.name, 'clear')" title="clear" :type="actionTypes['clear']" plain
           @click="clearRows">
-          <Icon icon="material-symbols:clear-all-rounded" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
+          <Icon :icon="actionIcon('clear')" width="1.25em" height="1.25em" />{{ $t('action.clear') }}
         </ElButton>
         <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
           @click="exportRows" :loading="exportLoading">
-          <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
+          <Icon :icon="actionIcon('export')" width="1.25em" height="1.25em" />{{
             $t('action.export') }}
         </ElButton>
       </ElCol>
@@ -216,7 +216,7 @@ async function clearRows() {
         <template #default="scope">
           <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
             @click="removeRow(scope.row.id, scope.row.name, scope.row.startTime)">
-            <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />{{
+            <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />{{
               $t('action.remove')
             }}
           </ElButton>

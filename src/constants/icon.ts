@@ -7,7 +7,7 @@ export const actionIcons: Record<string, string> = {
   export: 'file-export-outline',
   upload: 'upload',
   download: 'download',
-  unlock: 'lock-open',
+  unlock: 'lock-open-outline',
   relation: 'link',
   authorize: 'privacy-tip-outline',
   config: 'plug-connect-outline',
@@ -20,10 +20,61 @@ export const actionIcons: Record<string, string> = {
   data: 'data-table-outline',
   field: 'plug-connect-outline',
   section: 'plug-connect-outline',
-  generate: 'edit-document-outline'
+  cancel: 'close',
+  submit: 'check-circle-outline',
+  show: 'undereye',
+  add: 'add'
 }
 
-export const shceduleStatusIcon: { [key: string]: string } = {
+export const pageIcons: Record<string, string> = {
+  home: 'home-outline',
+  system: 'settings-outline',
+  groups: 'account-tree-outline',
+  users: 'person-outline',
+  privileges: 'admin-panel-settings-outline',
+  roles: 'shield-person-outline',
+  dictionaries: 'book-3-outline',
+  logs: 'lab-profile-outline',
+  operationLogs: 'clinical-notes-outline',
+  accessLogs: 'sticky-note-2-outline',
+  auditLogs: 'note-alt-outline',
+  schedulerLogs: 'event-note-outline',
+  scripts: 'terminal',
+  exploiters: 'build-outline',
+  connections: 'database-search',
+  files: 'folder-open-outline',
+  schemes: 'genetics',
+  codes: 'folder-code-outline',
+  samples: 'code-blocks-outline',
+  archives: 'assignment-add-outline',
+  modules: 'modeling-outline',
+  fragments: 'code',
+  reports: 'assignment-add-outline',
+  regions: 'location-on-outline',
+  docs: 'drive-file-move-outline',
+  templates: 'assignment-add-outline',
+}
+
+export const globalIcons: Record<string, string> = {
+  logout: 'logout',
+  help: 'help-outline',
+  profile: 'manage-accounts',
+  translate: 'translate',
+  link: 'link',
+  desktop: 'desktop-windows-outline',
+  image: 'image-outline',
+  video: 'videocam-outline',
+  doc: 'docs-outline',
+  folder: 'folder-open-outline',
+  phone: 'phone-in-talk',
+  email: 'mail-outline',
+  person: 'person-outline',
+  key: 'key-vertical-outline',
+  dark: 'dark-mode-outline',
+  light: 'light-mode-outline'
+}
+
+export const shceduleStatusIcon: Record<string, string> = {
   PENDING: 'pending-outline',
   RUNNING: 'progress-activity',
   SUCCESS: 'check-rounded',

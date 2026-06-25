@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { loadIcon } from 'src/utils'
 import { useUserStore } from 'stores/user'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -45,7 +46,7 @@ const items = ref([
       <ElCard>
         <ElMenu router :default-active="currentRoute.fullPath">
           <ElMenuItem v-for="item in items" :key="item.name" :index="`/profile${item.router}`">
-            <Icon :icon="`material-symbols:${item.icon}-rounded`" width="20" height="20" class="mr-2" />
+            <Icon :icon="loadIcon(item.icon)" width="20" height="20" class="mr-2" />
             {{ $t(`label.${item.name}`) }}
           </ElMenuItem>
         </ElMenu>

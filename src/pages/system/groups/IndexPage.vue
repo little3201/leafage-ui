@@ -25,7 +25,7 @@ import { retrieveRoles } from 'src/api/system/roles'
 import { retrieveUsers } from 'src/api/system/users'
 import { actionIcons, actionTypes } from 'src/constants'
 import type { Filter, Group, GroupMembers, GroupPrivileges, GroupRoles, Pagination, Privilege, Role, TreeNode, User } from 'src/types'
-import { exportToCSV, hasAction } from 'src/utils'
+import { actionIcon, exportToCSV, hasAction } from 'src/utils'
 import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -452,7 +452,7 @@ const rowSelected = (row: Privilege) => {
         <ElFormItem prop="filterText">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
-              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+              <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
         </ElFormItem>
@@ -471,11 +471,11 @@ const rowSelected = (row: Privilege) => {
             <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
               :placeholder="$t('placeholder.search')">
               <template #prefix>
-                <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+                <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
               </template>
             </ElInput>
             <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
-              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+              <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />{{
                 $t('action.search') }}
             </ElButton>
           </ElCol>
@@ -483,7 +483,7 @@ const rowSelected = (row: Privilege) => {
           <ElCol :span="12" class="inline-flex! justify-end space-x-3">
             <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
               @click="saveRow()">
-              <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />{{
+              <Icon :icon="actionIcon('create')" width="1.25em" height="1.25em" />{{
                 $t('action.create') }}
             </ElButton>
 
@@ -491,14 +491,14 @@ const rowSelected = (row: Privilege) => {
               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
               <ElButton v-if="hasAction($route.name, 'import')" v-loading="importLoading" title="import"
                 :type="actionTypes['import']" plain>
-                <Icon :icon="`material-symbols:${actionIcons['import']}-rounded`" width="1.25em" height="1.25em" />{{
+                <Icon :icon="actionIcon('import')" width="1.25em" height="1.25em" />{{
                   $t('action.import') }}
               </ElButton>
             </ElUpload>
 
             <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
               @click="exportRows" :loading="exportLoading">
-              <Icon :icon="`material-symbols:${actionIcons['export']}-rounded`" width="1.25em" height="1.25em" />{{
+              <Icon :icon="actionIcon('export')" width="1.25em" height="1.25em" />{{
                 $t('action.export')
               }}
             </ElButton>
@@ -522,17 +522,17 @@ const rowSelected = (row: Privilege) => {
             <template #default="scope">
               <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
                 @click="saveRow(scope.row)">
-                <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" width="1.25em" height="1.25em" />{{
+                <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />{{
                   $t('action.modify') }}
               </ElButton>
               <ElButton v-if="scope.row.enabled && hasAction($route.name, 'disable')" title="disable"
                 :type="actionTypes['disable']" link @click="disableRow(scope.row.id)">
-                <Icon :icon="`material-symbols:${actionIcons['disable']}-rounded`" width="1.25em" height="1.25em" />{{
+                <Icon :icon="actionIcon('disable')" width="1.25em" height="1.25em" />{{
                   $t('action.disable') }}
               </ElButton>
               <ElButton v-else-if="hasAction($route.name, 'enable')" title="enable" :type="actionTypes['enable']" link
                 @click="enableRow(scope.row.id)">
-                <Icon :icon="`material-symbols:${actionIcons['enable']}-rounded`" width="1.25em" height="1.25em" />{{
+                <Icon :icon="actionIcon('enable')" width="1.25em" height="1.25em" />{{
                   $t('action.enable') }}
               </ElButton>
               <template v-if="scope.row.enabled">
@@ -552,7 +552,7 @@ const rowSelected = (row: Privilege) => {
               </template>
               <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
                 @click="removeRow(scope.row.id, scope.row.name)">
-                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+                <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />
                 {{ $t('action.remove') }}
               </ElButton>
             </template>
@@ -589,10 +589,11 @@ const rowSelected = (row: Privilege) => {
     </ElForm>
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
     </template>

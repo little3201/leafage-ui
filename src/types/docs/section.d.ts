@@ -29,6 +29,6 @@ export interface SectionField extends AudtiMetadata {
 export interface SectionData extends AudtiMetadata {
   sectionId: number
   data: {
-    [key: string]: unknown
+    [key: string]: string | number | boolean
   }
 }

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { createSectionData, modifySectionData, removeSectionData, retrieveSectionDatas, retrieveSectionFields } from 'src/api/docs/sections'
 import type { SectionData, SectionField } from 'src/types'
+import { actionIcon } from 'src/utils'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -14,6 +16,7 @@ const props = defineProps<{
   readOnly: boolean
 }>()
 
+const formRef = ref<FormInstance>()
 const fields = ref<Array<SectionField>>([])
 const visibleFields = computed(() =>
   fields.value.filter(field => field.field !== 'id')
@@ -61,7 +64,7 @@ async function loadDatas() {
 function addRow() {
   if (!props.sectionId) return
 
-  const data: Record<string, unknown> = {}
+  const data: Record<string, string | number | boolean> = {}
   fields.value.forEach(field => {
     if (field.type === 'number') {
       data[field.field] = 0
@@ -101,60 +104,64 @@ async function removeRow(id: number) {
   })
 }
 
-async function confirmRow(row: SectionData) {
+async function onSubmit(row: SectionData) {
   if (!props.sectionId) return
-
-  saveLoading.value = true
-  try {
-    row.sectionId = props.sectionId
-    if (row.id) {
-      await modifySectionData(row.id, row)
-      editable.value[row.id] = false
-    } else {
-      const res = await createSectionData(row)
-      editable.value[res.data.id] = false
+  const valid = formRef.value?.validate()
+  if (valid) {
+    saveLoading.value = true
+    try {
+      row.sectionId = props.sectionId
+      if (row.id) {
+        await modifySectionData(row.id, row)
+        editable.value[row.id] = false
+      } else {
+        const res = await createSectionData(row)
+        editable.value[res.data.id] = false
+      }
+      await loadDatas()
+      ElMessage.success(t('message.success', { action: row.id ? t('action.modify') : t('action.create') }))
+    } catch (error) {
+      ElMessage.error(t('message.error', { action: row.id ? t('action.modify') : t('action.create') }))
+      throw error
+    } finally {
+      saveLoading.value = false
     }
-    await loadDatas()
-    ElMessage.success(t('message.success', { action: row.id ? t('action.modify') : t('action.create') }))
-  } catch (error) {
-    ElMessage.error(t('message.error', { action: row.id ? t('action.modify') : t('action.create') }))
-    throw error
-  } finally {
-    saveLoading.value = false
   }
 }
 </script>
 
 <template>
-  <ElTable :data="datas" row-key="id" table-layout="auto">
-    <ElTableColumn type="selection" />
-    <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-    <ElTableColumn v-for="(field, index) in visibleFields" :key="index" :prop="field.field" :label="field.name">
-      <template #default="scope">
-        <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.${scope.row.data[field.field]}`"
-          :rules="[{ required: scope.row.required, trigger: 'blur' }]">
-          <ElInput v-model="scope.row.data[field.field]" />
-        </ElFormItem>
-        <span v-else>{{ scope.row.data[field.field] }}</span>
-      </template>
-    </ElTableColumn>
-    <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
-      <template #default="scope">
-        <div class="items-center w-15">
-          <ElButton title="remove" circle size="small" type="danger" plain @click="removeRow(scope.row.id)">
-            <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />
-          </ElButton>
-          <ElButton v-if="editable[scope.row.id]" v-loading="saveLoading" title="confirm" circle size="small"
-            type="success" plain @click="confirmRow(scope.row)">
-            <Icon icon="material-symbols:check-rounded" width="1.25em" height="1.25em" />
-          </ElButton>
-          <ElButton v-else title="modify" circle size="small" type="primary" plain @click="modifyRow(scope.row.id)">
-            <Icon icon="material-symbols:edit-outline-rounded" width="1.25em" height="1.25em" />
-          </ElButton>
-        </div>
-      </template>
-    </ElTableColumn>
-  </ElTable>
+  <ElForm ref="formRef" :model="{ datas }" :show-message="false">
+    <ElTable :data="datas" row-key="id" table-layout="auto">
+      <ElTableColumn type="selection" />
+      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn v-for="(field, index) in visibleFields" :key="index" :prop="field.field" :label="field.name">
+        <template #default="scope">
+          <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.${scope.row.data[field.field]}`"
+            :rules="[{ required: scope.row.required, trigger: 'blur' }]">
+            <ElInput v-model="scope.row.data[field.field]" />
+          </ElFormItem>
+          <span v-else>{{ scope.row.data[field.field] }}</span>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
+        <template #default="scope">
+          <div class="items-center w-15">
+            <ElButton title="remove" circle size="small" type="danger" plain @click="removeRow(scope.row.id)">
+              <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />
+            </ElButton>
+            <ElButton v-if="editable[scope.row.id]" v-loading="saveLoading" title="confirm" circle size="small"
+              type="success" plain @click="onSubmit(scope.row)">
+              <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
+            </ElButton>
+            <ElButton v-else title="modify" circle size="small" type="primary" plain @click="modifyRow(scope.row.id)">
+              <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />
+            </ElButton>
+          </div>
+        </template>
+      </ElTableColumn>
+    </ElTable>
+  </ElForm>
   <ElButton v-if="!readOnly && fields.length > 1" class="mt-4" type="primary" plain style="width: 100%" @click="addRow">
     {{ $t('action.addItem') }}
   </ElButton>

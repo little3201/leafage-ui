@@ -3,9 +3,9 @@ import { Icon } from '@iconify/vue'
 import type { UploadRequestOptions } from 'element-plus'
 import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
 import { disableFile, downloadFile, enableFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
-import { actionIcons, actionTypes } from 'src/constants'
+import { actionTypes, globalIcons } from 'src/constants'
 import type { FileRecord, Filter, Pagination } from 'src/types'
-import { download, formatFileSize, hasAction } from 'src/utils'
+import { actionIcon, download, formatFileSize, hasAction, loadIcon } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -234,7 +234,7 @@ function onUploadError() {
         <ul class="flex-col space-y-4 list-none px-0">
           <li index="images" class="flex items-center space-x-2">
             <ElButton title="images" circle type="success" size="large">
-              <Icon icon="material-symbols:image-outline-rounded" width="1.5em" height="1.5em" />
+              <Icon :icon="loadIcon(globalIcons['image'])" width="1.5em" height="1.5em" />
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Images</span>
@@ -244,7 +244,7 @@ function onUploadError() {
           </li>
           <li index="media" class="flex items-center space-x-2">
             <ElButton title="media" circle type="primary" size="large">
-              <Icon icon="material-symbols:videocam-outline-rounded" width="1.5em" height="1.5em" />
+              <Icon :icon="loadIcon(globalIcons['video'])" width="1.5em" height="1.5em" />
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Media</span>
@@ -254,7 +254,7 @@ function onUploadError() {
           </li>
           <li index="documents" class="flex items-center space-x-2">
             <ElButton title="documents" circle type="warning" size="large">
-              <Icon icon="material-symbols:docs-outline-rounded" width="1.5em" height="1.5em" />
+              <Icon :icon="loadIcon(globalIcons['doc'])" width="1.5em" height="1.5em" />
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Documents</span>
@@ -286,11 +286,11 @@ function onUploadError() {
             <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
               :placeholder="$t('placeholder.search')">
               <template #prefix>
-                <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+                <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
               </template>
             </ElInput>
             <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
-              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />{{
+              <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />{{
                 $t('action.search') }}
             </ElButton>
           </ElCol>
@@ -299,7 +299,7 @@ function onUploadError() {
             <ElUpload multiple :auto-upload="false" :http-request="onUpload" :on-success="() => load()"
               :on-error="onUploadError">
               <ElButton v-if="hasAction($route.name, 'upload')" v-loading="uploadLoading" title="upload" type="primary">
-                <Icon icon="material-symbols:upload" width="1.25em" height="1.25em" />{{ $t('action.upload') }}
+                <Icon :icon="actionIcon('upload')" width="1.25em" height="1.25em" />{{ $t('action.upload') }}
               </ElButton>
             </ElUpload>
           </ElCol>
@@ -310,12 +310,11 @@ function onUploadError() {
           <ElTableColumn prop="name" :label="$t('label.name')" sortable>
             <template #default="scope">
               <ElButton title="name" type="primary" link @click="onRowClick(scope.row)">
-                <Icon v-if="scope.row.directory" icon="material-symbols:folder-open-outline-rounded" width="2em"
-                  height="2em" />
+                <Icon v-if="scope.row.directory" :icon="loadIcon(globalIcons['folder'])" width="2em" height="2em" />
                 <template v-else-if="scope.row.contentType">
-                  <Icon v-if="scope.row.contentType.includes('image')" icon="material-symbols:image-outline-rounded"
+                  <Icon v-if="scope.row.contentType.includes('image')" :icon="loadIcon(globalIcons['image'])"
                     width="2em" height="2em" />
-                  <Icon v-else icon="material-symbols:docs-outline-rounded" width="2em" height="2em" />
+                  <Icon v-else :icon="loadIcon(globalIcons['doc'])" width="2em" height="2em" />
                 </template>
                 <span class="ml-2">{{ scope.row.name }}</span>
               </ElButton>
@@ -342,21 +341,21 @@ function onUploadError() {
             <template #default="scope">
               <ElButton v-if="scope.row.enabled && hasAction($route.name, 'disable')" title="disable"
                 :type="actionTypes['disable']" link @click="disableRow(scope.row.id)">
-                <Icon :icon="`material-symbols:${actionIcons['disable']}-rounded`" width="1.25em" height="1.25em" />{{
+                <Icon :icon="actionIcon('disable')" width="1.25em" height="1.25em" />{{
                   $t('action.disable') }}
               </ElButton>
               <ElButton v-else-if="hasAction($route.name, 'enable')" title="enable" :type="actionTypes['enable']" link
                 @click="enableRow(scope.row.id)">
-                <Icon :icon="`material-symbols:${actionIcons['enable']}-rounded`" width="1.25em" height="1.25em" />{{
+                <Icon :icon="actionIcon('enable')" width="1.25em" height="1.25em" />{{
                   $t('action.enable') }}
               </ElButton>
               <ElButton v-if="scope.row.enabled && hasAction($route.name, 'download')" title="download" type="success"
                 link @click="downloadRow(scope.row.id, scope.row.name, scope.row.type)">
-                <Icon icon="material-symbols:download" width="1.25em" height="1.25em" />{{ $t('action.download') }}
+                <Icon :icon="actionIcon('download')" width="1.25em" height="1.25em" />{{ $t('action.download') }}
               </ElButton>
               <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
                 @click="removeRow(scope.row.id, scope.row.name)">
-                <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" width="1.25em" height="1.25em" />
+                <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />
                 {{
                   $t('action.remove')
                 }}
@@ -374,7 +373,7 @@ function onUploadError() {
     <div class="text-center">
       <ElImage v-if="data.contentType && data.contentType.includes('image')" :src="data.path"
         class="w-full h-52 overflow-hidden" />
-      <Icon v-else icon="material-symbols:docs-outline-rounded" width="80" height="80" />
+      <Icon v-else :icon="loadIcon(globalIcons['doc'])" width="80" height="80" />
     </div>
     <ElDescriptions :column="1" class="mt-4">
       <ElDescriptionsItem :label="$t('label.name')">{{ data.name }}</ElDescriptionsItem>

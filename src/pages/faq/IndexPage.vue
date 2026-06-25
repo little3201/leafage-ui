@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { actionIcons } from 'src/constants'
+import { globalIcons } from 'src/constants'
+import { actionIcon, loadIcon } from 'src/utils'
 import { ref } from 'vue'
 
 const searchQuery = ref('')
@@ -19,7 +20,7 @@ const faqList = [
         <h2>常见问题解答（FAQ）</h2>
         <ElInput v-model="searchQuery" placeholder="搜索问题..." clearable style="max-width: 480px;">
           <template #prefix>
-            <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
           </template>
         </ElInput>
       </div>
@@ -38,14 +39,14 @@ const faqList = [
         <ElRow :gutter="20">
           <ElCol :span="12">
             <div class="bg-(--el-bg-color-page) rounded-xl p-6">
-              <Icon icon="material-symbols:phone-in-talk-rounded" width="48" height="48" />
+              <Icon :icon="loadIcon(globalIcons['phone'])" width="48" height="48" />
               <p><strong>电话：</strong> +86 123 4567 8901</p>
               <p>We are always happy to help!</p>
             </div>
           </ElCol>
           <ElCol :span="12">
             <div class="bg-(--el-bg-color-page) rounded-xl p-6">
-              <Icon icon="material-symbols:mail-outline-rounded" width="48" height="48" />
+              <Icon :icon="loadIcon(globalIcons['email'])" width="48" height="48" />
               <p><strong>邮箱：</strong> hello@help.com</p>
               <p>Best way to get answer faster!</p>
             </div>

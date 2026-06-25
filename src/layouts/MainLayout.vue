@@ -5,6 +5,8 @@ import EssentialList from 'components/EssentialList.vue'
 import LanguageSelector from 'components/LanguageSelector.vue'
 import ThemeToogle from 'components/ThemeToogle.vue'
 import { signOut } from 'src/api/authentication'
+import { globalIcons } from 'src/constants'
+import { loadIcon, pageIcon } from 'src/utils'
 import { useUserStore } from 'stores/user'
 import { useRouter } from 'vue-router'
 
@@ -51,18 +53,18 @@ function logout() {
             <ElDropdownMenu>
               <RouterLink to="/profile" class="no-underline">
                 <ElDropdownItem>
-                  <Icon icon="material-symbols:manage-accounts-rounded" width="1.5em" height="1.5em" class="mr-2" />
+                  <Icon :icon="loadIcon(globalIcons['profile'])" width="1.5em" height="1.5em" class="mr-2" />
                   {{ $t('page.profile') }}
                 </ElDropdownItem>
               </RouterLink>
               <RouterLink to="/faq" class="no-underline">
                 <ElDropdownItem>
-                  <Icon icon="material-symbols:help-outline-rounded" width="1.5em" height="1.5em" class="mr-2" />
+                  <Icon :icon="loadIcon(globalIcons['help'])" width="1.5em" height="1.5em" class="mr-2" />
                   {{ $t('page.faq') }}
                 </ElDropdownItem>
               </RouterLink>
               <ElDropdownItem divided @click="logout">
-                <Icon icon="material-symbols:logout-rounded" width="1.5em" height="1.5em" class="mr-2" />
+                <Icon :icon="loadIcon(globalIcons['logout'])" width="1.5em" height="1.5em" class="mr-2" />
                 {{ $t('action.signout') }}
               </ElDropdownItem>
             </ElDropdownMenu>
@@ -76,14 +78,14 @@ function logout() {
     <ElScrollbar>
       <ElMenu router unique-opened :default-active="currentRoute.fullPath">
         <ElMenuItem :index="'/'">
-          <Icon icon="material-symbols:home-outline-rounded" width="1.25em" height="1.25em" class="mr-2" />{{
+          <Icon :icon="pageIcon('home')" width="1.25em" height="1.25em" class="mr-2" />{{
             $t('page.home') }}
         </ElMenuItem>
         <template v-for="link in user.privileges" :key="link.id">
           <EssentialList v-if="link.children && link.children.length > 0" :essentialLink="link"
             :parent-path="`/${link.meta.path}`" />
           <ElMenuItem v-else :index="`/${link.meta.path}`">
-            <Icon :icon="`material-symbols:${link.meta.icon}-rounded`" width="1.25em" height="1.25em" class="mr-2" />
+            <Icon :icon="pageIcon(link.name)" width="1.25em" height="1.25em" class="mr-2" />
             {{ $t(`page.${link.name}`) }}
           </ElMenuItem>
         </template>

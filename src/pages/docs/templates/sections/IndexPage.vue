@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import DocRender from 'components/DocRender.vue'
 import type {
   TreeData, TreeInstance, TreeNodeData
 } from 'element-plus'
@@ -12,14 +11,14 @@ import {
   removeSection,
   retrieveSectionTree
 } from 'src/api/docs/sections'
-import { actionIcons, actionTypes } from 'src/constants'
+import { actionTypes } from 'src/constants'
 import type { Section } from 'src/types'
-import { hasAction } from 'src/utils'
-import { onMounted, ref, watch } from 'vue'
+import { actionIcon, hasAction } from 'src/utils'
+import { onMounted, provide, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ExcelContent from './ExcelContent.vue'
-import ExcelField from './ExcelField.vue'
-import SectionContent from './SectionContent.vue'
+import Excel from './excel/IndexPage.vue'
+import SectionForm from './SectionForm.vue'
+import Word from './word/IndexPage.vue'
 
 
 const { t } = useI18n()
@@ -28,20 +27,22 @@ const props = withDefaults(defineProps<{
   ownerType: 'REPORT' | 'ARCHIVE' | 'TEMPLATE'
   templateType: 'WORD' | 'EXCEL',
   readOnly?: boolean,
-  excelMode?: boolean
+  excelMode?: 'DATA' | 'FIELD' | 'RENDER'
 }>(), { readOnly: false, data: false })
 
 const treeRef = ref<TreeInstance>()
 const treeData = ref<TreeData>([])
 const treeLoading = ref<boolean>(false)
-const treeSelected = ref<string>('')
+const selectedTreeId = ref<string>('')
 const filterText = ref('')
 
 const saveLoading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const docRenderRef = ref<InstanceType<typeof DocRender>>()
-const sectionContentRef = ref<InstanceType<typeof SectionContent>>()
+const saveMethod = ref()
+provide('saveData', saveMethod)
+
+const sectionFormRef = ref<InstanceType<typeof SectionForm>>()
 
 const initialValues: Section = {
   id: null,
@@ -65,7 +66,7 @@ watch(() => filterText.value, (newVal, oldVal) => {
   treeRef.value!.filter(newVal)
 })
 watch([() => props.ownerId, () => props.ownerType], async ([newOwnerId, newOwnerType]) => {
-  treeSelected.value = ''
+  selectedTreeId.value = ''
 
   form.value.ownerId = newOwnerId
   form.value.ownerType = newOwnerType
@@ -85,10 +86,10 @@ const filterNode = (value: string, data: { [key: string]: string }) => {
  * @param data node节点
  */
 async function onCurrentChange(data: TreeNodeData) {
-  if (!data.id || treeSelected.value === String(data.id)) {
+  if (!data.id || selectedTreeId.value === String(data.id)) {
     return
   }
-  treeSelected.value = String(data.id)
+  selectedTreeId.value = String(data.id)
   await loadOne(data.id)
 }
 
@@ -138,10 +139,10 @@ async function loadOne(id: number) {
  * 表单提交
  */
 async function onSubmit() {
-  const sectionFormEl = sectionContentRef.value?.sectionFormRef
+  const sectionFormEl = sectionFormRef.value?.sectionFormRef
   if (!sectionFormEl) return
 
-  const sectionForm = sectionContentRef.value?.sectionForm
+  const sectionForm = sectionFormRef.value?.sectionForm
   if (!sectionForm) return
 
   const valid = await sectionFormEl.validate()
@@ -149,7 +150,7 @@ async function onSubmit() {
     try {
       const { id } = sectionForm
 
-      const superiorId = treeSelected.value ? Number(treeSelected.value) : null
+      const superiorId = selectedTreeId.value ? Number(selectedTreeId.value) : null
       sectionForm.superiorId = superiorId
       const node = superiorId ? treeRef.value?.getNode(superiorId) : null
       if (node) {
@@ -190,7 +191,11 @@ async function onSubmit() {
 async function modifySectionContent() {
   if (!form.value.id) return
 
-  const sectionData = await docRenderRef.value?.save()
+  let sectionData = null
+  if (saveMethod.value && props.templateType === 'WORD') {
+    sectionData = await saveMethod.value()
+  }
+
   if (!sectionData) return
   form.value.body = JSON.parse(JSON.stringify(sectionData))
   try {
@@ -249,27 +254,27 @@ defineExpose({
         <div class="flex items-center space-x-4 mb-4">
           <ElInput v-model="filterText" :placeholder="$t('action.search')" clearable>
             <template #prefix>
-              <Icon :icon="`material-symbols:${actionIcons['search']}-rounded`" width="1.25em" height="1.25em" />
+              <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
             </template>
           </ElInput>
           <ElButton v-if="!readOnly && hasAction($route.name, 'create')" title="create" circle plain size="small"
             :type="actionTypes['create']" @click="saveRow()">
-            <Icon :icon="`material-symbols:${actionIcons['create']}-rounded`" width="1.25em" height="1.25em" />
+            <Icon :icon="actionIcon('create')" width="1.25em" height="1.25em" />
           </ElButton>
         </div>
 
-        <ElTree ref="treeRef" :data="treeData" v-loading="treeLoading" node-key="id" :current-node-key="treeSelected"
+        <ElTree ref="treeRef" :data="treeData" v-loading="treeLoading" node-key="id" :current-node-key="selectedTreeId"
           highlight-current :filter-node-method="filterNode" @current-change="onCurrentChange">
           <template #default="{ data }">
             <div class="flex flex-1 items-center justify-between ">
               <span>{{ data.meta!.sequence! }}. {{ data.name }}</span>
               <div v-if="!readOnly">
                 <ElButton type="primary" link @click="saveRow(data)">
-                  <Icon :icon="`material-symbols:${actionIcons['modify']}-rounded`" />
+                  <Icon :icon="actionIcon('modify')" />
                 </ElButton>
                 <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
                   @click="removeRow(data.id, data.name)">
-                  <Icon :icon="`material-symbols:${actionIcons['remove']}-rounded`" />
+                  <Icon :icon="actionIcon('remove')" />
                 </ElButton>
               </div>
             </div>
@@ -279,12 +284,9 @@ defineExpose({
     </ElCol>
 
     <ElCol :span="16" :xl="18">
-      <ElCard v-if="treeSelected">
-        <DocRender v-if="props.templateType === 'WORD'" ref="docRenderRef" :data="form.body" :read-only="readOnly" />
-        <template v-else>
-          <ExcelContent v-if="excelMode" :section-id="form.id" :read-only="readOnly" />
-          <ExcelField v-else :section-id="form.id" :read-only="readOnly" />
-        </template>
+      <ElCard v-if="selectedTreeId">
+        <Word v-if="props.templateType === 'WORD'" :data="form.body" :title="form.name" :read-only="readOnly" />
+        <Excel v-else :section-id="Number(selectedTreeId)" :name="form.name" :excel-mode="excelMode" />
       </ElCard>
       <ElEmpty v-else />
     </ElCol>
@@ -293,13 +295,14 @@ defineExpose({
   <!-- form -->
   <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
     width="400">
-    <SectionContent ref="sectionContentRef" :row="form" />
+    <SectionForm ref="sectionFormRef" :row="form" />
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
-        <Icon icon="material-symbols:close" width="1.25em" height="1.25em" />{{ $t('action.cancel') }}
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t('action.cancel') }}
       </ElButton>
       <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit()">
-        <Icon icon="material-symbols:check-circle-outline-rounded" width="1.25em" height="1.25em" /> {{
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
           $t('action.submit') }}
       </ElButton>
     </template>

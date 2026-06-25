@@ -2,6 +2,8 @@
 import { Icon } from '@iconify/vue'
 import { langOptions } from 'boot/i18n'
 import Cookies from 'js-cookie'
+import { globalIcons } from 'src/constants'
+import { loadIcon } from 'src/utils'
 import { useI18n } from 'vue-i18n'
 
 
@@ -25,7 +27,7 @@ function changeLang(lang: string) {
 <template>
   <ElDropdown trigger="click" @command="changeLang" placement="bottom-end">
     <ElButton title="language" type="default" link>
-      <Icon icon="material-symbols:translate" class="text-white" width="1.5em" height="1.5em" />
+      <Icon :icon="loadIcon(globalIcons['translate'])" class="text-white" width="1.5em" height="1.5em" />
     </ElButton>
     <template #dropdown>
       <ElDropdownMenu>

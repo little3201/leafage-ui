@@ -6,18 +6,22 @@ import UniverPresetSheetsCoreZhTW from '@univerjs/preset-sheets-core/locales/zh-
 import type { FUniver, IWorkbookData, Univer } from '@univerjs/presets'
 import { createUniver, LocaleType, mergeLocales } from '@univerjs/presets'
 import { useDark } from '@vueuse/core'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import type { Ref } from 'vue'
+import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import '@univerjs/preset-sheets-core/lib/index.css'
 
 const props = defineProps<{
-  data: Partial<IWorkbookData>
+  data: Partial<IWorkbookData>,
+  readOnly?: boolean
 }>()
 
 const { locale } = useI18n({ useScope: 'global' })
 const isDark = useDark()
 const container = ref<HTMLElement | null>(null)
+
+const saveMethod = inject<Ref<(() => unknown) | undefined>>('saveData')
 
 let univerInstance: Univer | null = null
 let univerAPIInstance: FUniver | null = null
@@ -82,7 +86,9 @@ function initUniver(workbookData: Partial<IWorkbookData>) {
     },
     presets: [
       UniverSheetsCorePreset({
-        container: container.value as HTMLElement
+        container: container.value as HTMLElement,
+        toolbar: !props.readOnly,
+        contextMenu: !props.readOnly
       })
     ]
   })
@@ -96,6 +102,9 @@ function initUniver(workbookData: Partial<IWorkbookData>) {
 onMounted(() => {
   if (props.data) {
     initUniver(props.data)
+  }
+  if (univerAPIInstance && saveMethod) {
+    saveMethod.value = save
   }
 })
 
@@ -115,10 +124,6 @@ function save() {
 
   return workbook.save()
 }
-
-defineExpose({
-  save
-})
 </script>
 
 <template>
