@@ -44,7 +44,7 @@ function logout() {
           </div>
           <template #dropdown>
             <div class="flex items-center space-x-2 p-4">
-              <ElAvatar alt="avatar" :size="32" :src="`https://cdn.leafage.top/${user.username}`" />
+              <ElAvatar alt="avatar" :src="`https://cdn.leafage.top/${user.username}`" />
               <div class="inline-flex flex-col">
                 <span>{{ user.fullName }}</span>
                 <span class="text-xs text-(--el-text-color-secondary)">{{ user.username }}</span>
