@@ -44,7 +44,7 @@ export function loadIcon(iconName: string) {
     return ''
   }
 
-  const fullIconName = `material-symbols:${iconName}-rounded`
+  const fullIconName = `material-symbols:${iconName}`
 
   if (iconLoaded(fullIconName)) {
     return fullIconName

@@ -56,6 +56,10 @@ body {
   --el-card-border-radius: var(--el-border-radius-base) !important;
 }
 
+.el-dropdown{
+  vertical-align: middle !important;
+}
+
 .el-badge {
   display: inline-flex !important;
   vertical-align: baseline !important;

@@ -581,26 +581,41 @@ const rowSelected = (row: Privilege) => {
                 <Icon :icon="actionIcon('enable')" width="1.25em" height="1.25em" />{{
                   $t('action.enable') }}
               </ElButton>
-              <template v-if="scope.row.enabled">
-                <ElButton v-if="hasAction($route.name, 'member')" title="member" :type="actionTypes['member']" link
-                  @click="memberRow(scope.row.id)">
-                  <Icon :icon="`material-symbols:${actionIcons['member']}-rounded`" width="1.25em" height="1.25em" />
-                  {{ $t('action.member')
-                  }}
-                </ElButton>
-                <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize" :type="actionTypes['authorize']"
-                  link @click="authorizeRow(scope.row.id)">
-                  <Icon :icon="`material-symbols:${actionIcons['authorize']}-rounded`" width="1.25em" height="1.25em" />
-                  {{
-                    $t('action.authorize')
-                  }}
-                </ElButton>
-              </template>
               <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
                 @click="removeRow(scope.row.id, scope.row.name)">
                 <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />
                 {{ $t('action.remove') }}
               </ElButton>
+              <ElDropdown
+                v-if="scope.row.enabled && (hasAction($route.name, 'member') || hasAction($route.name, 'authorize'))"
+                trigger="click" class="ml-2">
+                <ElButton link>
+                  <Icon :icon="actionIcon('more')" width="1.25em" height="1.25em" />{{
+                    $t('action.more')
+                  }}
+                </ElButton>
+                <template #dropdown>
+                  <ElDropdownItem>
+                    <ElButton v-if="hasAction($route.name, 'member')" title="member" :type="actionTypes['member']" link
+                      @click="memberRow(scope.row.id)">
+                      <Icon :icon="`material-symbols:${actionIcons['member']}-rounded`" width="1.25em"
+                        height="1.25em" />
+                      {{ $t('action.member')
+                      }}
+                    </ElButton>
+                  </ElDropdownItem>
+                  <ElDropdownItem>
+                    <ElButton v-if="hasAction($route.name, 'authorize')" title="authorize"
+                      :type="actionTypes['authorize']" link @click="authorizeRow(scope.row.id)">
+                      <Icon :icon="`material-symbols:${actionIcons['authorize']}-rounded`" width="1.25em"
+                        height="1.25em" />
+                      {{
+                        $t('action.authorize')
+                      }}
+                    </ElButton>
+                  </ElDropdownItem>
+                </template>
+              </ElDropdown>
             </template>
           </ElTableColumn>
         </ElTable>

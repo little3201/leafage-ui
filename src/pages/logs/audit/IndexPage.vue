@@ -179,7 +179,7 @@ async function removeRow(id: number, module: string, action: string) {
           <ElTag :type="scope.row.status === 'SUCCEED' ? 'success' : 'danger'" round>{{ scope.row.status }}</ElTag>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
+      <ElTableColumn prop="duration" :label="$t('label.duration')">
         <template #default="scope">
           {{ formatDuration(scope.row.duration) }}
         </template>

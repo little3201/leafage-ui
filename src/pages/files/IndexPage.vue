@@ -307,7 +307,7 @@ function onUploadError() {
 
         <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
           <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-          <ElTableColumn prop="name" :label="$t('label.name')" sortable>
+          <ElTableColumn show-overflow-tooltip prop="name" :label="$t('label.name')" sortable>
             <template #default="scope">
               <ElButton title="name" type="primary" link @click="onRowClick(scope.row)">
                 <Icon v-if="scope.row.directory" :icon="loadIcon(globalIcons['folder'])" width="2em" height="2em" />
@@ -325,14 +325,14 @@ function onUploadError() {
               {{ formatFileSize(scope.row.size) }}
             </template>
           </ElTableColumn>
-          <ElTableColumn show-overflow-tooltip prop="contentType" :label="$t('label.contentType')" sortable />
+          <ElTableColumn show-overflow-tooltip prop="contentType" :label="$t('label.contentType')" />
           <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
             <template #default="scope">
               <ElBadge is-dot :type="scope.row.enabled ? 'success' : 'info'" class="mr-1" />
               <ElText :type="scope.row.enabled ? 'success' : 'info'">{{ scope.row.enabled ? 'Y' : 'N' }}</ElText>
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
+          <ElTableColumn show-overflow-tooltip prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
             <template #default="scope">
               {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
             </template>

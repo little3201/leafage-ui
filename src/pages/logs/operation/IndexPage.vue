@@ -213,7 +213,7 @@ async function clearRows() {
           </ElTag>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="duration" :label="$t('label.duration')" sortable>
+      <ElTableColumn prop="duration" :label="$t('label.duration')">
         <template #default="scope">
           {{ scope.row.duration ? formatDuration(scope.row.duration) : '-' }}
         </template>
