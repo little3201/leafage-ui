@@ -7,7 +7,7 @@ import axios from 'axios'
 const abortControllerMap: Map<string, AbortController> = new Map()
 
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.QUASAR_API || '/api',
+  baseURL: import.meta.env.API || '/api',
   timeout: 10000,
   withCredentials: true
 })

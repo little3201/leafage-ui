@@ -89,6 +89,7 @@
 
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar'
 import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
 
@@ -99,6 +100,7 @@ import LanguageSelector from '@/components/LanguageSelector.vue'
 import ThemeToogle from '@/components/ThemeToogle.vue'
 
 
+const $q = useQuasar()
 const userStore = useUserStore()
 
 const leftDrawerOpen = ref<boolean>(false)

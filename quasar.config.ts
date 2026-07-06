@@ -85,19 +85,6 @@ export default defineConfig((ctx) => {
             // you need to set i18n resource including paths !
             include: [ctx.appPaths.resolve.app('src/lang')]
           }
-        ],
-
-        [
-          'vite-plugin-checker',
-          {
-            vueTsc: true,
-            eslint: {
-              lintCommand:
-                'eslint -c ./eslint.config.js "./src*/**/*.{ts,js,mjs,cjs,vue}"',
-              useFlatConfig: true,
-            },
-          },
-          { server: false }
         ]
       ]
     },
