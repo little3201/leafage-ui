@@ -112,15 +112,15 @@
 </template>
 
 <script setup lang="ts">
-import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { Notify } from 'quasar'
 import {
   createRegion, enableRegion, fetchRegion, importRegions, modifyRegion,
   removeRegion, retrieveRegions, retrieveRegionSubset
-} from 'src/api/regions'
-import type { Filter, Pagination, Region, TreeNode } from 'src/types'
-import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user'
+} from '@/api/regions'
+import { useUserStore } from '@/stores/user'
+import type { Filter, Pagination, Region, TreeNode } from '@/types'
+import { exportTable } from '@/utils'
+import type { QTable, QTableColumn, QTableProps } from 'quasar'
+import { Notify } from 'quasar'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

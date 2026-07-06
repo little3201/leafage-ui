@@ -118,13 +118,13 @@
 </template>
 
 <script setup lang="ts">
+import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from '@/api/system/users'
+import { userStatus } from '@/constants'
+import { useUserStore } from '@/stores/user'
+import type { Filter, Pagination, User } from '@/types'
+import { exportTable } from '@/utils'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { Notify } from 'quasar'
-import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers, unlockUser } from 'src/api/system/users'
-import { userStatus } from 'src/constants'
-import type { Filter, Pagination, User } from 'src/types'
-import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

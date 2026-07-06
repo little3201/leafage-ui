@@ -109,12 +109,12 @@
 </template>
 
 <script setup lang="ts">
+import { fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from '@/api/logs/scheduler-logs'
+import { shceduleStatus, shceduleStatusIcon } from '@/constants'
+import type { Filter, Pagination, SchedulerLog } from '@/types'
+import { exportTable, formatDuration } from '@/utils'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { date, Notify } from 'quasar'
-import { fetchSchedulerLog, removeSchedulerLog, retrieveSchedulerLogs } from 'src/api/logs/scheduler-logs'
-import { shceduleStatus, shceduleStatusIcon } from 'src/constants'
-import type { Filter, Pagination, SchedulerLog } from 'src/types'
-import { exportTable, formatDuration } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

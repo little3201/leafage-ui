@@ -1,10 +1,10 @@
-import { defineBoot } from '#q-app/wrappers'
+import { defineBoot } from '#q-app'
+import { handlers } from '@/mocks'
 import { setupWorker } from 'msw/browser'
-import { handlers } from 'src/mocks'
 
 export default defineBoot(async () => {
   // dev
-  if (!process.env.DEV) {
+  if (import.meta.env.QUASAR_DEV) {
     const worker = setupWorker(...handlers)
     await worker.start({
       onUnhandledRequest: 'bypass',

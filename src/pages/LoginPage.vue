@@ -46,7 +46,7 @@
                   <q-img alt="logo" :src="logo" width="8em" height="8em" />
                 </div>
                 <div class="text-h6 text-center q-mb-xs">
-                  {{ $t('message.signinTo') }}
+                  {{ $t('tips.signinTo') }}
                 </div>
                 <q-form @submit="onSubmit" class="full-width q-mt-md q-px-xl">
                   <q-input :disable="loading" dense no-error-icon v-model.trim="form.username"
@@ -84,12 +84,12 @@
 </template>
 
 <script setup lang="ts">
-import LanguageSelector from 'components/LanguageSelector.vue'
-import ThemeToogle from 'components/ThemeToogle.vue'
+import { signIn } from '@/api/authentication'
+import hello from '@/assets/hello_ccwj.svg'
+import logo from '@/assets/logo.svg'
+import LanguageSelector from '@/components/LanguageSelector.vue'
+import ThemeToogle from '@/components/ThemeToogle.vue'
 import { useQuasar } from 'quasar'
-import { signIn } from 'src/api/authentication'
-import hello from 'src/assets/hello_ccwj.svg'
-import logo from 'src/assets/logo.svg'
 import { ref } from 'vue'
 
 

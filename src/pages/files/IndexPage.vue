@@ -169,11 +169,11 @@
 </template>
 
 <script setup lang="ts">
+import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from '@/api/file-records'
+import { useUserStore } from '@/stores/user'
+import type { FileRecord, Filter, Pagination } from '@/types'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { date, format, Notify } from 'quasar'
-import { download, fetchFile, removeFile, retrieveFiles, uploadFile } from 'src/api/file-records'
-import type { FileRecord, Filter, Pagination } from 'src/types'
-import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

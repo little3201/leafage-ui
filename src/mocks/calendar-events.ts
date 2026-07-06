@@ -1,6 +1,6 @@
+import { SERVER_URL } from '@/constants'
+import type { Schedule } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Schedule } from 'src/types'
 
 const datas: Record<string, Schedule[]> = {}
 

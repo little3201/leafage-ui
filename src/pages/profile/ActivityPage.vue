@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
+import { actions } from '@/constants'
 import { ref } from 'vue'
-import { actions } from 'src/constants'
 
 
 const activities = ref([

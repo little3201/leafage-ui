@@ -1,6 +1,6 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Section, SectionData, SectionField } from 'src/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import type { Section, SectionData, SectionField } from '@/types'
 
 
 /**

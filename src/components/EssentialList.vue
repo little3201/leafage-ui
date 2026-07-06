@@ -27,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PrivilegeTreeNode } from 'src/types'
-import { pathResolve } from 'src/utils'
+import type { PrivilegeTreeNode } from '@/types'
+import { pathResolve } from '@/utils'
 
 withDefaults(defineProps<{
   essentialLink: PrivilegeTreeNode

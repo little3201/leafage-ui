@@ -1,6 +1,6 @@
+import { SERVER_URL } from '@/constants'
+import type { Template } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Template } from 'src/types'
 import { applyFilters } from '../util'
 
 const datas: Template[] = []

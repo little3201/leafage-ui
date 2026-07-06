@@ -133,14 +133,14 @@
 </template>
 
 <script setup lang="ts">
+import { retrieveDictionarySubset } from '@/api/system/dictionaries'
+import { enablePrivilege, fetchPrivilege, importPrivileges, modifyPrivilege, retrievePrivileges, retrievePrivilegeSubset } from '@/api/system/privileges'
+import { actions } from '@/constants'
+import { useUserStore } from '@/stores/user'
+import type { Dictionary, Filter, Pagination, Privilege } from '@/types'
+import { exportTable, visibleArray } from '@/utils'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { Notify } from 'quasar'
-import { retrieveDictionarySubset } from 'src/api/system/dictionaries'
-import { enablePrivilege, fetchPrivilege, importPrivileges, modifyPrivilege, retrievePrivileges, retrievePrivilegeSubset } from 'src/api/system/privileges'
-import { actions } from 'src/constants'
-import type { Dictionary, Filter, Pagination, Privilege } from 'src/types'
-import { exportTable, visibleArray } from 'src/utils'
-import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SubPage from './SubPage.vue'

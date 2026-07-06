@@ -110,12 +110,12 @@
 </template>
 
 <script setup lang="ts">
+import { createGroup, enableGroup, fetchGroup, importGroups, modifyGroup, removeGroup, retrieveGroups } from '@/api/system/groups'
+import { useUserStore } from '@/stores/user'
+import type { Filter, Group, Pagination } from '@/types'
+import { exportTable, visibleArray } from '@/utils'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { Notify } from 'quasar'
-import { createGroup, enableGroup, fetchGroup, importGroups, modifyGroup, removeGroup, retrieveGroups } from 'src/api/system/groups'
-import type { Filter, Group, Pagination } from 'src/types'
-import { exportTable, visibleArray } from 'src/utils'
-import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

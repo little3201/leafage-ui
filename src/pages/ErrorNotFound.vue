@@ -16,5 +16,5 @@
 </template>
 
 <script setup lang="ts">
-import img404 from 'src/assets/404.svg'
+import img404 from '@/assets/404.svg'
 </script>

@@ -1,12 +1,12 @@
-import { defineBoot } from '#q-app/wrappers'
-import { getUserInfo, signIn } from 'src/api/authentication'
-import { retrievePrivilegeTree } from 'src/api/system/privileges'
-import type { PrivilegeTreeNode } from 'src/types'
-import { useUserStore } from 'stores/user'
+import { defineBoot } from '#q-app'
+import { getUserInfo, signIn } from '@/api/authentication'
+import { retrievePrivilegeTree } from '@/api/system/privileges'
+import { useUserStore } from '@/stores/user'
+import type { PrivilegeTreeNode } from '@/types'
 import type { RouteRecordRaw } from 'vue-router'
 
 
-const BlankLayout = () => import('src/layouts/BlankLayout.vue')
+const BlankLayout = () => import('@/layouts/BlankLayout.vue')
 
 const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
 
@@ -54,7 +54,7 @@ export default defineBoot(({ router, store }) => {
         router.addRoute({
           path: '/:pathMatch(.*)*',
           name: 'ErrorNotFound',
-          component: () => import('pages/ErrorNotFound.vue'),
+          component: () => import('@/pages/ErrorNotFound.vue'),
         })
       }
 

@@ -112,11 +112,11 @@
 </template>
 
 <script setup lang="ts">
+import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from '@/api/logs/audit-logs'
+import type { AuditLog, Filter, Pagination } from '@/types'
+import { exportTable, formatDuration } from '@/utils'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { Notify } from 'quasar'
-import { fetchAuditLog, removeAuditLog, retrieveAuditLogs } from 'src/api/logs/audit-logs'
-import type { AuditLog, Filter, Pagination } from 'src/types'
-import { exportTable, formatDuration } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

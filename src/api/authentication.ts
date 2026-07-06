@@ -1,9 +1,9 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import { generateCodeChallenge, generateVerifier } from 'src/utils'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { generateCodeChallenge, generateVerifier } from '@/utils'
 
 
-const CLIENT_ID = process.env.CLIENT_ID || ''
+const CLIENT_ID = import.meta.env.QUASAR_CLIENT_ID || ''
 const REDIRECT_URI = `${globalThis.location.origin}/callback`
 
 export async function signIn() {

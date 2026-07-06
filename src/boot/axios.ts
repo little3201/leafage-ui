@@ -1,13 +1,13 @@
-import { defineBoot } from '#q-app/wrappers'
+import { defineBoot } from '#q-app'
+import { signIn } from '@/api/authentication'
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import { signIn } from 'src/api/authentication'
 
 
 const abortControllerMap: Map<string, AbortController> = new Map()
 
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.API || '/api',
+  baseURL: import.meta.env.QUASAR_API || '/api',
   timeout: 10000,
   withCredentials: true
 })

@@ -1,10 +1,9 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-import { defineConfig } from '#q-app/wrappers'
-import { fileURLToPath } from 'node:url'
+import { defineConfig } from '#q-app'
 
-export default defineConfig(ctx => {
+export default defineConfig((ctx) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -41,8 +40,8 @@ export default defineConfig(ctx => {
     // Full list of options: // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       target: {
-        browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
-        node: 'node20',
+        // browser: 'baseline-widely-available',
+        // node: 'node22'
       },
 
       typescript: {
@@ -59,15 +58,12 @@ export default defineConfig(ctx => {
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
       // publicPath: '/',
-      // analyze: true,
-      env: {
+      defineEnv: {
         API: '/api',
         CLIENT_ID: 'pkce-client'
       },
-      // rawDefine: {},
       // ignorePublicFolder: true,
       // minify: false,
-      // polyfillModulePreload: true,
       // distDir
 
       // extendViteConf (viteConf) {},
@@ -87,7 +83,7 @@ export default defineConfig(ctx => {
             ssr: ctx.modeName === 'ssr',
 
             // you need to set i18n resource including paths !
-            include: [fileURLToPath(new URL('./src/lang', import.meta.url))]
+            include: [ctx.appPaths.resolve.app('src/lang')]
           }
         ],
 
@@ -169,19 +165,18 @@ export default defineConfig(ctx => {
         'render' // keep this as last one
       ],
 
-      // extendPackageJson (json) {},
-      // extendSSRWebserverConf (esbuildConf) {},
-
       // manualStoreSerialization: true,
       // manualStoreSsrContextInjection: true,
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,
 
-      pwa: false
+      pwa: false,
       // pwaOfflineHtmlFilename: 'offline.html', // do NOT use index.html as name!
 
-      // pwaExtendGenerateSWOptions (cfg) {},
-      // pwaExtendInjectManifestOptions (cfg) {}
+      // can now be async and optionally return object to be merged with default one
+      // extendSSRGenerateSWOptions(conf) { },
+      // can now be async and optionally return object to be merged with default one
+      // extendSSRInjectManifestOptions(conf) { },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
@@ -238,7 +233,7 @@ export default defineConfig(ctx => {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'leafage'
+        appId: 'leafage-ui'
       }
     },
 

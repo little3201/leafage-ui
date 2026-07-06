@@ -1,6 +1,6 @@
+import { SERVER_URL } from '@/constants'
+import type { AccessLog } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { AccessLog } from 'src/types'
 import { applyFilters } from '../util'
 
 

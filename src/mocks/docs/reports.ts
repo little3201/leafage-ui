@@ -1,6 +1,6 @@
+import { SERVER_URL } from '@/constants'
+import type { Report } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Report } from 'src/types'
 import { applyFilters } from '../util'
 
 const datas: Report[] = []

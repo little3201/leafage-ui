@@ -1,5 +1,5 @@
-import type { PrivilegeTreeNode } from 'src/types'
-import { useUserStore } from 'stores/user'
+import { useUserStore } from '@/stores/user'
+import type { PrivilegeTreeNode } from '@/types'
 import type { RouteRecordNameGeneric } from 'vue-router'
 
 

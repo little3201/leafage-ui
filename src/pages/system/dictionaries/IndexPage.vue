@@ -100,12 +100,12 @@
 </template>
 
 <script setup lang="ts">
+import { createDictionary, enableDictionary, fetchDictionary, importDictionaries, modifyDictionary, retrieveDictionaries, retrieveDictionarySubset } from '@/api/system/dictionaries'
+import { useUserStore } from '@/stores/user'
+import type { Dictionary, Filter, Pagination, TreeNode } from '@/types'
+import { exportTable } from '@/utils'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { Notify } from 'quasar'
-import { createDictionary, enableDictionary, fetchDictionary, importDictionaries, modifyDictionary, retrieveDictionaries, retrieveDictionarySubset } from 'src/api/system/dictionaries'
-import type { Dictionary, Filter, Pagination, TreeNode } from 'src/types'
-import { exportTable } from 'src/utils'
-import { useUserStore } from 'stores/user'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

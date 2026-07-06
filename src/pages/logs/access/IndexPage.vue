@@ -115,12 +115,12 @@
 </template>
 
 <script setup lang="ts">
+import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from '@/api/logs/access-logs'
+import { httpMethods } from '@/constants'
+import type { AccessLog, Filter, Pagination } from '@/types'
+import { exportTable, formatDuration } from '@/utils'
 import type { QTable, QTableColumn, QTableProps } from 'quasar'
 import { Notify } from 'quasar'
-import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from 'src/api/logs/access-logs'
-import { httpMethods } from 'src/constants'
-import type { AccessLog, Filter, Pagination } from 'src/types'
-import { exportTable, formatDuration } from 'src/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

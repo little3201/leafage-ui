@@ -89,14 +89,14 @@
 
 
 <script setup lang="ts">
-import { useUserStore } from 'stores/user'
+import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
 
-import EssentialList from 'components/EssentialList.vue'
-import LanguageSelector from 'components/LanguageSelector.vue'
-import ThemeToogle from 'components/ThemeToogle.vue'
-import { signOut } from 'src/api/authentication'
-import logo from 'src/assets/logo.svg'
+import { signOut } from '@/api/authentication'
+import logo from '@/assets/logo.svg'
+import EssentialList from '@/components/EssentialList.vue'
+import LanguageSelector from '@/components/LanguageSelector.vue'
+import ThemeToogle from '@/components/ThemeToogle.vue'
 
 
 const userStore = useUserStore()

@@ -96,12 +96,12 @@
 </template>
 
 <script setup lang="ts">
+import { enablePrivilege, fetchPrivilege, modifyPrivilege, retrievePrivilegeSubset } from '@/api/system/privileges'
+import { actions } from '@/constants'
+import type { Dictionary, Privilege } from '@/types'
+import { visibleArray } from '@/utils'
 import type { QTable, QTableColumn } from 'quasar'
 import { Notify } from 'quasar'
-import { enablePrivilege, fetchPrivilege, modifyPrivilege, retrievePrivilegeSubset } from 'src/api/system/privileges'
-import { actions } from 'src/constants'
-import type { Dictionary, Privilege } from 'src/types'
-import { visibleArray } from 'src/utils'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
