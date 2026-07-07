@@ -1,24 +1,16 @@
 {
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit",
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.oxc": "always"
   },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "vue",
-    "html"
-  ],
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.format.semicolons": "remove",
-  "javascript.format.semicolons": "remove",
-  "eslint.format.enable": true,
+  "oxc.fmt.configPath": "oxfmt.config.ts",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
-  "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "search.exclude": {
+    "dist/": true,
+    ".quasar/": true,
+    "/quasar.config.js.temporary.*": true
   }
 }

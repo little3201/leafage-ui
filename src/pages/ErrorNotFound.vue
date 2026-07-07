@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import notFound from 'src/assets/404.svg'
+import notFound from '@/assets/404.svg'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

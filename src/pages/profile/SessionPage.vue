@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { globalIcons } from 'src/constants'
-import { loadIcon } from 'src/utils'
+import { globalIcons } from '@/constants'
+import { loadIcon } from '@/utils'
 import { ref } from 'vue'
 
 const sessions = ref([

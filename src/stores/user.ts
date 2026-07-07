@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import type { PrivilegeTreeNode } from 'src/types'
+import type { PrivilegeTreeNode } from '@/types'
 
 
 export const useUserStore = defineStore('user', {

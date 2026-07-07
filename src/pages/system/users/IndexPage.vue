@@ -7,10 +7,10 @@ import {
   disableUser,
   enableUser,
   importUsers, modifyUser, removeUser, retrieveUsers, unlockUser
-} from 'src/api/system/users'
-import { actionTypes, userStatus } from 'src/constants'
-import type { Filter, Pagination, User } from 'src/types'
-import { actionIcon, exportToCSV, hasAction } from 'src/utils'
+} from '@/api/system/users'
+import { actionTypes, userStatus } from '@/constants'
+import type { Filter, Pagination, User } from '@/types'
+import { actionIcon, exportToCSV, hasAction } from '@/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

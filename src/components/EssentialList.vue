@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import type { PrivilegeTreeNode } from 'src/types'
-import { pageIcon, pathResolve } from 'src/utils'
+import type { PrivilegeTreeNode } from '@/types'
+import { pageIcon, pathResolve } from '@/utils'
 
 withDefaults(defineProps<{
   essentialLink: PrivilegeTreeNode

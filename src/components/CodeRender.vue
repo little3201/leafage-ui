@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import hljs from 'boot/hljs'
+import hljs from '@/boot/hljs'
 import type { HighlightResult } from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
 import { computed } from 'vue'

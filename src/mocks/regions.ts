@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Region } from 'src/types'
+import { SERVER_URL } from '@/constants'
+import type { Region } from '@/types'
 import { applyFilters } from './util'
 
 const datas: Region[] = []
@@ -14,8 +14,7 @@ for (let i = 1; i < 99; i++) {
     areaCode: Math.floor(Math.random() * 100),
     postalCode: Math.floor(Math.random() * 3000),
     enabled: i % 3 > 0,
-    count: i > 33 ? 0 : Math.floor(Math.random() * 5) + 1,
-    description: 'This is region description about xxx'
+    count: i > 33 ? 0 : Math.floor(Math.random() * 5) + 1
   }
   datas.push(data)
 }

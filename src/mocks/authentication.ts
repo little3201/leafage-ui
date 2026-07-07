@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
+import { SERVER_URL } from '@/constants'
 
 
 export const authenticationHandlers = [

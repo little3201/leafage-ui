@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { globalIcons } from 'src/constants'
-import type { User } from 'src/types'
-import { actionIcon, loadIcon } from 'src/utils'
-import { useUserStore } from 'stores/user'
+import { globalIcons } from '@/constants'
+import type { User } from '@/types'
+import { actionIcon, loadIcon } from '@/utils'
+import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
 
 

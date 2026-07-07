@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Group, GroupMembers, GroupPrivileges, GroupRoles, TreeNode } from 'src/types'
+import { SERVER_URL } from '@/constants'
+import type { Group, GroupMembers, GroupPrivileges, GroupRoles, TreeNode } from '@/types'
 import { applyFilters } from '../util'
 
 const datas: Group[] = []

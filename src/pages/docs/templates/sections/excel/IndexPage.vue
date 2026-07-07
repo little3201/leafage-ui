@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { retrieveSectionDatas, retrieveSectionFields } from 'src/api/docs/sections'
-import type { SectionData, SectionField } from 'src/types'
+import { retrieveSectionDatas, retrieveSectionFields } from '@/api/docs/sections'
+import type { SectionData, SectionField } from '@/types'
 import { onMounted, ref, watch } from 'vue'
 import ExcelContent from './ExcelContent.vue'
 import ExcelField from './ExcelField.vue'

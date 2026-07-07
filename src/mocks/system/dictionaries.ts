@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Dictionary } from 'src/types'
+import { SERVER_URL } from '@/constants'
+import type { Dictionary } from '@/types'
 import { applyFilters } from '../util'
 
 const datas: Dictionary[] = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000].map(item => {

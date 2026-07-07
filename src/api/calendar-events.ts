@@ -1,5 +1,5 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
 
 /**
  * Retrieve rows

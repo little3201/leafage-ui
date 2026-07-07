@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { useDark, useToggle } from '@vueuse/core'
-import { globalIcons } from 'src/constants'
-import { loadIcon } from 'src/utils'
+import { globalIcons } from '@/constants'
+import { loadIcon } from '@/utils'
 
 
 const isDark = useDark()

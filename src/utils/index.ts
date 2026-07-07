@@ -1,6 +1,6 @@
 import type { IWorkbookData } from '@univerjs/presets'
 import { covertCellValues } from '@univerjs/presets'
-import type { SectionData, SectionField } from 'src/types'
+import type { SectionData, SectionField } from '@/types'
 
 
 export * from './action'

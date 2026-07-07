@@ -1,4 +1,4 @@
-import type { Filter } from 'src/types'
+import type { Filter } from '@/types'
 
 /**
  * Resolve a child path relative to a parent path

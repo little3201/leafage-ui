@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, Privilege, PrivilegeAction } from 'src/types'
-import { dealFilters } from 'src/utils'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import type { Filter, Pagination, Privilege, PrivilegeAction } from '@/types'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows

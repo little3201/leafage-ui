@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import SheetRender from 'components/SheetRender.vue'
-import { retrieveSectionDatas, retrieveSectionFields } from 'src/api/docs/sections'
-import type { SectionData, SectionField } from 'src/types'
-import { transformToWorkbookData } from 'src/utils'
+import SheetRender from '@/components/SheetRender.vue'
+import { retrieveSectionDatas, retrieveSectionFields } from '@/api/docs/sections'
+import type { SectionData, SectionField } from '@/types'
+import { transformToWorkbookData } from '@/utils'
 import { computed, onMounted, ref, watch } from 'vue'
 
 

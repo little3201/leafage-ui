@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { IDocumentData } from '@univerjs/presets'
-import DocRender from 'components/DocRender.vue'
+import DocRender from '@/components/DocRender.vue'
 
 defineProps<{
   title: string,

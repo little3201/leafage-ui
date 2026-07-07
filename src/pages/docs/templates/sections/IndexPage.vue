@@ -10,10 +10,10 @@ import {
   modifySection,
   removeSection,
   retrieveSectionTree
-} from 'src/api/docs/sections'
-import { actionTypes } from 'src/constants'
-import type { Section } from 'src/types'
-import { actionIcon, hasAction } from 'src/utils'
+} from '@/api/docs/sections'
+import { actionTypes } from '@/constants'
+import type { Section } from '@/types'
+import { actionIcon, hasAction } from '@/utils'
 import { onMounted, provide, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Excel from './excel/IndexPage.vue'

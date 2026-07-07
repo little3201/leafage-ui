@@ -3,7 +3,7 @@ import type {
   FormInstance,
   FormRules
 } from 'element-plus'
-import type { Section } from 'src/types'
+import type { Section } from '@/types'
 import { nextTick, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

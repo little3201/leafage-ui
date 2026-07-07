@@ -1,4 +1,4 @@
-import type { Section } from 'src/types'
+import type { Section } from '@/types'
 
 // 工具函数：根据父级章节递归生成编号
 export function generateNumbering(section: Section, numberingFormat: 'number' | 'alphabet', allSections: Section[]): string {

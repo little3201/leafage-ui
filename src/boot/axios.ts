@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import axios from 'axios'
-import { signIn } from 'src/api/authentication'
+import { signIn } from '@/api/authentication'
 
 
 const abortControllerMap: Map<string, AbortController> = new Map()

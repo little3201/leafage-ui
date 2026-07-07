@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { globalIcons } from 'src/constants'
-import { actionIcon, loadIcon } from 'src/utils'
+import { globalIcons } from '@/constants'
+import { actionIcon, loadIcon } from '@/utils'
 import { ref } from 'vue'
 
 const searchQuery = ref('')

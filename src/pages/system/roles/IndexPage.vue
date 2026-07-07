@@ -20,12 +20,12 @@ import {
   retrieveRoleMembers,
   retrieveRolePrivileges,
   retrieveRoles
-} from 'src/api/system/roles'
-import { retrieveUsers } from 'src/api/system/users'
-import { actionIcons, actionTypes } from 'src/constants'
-import type { Filter, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from 'src/types'
-import { actionIcon, exportToCSV, hasAction } from 'src/utils'
-import { useUserStore } from 'stores/user'
+} from '@/api/system/roles'
+import { retrieveUsers } from '@/api/system/users'
+import { actionIcons, actionTypes } from '@/constants'
+import type { Filter, Pagination, Privilege, Role, RoleMembers, RolePrivileges } from '@/types'
+import { actionIcon, exportToCSV, hasAction } from '@/utils'
+import { useUserStore } from '@/stores/user'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

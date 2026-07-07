@@ -12,11 +12,11 @@ import {
   modifyArchive,
   removeArchive,
   retrieveArchives
-} from 'src/api/docs/archives'
-import { retrieveTemplates } from 'src/api/docs/templates'
-import { actionTypes } from 'src/constants'
-import type { Archive, Filter, Pagination, Template } from 'src/types'
-import { actionIcon, exportToCSV, hasAction } from 'src/utils'
+} from '@/api/docs/archives'
+import { retrieveTemplates } from '@/api/docs/templates'
+import { actionTypes } from '@/constants'
+import type { Archive, Filter, Pagination, Template } from '@/types'
+import { actionIcon, exportToCSV, hasAction } from '@/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Section from '../templates/sections/IndexPage.vue'

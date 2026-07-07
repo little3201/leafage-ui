@@ -1,6 +1,6 @@
 import { icons } from '@iconify-json/material-symbols'
 import { addIcon, iconLoaded } from '@iconify/vue'
-import { actionIcons, pageIcons } from 'src/constants'
+import { actionIcons, pageIcons } from '@/constants'
 
 
 /**

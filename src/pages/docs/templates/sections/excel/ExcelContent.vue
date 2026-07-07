@@ -2,9 +2,9 @@
 import { Icon } from '@iconify/vue'
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { createSectionData, modifySectionData, removeSectionData, retrieveSectionDatas, retrieveSectionFields } from 'src/api/docs/sections'
-import type { SectionData, SectionField } from 'src/types'
-import { actionIcon } from 'src/utils'
+import { createSectionData, modifySectionData, removeSectionData, retrieveSectionDatas, retrieveSectionFields } from '@/api/docs/sections'
+import type { SectionData, SectionField } from '@/types'
+import { actionIcon } from '@/utils'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

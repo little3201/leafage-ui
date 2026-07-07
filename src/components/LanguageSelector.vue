@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { langOptions } from 'boot/i18n'
+import { langOptions } from '@/lang'
 import Cookies from 'js-cookie'
-import { globalIcons } from 'src/constants'
-import { loadIcon } from 'src/utils'
+import { globalIcons } from '@/constants'
+import { loadIcon } from '@/utils'
 import { useI18n } from 'vue-i18n'
 
 

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import logo from 'assets/logo.svg'
-import EssentialList from 'components/EssentialList.vue'
-import LanguageSelector from 'components/LanguageSelector.vue'
-import ThemeToogle from 'components/ThemeToogle.vue'
-import { signOut } from 'src/api/authentication'
-import { globalIcons } from 'src/constants'
-import { loadIcon, pageIcon } from 'src/utils'
-import { useUserStore } from 'stores/user'
+import logo from '@/assets/logo.svg'
+import EssentialList from '@/components/EssentialList.vue'
+import LanguageSelector from '@/components/LanguageSelector.vue'
+import ThemeToogle from '@/components/ThemeToogle.vue'
+import { signOut } from '@/api/authentication'
+import { globalIcons } from '@/constants'
+import { loadIcon, pageIcon } from '@/utils'
+import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 
 

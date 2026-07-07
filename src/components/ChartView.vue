@@ -2,7 +2,7 @@
 import { useDark, useEventListener } from '@vueuse/core'
 import type { ApexOptions } from 'apexcharts'
 import ApexCharts from 'apexcharts'
-import { isNumber } from 'src/utils'
+import { isNumber } from '@/utils'
 import { computed, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{

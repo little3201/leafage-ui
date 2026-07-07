@@ -1,5 +1,5 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
 
 
 const BASE_URL = import.meta.env.VITE_BASE_URL || ''

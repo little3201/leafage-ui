@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ApexOptions } from 'apexcharts'
-import ChartView from 'components/ChartView.vue'
-import { retrieveCalendarEvents } from 'src/api/calendar-events'
-import { lineOptions } from 'src/mocks/charts-data'
-import type { Schedule } from 'src/types'
+import ChartView from '@/components/ChartView.vue'
+import { retrieveCalendarEvents } from '@/api/calendar-events'
+import { lineOptions } from '@/mocks/charts-data'
+import type { Schedule } from '@/types'
 import { onMounted, reactive, ref } from 'vue'
 
 

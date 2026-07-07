@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Archive, Section } from 'src/types'
+import { SERVER_URL } from '@/constants'
+import type { Archive, Section } from '@/types'
 import { applyFilters } from '../util'
 
 const datas: Archive[] = []

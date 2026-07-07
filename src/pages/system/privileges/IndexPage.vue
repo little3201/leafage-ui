@@ -8,10 +8,10 @@ import {
   importPrivileges,
   modifyPrivilege,
   retrievePrivileges, retrievePrivilegeSubset
-} from 'src/api/system/privileges'
-import { actionIcons, actionTypes } from 'src/constants'
-import type { Dictionary, Filter, Pagination, Privilege } from 'src/types'
-import { actionIcon, exportToCSV, hasAction, pageIcon, visibleArray } from 'src/utils'
+} from '@/api/system/privileges'
+import { actionIcons, actionTypes } from '@/constants'
+import type { Dictionary, Filter, Pagination, Privilege } from '@/types'
+import { actionIcon, exportToCSV, hasAction, pageIcon, visibleArray } from '@/utils'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

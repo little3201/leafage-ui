@@ -11,10 +11,10 @@ import {
   removeDictionary,
   retrieveDictionaries,
   retrieveDictionarySubset
-} from 'src/api/system/dictionaries'
-import { actionTypes } from 'src/constants'
-import type { Dictionary, Filter, Pagination } from 'src/types'
-import { actionIcon, exportToCSV, hasAction } from 'src/utils'
+} from '@/api/system/dictionaries'
+import { actionTypes } from '@/constants'
+import type { Dictionary, Filter, Pagination } from '@/types'
+import { actionIcon, exportToCSV, hasAction } from '@/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

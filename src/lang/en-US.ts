@@ -212,6 +212,9 @@ export default {
     confirm: 'Are you sure ?',
     removeWarning: 'This action cannot be undone. This will permanently remove the <strong>{module}/{data}</strong>.',
     removeButtonText: 'I understand, remove it.',
+
+    disableWarning: 'After disabling the data, the current data and associated data will be unavailable.',
+    disableButtonText: 'I understand, disable it!',
     clearWarning: 'This action cannot be undone. This will permanently remove all items.',
     clearButtonText: 'I understand, remove all.',
     welcome: 'Hi! Welcome Back.',

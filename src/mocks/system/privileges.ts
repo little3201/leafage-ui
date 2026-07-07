@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { actionTypes, SERVER_URL } from 'src/constants'
-import type { GroupPrivileges, Privilege, PrivilegeAction, PrivilegeTreeNode, RolePrivileges, UserPrivileges } from 'src/types'
+import { actionTypes, SERVER_URL } from '@/constants'
+import type { GroupPrivileges, Privilege, PrivilegeAction, PrivilegeTreeNode, RolePrivileges, UserPrivileges } from '@/types'
 import { applyFilters } from '../util'
 
 const datas: Privilege[] = [

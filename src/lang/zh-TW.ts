@@ -127,7 +127,7 @@ export default {
     upload: '上傳',
     download: '下載',
     config: '配置',
-    fields: '屬性',
+    field: '屬性',
     execute: '執行',
     sync: '同步',
     preview: '預覽',
@@ -198,8 +198,6 @@ export default {
 
   message: {
     selectedTotal: '已選擇 {total} 條',
-    forbidden: '您沒有訪問此資源的權限，請聯繫管理員。',
-    notFound: '未找到您請求的資源。請檢查URL是否正確，或返回首頁。',
     success: '{action}成功。',
     error: '{action}失敗！',
     networkError: '網路錯誤或超時'
@@ -214,6 +212,9 @@ export default {
     confirm: '是否確定？',
     removeWarning: '此操作無法撤銷。這將永久移除 <strong>{module}/{data}</strong>。',
     removeButtonText: '我明白，移除它！',
+    
+    disableWarning: '数据停用后，当前数据及关联数据将不可用。',
+    disableButtonText: '我明白，停用它！',
     clearWarning: '此操作無法撤銷。這將永久移除所有項目。',
     clearButtonText: '我明白，移除所有項目。',
     welcome: '嗨！歡迎回來',

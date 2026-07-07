@@ -13,10 +13,10 @@ import {
   importRegions,
   modifyRegion, removeRegion,
   retrieveRegions, retrieveRegionSubset
-} from 'src/api/regions'
-import { actionTypes } from 'src/constants'
-import type { Filter, Pagination, Region } from 'src/types'
-import { actionIcon, exportToCSV, hasAction } from 'src/utils'
+} from '@/api/regions'
+import { actionTypes } from '@/constants'
+import type { Filter, Pagination, Region } from '@/types'
+import { actionIcon, exportToCSV, hasAction } from '@/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 

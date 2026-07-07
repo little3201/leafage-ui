@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { actionTypes } from 'src/constants'
+import { actionTypes } from '@/constants'
 import { ref } from 'vue'
 
 

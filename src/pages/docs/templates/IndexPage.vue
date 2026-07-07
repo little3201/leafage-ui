@@ -9,10 +9,10 @@ import {
   createTemplate,
   importTemplates, modifyTemplate,
   removeTemplate, retrieveTemplates
-} from 'src/api/docs/templates'
-import { actionTypes, schemaStatus, templateTypes } from 'src/constants'
-import type { Filter, Pagination, Template } from 'src/types'
-import { actionIcon, exportToCSV, hasAction } from 'src/utils'
+} from '@/api/docs/templates'
+import { actionTypes, schemaStatus, templateTypes } from '@/constants'
+import type { Filter, Pagination, Template } from '@/types'
+import { actionIcon, exportToCSV, hasAction } from '@/utils'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Section from './sections/IndexPage.vue'
