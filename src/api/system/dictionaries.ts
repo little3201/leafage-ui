@@ -1,7 +1,7 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { Dictionary, Filter, Pagination } from '@/types'
-import { dealFilters } from '@/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Dictionary, Filter, Pagination } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from '@/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveDictionaries = (pagination: Pagination, filter?: Filter<Dictionary>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.DICTIONARY, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveDictionaries = (
+  pagination: Pagination,
+  filter?: Filter<Dictionary>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.DICTIONARY, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Get row subset
@@ -20,16 +25,16 @@ export const retrieveDictionaries = (pagination: Pagination, filter?: Filter<Dic
  * @returns Subset data
  */
 export const retrieveDictionarySubset = (id: number | null) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/subset`, { params: { id } })
-}
+  return api.get(`${SERVER_URL.DICTIONARY}/subset`, { params: { id } });
+};
 
 /**
  * Fetch row tree structure
  * @returns tree data
  */
 export const retrieveDictionaryTree = () => {
-  return api.get(`${SERVER_URL.DICTIONARY}/tree`)
-}
+  return api.get(`${SERVER_URL.DICTIONARY}/tree`);
+};
 
 /**
  * Fetch a specific row
@@ -37,8 +42,8 @@ export const retrieveDictionaryTree = () => {
  * @returns Row data
  */
 export const fetchDictionary = (id: number) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/${id}`)
-}
+  return api.get(`${SERVER_URL.DICTIONARY}/${id}`);
+};
 
 /**
  * Create a new row
@@ -46,8 +51,8 @@ export const fetchDictionary = (id: number) => {
  * @returns Created row
  */
 export const createDictionary = (row: Dictionary) => {
-  return api.post(SERVER_URL.DICTIONARY, row)
-}
+  return api.post(SERVER_URL.DICTIONARY, row);
+};
 
 /**
  * Modify an existing row
@@ -56,8 +61,8 @@ export const createDictionary = (row: Dictionary) => {
  * @returns Modified row
  */
 export const modifyDictionary = (id: number, row: Dictionary) => {
-  return api.put(`${SERVER_URL.DICTIONARY}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.DICTIONARY}/${id}`, row);
+};
 
 /**
  * Enable an existing row
@@ -65,8 +70,8 @@ export const modifyDictionary = (id: number, row: Dictionary) => {
  * @returns Enable result
  */
 export const enableDictionary = (id: number) => {
-  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/enable`)
-}
+  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/enable`);
+};
 
 /**
  * Disable an existing row
@@ -74,8 +79,8 @@ export const enableDictionary = (id: number) => {
  * @returns Disable result
  */
 export const disableDictionary = (id: number) => {
-  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/disable`)
-}
+  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/disable`);
+};
 
 /**
  * Remove a row
@@ -83,8 +88,8 @@ export const disableDictionary = (id: number) => {
  * @returns Deletion status
  */
 export const removeDictionary = (id: number) => {
-  return api.delete(`${SERVER_URL.DICTIONARY}/${id}`)
-}
+  return api.delete(`${SERVER_URL.DICTIONARY}/${id}`);
+};
 
 /**
  * Import rows
@@ -92,5 +97,5 @@ export const removeDictionary = (id: number) => {
  * @returns
  */
 export const importDictionaries = (file: File) => {
-  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, { file: file });
+};

@@ -1,67 +1,74 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
+import { Icon } from "@iconify/vue";
 import type {
-  FormInstance, FormRules, TableInstance,
+  FormInstance,
+  FormRules,
+  TableInstance,
   UploadRequestOptions
-} from 'element-plus'
-import { dayjs, ElMessage, ElMessageBox } from 'element-plus'
+} from "element-plus";
+import { dayjs, ElMessage, ElMessageBox } from "element-plus";
 import {
   createTemplate,
-  importTemplates, modifyTemplate,
-  removeTemplate, retrieveTemplates
-} from '@/api/docs/templates'
-import { actionTypes, schemaStatus, templateTypes } from '@/constants'
-import type { Filter, Pagination, Template } from '@/types'
-import { actionIcon, exportToCSV, hasAction } from '@/utils'
-import { onMounted, reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import Section from './sections/IndexPage.vue'
+  importTemplates,
+  modifyTemplate,
+  removeTemplate,
+  retrieveTemplates
+} from "@/api/docs/templates";
+import { actionTypes, schemaStatus, templateTypes } from "@/constants";
+import type { Filter, Pagination, Template } from "@/types";
+import { actionIcon, exportToCSV, hasAction } from "@/utils";
+import { onMounted, reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import Section from "./sections/IndexPage.vue";
 
+const { t } = useI18n();
 
-const { t } = useI18n()
+const loading = ref<boolean>(false);
+const datas = ref<Array<Template>>([]);
+const total = ref<number>(0);
 
-const loading = ref<boolean>(false)
-const datas = ref<Array<Template>>([])
-const total = ref<number>(0)
-
-const tableRef = ref<TableInstance>()
+const tableRef = ref<TableInstance>();
 const pagination = reactive<Pagination>({
   page: 1,
   size: 10
-})
+});
 
-const saveLoading = ref<boolean>(false)
-const visible = ref<boolean>(false)
+const saveLoading = ref<boolean>(false);
+const visible = ref<boolean>(false);
 
-const configVisible = ref<boolean>(false)
-const previewVisible = ref<boolean>(false)
+const configVisible = ref<boolean>(false);
+const previewVisible = ref<boolean>(false);
 
-const importLoading = ref<boolean>(false)
-const exportLoading = ref<boolean>(false)
+const importLoading = ref<boolean>(false);
+const exportLoading = ref<boolean>(false);
 
 const filter = reactive<Filter<Template>>({
-  name: { op: 'like', value: undefined }
-})
+  name: { op: "like", value: undefined }
+});
 
-const sectionRef = ref<InstanceType<typeof Section>>()
-const formRef = ref<FormInstance>()
+const sectionRef = ref<InstanceType<typeof Section>>();
+const formRef = ref<FormInstance>();
 const initialValues: Template = {
   id: null,
-  name: '',
-  type: 'WORD',
+  name: "",
+  type: "WORD",
   version: 1
-}
-const form = ref<Template>({ ...initialValues })
+};
+const form = ref<Template>({ ...initialValues });
 
 const rules = reactive<FormRules<typeof form>>({
   name: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.name') }), trigger: 'blur' }
+    {
+      required: true,
+      message: t("placeholder.inputText", { field: t("label.name") }),
+      trigger: "blur"
+    }
   ]
-})
+});
 
 onMounted(async () => {
-  await load()
-})
+  await load();
+});
 
 /**
  * 分页变化
@@ -69,28 +76,28 @@ onMounted(async () => {
  * @param pageSize 分页大小
  */
 async function pageChange(currentPage: number, pageSize: number) {
-  pagination.page = currentPage
-  pagination.size = pageSize
-  await load()
+  pagination.page = currentPage;
+  pagination.size = pageSize;
+  await load();
 }
 
 /**
  * 加载列表
  */
 async function load() {
-  loading.value = true
+  loading.value = true;
 
   try {
-    const res = await retrieveTemplates(pagination, filter)
-    datas.value = res.data.content
-    total.value = res.data.page.totalElements
+    const res = await retrieveTemplates(pagination, filter);
+    datas.value = res.data.content;
+    total.value = res.data.page.totalElements;
   } catch (error) {
-    datas.value = []
-    total.value = 0
+    datas.value = [];
+    total.value = 0;
 
-    throw error
+    throw error;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
@@ -99,9 +106,9 @@ async function load() {
  * @param row 数据
  */
 function showRow(row: Template) {
-  form.value = { ...row }
+  form.value = { ...row };
 
-  previewVisible.value = true
+  previewVisible.value = true;
 }
 
 /**
@@ -109,45 +116,53 @@ function showRow(row: Template) {
  * @param row 数据
  */
 function saveRow(row?: Template) {
-  form.value = row ? { ...row } : { ...initialValues }
+  form.value = row ? { ...row } : { ...initialValues };
 
-  visible.value = true
+  visible.value = true;
 }
 
 /**
  * 配置
  * @param id 主键
  */
-function configSection(id: number, type: 'WORD' | 'EXCEL') {
-  form.value.id = id
-  form.value.type = type
-  configVisible.value = true
+function configSection(id: number, type: "WORD" | "EXCEL") {
+  form.value.id = id;
+  form.value.type = type;
+  configVisible.value = true;
 }
 
 /**
  * 表单提交
  */
 async function onSubmit(formEl: FormInstance) {
-  if (!formEl) return
+  if (!formEl) return;
 
-  const valid = await formEl.validate()
+  const valid = await formEl.validate();
   if (valid) {
-    saveLoading.value = true
+    saveLoading.value = true;
     try {
       if (form.value.id) {
-        await modifyTemplate(form.value.id, form.value)
+        await modifyTemplate(form.value.id, form.value);
       } else {
-        await createTemplate(form.value)
+        await createTemplate(form.value);
       }
-      visible.value = false
+      visible.value = false;
 
-      ElMessage.success(t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }))
-      await load()
+      ElMessage.success(
+        t("message.success", {
+          action: form.value.id ? t("action.modify") : t("action.create")
+        })
+      );
+      await load();
     } catch (error) {
-      ElMessage.error(t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }))
-      throw error
+      ElMessage.error(
+        t("message.error", {
+          action: form.value.id ? t("action.modify") : t("action.create")
+        })
+      );
+      throw error;
     } finally {
-      saveLoading.value = false
+      saveLoading.value = false;
     }
   }
 }
@@ -160,55 +175,55 @@ async function onSubmit(formEl: FormInstance) {
 async function removeRow(id: number, name: string) {
   // 弹出确认框
   await ElMessageBox.confirm(
-    t('tips.removeWarning', { module: t('page.templates'), data: name }),
-    t('tips.confirm'),
+    t("tips.removeWarning", { module: t("page.templates"), data: name }),
+    t("tips.confirm"),
     {
       dangerouslyUseHTMLString: true,
       showCancelButton: false,
-      confirmButtonType: 'danger',
-      confirmButtonClass: 'w-full',
-      confirmButtonText: t('tips.removeButtonText'),
-      type: 'warning'
+      confirmButtonType: "danger",
+      confirmButtonClass: "w-full",
+      confirmButtonText: t("tips.removeButtonText"),
+      type: "warning"
     }
   ).then(async () => {
     try {
-      await removeTemplate(id)
-      await load()
+      await removeTemplate(id);
+      await load();
 
-      ElMessage.success(t('message.success', { action: t('action.remove') }))
+      ElMessage.success(t("message.success", { action: t("action.remove") }));
     } catch (error) {
-      ElMessage.error(t('message.error', { action: t('action.remove') }))
-      throw error
+      ElMessage.error(t("message.error", { action: t("action.remove") }));
+      throw error;
     }
-  })
+  });
 }
 
 /**
  * 导出
  */
 function exportRows() {
-  exportLoading.value = true
+  exportLoading.value = true;
 
-  const selectedRows = tableRef.value?.getSelectionRows()
+  const selectedRows = tableRef.value?.getSelectionRows();
   if (selectedRows && selectedRows.length) {
-    exportToCSV(selectedRows, 'templates')
+    exportToCSV(selectedRows, "templates");
   } else {
-    exportToCSV(datas.value, 'templates')
+    exportToCSV(datas.value, "templates");
   }
-  exportLoading.value = false
+  exportLoading.value = false;
 }
 
 /**
  * 导入
  */
 function onUpload(options: UploadRequestOptions) {
-  return importTemplates(options.file)
+  return importTemplates(options.file);
 }
 
 async function onSectionSave() {
-  const result = await sectionRef.value?.modifySectionContent()
+  const result = await sectionRef.value?.modifySectionContent();
   if (result) {
-    configVisible.value = false
+    configVisible.value = false;
   }
 }
 </script>
@@ -217,47 +232,93 @@ async function onSectionSave() {
   <ElCard>
     <ElRow :gutter="20" justify="space-between" class="mb-4">
       <ElCol :span="12">
-        <ElInput v-model="filter.name!.value" clearable style="width: 240px" class="mr-4"
-          :placeholder="$t('placeholder.search')">
+        <ElInput
+          v-model="filter.name!.value"
+          clearable
+          style="width: 240px"
+          class="mr-4"
+          :placeholder="$t('placeholder.search')"
+        >
           <template #prefix>
             <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />
           </template>
         </ElInput>
-        <ElButton title="search" plain :type="actionTypes['search']" @click="load()">
+        <ElButton
+          title="search"
+          plain
+          :type="actionTypes['search']"
+          @click="load()"
+        >
           <Icon :icon="actionIcon('search')" width="1.25em" height="1.25em" />{{
-            $t('action.search') }}
+            $t("action.search")
+          }}
         </ElButton>
       </ElCol>
 
       <ElCol :span="12" class="inline-flex! justify-end space-x-3">
-        <ElButton v-if="hasAction($route.name, 'create')" title="create" :type="actionTypes['create']"
-          @click="saveRow()">
+        <ElButton
+          v-if="hasAction($route.name, 'create')"
+          title="create"
+          :type="actionTypes['create']"
+          @click="saveRow()"
+        >
           <Icon :icon="actionIcon('create')" width="1.25em" height="1.25em" />{{
-            $t('action.create') }}
+            $t("action.create")
+          }}
         </ElButton>
-        <ElUpload :limit="1" :auto-upload="false" :http-request="onUpload" :on-success="load"
-          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
-          <ElButton v-if="hasAction($route.name, 'import')" v-loading="importLoading" title="import"
-            :type="actionTypes['import']" plain>
-            <Icon :icon="actionIcon('import')" width="1.25em" height="1.25em" />{{
-              $t('action.import') }}
+        <ElUpload
+          :limit="1"
+          :auto-upload="false"
+          :http-request="onUpload"
+          :on-success="load"
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+        >
+          <ElButton
+            v-if="hasAction($route.name, 'import')"
+            v-loading="importLoading"
+            title="import"
+            :type="actionTypes['import']"
+            plain
+          >
+            <Icon
+              :icon="actionIcon('import')"
+              width="1.25em"
+              height="1.25em"
+            />{{ $t("action.import") }}
           </ElButton>
         </ElUpload>
-        <ElButton v-if="hasAction($route.name, 'export')" title="export" :type="actionTypes['export']" plain
-          @click="exportRows" :loading="exportLoading">
+        <ElButton
+          v-if="hasAction($route.name, 'export')"
+          title="export"
+          :type="actionTypes['export']"
+          plain
+          @click="exportRows"
+          :loading="exportLoading"
+        >
           <Icon :icon="actionIcon('export')" width="1.25em" height="1.25em" />{{
-            $t('action.export')
+            $t("action.export")
           }}
         </ElButton>
       </ElCol>
     </ElRow>
 
-    <ElTable ref="tableRef" v-loading="loading" :data="datas" row-key="id" table-layout="auto">
+    <ElTable
+      ref="tableRef"
+      v-loading="loading"
+      :data="datas"
+      row-key="id"
+      table-layout="auto"
+    >
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
         <template #default="scope">
-          <ElButton title="details" type="primary" link @click="showRow(scope.row)">
+          <ElButton
+            title="details"
+            type="primary"
+            link
+            @click="showRow(scope.row)"
+          >
             {{ scope.row.name }}
           </ElButton>
         </template>
@@ -265,72 +326,137 @@ async function onSectionSave() {
       <ElTableColumn prop="type" :label="$t('label.type')">
         <template #default="scope">
           <ElBadge is-dot :type="templateTypes[scope.row.type]" class="mr-1" />
-          <ElText :type="templateTypes[scope.row.type]">{{ scope.row.type }}</ElText>
+          <ElText :type="templateTypes[scope.row.type]">{{
+            scope.row.type
+          }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="version" :label="$t('label.version')">
-        <template #default="scope">
-          V{{ scope.row.version }}
-        </template>
+        <template #default="scope"> V{{ scope.row.version }} </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('label.status')" align="center" sortable>
+      <ElTableColumn
+        prop="status"
+        :label="$t('label.status')"
+        align="center"
+        sortable
+      >
         <template #default="scope">
           <ElBadge is-dot :type="schemaStatus[scope.row.status]" class="mr-1" />
-          <ElText :type="schemaStatus[scope.row.status]">{{ scope.row.status }}</ElText>
+          <ElText :type="schemaStatus[scope.row.status]">{{
+            scope.row.status
+          }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="lastModifiedDate" :label="$t('label.lastModifiedDate')" sortable>
+      <ElTableColumn
+        prop="lastModifiedDate"
+        :label="$t('label.lastModifiedDate')"
+        sortable
+      >
         <template #default="scope">
-          {{ scope.row.lastModifiedDate ? dayjs(scope.row.lastModifiedDate).format('YYYY-MM-DD HH:mm') : '-' }}
+          {{
+            scope.row.lastModifiedDate
+              ? dayjs(scope.row.lastModifiedDate).format("YYYY-MM-DD HH:mm")
+              : "-"
+          }}
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
-          <ElButton v-if="hasAction($route.name, 'modify')" title="modify" :type="actionTypes['modify']" link
-            @click="saveRow(scope.row)">
-            <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />{{
-              $t('action.modify')
-            }}
+          <ElButton
+            v-if="hasAction($route.name, 'modify')"
+            title="modify"
+            :type="actionTypes['modify']"
+            link
+            @click="saveRow(scope.row)"
+          >
+            <Icon
+              :icon="actionIcon('modify')"
+              width="1.25em"
+              height="1.25em"
+            />{{ $t("action.modify") }}
           </ElButton>
-          <ElButton v-if="scope.row.status === 'DRAFT' && hasAction($route.name, 'section')" title="section"
-            type="success" link @click="configSection(scope.row.id, scope.row.type)">
-            <Icon :icon="actionIcon('section')" width="1.25em" height="1.25em" />{{
-              $t('action.section')
-            }}
+          <ElButton
+            v-if="
+              scope.row.status === 'DRAFT' && hasAction($route.name, 'section')
+            "
+            title="section"
+            type="success"
+            link
+            @click="configSection(scope.row.id, scope.row.type)"
+          >
+            <Icon
+              :icon="actionIcon('section')"
+              width="1.25em"
+              height="1.25em"
+            />{{ $t("action.section") }}
           </ElButton>
-          <ElButton v-if="hasAction($route.name, 'remove')" title="remove" :type="actionTypes['remove']" link
-            @click="removeRow(scope.row.id, scope.row.name)">
-            <Icon :icon="actionIcon('remove')" width="1.25em" height="1.25em" />{{
-              $t('action.remove')
-            }}
+          <ElButton
+            v-if="hasAction($route.name, 'remove')"
+            title="remove"
+            :type="actionTypes['remove']"
+            link
+            @click="removeRow(scope.row.id, scope.row.name)"
+          >
+            <Icon
+              :icon="actionIcon('remove')"
+              width="1.25em"
+              height="1.25em"
+            />{{ $t("action.remove") }}
           </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>
-    <ElPagination layout="slot, ->, total, prev, pager, next, sizes" @change="pageChange" :total="total">
+    <ElPagination
+      layout="slot, ->, total, prev, pager, next, sizes"
+      @change="pageChange"
+      :total="total"
+    >
       <template #default>
-        {{ $t('message.selectedTotal', { total: tableRef?.getSelectionRows().length }) }}
+        {{
+          $t("message.selectedTotal", {
+            total: tableRef?.getSelectionRows().length
+          })
+        }}
       </template>
     </ElPagination>
   </ElCard>
 
   <!-- form -->
-  <ElDialog v-model="visible" :title="form.id ? $t('action.modify') : $t('action.create')" :show-close="false"
-    width="480">
+  <ElDialog
+    v-model="visible"
+    :title="form.id ? $t('action.modify') : $t('action.create')"
+    :show-close="false"
+    width="480"
+  >
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.name')" prop="name">
-            <ElInput v-model="form.name" :placeholder="$t('placeholder.inputText', { field: $t('label.name') })" />
+            <ElInput
+              v-model="form.name"
+              :placeholder="
+                $t('placeholder.inputText', { field: $t('label.name') })
+              "
+            />
           </ElFormItem>
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
         <ElCol>
           <ElFormItem :label="$t('label.type')" prop="type">
-            <ElSelect v-model="form.type" :disabled="form.id != null"
-              :placeholder="$t('placeholder.selectText', { field: $t('label.type') })">
-              <ElOption v-for="(_, value) in templateTypes" :key="value" :label="value" :value="value" />
+            <ElSelect
+              v-model="form.type"
+              :disabled="form.id != null"
+              :placeholder="
+                $t('placeholder.selectText', { field: $t('label.type') })
+              "
+            >
+              <ElOption
+                v-for="(_, value) in templateTypes"
+                :key="value"
+                :label="value"
+                :value="value"
+              />
             </ElSelect>
           </ElFormItem>
         </ElCol>
@@ -339,32 +465,59 @@ async function onSectionSave() {
     <template #footer>
       <ElButton title="cancel" @click="visible = false">
         <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
-          $t('action.cancel') }}
+          $t("action.cancel")
+        }}
       </ElButton>
-      <ElButton title="submit" type="primary" :loading="saveLoading" @click="onSubmit(formRef!)">
-        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
-          $t('action.submit') }}
+      <ElButton
+        title="submit"
+        type="primary"
+        :loading="saveLoading"
+        @click="onSubmit(formRef!)"
+      >
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
+        {{ $t("action.submit") }}
       </ElButton>
     </template>
   </ElDialog>
 
   <!-- section -->
-  <ElDialog v-model="configVisible" :title="$t('action.section')" :show-close="false" :z-index="10">
-    <Section ref="sectionRef" :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" excel-mode="FIELD" />
+  <ElDialog
+    v-model="configVisible"
+    :title="$t('action.section')"
+    :show-close="false"
+    :z-index="10"
+  >
+    <Section
+      ref="sectionRef"
+      :owner-id="form.id"
+      owner-type="TEMPLATE"
+      :template-type="form.type"
+      excel-mode="FIELD"
+    />
     <template #footer>
       <ElButton title="close" @click="configVisible = false">
         <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
-          $t('action.cancel') }}
+          $t("action.cancel")
+        }}
       </ElButton>
       <ElButton title="save" type="primary" @click="onSectionSave()">
-        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" /> {{
-          $t('action.submit') }}
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
+        {{ $t("action.submit") }}
       </ElButton>
     </template>
   </ElDialog>
 
   <!-- preview -->
-  <ElDialog v-model="previewVisible" :title="$t('action.preview')" :z-index="10">
-    <Section :owner-id="form.id" owner-type="TEMPLATE" :template-type="form.type" :read-only="true" />
+  <ElDialog
+    v-model="previewVisible"
+    :title="$t('action.preview')"
+    :z-index="10"
+  >
+    <Section
+      :owner-id="form.id"
+      owner-type="TEMPLATE"
+      :template-type="form.type"
+      :read-only="true"
+    />
   </ElDialog>
 </template>

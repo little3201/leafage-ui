@@ -1,14 +1,14 @@
-import type { AudtiMetadata } from '../global'
+import type { AudtiMetadata } from "../global";
 
 export interface AccessLog extends AudtiMetadata {
-  url: string
-  httpMethod: string
-  targetId?: number
-  params?: string
-  body?: string
-  ip: string
-  userAgent?: string
-  duration?: number
-  statusCode?: number
-  response?: string
+  url: string;
+  httpMethod: string;
+  targetId?: number;
+  params?: string;
+  body?: string;
+  ip: string;
+  userAgent?: string;
+  duration?: number;
+  statusCode?: number;
+  response?: string;
 }

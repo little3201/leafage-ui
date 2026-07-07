@@ -1,15 +1,16 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { Section, SectionData, SectionField } from '@/types'
-
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Section, SectionData, SectionField } from "@/types";
 
 /**
  * Fetch row tree structure
  * @returns tree data
  */
 export const retrieveSectionTree = (ownerId: number, ownerType: string) => {
-  return api.get(`${SERVER_URL.SECTION}/${ownerId}/tree`, { params: { ownerType } })
-}
+  return api.get(`${SERVER_URL.SECTION}/${ownerId}/tree`, {
+    params: { ownerType }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -17,8 +18,8 @@ export const retrieveSectionTree = (ownerId: number, ownerType: string) => {
  * @returns Row data
  */
 export const fetchSection = (id: number) => {
-  return api.get(`${SERVER_URL.SECTION}/${id}`)
-}
+  return api.get(`${SERVER_URL.SECTION}/${id}`);
+};
 
 /**
  * Get row fields
@@ -26,8 +27,8 @@ export const fetchSection = (id: number) => {
  * @returns Fields data
  */
 export const retrieveSectionFields = (id: number) => {
-  return api.get(`${SERVER_URL.SECTION}/${id}/fields`)
-}
+  return api.get(`${SERVER_URL.SECTION}/${id}/fields`);
+};
 
 /**
  * Get row datas
@@ -35,8 +36,8 @@ export const retrieveSectionFields = (id: number) => {
  * @returns Datas data
  */
 export const retrieveSectionDatas = (id: number) => {
-  return api.get(`${SERVER_URL.SECTION}/${id}/datas`)
-}
+  return api.get(`${SERVER_URL.SECTION}/${id}/datas`);
+};
 
 /**
  * Create a new row
@@ -44,8 +45,8 @@ export const retrieveSectionDatas = (id: number) => {
  * @returns Created row
  */
 export const createSection = (row: Section) => {
-  return api.post(SERVER_URL.SECTION, row)
-}
+  return api.post(SERVER_URL.SECTION, row);
+};
 
 /**
  * Create a new row
@@ -53,8 +54,8 @@ export const createSection = (row: Section) => {
  * @returns Created row
  */
 export const createSectionField = (row: SectionField) => {
-  return api.post(`${SERVER_URL.SECTION}/fields`, row)
-}
+  return api.post(`${SERVER_URL.SECTION}/fields`, row);
+};
 
 /**
  * Create a new row
@@ -62,8 +63,8 @@ export const createSectionField = (row: SectionField) => {
  * @returns Created row
  */
 export const createSectionData = (row: SectionData) => {
-  return api.post(`${SERVER_URL.SECTION}/datas`, row)
-}
+  return api.post(`${SERVER_URL.SECTION}/datas`, row);
+};
 
 /**
  * Modify an existing row
@@ -72,8 +73,8 @@ export const createSectionData = (row: SectionData) => {
  * @returns Modified row
  */
 export const modifySection = (id: number, row: Section) => {
-  return api.put(`${SERVER_URL.SECTION}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.SECTION}/${id}`, row);
+};
 
 /**
  * Modify an existing row
@@ -82,8 +83,8 @@ export const modifySection = (id: number, row: Section) => {
  * @returns Modified row
  */
 export const modifySectionField = (id: number, row: SectionField) => {
-  return api.put(`${SERVER_URL.SECTION}/fields/${id}`, row)
-}
+  return api.put(`${SERVER_URL.SECTION}/fields/${id}`, row);
+};
 
 /**
  * Modify an existing row
@@ -92,8 +93,8 @@ export const modifySectionField = (id: number, row: SectionField) => {
  * @returns Modified row
  */
 export const modifySectionData = (id: number, row: SectionData) => {
-  return api.put(`${SERVER_URL.SECTION}/datas/${id}`, row)
-}
+  return api.put(`${SERVER_URL.SECTION}/datas/${id}`, row);
+};
 
 /**
  * Remove a row
@@ -101,8 +102,8 @@ export const modifySectionData = (id: number, row: SectionData) => {
  * @returns Deletion status
  */
 export const removeSection = (id: number) => {
-  return api.delete(`${SERVER_URL.SECTION}/${id}`)
-}
+  return api.delete(`${SERVER_URL.SECTION}/${id}`);
+};
 
 /**
  * Remove a row
@@ -110,8 +111,8 @@ export const removeSection = (id: number) => {
  * @returns Deletion status
  */
 export const removeSectionField = (id: number) => {
-  return api.delete(`${SERVER_URL.SECTION}/fields/${id}`)
-}
+  return api.delete(`${SERVER_URL.SECTION}/fields/${id}`);
+};
 
 /**
  * Remove a row
@@ -119,5 +120,5 @@ export const removeSectionField = (id: number) => {
  * @returns Deletion status
  */
 export const removeSectionData = (id: number) => {
-  return api.delete(`${SERVER_URL.SECTION}/datas/${id}`)
-}
+  return api.delete(`${SERVER_URL.SECTION}/datas/${id}`);
+};

@@ -1,92 +1,91 @@
-import { getUserInfo, signIn } from '@/api/authentication'
-import { retrievePrivilegeTree } from '@/api/system/privileges'
-import type { PrivilegeTreeNode } from '@/types'
-import { useUserStore } from '@/stores/user'
-import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHistory } from 'vue-router'
-import { constantRouterMap } from './routes'
+import { getUserInfo, signIn } from "@/api/authentication";
+import { retrievePrivilegeTree } from "@/api/system/privileges";
+import type { PrivilegeTreeNode } from "@/types";
+import { useUserStore } from "@/stores/user";
+import type { RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
+import { constantRouterMap } from "./routes";
 // Lazy load layout
-const BlankLayout = () => import('layouts/BlankLayout.vue')
+const BlankLayout = () => import("layouts/BlankLayout.vue");
 
-
-const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
+const modules = import.meta.glob("../pages/**/*.{vue,tsx}");
 
 // Create router instance
 const router = createRouter({
   history: createWebHistory(),
   routes: constantRouterMap,
   scrollBehavior: () => ({ left: 0, top: 0 })
-})
-
+});
 
 router.beforeEach(async (to, from) => {
-  if (['/login'].includes(to.path)) return true
+  if (["/login"].includes(to.path)) return true;
 
-  const userStore = useUserStore()
+  const userStore = useUserStore();
 
   // 加载用户信息
   if (!userStore.username) {
     try {
-      const res = await getUserInfo()
+      const res = await getUserInfo();
       if (res && res.data) {
         userStore.$patch({
           username: res.data.sub,
           fullName: res.data.name,
           email: res.data.email
-        })
+        });
       }
     } catch {
-      userStore.$reset()
-      signIn()
-      return false
+      userStore.$reset();
+      signIn();
+      return false;
     }
   }
 
   // 加载权限信息
   if (!userStore.privileges.length) {
     try {
-      const res = await retrievePrivilegeTree()
+      const res = await retrievePrivilegeTree();
       if (res && res.data) {
-        userStore.$patch({ privileges: res.data })
+        userStore.$patch({ privileges: res.data });
       }
     } catch {
-      userStore.$reset()
-      signIn()
-      return false
+      userStore.$reset();
+      signIn();
+      return false;
     }
   }
 
   // 动态注册路由
   if (!userStore.routesAdded) {
-    generateRoutes(userStore.privileges).forEach((route) => {
-      router.addRoute('home', route)
-    })
+    generateRoutes(userStore.privileges).forEach(route => {
+      router.addRoute("home", route);
+    });
 
-    if (!router.hasRoute('ErrorNotFound')) {
+    if (!router.hasRoute("ErrorNotFound")) {
       router.addRoute({
-        path: '/:cacheAll(.*)*',
-        name: 'ErrorNotFound',
-        component: () => import('pages/ErrorNotFound.vue'),
-      })
+        path: "/:cacheAll(.*)*",
+        name: "ErrorNotFound",
+        component: () => import("pages/ErrorNotFound.vue")
+      });
     }
 
-    userStore.routesAdded = true
+    userStore.routesAdded = true;
   }
 
   if (!from.name && to.matched.length === 0) {
-    return { path: to.fullPath, replace: true, query: to.query, hash: to.hash }
+    return { path: to.fullPath, replace: true, query: to.query, hash: to.hash };
   }
-  return true
-})
-
+  return true;
+});
 
 /**
  * Generate routes dynamically based on user privileges
  * @param {PrivilegeTreeNode[]} routes - Array of privilege tree nodes
  * @returns {RouteRecordRaw[]} - Array of route records
  */
-export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] => {
-  const res: RouteRecordRaw[] = []
+export const generateRoutes = (
+  routes: PrivilegeTreeNode[]
+): RouteRecordRaw[] => {
+  const res: RouteRecordRaw[] = [];
   for (const route of routes) {
     const item: RouteRecordRaw = {
       path: route.meta.path,
@@ -94,22 +93,23 @@ export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] =>
       redirect: route.meta.redirect,
       component: null,
       children: []
-    }
+    };
     if (route.meta.component) {
-      const comModule = modules[`../pages/${route.meta.component}/IndexPage.vue`]
-      const component = route.meta.component
+      const comModule =
+        modules[`../pages/${route.meta.component}/IndexPage.vue`];
+      const component = route.meta.component;
       if (comModule) {
-        item.component = comModule
-      } else if (component.includes('#')) {
-        item.component = BlankLayout
+        item.component = comModule;
+      } else if (component.includes("#")) {
+        item.component = BlankLayout;
       }
     }
     if (route.children) {
-      item.children = generateRoutes(route.children)
+      item.children = generateRoutes(route.children);
     }
-    res.push(item)
+    res.push(item);
   }
-  return res
-}
+  return res;
+};
 
-export default router
+export default router;

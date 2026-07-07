@@ -1,7 +1,7 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { Filter, Pagination, Privilege, PrivilegeAction } from '@/types'
-import { dealFilters } from '@/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, Pagination, Privilege, PrivilegeAction } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from '@/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrievePrivileges = (pagination: Pagination, filter?: Filter<Privilege>) => {
-  const filters = dealFilters(filter)
-  return api.get(`${SERVER_URL.PRIVILEGE}`, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrievePrivileges = (
+  pagination: Pagination,
+  filter?: Filter<Privilege>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(`${SERVER_URL.PRIVILEGE}`, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Get row subset
@@ -20,24 +25,24 @@ export const retrievePrivileges = (pagination: Pagination, filter?: Filter<Privi
  * @returns Subset data
  */
 export const retrievePrivilegeSubset = (id: number) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/subset`)
-}
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/subset`);
+};
 
 /**
  * Fetch row tree structure
  * @returns tree data
  */
 export const retrievePrivilegeTree = () => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/tree`)
-}
+  return api.get(`${SERVER_URL.PRIVILEGE}/tree`);
+};
 
 /**
  * Fetch row actions
  * @returns Row actions
  */
 export const retrievePrivilegeActions = (id: number) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/actions`)
-}
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/actions`);
+};
 
 /**
  * Fetch a specific row
@@ -45,8 +50,8 @@ export const retrievePrivilegeActions = (id: number) => {
  * @returns Row data
  */
 export const fetchPrivilege = (id: number) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/${id}`)
-}
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}`);
+};
 
 /**
  * Fetch a specific row
@@ -54,8 +59,8 @@ export const fetchPrivilege = (id: number) => {
  * @returns Row data
  */
 export const fetchPrivilegeAction = (id: number, actionId: number) => {
-  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/actions/${actionId}`)
-}
+  return api.get(`${SERVER_URL.PRIVILEGE}/${id}/actions/${actionId}`);
+};
 
 /**
  * Modify an existing row
@@ -64,8 +69,8 @@ export const fetchPrivilegeAction = (id: number, actionId: number) => {
  * @returns Modified row
  */
 export const createPrivilegeAction = (id: number, row: PrivilegeAction) => {
-  return api.post(`${SERVER_URL.PRIVILEGE}/${id}/actions`, row)
-}
+  return api.post(`${SERVER_URL.PRIVILEGE}/${id}/actions`, row);
+};
 
 /**
  * Modify an existing row
@@ -74,8 +79,8 @@ export const createPrivilegeAction = (id: number, row: PrivilegeAction) => {
  * @returns Modified row
  */
 export const modifyPrivilege = (id: number, row: Privilege) => {
-  return api.put(`${SERVER_URL.PRIVILEGE}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.PRIVILEGE}/${id}`, row);
+};
 
 /**
  * Modify an existing row
@@ -84,8 +89,8 @@ export const modifyPrivilege = (id: number, row: Privilege) => {
  * @returns Modified row
  */
 export const modifyPrivilegeAction = (id: number, row: PrivilegeAction) => {
-  return api.put(`${SERVER_URL.PRIVILEGE}/${id}/actions/${row.id}`, row)
-}
+  return api.put(`${SERVER_URL.PRIVILEGE}/${id}/actions/${row.id}`, row);
+};
 
 /**
  * Enable an existing row
@@ -93,8 +98,8 @@ export const modifyPrivilegeAction = (id: number, row: PrivilegeAction) => {
  * @returns Enable result
  */
 export const enablePrivilege = (id: number) => {
-  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/enable`)
-}
+  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/enable`);
+};
 
 /**
  * Disable an existing row
@@ -102,8 +107,8 @@ export const enablePrivilege = (id: number) => {
  * @returns Disable result
  */
 export const disablePrivilege = (id: number) => {
-  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/disable`)
-}
+  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/disable`);
+};
 
 /**
  * Enable or Disable an existing row
@@ -112,8 +117,8 @@ export const disablePrivilege = (id: number) => {
  * @returns Enable or Disable result
  */
 export const enablePrivilegeAction = (id: number, actionId: number) => {
-  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/actions/${actionId}`)
-}
+  return api.patch(`${SERVER_URL.PRIVILEGE}/${id}/actions/${actionId}`);
+};
 
 /**
  * Import rows
@@ -121,5 +126,5 @@ export const enablePrivilegeAction = (id: number, actionId: number) => {
  * @returns
  */
 export const importPrivileges = (file: File) => {
-  return api.postForm(`${SERVER_URL.PRIVILEGE}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.PRIVILEGE}/import`, { file: file });
+};

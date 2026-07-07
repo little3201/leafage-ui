@@ -1,34 +1,34 @@
-import type { AudtiMetadata, TreeNode } from '../global'
+import type { AudtiMetadata, TreeNode } from "../global";
 
 export interface Section extends AudtiMetadata {
-  superiorId: number | null
-  ownerId: number | null
-  ownerType: string | null
-  name: string
-  sequence?: number
-  level?: number
-  body: Record<string, unknown>
-  count?: number
+  superiorId: number | null;
+  ownerId: number | null;
+  ownerType: string | null;
+  name: string;
+  sequence?: number;
+  level?: number;
+  body: Record<string, unknown>;
+  count?: number;
 }
 
 export interface SectionTreeNode extends TreeNode {
   meta: {
-    sequence: number
-  }
+    sequence: number;
+  };
 }
 
 export interface SectionField extends AudtiMetadata {
-  name: string
-  sectionId: number | null
-  field: string
-  type: string
-  length: number
-  required: boolean
+  name: string;
+  sectionId: number | null;
+  field: string;
+  type: string;
+  length: number;
+  required: boolean;
 }
 
 export interface SectionData extends AudtiMetadata {
-  sectionId: number
+  sectionId: number;
   data: {
-    [key: string]: string | number | boolean
-  }
+    [key: string]: string | number | boolean;
+  };
 }

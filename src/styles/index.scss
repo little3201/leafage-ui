@@ -8,8 +8,9 @@
 }
 
 body {
-  font-family: Inter, system-ui, Avenir, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-family:
+    Inter, system-ui, Avenir, "Helvetica Neue", Helvetica, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
@@ -18,19 +19,35 @@ body {
 // app global css in SCSS
 
 .bg-primary-gradient {
-  background: radial-gradient(circle at top right, var(--el-color-white), var(--el-color-primary-dark-2));
+  background: radial-gradient(
+    circle at top right,
+    var(--el-color-white),
+    var(--el-color-primary-dark-2)
+  );
 }
 
 .bg-error-gradient {
-  background: radial-gradient(circle at center left, var(--el-color-danger), var(--el-color-danger-dark-2));
+  background: radial-gradient(
+    circle at center left,
+    var(--el-color-danger),
+    var(--el-color-danger-dark-2)
+  );
 }
 
 .bg-success-gradient {
-  background: radial-gradient(circle at center right, var(--el-color-success), var(--el-color-success-dark-2));
+  background: radial-gradient(
+    circle at center right,
+    var(--el-color-success),
+    var(--el-color-success-dark-2)
+  );
 }
 
 .bg-warning-gradient {
-  background: radial-gradient(circle at center top, var(--el-color-warning), var(--el-color-warning-dark-2));
+  background: radial-gradient(
+    circle at center top,
+    var(--el-color-warning),
+    var(--el-color-warning-dark-2)
+  );
 }
 
 .el-menu {
@@ -56,7 +73,7 @@ body {
   --el-card-border-radius: var(--el-border-radius-base) !important;
 }
 
-.el-dropdown{
+.el-dropdown {
   vertical-align: middle !important;
 }
 

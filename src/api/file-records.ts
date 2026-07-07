@@ -1,7 +1,7 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { FileRecord, Filter, Pagination } from '@/types'
-import { dealFilters } from '@/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { FileRecord, Filter, Pagination } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from '@/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveFiles = (pagination: Pagination, filter?: Filter<FileRecord>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.FILE, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveFiles = (
+  pagination: Pagination,
+  filter?: Filter<FileRecord>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.FILE, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveFiles = (pagination: Pagination, filter?: Filter<FileRecord
  * @returns Row data
  */
 export const fetchFile = (id: number) => {
-  return api.get(`${SERVER_URL.FILE}/${id}`)
-}
+  return api.get(`${SERVER_URL.FILE}/${id}`);
+};
 
 /**
  * Enable an existing row
@@ -29,8 +34,8 @@ export const fetchFile = (id: number) => {
  * @returns Enable result
  */
 export const enableFile = (id: number) => {
-  return api.patch(`${SERVER_URL.FILE}/${id}/enable`)
-}
+  return api.patch(`${SERVER_URL.FILE}/${id}/enable`);
+};
 
 /**
  * Disable an existing row
@@ -38,8 +43,8 @@ export const enableFile = (id: number) => {
  * @returns Disable result
  */
 export const disableFile = (id: number) => {
-  return api.patch(`${SERVER_URL.FILE}/${id}/disable`)
-}
+  return api.patch(`${SERVER_URL.FILE}/${id}/disable`);
+};
 
 /**
  * Upload
@@ -47,8 +52,8 @@ export const disableFile = (id: number) => {
  * @returns Uploaded row
  */
 export const uploadFile = (file: File, superiorId?: number | null) => {
-  return api.postForm(`${SERVER_URL.FILE}/upload`, { file, superiorId })
-}
+  return api.postForm(`${SERVER_URL.FILE}/upload`, { file, superiorId });
+};
 
 /**
  * Download
@@ -56,8 +61,8 @@ export const uploadFile = (file: File, superiorId?: number | null) => {
  * @returns data stream
  */
 export const downloadFile = (id: number) => {
-  return api.get(`${SERVER_URL.FILE}/${id}/download`, { responseType: 'blob' })
-}
+  return api.get(`${SERVER_URL.FILE}/${id}/download`, { responseType: "blob" });
+};
 
 /**
  * Remove a row
@@ -65,5 +70,5 @@ export const downloadFile = (id: number) => {
  * @returns Deletion status
  */
 export const removeFile = (id: number) => {
-  return api.delete(`${SERVER_URL.FILE}/${id}`)
-}
+  return api.delete(`${SERVER_URL.FILE}/${id}`);
+};

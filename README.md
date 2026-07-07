@@ -16,11 +16,11 @@
   后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
 </p>
 
-|   分支   | 认证模式|                 组件库                      |              预览地址       |
-|----------|--------|--------------------------------------------|-----------------------------|
-| element  |  BFF   | [Element plus](https://element-plus.org)   | <a href="https://preview.leafage.top" target="_blank">https://preview.leafage.top</a> |
-| develop  |  PKCE  | [Quasar framework](https://quasar.dev)     | <a href="https://console.leafage.top" target="_blank">https://console.leafage.top</a> |
-| react    |  JWT   | [Material UI](https://mui.com/material-ui) |              -              |
+| 分支    | 认证模式 | 组件库                                     | 预览地址                                                                              |
+| ------- | -------- | ------------------------------------------ | ------------------------------------------------------------------------------------- |
+| element | BFF      | [Element plus](https://element-plus.org)   | <a href="https://preview.leafage.top" target="_blank">https://preview.leafage.top</a> |
+| develop | PKCE     | [Quasar framework](https://quasar.dev)     | <a href="https://console.leafage.top" target="_blank">https://console.leafage.top</a> |
+| react   | JWT      | [Material UI](https://mui.com/material-ui) | -                                                                                     |
 
 ### 特性
 

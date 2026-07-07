@@ -1,6 +1,4 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="container mx-auto">
@@ -8,9 +6,7 @@
 
     <div class="space-y-10 text-gray-700">
       <section class="space-y-4">
-        <h2 class="text-xl font-semibold">
-          1. 信息收集
-        </h2>
+        <h2 class="text-xl font-semibold"> 1. 信息收集 </h2>
 
         <p class="leading-8">
           我们可能会收集您在使用系统过程中主动提供的信息，包括但不限于：
@@ -25,13 +21,9 @@
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-xl font-semibold">
-          2. 信息使用
-        </h2>
+        <h2 class="text-xl font-semibold"> 2. 信息使用 </h2>
 
-        <p class="leading-8">
-          收集的信息将用于：
-        </p>
+        <p class="leading-8"> 收集的信息将用于： </p>
 
         <ul class="list-disc space-y-2 pl-6 leading-8">
           <li>提供系统服务</li>
@@ -42,9 +34,7 @@
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-xl font-semibold">
-          3. 数据安全
-        </h2>
+        <h2 class="text-xl font-semibold"> 3. 数据安全 </h2>
 
         <p class="leading-8">
           我们会采用合理的安全措施保护您的数据，避免未经授权的访问、泄露或篡改。
@@ -52,15 +42,14 @@
       </section>
 
       <section class="space-y-4">
-        <h2 class="text-xl font-semibold">
-          4. 联系我们
-        </h2>
+        <h2 class="text-xl font-semibold"> 4. 联系我们 </h2>
 
-        <p class="leading-8">
-          如有任何问题，请联系：
-        </p>
+        <p class="leading-8"> 如有任何问题，请联系： </p>
 
-        <a href="mailto:admin@example.com" class="text-blue-500 hover:underline">
+        <a
+          href="mailto:admin@example.com"
+          class="text-blue-500 hover:underline"
+        >
           admin@example.com
         </a>
       </section>

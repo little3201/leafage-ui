@@ -1,8 +1,8 @@
-import { createPinia } from 'pinia'
+import { createPinia } from "pinia";
 
-const pinia = createPinia()
+const pinia = createPinia();
 
 // use the plugin
 // pinia.use(plugin)
 
-export default pinia
+export default pinia;

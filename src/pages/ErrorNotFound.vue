@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import notFound from '@/assets/404.svg'
-import { useRouter } from 'vue-router'
+import notFound from "@/assets/404.svg";
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 </script>
 
 <template>
@@ -12,7 +12,9 @@ const router = useRouter()
       <div class="text-center">
         <div class="text-2xl text-(--el-color-info)">Oops. Nothing here...</div>
         <div class="mt-8">
-          <ElButton size="large" type="primary" @click="router.push('/')">{{ $t('action.goHome') }}</ElButton>
+          <ElButton size="large" type="primary" @click="router.push('/')">{{
+            $t("action.goHome")
+          }}</ElButton>
         </div>
       </div>
     </ElMain>

@@ -1,83 +1,82 @@
-import BlankLayout from 'layouts/BlankLayout.vue'
-import MainLayout from 'layouts/MainLayout.vue'
-import type { RouteRecordRaw } from 'vue-router'
-
+import BlankLayout from "layouts/BlankLayout.vue";
+import MainLayout from "layouts/MainLayout.vue";
+import type { RouteRecordRaw } from "vue-router";
 
 export const constantRouterMap: Array<RouteRecordRaw> = [
   {
-    path: '/',
-    name: 'home',
+    path: "/",
+    name: "home",
     component: MainLayout,
     children: [
       {
-        path: '',
-        name: 'index',
-        component: () => import('pages/IndexPage.vue')
+        path: "",
+        name: "index",
+        component: () => import("pages/IndexPage.vue")
       },
       {
-        path: 'profile',
-        name: 'profile',
-        component: () => import('pages/profile/IndexPage.vue'),
+        path: "profile",
+        name: "profile",
+        component: () => import("pages/profile/IndexPage.vue"),
         children: [
           {
-            path: '',
-            name: 'overview',
-            component: () => import('pages/profile/OverviewPage.vue')
+            path: "",
+            name: "overview",
+            component: () => import("pages/profile/OverviewPage.vue")
           },
           {
-            path: 'activities',
-            name: 'activities',
-            component: () => import('pages/profile/ActivityPage.vue')
+            path: "activities",
+            name: "activities",
+            component: () => import("pages/profile/ActivityPage.vue")
           },
           {
-            path: 'notifications',
-            name: 'notifications',
-            component: () => import('pages/profile/NotificationPage.vue')
+            path: "notifications",
+            name: "notifications",
+            component: () => import("pages/profile/NotificationPage.vue")
           },
           {
-            path: 'change-password',
-            name: 'ChangePassword',
-            component: () => import('pages/profile/ChangePassword.vue')
+            path: "change-password",
+            name: "ChangePassword",
+            component: () => import("pages/profile/ChangePassword.vue")
           },
           {
-            path: 'sessions',
-            name: 'sessions',
-            component: () => import('pages/profile/SessionPage.vue')
+            path: "sessions",
+            name: "sessions",
+            component: () => import("pages/profile/SessionPage.vue")
           }
         ]
       },
       {
-        path: 'faq',
-        name: 'faq',
-        component: () => import('pages/faq/IndexPage.vue')
-      },
+        path: "faq",
+        name: "faq",
+        component: () => import("pages/faq/IndexPage.vue")
+      }
     ]
   },
   {
-    path: '/legal',
-    name: 'legal',
+    path: "/legal",
+    name: "legal",
     component: BlankLayout,
     children: [
       {
-        path: '',
-        name: 'info',
-        component: () => import('pages/legal/IndexPage.vue'),
+        path: "",
+        name: "info",
+        component: () => import("pages/legal/IndexPage.vue")
       },
       {
-        path: '/privacy',
-        name: 'privacy',
-        component: () => import('pages/legal/privacy/IndexPage.vue')
+        path: "/privacy",
+        name: "privacy",
+        component: () => import("pages/legal/privacy/IndexPage.vue")
       },
       {
-        path: '/terms',
-        name: 'terms',
-        component: () => import('pages/legal/terms/IndexPage.vue')
-      },
+        path: "/terms",
+        name: "terms",
+        component: () => import("pages/legal/terms/IndexPage.vue")
+      }
     ]
   },
   {
-    path: '/login',
-    name: 'login',
-    component: () => import('pages/LoginPage.vue')
+    path: "/login",
+    name: "login",
+    component: () => import("pages/LoginPage.vue")
   }
-]
+];

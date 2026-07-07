@@ -1,26 +1,29 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { loadIcon } from '@/utils'
-import { useUserStore } from '@/stores/user'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { Icon } from "@iconify/vue";
+import { loadIcon } from "@/utils";
+import { useUserStore } from "@/stores/user";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-
-const { currentRoute } = useRouter()
-const userStore = useUserStore()
+const { currentRoute } = useRouter();
+const userStore = useUserStore();
 
 const me = {
   username: userStore.username,
   fullName: userStore.fullName
-}
+};
 
 const items = ref([
-  { name: 'overview', icon: 'overview-outline', router: '' },
-  { name: 'notifications', icon: 'notification-settings-outline', router: '/notifications' },
-  { name: 'sessions', icon: 'bigtop-updates', router: '/sessions' },
-  { name: 'changePassword', icon: 'key-outline', router: '/change-password' },
-  { name: 'activities', icon: 'browse-activity-outline', router: '/activities' },
-])
+  { name: "overview", icon: "overview-outline", router: "" },
+  {
+    name: "notifications",
+    icon: "notification-settings-outline",
+    router: "/notifications"
+  },
+  { name: "sessions", icon: "bigtop-updates", router: "/sessions" },
+  { name: "changePassword", icon: "key-outline", router: "/change-password" },
+  { name: "activities", icon: "browse-activity-outline", router: "/activities" }
+]);
 </script>
 
 <template>
@@ -45,8 +48,17 @@ const items = ref([
     <ElCol :span="5" :xl="4">
       <ElCard>
         <ElMenu router :default-active="currentRoute.fullPath">
-          <ElMenuItem v-for="item in items" :key="item.name" :index="`/profile${item.router}`">
-            <Icon :icon="loadIcon(item.icon)" width="20" height="20" class="mr-2" />
+          <ElMenuItem
+            v-for="item in items"
+            :key="item.name"
+            :index="`/profile${item.router}`"
+          >
+            <Icon
+              :icon="loadIcon(item.icon)"
+              width="20"
+              height="20"
+              class="mr-2"
+            />
             {{ $t(`label.${item.name}`) }}
           </ElMenuItem>
         </ElMenu>

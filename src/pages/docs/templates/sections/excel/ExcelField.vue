@@ -1,69 +1,76 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import type { FormInstance } from 'element-plus'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { createSectionField, modifySectionField, removeSectionField, retrieveSectionFields } from '@/api/docs/sections'
-import { fieldTypes } from '@/constants'
-import type { SectionField } from '@/types'
-import { actionIcon } from '@/utils'
-import { onMounted, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { Icon } from "@iconify/vue";
+import type { FormInstance } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import {
+  createSectionField,
+  modifySectionField,
+  removeSectionField,
+  retrieveSectionFields
+} from "@/api/docs/sections";
+import { fieldTypes } from "@/constants";
+import type { SectionField } from "@/types";
+import { actionIcon } from "@/utils";
+import { onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-
-const { t } = useI18n()
+const { t } = useI18n();
 const props = defineProps<{
-  sectionId: number | null
-  readOnly: boolean
-}>()
+  sectionId: number | null;
+  readOnly: boolean;
+}>();
 
-const formRef = ref<FormInstance>()
-const fields = ref<Array<SectionField>>([])
-const editable = ref<Record<number, boolean>>({})
-const loading = ref(false)
-const saveLoading = ref(false)
+const formRef = ref<FormInstance>();
+const fields = ref<Array<SectionField>>([]);
+const editable = ref<Record<number, boolean>>({});
+const loading = ref(false);
+const saveLoading = ref(false);
 
 const initialValues: SectionField = {
   id: null,
   sectionId: props.sectionId,
-  name: '',
-  type: '',
-  field: '',
+  name: "",
+  type: "",
+  field: "",
   length: 0,
   required: false
-}
+};
 
 onMounted(async () => {
-  await load()
-})
+  await load();
+});
 
-watch(() => props.sectionId, async (newVal, oldVal) => {
-  if (newVal === oldVal) return
+watch(
+  () => props.sectionId,
+  async (newVal, oldVal) => {
+    if (newVal === oldVal) return;
 
-  await load()
-})
+    await load();
+  }
+);
 
 async function load() {
-  if (!props.sectionId) return
-  loading.value = true
+  if (!props.sectionId) return;
+  loading.value = true;
 
   try {
-    const res = await retrieveSectionFields(props.sectionId)
-    fields.value = res.data
+    const res = await retrieveSectionFields(props.sectionId);
+    fields.value = res.data;
   } catch (error) {
-    fields.value = []
+    fields.value = [];
 
-    throw error
+    throw error;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function addRow() {
-  fields.value.push({ ...initialValues })
+  fields.value.push({ ...initialValues });
 }
 
 function modifyRow(id: number) {
-  editable.value[id] = true
+  editable.value[id] = true;
 }
 
 /**
@@ -73,88 +80,125 @@ function modifyRow(id: number) {
  */
 async function removeRow(id: number, name: string) {
   await ElMessageBox.confirm(
-    t('tips.removeWarning', { module: t('action.field'), data: name }),
-    t('tips.confirm'),
+    t("tips.removeWarning", { module: t("action.field"), data: name }),
+    t("tips.confirm"),
     {
       dangerouslyUseHTMLString: true,
       showCancelButton: false,
-      confirmButtonType: 'danger',
-      confirmButtonClass: 'w-full',
-      confirmButtonText: t('tips.removeButtonText'),
-      type: 'warning'
+      confirmButtonType: "danger",
+      confirmButtonClass: "w-full",
+      confirmButtonText: t("tips.removeButtonText"),
+      type: "warning"
     }
   ).then(async () => {
     try {
-      await removeSectionField(id)
-      await load()
+      await removeSectionField(id);
+      await load();
 
-      ElMessage.success(t('message.success', { action: t('action.remove') }))
+      ElMessage.success(t("message.success", { action: t("action.remove") }));
     } catch (error) {
-      ElMessage.error(t('message.error', { action: t('action.remove') }))
-      throw error
+      ElMessage.error(t("message.error", { action: t("action.remove") }));
+      throw error;
     }
-  })
+  });
 }
 
 /**
  * 表单提交
  */
 async function onSubmit(row: SectionField) {
-  if (!props.sectionId) return
+  if (!props.sectionId) return;
 
-  const valid = formRef.value?.validate()
+  const valid = formRef.value?.validate();
   if (valid) {
-    saveLoading.value = true
+    saveLoading.value = true;
     try {
-      row.sectionId = props.sectionId
+      row.sectionId = props.sectionId;
       if (row.id) {
-        await modifySectionField(row.id, row)
-        editable.value[row.id] = false
+        await modifySectionField(row.id, row);
+        editable.value[row.id] = false;
       } else {
-        await createSectionField(row)
+        await createSectionField(row);
       }
-      await load()
-      ElMessage.success(t('message.success', { action: row.id ? t('action.modify') : t('action.create') }))
+      await load();
+      ElMessage.success(
+        t("message.success", {
+          action: row.id ? t("action.modify") : t("action.create")
+        })
+      );
     } catch (error) {
-      ElMessage.error(t('message.error', { action: row.id ? t('action.modify') : t('action.create') }))
-      throw error
+      ElMessage.error(
+        t("message.error", {
+          action: row.id ? t("action.modify") : t("action.create")
+        })
+      );
+      throw error;
     } finally {
-      saveLoading.value = false
+      saveLoading.value = false;
     }
   }
-
 }
 </script>
 
 <template>
   <ElForm ref="formRef" :model="{ fields }" :show-message="false">
-    <ElTable v-loading="loading" :data="fields" row-key="id" table-layout="auto">
+    <ElTable
+      v-loading="loading"
+      :data="fields"
+      row-key="id"
+      table-layout="auto"
+    >
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
         <template #default="scope">
-          <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.name`"
-            :rules="[{ required: true, trigger: 'blur' }]">
-            <ElInput v-model="scope.row.name" style="width: 100px;" />
+          <ElFormItem
+            v-if="editable[scope.row.id]"
+            :prop="`fields.${scope.$index}.name`"
+            :rules="[{ required: true, trigger: 'blur' }]"
+          >
+            <ElInput v-model="scope.row.name" style="width: 100px" />
           </ElFormItem>
           <span v-else>{{ scope.row.name }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="field" :label="$t('label.field')">
         <template #default="scope">
-          <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.field`"
-            :rules="[{ required: true, trigger: 'blur' }]">
-            <ElInput v-if="editable[scope.row.id]" v-model="scope.row.field" style="width: 100px;" />
+          <ElFormItem
+            v-if="editable[scope.row.id]"
+            :prop="`fields.${scope.$index}.field`"
+            :rules="[{ required: true, trigger: 'blur' }]"
+          >
+            <ElInput
+              v-if="editable[scope.row.id]"
+              v-model="scope.row.field"
+              style="width: 100px"
+            />
             <span v-else>{{ scope.row.field }}</span>
           </ElFormItem>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="type" :label="$t('label.type')">
         <template #default="scope">
-          <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.type`"
-            :rules="[{ required: true, trigger: 'blur' }]">
-            <ElSelect v-if="editable[scope.row.id]" v-model="scope.row.type" :disabled="scope.row.id !== null"
-              :placeholder="$t('placeholder.selectText', { field: $t('label.type') })" style="width: 100px;">
-              <ElOption v-for="(label, value) in fieldTypes" :key="value" :label="label" :value="value" />
+          <ElFormItem
+            v-if="editable[scope.row.id]"
+            :prop="`fields.${scope.$index}.type`"
+            :rules="[{ required: true, trigger: 'blur' }]"
+          >
+            <ElSelect
+              v-if="editable[scope.row.id]"
+              v-model="scope.row.type"
+              :disabled="scope.row.id !== null"
+              :placeholder="
+                $t('placeholder.selectText', { field: $t('label.type') })
+              "
+              style="width: 100px"
+            >
+              <ElOption
+                v-for="(label, value) in fieldTypes"
+                :key="value"
+                :label="label"
+                :value="value"
+              />
             </ElSelect>
             <span v-else>{{ scope.row.type }}</span>
           </ElFormItem>
@@ -162,38 +206,90 @@ async function onSubmit(row: SectionField) {
       </ElTableColumn>
       <ElTableColumn prop="length" :label="$t('label.length')">
         <template #default="scope">
-          <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.length`"
-            :rules="[{ required: true, trigger: 'blur' }]">
-            <ElInput v-if="editable[scope.row.id]" v-model="scope.row.length" style="width: 100px;" />
+          <ElFormItem
+            v-if="editable[scope.row.id]"
+            :prop="`fields.${scope.$index}.length`"
+            :rules="[{ required: true, trigger: 'blur' }]"
+          >
+            <ElInput
+              v-if="editable[scope.row.id]"
+              v-model="scope.row.length"
+              style="width: 100px"
+            />
           </ElFormItem>
           <span v-else>{{ scope.row.length }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="required" :label="$t('label.required')">
         <template #default="scope">
-          <ElSwitch :disabled="!editable[scope.row.id]" v-model="scope.row.required" size="small" />
+          <ElSwitch
+            :disabled="!editable[scope.row.id]"
+            v-model="scope.row.required"
+            size="small"
+          />
         </template>
       </ElTableColumn>
       <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
         <template #default="scope">
           <div class="items-center w-15">
-            <ElButton title="remove" circle size="small" type="danger" plain
-              @click="removeRow(scope.row.id, scope.row.name)">
-              <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />
+            <ElButton
+              title="remove"
+              circle
+              size="small"
+              type="danger"
+              plain
+              @click="removeRow(scope.row.id, scope.row.name)"
+            >
+              <Icon
+                :icon="actionIcon('cancel')"
+                width="1.25em"
+                height="1.25em"
+              />
             </ElButton>
-            <ElButton v-if="editable[scope.row.id]" v-loading="saveLoading" title="confirm" circle size="small"
-              type="success" plain @click="onSubmit(scope.row)">
-              <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
+            <ElButton
+              v-if="editable[scope.row.id]"
+              v-loading="saveLoading"
+              title="confirm"
+              circle
+              size="small"
+              type="success"
+              plain
+              @click="onSubmit(scope.row)"
+            >
+              <Icon
+                :icon="actionIcon('submit')"
+                width="1.25em"
+                height="1.25em"
+              />
             </ElButton>
-            <ElButton v-else title="modify" circle size="small" type="primary" plain @click="modifyRow(scope.row.id)">
-              <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />
+            <ElButton
+              v-else
+              title="modify"
+              circle
+              size="small"
+              type="primary"
+              plain
+              @click="modifyRow(scope.row.id)"
+            >
+              <Icon
+                :icon="actionIcon('modify')"
+                width="1.25em"
+                height="1.25em"
+              />
             </ElButton>
           </div>
         </template>
       </ElTableColumn>
     </ElTable>
   </ElForm>
-  <ElButton v-if="!readOnly" class="mt-4" type="primary" plain style="width: 100%" @click="addRow">
-    {{ $t('action.addItem') }}
+  <ElButton
+    v-if="!readOnly"
+    class="mt-4"
+    type="primary"
+    plain
+    style="width: 100%"
+    @click="addRow"
+  >
+    {{ $t("action.addItem") }}
   </ElButton>
 </template>

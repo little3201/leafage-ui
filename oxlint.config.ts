@@ -6,10 +6,7 @@ export default defineConfig({
   ignorePatterns: [
     "**/node_modules/",
     "dist/",
-    "quasar.config.*.temporary.compiled*",
-    ".quasar/",
-    "src-cordova/",
-    "src-capacitor/",
+    "**/mockServiceworker.js",
     "src/router/typed-router.d.ts"
   ],
 

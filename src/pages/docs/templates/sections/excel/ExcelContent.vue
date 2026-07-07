@@ -1,130 +1,146 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import type { FormInstance } from 'element-plus'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { createSectionData, modifySectionData, removeSectionData, retrieveSectionDatas, retrieveSectionFields } from '@/api/docs/sections'
-import type { SectionData, SectionField } from '@/types'
-import { actionIcon } from '@/utils'
-import { computed, onMounted, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { Icon } from "@iconify/vue";
+import type { FormInstance } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import {
+  createSectionData,
+  modifySectionData,
+  removeSectionData,
+  retrieveSectionDatas,
+  retrieveSectionFields
+} from "@/api/docs/sections";
+import type { SectionData, SectionField } from "@/types";
+import { actionIcon } from "@/utils";
+import { computed, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-
-const { t } = useI18n()
+const { t } = useI18n();
 
 const props = defineProps<{
-  sectionId: number | null
-  readOnly: boolean
-}>()
+  sectionId: number | null;
+  readOnly: boolean;
+}>();
 
-const formRef = ref<FormInstance>()
-const fields = ref<Array<SectionField>>([])
+const formRef = ref<FormInstance>();
+const fields = ref<Array<SectionField>>([]);
 const visibleFields = computed(() =>
-  fields.value.filter(field => field.field !== 'id')
-)
-const datas = ref<Array<SectionData>>([])
-const saveLoading = ref(false)
-const editable = ref<Record<number, boolean>>({})
+  fields.value.filter(field => field.field !== "id")
+);
+const datas = ref<Array<SectionData>>([]);
+const saveLoading = ref(false);
+const editable = ref<Record<number, boolean>>({});
 
 onMounted(async () => {
-  await loadFields()
-  await loadDatas()
-})
+  await loadFields();
+  await loadDatas();
+});
 
-watch(() => props.sectionId, async (newVal, oldVal) => {
-  if (newVal !== oldVal) {
-    await loadFields()
-    await loadDatas()
+watch(
+  () => props.sectionId,
+  async (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      await loadFields();
+      await loadDatas();
+    }
   }
-})
+);
 
 async function loadFields() {
-  if (!props.sectionId) return
+  if (!props.sectionId) return;
 
   try {
-    const res = await retrieveSectionFields(props.sectionId)
-    fields.value = res.data
+    const res = await retrieveSectionFields(props.sectionId);
+    fields.value = res.data;
   } catch (error) {
-    fields.value = []
-    throw error
+    fields.value = [];
+    throw error;
   }
 }
 
 async function loadDatas() {
-  if (!props.sectionId) return
+  if (!props.sectionId) return;
 
   try {
-    const res = await retrieveSectionDatas(props.sectionId)
-    datas.value = res.data
+    const res = await retrieveSectionDatas(props.sectionId);
+    datas.value = res.data;
   } catch (error) {
-    datas.value = []
-    throw error
+    datas.value = [];
+    throw error;
   }
 }
 
 function addRow() {
-  if (!props.sectionId) return
+  if (!props.sectionId) return;
 
-  const data: Record<string, string | number | boolean> = {}
+  const data: Record<string, string | number | boolean> = {};
   fields.value.forEach(field => {
-    if (field.type === 'number') {
-      data[field.field] = 0
+    if (field.type === "number") {
+      data[field.field] = 0;
     } else {
-      data[field.field] = ''
+      data[field.field] = "";
     }
-  })
-  datas.value.push({ id: null, sectionId: props.sectionId, data })
+  });
+  datas.value.push({ id: null, sectionId: props.sectionId, data });
 }
 
 function modifyRow(id: number) {
-  editable.value[id] = true
+  editable.value[id] = true;
 }
 
 async function removeRow(id: number) {
   await ElMessageBox.confirm(
-    t('tips.removeWarning', { module: t('action.data'), data: id }),
-    t('tips.confirm'),
+    t("tips.removeWarning", { module: t("action.data"), data: id }),
+    t("tips.confirm"),
     {
       dangerouslyUseHTMLString: true,
       showCancelButton: false,
-      confirmButtonType: 'danger',
-      confirmButtonClass: 'w-full',
-      confirmButtonText: t('tips.removeButtonText'),
-      type: 'warning'
+      confirmButtonType: "danger",
+      confirmButtonClass: "w-full",
+      confirmButtonText: t("tips.removeButtonText"),
+      type: "warning"
     }
   ).then(async () => {
     try {
-      await removeSectionData(id)
-      await loadDatas()
+      await removeSectionData(id);
+      await loadDatas();
 
-      ElMessage.success(t('message.success', { action: t('action.remove') }))
+      ElMessage.success(t("message.success", { action: t("action.remove") }));
     } catch (error) {
-      ElMessage.error(t('message.error', { action: t('action.remove') }))
-      throw error
+      ElMessage.error(t("message.error", { action: t("action.remove") }));
+      throw error;
     }
-  })
+  });
 }
 
 async function onSubmit(row: SectionData) {
-  if (!props.sectionId) return
-  const valid = formRef.value?.validate()
+  if (!props.sectionId) return;
+  const valid = formRef.value?.validate();
   if (valid) {
-    saveLoading.value = true
+    saveLoading.value = true;
     try {
-      row.sectionId = props.sectionId
+      row.sectionId = props.sectionId;
       if (row.id) {
-        await modifySectionData(row.id, row)
-        editable.value[row.id] = false
+        await modifySectionData(row.id, row);
+        editable.value[row.id] = false;
       } else {
-        const res = await createSectionData(row)
-        editable.value[res.data.id] = false
+        const res = await createSectionData(row);
+        editable.value[res.data.id] = false;
       }
-      await loadDatas()
-      ElMessage.success(t('message.success', { action: row.id ? t('action.modify') : t('action.create') }))
+      await loadDatas();
+      ElMessage.success(
+        t("message.success", {
+          action: row.id ? t("action.modify") : t("action.create")
+        })
+      );
     } catch (error) {
-      ElMessage.error(t('message.error', { action: row.id ? t('action.modify') : t('action.create') }))
-      throw error
+      ElMessage.error(
+        t("message.error", {
+          action: row.id ? t("action.modify") : t("action.create")
+        })
+      );
+      throw error;
     } finally {
-      saveLoading.value = false
+      saveLoading.value = false;
     }
   }
 }
@@ -135,10 +151,18 @@ async function onSubmit(row: SectionData) {
     <ElTable :data="datas" row-key="id" table-layout="auto">
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.no')" width="55" />
-      <ElTableColumn v-for="(field, index) in visibleFields" :key="index" :prop="field.field" :label="field.name">
+      <ElTableColumn
+        v-for="(field, index) in visibleFields"
+        :key="index"
+        :prop="field.field"
+        :label="field.name"
+      >
         <template #default="scope">
-          <ElFormItem v-if="editable[scope.row.id]" :prop="`fields.${scope.$index}.${scope.row.data[field.field]}`"
-            :rules="[{ required: scope.row.required, trigger: 'blur' }]">
+          <ElFormItem
+            v-if="editable[scope.row.id]"
+            :prop="`fields.${scope.$index}.${scope.row.data[field.field]}`"
+            :rules="[{ required: scope.row.required, trigger: 'blur' }]"
+          >
             <ElInput v-model="scope.row.data[field.field]" />
           </ElFormItem>
           <span v-else>{{ scope.row.data[field.field] }}</span>
@@ -147,22 +171,64 @@ async function onSubmit(row: SectionData) {
       <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
         <template #default="scope">
           <div class="items-center w-15">
-            <ElButton title="remove" circle size="small" type="danger" plain @click="removeRow(scope.row.id)">
-              <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />
+            <ElButton
+              title="remove"
+              circle
+              size="small"
+              type="danger"
+              plain
+              @click="removeRow(scope.row.id)"
+            >
+              <Icon
+                :icon="actionIcon('cancel')"
+                width="1.25em"
+                height="1.25em"
+              />
             </ElButton>
-            <ElButton v-if="editable[scope.row.id]" v-loading="saveLoading" title="confirm" circle size="small"
-              type="success" plain @click="onSubmit(scope.row)">
-              <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
+            <ElButton
+              v-if="editable[scope.row.id]"
+              v-loading="saveLoading"
+              title="confirm"
+              circle
+              size="small"
+              type="success"
+              plain
+              @click="onSubmit(scope.row)"
+            >
+              <Icon
+                :icon="actionIcon('submit')"
+                width="1.25em"
+                height="1.25em"
+              />
             </ElButton>
-            <ElButton v-else title="modify" circle size="small" type="primary" plain @click="modifyRow(scope.row.id)">
-              <Icon :icon="actionIcon('modify')" width="1.25em" height="1.25em" />
+            <ElButton
+              v-else
+              title="modify"
+              circle
+              size="small"
+              type="primary"
+              plain
+              @click="modifyRow(scope.row.id)"
+            >
+              <Icon
+                :icon="actionIcon('modify')"
+                width="1.25em"
+                height="1.25em"
+              />
             </ElButton>
           </div>
         </template>
       </ElTableColumn>
     </ElTable>
   </ElForm>
-  <ElButton v-if="!readOnly && fields.length > 1" class="mt-4" type="primary" plain style="width: 100%" @click="addRow">
-    {{ $t('action.addItem') }}
+  <ElButton
+    v-if="!readOnly && fields.length > 1"
+    class="mt-4"
+    type="primary"
+    plain
+    style="width: 100%"
+    @click="addRow"
+  >
+    {{ $t("action.addItem") }}
   </ElButton>
 </template>

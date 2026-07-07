@@ -4,14 +4,14 @@
  * @returns {string} - The formatted file size
  */
 export function formatFileSize(size: number): string {
-  if (isNaN(size) || size <= 0) return '-'
-  const units = ['B', 'KB', 'MB', 'GB', 'TB']
-  let index = 0
+  if (isNaN(size) || size <= 0) return "-";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let index = 0;
   while (size >= 1024 && index < units.length - 1) {
-    size /= 1024
-    index++
+    size /= 1024;
+    index++;
   }
-  return `${size.toFixed(2)}${units[index]}`
+  return `${size.toFixed(2)}${units[index]}`;
 }
 
 /**
@@ -22,21 +22,21 @@ export function formatFileSize(size: number): string {
  */
 export function download(data: Blob, filename: string, type?: string): void {
   // 创建一个新的 Blob 对象，指定 MIME 类型
-  const blob = new Blob([data], { type: type || 'application/octet-stream' })
+  const blob = new Blob([data], { type: type || "application/octet-stream" });
 
   // 创建一个临时的下载链接
-  const url = globalThis.URL.createObjectURL(blob)
+  const url = globalThis.URL.createObjectURL(blob);
 
   // 创建一个 <a> 元素并触发点击事件来启动下载
-  const link = document.createElement('a')
-  link.href = url
-  link.setAttribute('download', filename) // 设置下载的文件名
-  document.body.appendChild(link)
-  link.click() // 执行点击，触发下载
-  link.remove() // 清除临时元素
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename); // 设置下载的文件名
+  document.body.appendChild(link);
+  link.click(); // 执行点击，触发下载
+  link.remove(); // 清除临时元素
 
   // 释放创建的 URL 对象
-  globalThis.URL.revokeObjectURL(url)
+  globalThis.URL.revokeObjectURL(url);
 }
 
 /**
@@ -46,28 +46,32 @@ export function download(data: Blob, filename: string, type?: string): void {
  */
 function escapeCSV(value: unknown) {
   if (value == null) {
-    return ''
+    return "";
   }
 
-  let str: string
+  let str: string;
 
-  if (typeof value === 'string') {
-    str = value
-  } else if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
-    str = value.toString()
+  if (typeof value === "string") {
+    str = value;
+  } else if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "bigint"
+  ) {
+    str = value.toString();
   } else if (value instanceof Date) {
-    str = value.toISOString()
+    str = value.toISOString();
   } else {
     // 对象/数组转 JSON
-    str = JSON.stringify(value)
+    str = JSON.stringify(value);
   }
 
   // CSV 转义
   if (/[",\n]/.test(str)) {
-    return `"${str.replace(/"/g, '""')}"`
+    return `"${str.replace(/"/g, '""')}"`;
   }
 
-  return str
+  return str;
 }
 
 /**
@@ -76,31 +80,35 @@ function escapeCSV(value: unknown) {
  * @param fileName 文件名
  * @param t 转换函数
  */
-export function exportToCSV(data: object[], fileName: string, t?: (key: string) => string) {
+export function exportToCSV(
+  data: object[],
+  fileName: string,
+  t?: (key: string) => string
+) {
   if (!data.length) {
-    return
+    return;
   }
 
   // 获取表头
-  const headers = Object.keys(data[0])
+  const headers = Object.keys(data[0]);
   // i18n 表头
   const headerTitles = headers.map(field => {
-    return typeof t === 'function'
-      ? t(`label.${field}`) ?? field
-      : field
-  })
+    return typeof t === "function" ? (t(`label.${field}`) ?? field) : field;
+  });
 
   // 生成 CSV 内容
   const rows = data.map(row =>
-    headers.map(header => escapeCSV((row as Record<string, unknown>)[header])).join(',')
-  )
+    headers
+      .map(header => escapeCSV((row as Record<string, unknown>)[header]))
+      .join(",")
+  );
 
-  const csv = [headerTitles.join(','), ...rows].join('\n')
+  const csv = [headerTitles.join(","), ...rows].join("\n");
 
   // UTF-8 BOM，避免 Excel 中文乱码
-  const blob = new Blob(['\uFEFF' + csv], {
-    type: 'text/csv;charset=utf-8;'
-  })
+  const blob = new Blob(["\uFEFF" + csv], {
+    type: "text/csv;charset=utf-8;"
+  });
 
-  download(blob, fileName.replace(/\.[^/.]+$/, '') + '.csv')
+  download(blob, fileName.replace(/\.[^/.]+$/, "") + ".csv");
 }

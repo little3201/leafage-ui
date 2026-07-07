@@ -1,7 +1,7 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { Filter, Pagination, Report } from '@/types'
-import { dealFilters } from '@/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, Pagination, Report } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from '@/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveReports = (pagination: Pagination, filter?: Filter<Report>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.REPORT, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveReports = (
+  pagination: Pagination,
+  filter?: Filter<Report>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.REPORT, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveReports = (pagination: Pagination, filter?: Filter<Report>)
  * @returns Row data
  */
 export const fetchReport = (id: number) => {
-  return api.get(`${SERVER_URL.REPORT}/${id}`)
-}
+  return api.get(`${SERVER_URL.REPORT}/${id}`);
+};
 
 /**
  * Create a new row
@@ -29,8 +34,8 @@ export const fetchReport = (id: number) => {
  * @returns Created row
  */
 export const createReport = (row: Report) => {
-  return api.post(SERVER_URL.REPORT, row)
-}
+  return api.post(SERVER_URL.REPORT, row);
+};
 
 /**
  * Modify an existing row
@@ -39,8 +44,8 @@ export const createReport = (row: Report) => {
  * @returns Modified row
  */
 export const modifyReport = (id: number, row: Report) => {
-  return api.put(`${SERVER_URL.REPORT}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.REPORT}/${id}`, row);
+};
 
 /**
  * Remove a row
@@ -48,8 +53,8 @@ export const modifyReport = (id: number, row: Report) => {
  * @returns Deletion status
  */
 export const removeReport = (id: number) => {
-  return api.delete(`${SERVER_URL.REPORT}/${id}`)
-}
+  return api.delete(`${SERVER_URL.REPORT}/${id}`);
+};
 
 /**
  * Import rows
@@ -57,5 +62,5 @@ export const removeReport = (id: number) => {
  * @returns
  */
 export const importReports = (file: File) => {
-  return api.postForm(`${SERVER_URL.REPORT}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.REPORT}/import`, { file: file });
+};

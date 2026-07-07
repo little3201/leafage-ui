@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import hljs from '@/boot/hljs'
-import type { HighlightResult } from 'highlight.js'
-import 'highlight.js/styles/github-dark.min.css'
-import { computed } from 'vue'
+import hljs from "@/boot/hljs";
+import type { HighlightResult } from "highlight.js";
+import "highlight.js/styles/github-dark.min.css";
+import { computed } from "vue";
 
 const props = defineProps<{
-  content: string | undefined,
-  language?: string
-}>()
+  content: string | undefined;
+  language?: string;
+}>();
 
 const highlightResult = computed<HighlightResult | null>(() => {
-  if (!props.content) return null
+  if (!props.content) return null;
 
   return props.language && hljs.getLanguage(props.language)
     ? hljs.highlight(props.content, { language: props.language })
-    : hljs.highlightAuto(props.content)
-})
+    : hljs.highlightAuto(props.content);
+});
 </script>
 
 <template>

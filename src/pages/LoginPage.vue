@@ -1,75 +1,102 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-import { api } from '@/boot/axios'
-import LanguageSelector from '@/components/LanguageSelector.vue'
-import ThemeToogle from '@/components/ThemeToogle.vue'
-import type { FormInstance, FormRules } from 'element-plus'
-import { ElMessage } from 'element-plus'
-import hello from '@/assets/hello_ccwj.svg'
-import logo from '@/assets/logo.svg'
-import { SERVER_URL, globalIcons } from '@/constants'
-import { loadIcon } from '@/utils'
-import { reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { Icon } from "@iconify/vue";
+import { api } from "@/boot/axios";
+import LanguageSelector from "@/components/LanguageSelector.vue";
+import ThemeToogle from "@/components/ThemeToogle.vue";
+import type { FormInstance, FormRules } from "element-plus";
+import { ElMessage } from "element-plus";
+import hello from "@/assets/hello_ccwj.svg";
+import logo from "@/assets/logo.svg";
+import { SERVER_URL, globalIcons } from "@/constants";
+import { loadIcon } from "@/utils";
+import { reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 
+const { t } = useI18n();
+const router = useRouter();
 
-const { t } = useI18n()
-const router = useRouter()
-
-const loading = ref<boolean>(false)
-const formRef = ref<FormInstance>()
+const loading = ref<boolean>(false);
+const formRef = ref<FormInstance>();
 const form = reactive({
-  username: '',
-  password: '',
+  username: "",
+  password: "",
   rememberMe: false
-})
+});
 
 const rules = reactive<FormRules<typeof form>>({
   username: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.username') }), trigger: 'blur' },
-    { min: 5, max: 12, message: t('placeholder.lengthRange', { min: 5, max: 12 }), trigger: 'blur' }
+    {
+      required: true,
+      message: t("placeholder.inputText", { field: t("label.username") }),
+      trigger: "blur"
+    },
+    {
+      min: 5,
+      max: 12,
+      message: t("placeholder.lengthRange", { min: 5, max: 12 }),
+      trigger: "blur"
+    }
   ],
   password: [
-    { required: true, message: t('placeholder.inputText', { field: t('label.password') }), trigger: 'blur' },
-    { min: 8, max: 32, message: t('placeholder.lengthRange', { min: 8, max: 32 }), trigger: 'blur' }
+    {
+      required: true,
+      message: t("placeholder.inputText", { field: t("label.password") }),
+      trigger: "blur"
+    },
+    {
+      min: 8,
+      max: 32,
+      message: t("placeholder.lengthRange", { min: 8, max: 32 }),
+      trigger: "blur"
+    }
   ]
-})
+});
 
 async function onSubmit() {
-  if (!formRef.value) return
+  if (!formRef.value) return;
 
-  const valid = await formRef.value.validate()
+  const valid = await formRef.value.validate();
   if (valid) {
-    loading.value = true
+    loading.value = true;
     try {
-      await api.get(SERVER_URL.LOGIN)
+      await api.get(SERVER_URL.LOGIN);
 
-      ElMessage.success(t('message.success', { action: t('action.signin') }))
-      await router.replace('/')
+      ElMessage.success(t("message.success", { action: t("action.signin") }));
+      await router.replace("/");
     } catch (error) {
-      ElMessage.error(t('message.error', { action: t('action.signin') }))
-      throw error
+      ElMessage.error(t("message.error", { action: t("action.signin") }));
+      throw error;
     } finally {
-      loading.value = false
+      loading.value = false;
     }
   }
 }
 </script>
 
 <template>
-  <ElContainer class="h-screen relative overflow-hidden bg---el-color-primary-light-9) dark:bg-(--el-bg-color-page)">
-    <figure class="absolute bg-primary-gradient rounded-full"
-      style="height: 31em; width: 31em;  top: -14em; right: -12em; ">
+  <ElContainer
+    class="h-screen relative overflow-hidden bg---el-color-primary-light-9) dark:bg-(--el-bg-color-page)"
+  >
+    <figure
+      class="absolute bg-primary-gradient rounded-full"
+      style="height: 31em; width: 31em; top: -14em; right: -12em"
+    >
     </figure>
-    <figure class="absolute bg-success-gradient rounded-full"
-      style="height: 19em; width: 19em; bottom: 6em; right: -7em; ">
+    <figure
+      class="absolute bg-success-gradient rounded-full"
+      style="height: 19em; width: 19em; bottom: 6em; right: -7em"
+    >
     </figure>
-    <figure class="absolute bg-warning-gradient rounded-full"
-      style="height: 40em; width: 40em; bottom: -17em; left: -15em;">
+    <figure
+      class="absolute bg-warning-gradient rounded-full"
+      style="height: 40em; width: 40em; bottom: -17em; left: -15em"
+    >
     </figure>
-    <figure class="absolute bg-error-gradient rounded-full"
-      style="height: 19em;  width: 19em; bottom: -12em; left: 12em; ">
+    <figure
+      class="absolute bg-error-gradient rounded-full"
+      style="height: 19em; width: 19em; bottom: -12em; left: 12em"
+    >
     </figure>
 
     <ElHeader class="flex flex-nowrap items-center z-10" height="50px">
@@ -89,39 +116,61 @@ async function onSubmit() {
     </ElHeader>
     <ElMain class="items-center justify-center z-10">
       <Transition appear name="el-zoom-in-center">
-        <ElCard shadow="always" class="w-full lg:w-1/2 xl:w-2/3" style="height: 70vh;border-radius: 1.5rem;"
-          body-class="flex items-center !p-0 h-full">
-          <div class="hidden xl:flex flex-col items-center h-full w-1/2  ">
-            <div class="inline-flex grow flex-col items-center justify-center w-full">
+        <ElCard
+          shadow="always"
+          class="w-full lg:w-1/2 xl:w-2/3"
+          style="height: 70vh; border-radius: 1.5rem"
+          body-class="flex items-center !p-0 h-full"
+        >
+          <div class="hidden xl:flex flex-col items-center h-full w-1/2">
+            <div
+              class="inline-flex grow flex-col items-center justify-center w-full"
+            >
               <ElImage :src="hello" alt="hello" class="m-24" />
               <div>
                 <p class="font-bold text-xl text-left">
-                  {{ $t('tips.welcome') }}
+                  {{ $t("tips.welcome") }}
                 </p>
                 <p class="text-subtitle1">
-                  {{ $t('tips.subtitle') }}
+                  {{ $t("tips.subtitle") }}
                 </p>
               </div>
             </div>
           </div>
           <div
-            class="flex flex-row items-center w-full xl:w-1/2 h-full bg-(--el-color-primary-light-9) dark:bg-transparent">
-            <div class="inline-flex flex-col w-full h-full space-y-2xl justify-center items-center">
+            class="flex flex-row items-center w-full xl:w-1/2 h-full bg-(--el-color-primary-light-9) dark:bg-transparent"
+          >
+            <div
+              class="inline-flex flex-col w-full h-full space-y-2xl justify-center items-center"
+            >
               <div class="text-center">
                 <ElImage :src="logo" alt="logo" class="w-24 h-24" />
               </div>
               <div class="text-lg font-bold text-center mb-xs">
-                {{ $t('tips.signinTo') }}
+                {{ $t("tips.signinTo") }}
               </div>
-              <ElForm ref="formRef" :model="form" :rules="rules" @submit.prevent="onSubmit"
-                class="bg-transparent max-w-lg w-full my-6 space-y-4">
+              <ElForm
+                ref="formRef"
+                :model="form"
+                :rules="rules"
+                @submit.prevent="onSubmit"
+                class="bg-transparent max-w-lg w-full my-6 space-y-4"
+              >
                 <ElRow>
                   <ElCol>
                     <ElFormItem prop="username">
-                      <ElInput size="large" :disabled="loading" v-model="form.username"
-                        :placeholder="$t('label.username')">
+                      <ElInput
+                        size="large"
+                        :disabled="loading"
+                        v-model="form.username"
+                        :placeholder="$t('label.username')"
+                      >
                         <template #prefix>
-                          <Icon :icon="loadIcon(globalIcons['person'])" width="1.25em" height="1.25em" />
+                          <Icon
+                            :icon="loadIcon(globalIcons['person'])"
+                            width="1.25em"
+                            height="1.25em"
+                          />
                         </template>
                       </ElInput>
                     </ElFormItem>
@@ -130,10 +179,20 @@ async function onSubmit() {
                 <ElRow>
                   <ElCol>
                     <ElFormItem prop="password">
-                      <ElInput size="large" :disabled="loading" type="password" v-model="form.password"
-                        :placeholder="$t('label.password')" show-password>
+                      <ElInput
+                        size="large"
+                        :disabled="loading"
+                        type="password"
+                        v-model="form.password"
+                        :placeholder="$t('label.password')"
+                        show-password
+                      >
                         <template #prefix>
-                          <Icon :icon="loadIcon(globalIcons['key'])" width="1.25em" height="1.25em" />
+                          <Icon
+                            :icon="loadIcon(globalIcons['key'])"
+                            width="1.25em"
+                            height="1.25em"
+                          />
                         </template>
                       </ElInput>
                     </ElFormItem>
@@ -142,28 +201,48 @@ async function onSubmit() {
                 <ElRow>
                   <ElCol>
                     <ElFormItem>
-                      <ElButton title="signin" auto-insert-space size="large" type="primary" :loading="loading"
-                        class="w-full" native-type="submit">
-                        {{ $t('action.signin') }}
+                      <ElButton
+                        title="signin"
+                        auto-insert-space
+                        size="large"
+                        type="primary"
+                        :loading="loading"
+                        class="w-full"
+                        native-type="submit"
+                      >
+                        {{ $t("action.signin") }}
                       </ElButton>
                     </ElFormItem>
                   </ElCol>
                 </ElRow>
               </ElForm>
             </div>
-
           </div>
         </ElCard>
       </Transition>
     </ElMain>
     <ElFooter class="text-center">
       <div class="text-sm mb-2 space-x-4">
-        <a href="/privacy" class="text-(--el-text-color-regular) no-underline hover:underline">隐私政策</a>
-        <a href="/terms" class="text-(--el-text-color-regular) no-underline hover:underline">使用条款</a>
-        <a href="/legal" class="text-(--el-text-color-regular) no-underline hover:underline">法律信息</a>
+        <a
+          href="/privacy"
+          class="text-(--el-text-color-regular) no-underline hover:underline"
+          >隐私政策</a
+        >
+        <a
+          href="/terms"
+          class="text-(--el-text-color-regular) no-underline hover:underline"
+          >使用条款</a
+        >
+        <a
+          href="/legal"
+          class="text-(--el-text-color-regular) no-underline hover:underline"
+          >法律信息</a
+        >
       </div>
-      <span class="text-sm text-(--el-text-color-regular)">Copyright &copy; 2018-{{ new Date().getFullYear() }}
-        Leafage. All Rights Reserved.</span>
+      <span class="text-sm text-(--el-text-color-regular)"
+        >Copyright &copy; 2018-{{ new Date().getFullYear() }} Leafage. All
+        Rights Reserved.</span
+      >
     </ElFooter>
   </ElContainer>
 </template>

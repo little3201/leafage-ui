@@ -1,7 +1,7 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { Filter, Pagination, User } from '@/types'
-import { dealFilters } from '@/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, Pagination, User } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from '@/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveUsers = (pagination: Pagination, filter?: Filter<User>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveUsers = (
+  pagination: Pagination,
+  filter?: Filter<User>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.USER, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveUsers = (pagination: Pagination, filter?: Filter<User>) => 
  * @returns Row data
  */
 export const fetchUser = (id: number) => {
-  return api.get(`${SERVER_URL.USER}/${id}`)
-}
+  return api.get(`${SERVER_URL.USER}/${id}`);
+};
 
 /**
  * Create a new row
@@ -29,8 +34,8 @@ export const fetchUser = (id: number) => {
  * @returns Created row
  */
 export const createUser = (row: User) => {
-  return api.post(SERVER_URL.USER, row)
-}
+  return api.post(SERVER_URL.USER, row);
+};
 
 /**
  * Modify an existing row
@@ -39,8 +44,8 @@ export const createUser = (row: User) => {
  * @returns Modified row
  */
 export const modifyUser = (id: number, row: User) => {
-  return api.put(`${SERVER_URL.USER}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.USER}/${id}`, row);
+};
 
 /**
  * Enable an existing row
@@ -48,8 +53,8 @@ export const modifyUser = (id: number, row: User) => {
  * @returns Enable result
  */
 export const enableUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}/enable`)
-}
+  return api.patch(`${SERVER_URL.USER}/${id}/enable`);
+};
 
 /**
  * Disable an existing row
@@ -57,8 +62,8 @@ export const enableUser = (id: number) => {
  * @returns Disable result
  */
 export const disableUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}/disable`)
-}
+  return api.patch(`${SERVER_URL.USER}/${id}/disable`);
+};
 
 /**
  * Unlock an existing row
@@ -66,8 +71,8 @@ export const disableUser = (id: number) => {
  * @returns Unlock result
  */
 export const unlockUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}/unlock`)
-}
+  return api.patch(`${SERVER_URL.USER}/${id}/unlock`);
+};
 
 /**
  * Remove a row
@@ -75,8 +80,8 @@ export const unlockUser = (id: number) => {
  * @returns Deletion status
  */
 export const removeUser = (id: number) => {
-  return api.delete(`${SERVER_URL.USER}/${id}`)
-}
+  return api.delete(`${SERVER_URL.USER}/${id}`);
+};
 
 /**
  * Import rows
@@ -84,5 +89,5 @@ export const removeUser = (id: number) => {
  * @returns
  */
 export const importUsers = (file: File) => {
-  return api.postForm(`${SERVER_URL.USER}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.USER}/import`, { file: file });
+};

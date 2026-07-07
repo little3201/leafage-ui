@@ -1,94 +1,104 @@
 <script setup lang="ts">
-import { useDark, useEventListener } from '@vueuse/core'
-import type { ApexOptions } from 'apexcharts'
-import ApexCharts from 'apexcharts'
-import { isNumber } from '@/utils'
-import { computed, onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useDark, useEventListener } from "@vueuse/core";
+import type { ApexOptions } from "apexcharts";
+import ApexCharts from "apexcharts";
+import { isNumber } from "@/utils";
+import {
+  computed,
+  onActivated,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch
+} from "vue";
 
-const props = withDefaults(defineProps<{
-  options: ApexOptions
-  width?: number | string
-  height?: number | string
-}>(), {
-  width: '100%',
-  height: '400px'
-})
+const props = withDefaults(
+  defineProps<{
+    options: ApexOptions;
+    width?: number | string;
+    height?: number | string;
+  }>(),
+  {
+    width: "100%",
+    height: "400px"
+  }
+);
 
 const options = computed(() => {
   return Object.assign({}, props.options, {
     theme: {
-      mode: useDark().value ? 'dark' : 'light'
+      mode: useDark().value ? "dark" : "light"
     }
-  })
-})
+  });
+});
 
-const elRef = ref<HTMLElement | null>(null)
+const elRef = ref<HTMLElement | null>(null);
 
-let chartRef: ApexCharts
+let chartRef: ApexCharts;
 
 const styles = computed(() => {
-  const width = isNumber(props.width) ? `${props.width}px` : props.width
-  const height = isNumber(props.height) ? `${props.height}px` : props.height
+  const width = isNumber(props.width) ? `${props.width}px` : props.width;
+  const height = isNumber(props.height) ? `${props.height}px` : props.height;
 
   return {
     width,
     height
-  }
-})
+  };
+});
 
 const initChart = async () => {
   if (elRef.value && props.options) {
     // 销毁旧图表，防止重复渲染
     if (chartRef) {
-      chartRef.destroy()
+      chartRef.destroy();
     } else {
-      chartRef = new ApexCharts(elRef.value, options.value)
+      chartRef = new ApexCharts(elRef.value, options.value);
     }
-    await chartRef.render()
+    await chartRef.render();
   }
-}
+};
 
 watch(
   () => options.value,
-  async (newVal) => {
+  async newVal => {
     if (chartRef) {
       // 第二个参数 true 表示对图表强制更新
-      await chartRef.updateOptions(newVal, true, false)
+      await chartRef.updateOptions(newVal, true, false);
     }
   },
   {
     deep: true
   }
-)
+);
 
 const resizeHandler = () => {
   if (chartRef) {
-    chartRef.destroy()
-    void initChart()
+    chartRef.destroy();
+    void initChart();
   }
-}
+};
 
-useEventListener(document, 'transitionend', (evt) => {
-  if (elRef.value && evt.propertyName === 'width') {
-    resizeHandler()
+useEventListener(document, "transitionend", evt => {
+  if (elRef.value && evt.propertyName === "width") {
+    resizeHandler();
   }
-})
+});
 
 onMounted(async () => {
-  await initChart()
-})
+  await initChart();
+});
 
 onBeforeUnmount(() => {
   if (chartRef) {
-    chartRef.destroy()
+    chartRef.destroy();
   }
-})
+});
 
 onActivated(() => {
   if (chartRef) {
-    void resizeHandler()
+    void resizeHandler();
   }
-})
+});
 </script>
 
 <template>

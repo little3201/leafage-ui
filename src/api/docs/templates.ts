@@ -1,7 +1,7 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { Filter, Pagination, Template } from '@/types'
-import { dealFilters } from '@/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, Pagination, Template } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from '@/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveTemplates = (pagination: Pagination, filter?: Filter<Template>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.TEMPLATE, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveTemplates = (
+  pagination: Pagination,
+  filter?: Filter<Template>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.TEMPLATE, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveTemplates = (pagination: Pagination, filter?: Filter<Templa
  * @returns Row data
  */
 export const fetchTemplate = (id: number) => {
-  return api.get(`${SERVER_URL.TEMPLATE}/${id}`)
-}
+  return api.get(`${SERVER_URL.TEMPLATE}/${id}`);
+};
 
 /**
  * Create a new row
@@ -29,8 +34,8 @@ export const fetchTemplate = (id: number) => {
  * @returns Created row
  */
 export const createTemplate = (row: Template) => {
-  return api.post(SERVER_URL.TEMPLATE, row)
-}
+  return api.post(SERVER_URL.TEMPLATE, row);
+};
 
 /**
  * Modify an existing row
@@ -39,8 +44,8 @@ export const createTemplate = (row: Template) => {
  * @returns Modified row
  */
 export const modifyTemplate = (id: number, row: Template) => {
-  return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row);
+};
 
 /**
  * Remove a row
@@ -48,8 +53,8 @@ export const modifyTemplate = (id: number, row: Template) => {
  * @returns Deletion status
  */
 export const removeTemplate = (id: number) => {
-  return api.delete(`${SERVER_URL.TEMPLATE}/${id}`)
-}
+  return api.delete(`${SERVER_URL.TEMPLATE}/${id}`);
+};
 
 /**
  * Import rows
@@ -57,5 +62,5 @@ export const removeTemplate = (id: number) => {
  * @returns
  */
 export const importTemplates = (file: File) => {
-  return api.postForm(`${SERVER_URL.TEMPLATE}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.TEMPLATE}/import`, { file: file });
+};
