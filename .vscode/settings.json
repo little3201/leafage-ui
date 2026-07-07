@@ -9,8 +9,6 @@
   "editor.formatOnSave": true,
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "search.exclude": {
-    "dist/": true,
-    ".quasar/": true,
-    "/quasar.config.js.temporary.*": true
+    "dist/": true
   }
 }
