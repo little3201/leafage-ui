@@ -22,7 +22,7 @@ declare module 'vue-i18n' {
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
 export const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
-  locale: 'zh-CN',
+  locale: Cookies.get('lang') || 'zh-CN',
   legacy: false,
   messages
 })
