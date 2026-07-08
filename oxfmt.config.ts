@@ -1,27 +1,27 @@
-import { defineConfig } from 'oxfmt'
+import { defineConfig } from "oxfmt";
 
 export default defineConfig({
-  $schema: './node_modules/oxfmt/configuration_schema.json',
+  $schema: "./node_modules/oxfmt/configuration_schema.json",
 
   ignorePatterns: [
-    '**/node_modules/',
-    'dist/',
-    'quasar.config.*.temporary.compiled*',
-    '.quasar/',
-    'src-cordova/',
-    'src-capacitor/',
-    'src/router/typed-router.d.ts'
+    "**/node_modules/",
+    "dist/",
+    "quasar.config.*.temporary.compiled*",
+    ".quasar/",
+    "src-cordova/",
+    "src-capacitor/",
+    "src/router/typed-router.d.ts"
   ],
 
   printWidth: 80,
-  arrowParens: 'avoid',
+  arrowParens: "avoid",
   bracketSpacing: true,
   bracketSameLine: false,
-  htmlWhitespaceSensitivity: 'strict',
+  htmlWhitespaceSensitivity: "strict",
   semi: true,
   singleQuote: false,
-  quoteProps: 'as-needed',
-  trailingComma: 'none',
+  quoteProps: "as-needed",
+  trailingComma: "none",
   useTabs: false,
   vueIndentScriptAndStyle: false
-})
+});

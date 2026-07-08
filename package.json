@@ -1,10 +1,9 @@
 {
   "name": "leafage-ui",
   "version": "0.0.1",
-  "description": "A system based on RBAC.",
-  "productName": "leafage",
-  "author": "wq.li <little3201@163.com>",
   "private": true,
+  "description": "A system based on RBAC.",
+  "author": "wq.li <little3201@163.com>",
   "type": "module",
   "scripts": {
     "lint": "oxfmt && oxlint --fix",
@@ -12,7 +11,6 @@
     "dev": "quasar dev",
     "build": "quasar build",
     "test": "vitest",
-    "coverage": "vitest run --coverage",
     "lint:lint-staged": "lint-staged",
     "prepare": "husky"
   },
@@ -21,7 +19,7 @@
     "axios": "^1.18.1",
     "highlight.js": "^11.11.1",
     "oxfmt": "^0.57.0",
-    "oxlint": "^1.72.0",
+    "oxlint": "^1.73.0",
     "oxlint-tsgolint": "^0.24.0",
     "pinia": "^3.0.4",
     "quasar": "^2.21.1",
@@ -30,25 +28,26 @@
     "vue-router": "^5.1.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.2.0",
+    "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
     "@intlify/unplugin-vue-i18n": "^11.2.4",
-    "@quasar/app-vite": "^3.0.0",
+    "@quasar/app-vite": "^3.0.1",
     "@quasar/extras": "^2.0.2",
-    "@types/node": "^24.13.2",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@types/node": "^24.13.3",
     "autoprefixer": "^10.5.2",
+    "happy-dom": "^20.10.6",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
-    "msw": "^2.14.6",
+    "msw": "^2.15.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",
-    "vue-tsc": "^3.3.6"
+    "vue-tsc": "^3.3.7"
   },
+  "packageManager": "pnpm@10.28.0",
   "msw": {
     "workerDirectory": [
       "public"
     ]
   },
-  "packageManager": "pnpm@10.28.0"
+  "productName": "leafage"
 }

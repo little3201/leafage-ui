@@ -1,50 +1,73 @@
 <template>
   <q-page padding>
-
     <q-dialog v-model="visible">
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('page.accessLogs') }}</div>
+          <div class="text-h6">{{ $t("page.accessLogs") }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('label.url') }}</strong>
+            <p
+              ><strong>{{ $t("label.url") }}</strong>
               {{ row.url }}
             </p>
-            <p><strong>{{ $t('label.httpMethod') }}</strong>{{ row.httpMethod }}</p>
+            <p
+              ><strong>{{ $t("label.httpMethod") }}</strong
+              >{{ row.httpMethod }}</p
+            >
             <p>
-              <strong>{{ $t('label.statusCode') }}</strong>
-              <q-chip v-if="row.statusCode && row.statusCode >= 200 && row.statusCode < 300" size="sm" color="positive"
-                text-color="white">{{ row.statusCode }}</q-chip>
-              <q-chip v-else-if="row.statusCode && row.statusCode >= 500" size="sm" color="warning"
-                text-color="white">{{
-                  row.statusCode }}</q-chip>
-              <q-chip v-else size="sm" color="negative" text-color="white">{{ row.statusCode }}</q-chip>
+              <strong>{{ $t("label.statusCode") }}</strong>
+              <q-chip
+                v-if="
+                  row.statusCode &&
+                  row.statusCode >= 200 &&
+                  row.statusCode < 300
+                "
+                size="sm"
+                color="positive"
+                text-color="white"
+                >{{ row.statusCode }}</q-chip
+              >
+              <q-chip
+                v-else-if="row.statusCode && row.statusCode >= 500"
+                size="sm"
+                color="warning"
+                text-color="white"
+                >{{ row.statusCode }}</q-chip
+              >
+              <q-chip v-else size="sm" color="negative" text-color="white">{{
+                row.statusCode
+              }}</q-chip>
             </p>
           </div>
 
           <div class="q-gutter-md">
-            <p><strong>{{ $t('label.params') }}</strong>
+            <p
+              ><strong>{{ $t("label.params") }}</strong>
               {{ row.params }}
             </p>
-            <p><strong>{{ $t('label.request.body') }}</strong>
+            <p
+              ><strong>{{ $t("label.request.body") }}</strong>
               {{ row.body }}
             </p>
           </div>
 
           <div class="row q-gutter-md">
-            <p><strong>{{ $t('label.ip') }}</strong>
+            <p
+              ><strong>{{ $t("label.ip") }}</strong>
               {{ row.ip }}
             </p>
           </div>
           <div class="q-gutter-md">
-            <p><strong>{{ $t('label.duration') }}</strong>
-              {{ row.duration ? formatDuration(row.duration) : '' }}
+            <p
+              ><strong>{{ $t("label.duration") }}</strong>
+              {{ row.duration ? formatDuration(row.duration) : "" }}
             </p>
-            <p><strong>{{ $t('label.response') }}</strong>
+            <p
+              ><strong>{{ $t("label.response") }}</strong>
               {{ row.response }}
             </p>
           </div>
@@ -52,29 +75,73 @@
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
-      row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
-      @request="onRequest" class="full-width">
+    <q-table
+      ref="tableRef"
+      flat
+      selection="multiple"
+      v-model:selected="selected"
+      :rows="rows"
+      :columns="columns"
+      row-key="id"
+      v-model:pagination="pagination"
+      :loading="loading"
+      :filter="filter"
+      binary-state-sort
+      @request="onRequest"
+      class="full-width"
+    >
       <template v-slot:top-left>
-        <q-input dense debounce="300" filled v-model="filter.url!.value" placeholder="Search">
+        <q-input
+          dense
+          debounce="300"
+          filled
+          v-model="filter.url!.value"
+          placeholder="Search"
+        >
           <template v-slot:prepend>
             <q-icon name="sym_r_search" />
           </template>
         </q-input>
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
+        <q-btn
+          title="refresh"
+          round
+          padding="xs"
+          flat
+          color="primary"
+          class="q-ml-sm"
+          :disable="loading"
+          icon="sym_r_refresh"
+          @click="refresh"
+        />
       </template>
       <template v-slot:top-right>
-        <q-btn title="clear" round padding="xs" flat color="negative" class="q-mx-sm" icon="sym_r_clear_all" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
-          @click="exportTable(columns, rows)" />
+        <q-btn
+          title="clear"
+          round
+          padding="xs"
+          flat
+          color="negative"
+          class="q-mx-sm"
+          icon="sym_r_clear_all"
+        />
+        <q-btn
+          title="export"
+          round
+          padding="xs"
+          flat
+          color="primary"
+          icon="sym_r_file_export"
+          @click="exportTable(columns, rows)"
+        />
       </template>
 
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width />
           <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            <span v-if="col.label === 'body'">{{ $t('label.request.body') }}</span>
+            <span v-if="col.label === 'body'">{{
+              $t("label.request.body")
+            }}</span>
             <span v-else>{{ $t(`label.${col.label}`) }}</span>
           </q-th>
         </q-tr>
@@ -82,8 +149,19 @@
 
       <template v-slot:body-cell-url="props">
         <q-td :props="props">
-          <q-btn :title="props.row.url" flat rounded no-caps color="primary" @click="showRow(props.row.id)">
-            <q-badge :color="httpMethods[props.row.httpMethod]" rounded class="q-mr-sm">
+          <q-btn
+            :title="props.row.url"
+            flat
+            rounded
+            no-caps
+            color="primary"
+            @click="showRow(props.row.id)"
+          >
+            <q-badge
+              :color="methodTypes[props.row.httpMethod]"
+              rounded
+              class="q-mr-sm"
+            >
               {{ props.row.httpMethod }}
             </q-badge>
             {{ props.row.url }}
@@ -92,22 +170,41 @@
       </template>
       <template v-slot:body-cell-statusCode="props">
         <q-td :props="props">
-          <q-chip v-if="props.row.statusCode >= 200 && props.row.statusCode < 300" size="sm" color="positive"
-            text-color="white">{{ props.row.statusCode }}</q-chip>
-          <q-chip v-else-if="props.row.statusCode >= 500" size="sm" color="warning" text-color="white">{{
-            props.row.statusCode }}</q-chip>
-          <q-chip v-else size="sm" color="negative" text-color="white">{{ props.row.statusCode }}</q-chip>
+          <q-chip
+            v-if="props.row.statusCode >= 200 && props.row.statusCode < 300"
+            size="sm"
+            color="positive"
+            text-color="white"
+            >{{ props.row.statusCode }}</q-chip
+          >
+          <q-chip
+            v-else-if="props.row.statusCode >= 500"
+            size="sm"
+            color="warning"
+            text-color="white"
+            >{{ props.row.statusCode }}</q-chip
+          >
+          <q-chip v-else size="sm" color="negative" text-color="white">{{
+            props.row.statusCode
+          }}</q-chip>
         </q-td>
       </template>
-      <template v-slot:body-cell-responseTimes="props">
+      <template v-slot:body-cell-duration="props">
         <q-td :props="props">
-          {{ props.row.responseTimes ? formatDuration(props.row.responseTimes) : '-' }}
+          {{ props.row.duration ? formatDuration(props.row.duration) : "-" }}
         </q-td>
       </template>
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
-          <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" />
+          <q-btn
+            title="delete"
+            padding="xs"
+            flat
+            round
+            color="negative"
+            icon="sym_r_delete"
+            @click="removeRow(props.row.id)"
+          />
         </q-td>
       </template>
     </q-table>
@@ -115,121 +212,131 @@
 </template>
 
 <script setup lang="ts">
-import { fetchAccessLog, removeAccessLog, retrieveAccessLogs } from '@/api/logs/access-logs'
-import { httpMethods } from '@/constants'
-import type { AccessLog, Filter, Pagination } from '@/types'
-import { exportTable, formatDuration } from '@/utils'
-import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { Notify } from 'quasar'
-import { onMounted, reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import {
+  fetchAccessLog,
+  removeAccessLog,
+  retrieveAccessLogs
+} from "@/api/logs/access-logs";
+import { methodTypes } from "@/constants";
+import type { AccessLog, Filter, Pagination } from "@/types";
+import { exportTable, formatDuration } from "@/utils";
+import type { QTable, QTableColumn, QTableProps } from "quasar";
+import { Notify } from "quasar";
+import { onMounted, reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
+const visible = ref<boolean>(false);
 
-const { t } = useI18n()
-const visible = ref<boolean>(false)
-
-const tableRef = ref<QTable>()
-const rows = ref<Array<AccessLog>>([])
+const tableRef = ref<QTable>();
+const rows = ref<Array<AccessLog>>([]);
 const filter = reactive<Filter<AccessLog>>({
-  url: { op: 'eq', value: undefined },
-  statusCode: { op: 'eq', value: undefined }
-})
-const loading = ref<boolean>(false)
+  url: { op: "eq", value: undefined },
+  statusCode: { op: "eq", value: undefined }
+});
+const loading = ref<boolean>(false);
 
 const initialValues: AccessLog = {
   id: null,
-  url: '',
-  httpMethod: '',
-  ip: ''
-}
-const row = ref<AccessLog>({ ...initialValues })
+  url: "",
+  httpMethod: "",
+  ip: ""
+};
+const row = ref<AccessLog>({ ...initialValues });
 
 const pagination = ref({
-  sortBy: '',
+  sortBy: "",
   descending: true,
   page: 1,
   rowsPerPage: 7,
   rowsNumber: 0
-})
+});
 
-const selected = ref([])
+const selected = ref([]);
 
 const columns: QTableColumn<AccessLog>[] = [
-  { name: 'url', label: 'url', align: 'left', field: 'url' },
-  { name: 'params', label: 'params', align: 'left', field: 'params' },
-  { name: 'body', label: 'body', align: 'left', field: 'body' },
-  { name: 'ip', label: 'ip', align: 'center', field: 'ip' },
-  { name: 'statusCode', label: 'statusCode', align: 'center', field: 'statusCode' },
-  { name: 'duration', label: 'duration', align: 'center', field: 'duration' },
-  { name: 'response', label: 'response', align: 'center', field: 'response' },
-  { name: 'id', label: 'actions', field: 'id' }
-]
+  { name: "url", label: "url", align: "left", field: "url" },
+  { name: "params", label: "params", align: "left", field: "params" },
+  { name: "body", label: "body", align: "left", field: "body" },
+  { name: "ip", label: "ip", align: "center", field: "ip" },
+  {
+    name: "statusCode",
+    label: "statusCode",
+    align: "center",
+    field: "statusCode"
+  },
+  { name: "duration", label: "duration", align: "center", field: "duration" },
+  { name: "response", label: "response", align: "center", field: "response" },
+  { name: "id", label: "actions", field: "id" }
+];
 
 onMounted(() => {
-  refresh()
-})
+  refresh();
+});
 
 /**
  * 查询列表
  */
-async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
-  loading.value = true
+async function onRequest(
+  props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
+) {
+  loading.value = true;
 
-  const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const params: Pagination = { page, size: rowsPerPage }
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
+  const params: Pagination = { page, size: rowsPerPage };
   if (sortBy) {
-    params.sortBy = sortBy
-    params.descending = descending
+    params.sortBy = sortBy;
+    params.descending = descending;
   }
 
   try {
-    const res = await retrieveAccessLogs(params, filter)
-    pagination.value.page = page
-    pagination.value.rowsPerPage = rowsPerPage
-    pagination.value.sortBy = sortBy
-    pagination.value.descending = descending
+    const res = await retrieveAccessLogs(params, filter);
+    pagination.value.page = page;
+    pagination.value.rowsPerPage = rowsPerPage;
+    pagination.value.sortBy = sortBy;
+    pagination.value.descending = descending;
 
-    rows.value = res.data.content
-    pagination.value.rowsNumber = res.data.totalElements
+    rows.value = res.data.content;
+    pagination.value.rowsNumber = res.data.totalElements;
   } catch (error) {
-    rows.value = []
-    pagination.value.rowsNumber = 0
+    rows.value = [];
+    pagination.value.rowsNumber = 0;
 
-    throw error
+    throw error;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function refresh() {
-  tableRef.value?.requestServerInteraction()
+  tableRef.value?.requestServerInteraction();
 }
 
 async function showRow(id: number) {
   try {
-    const res = await fetchAccessLog(id)
-    row.value = res.data
+    const res = await fetchAccessLog(id);
+    row.value = res.data;
   } catch (error) {
-    row.value = { ...initialValues }
-    throw error
+    row.value = { ...initialValues };
+    throw error;
   }
-  visible.value = true
+  visible.value = true;
 }
 
 async function removeRow(id: number) {
   try {
-    await removeAccessLog(id)
-    refresh()
+    await removeAccessLog(id);
+    refresh();
     Notify.create({
-      message: t('message.success', { action: t('action.remove') }),
-      type: 'positive',
-    })
+      message: t("message.success", { action: t("action.remove") }),
+      type: "positive"
+    });
   } catch (error) {
     Notify.create({
-      message: t('message.error', { action: t('action.remove') }),
-      type: 'negative',
-    })
-    throw error
+      message: t("message.error", { action: t("action.remove") }),
+      type: "negative"
+    });
+    throw error;
   }
 }
 </script>

@@ -1,33 +1,32 @@
-import { defineBoot } from '#q-app'
-import messages from '@/lang'
-import { createI18n } from 'vue-i18n'
+import { defineBoot } from "#q-app";
+import messages from "@/lang";
+import { createI18n } from "vue-i18n";
 
-
-export type MessageLanguages = keyof typeof messages
+export type MessageLanguages = keyof typeof messages;
 // Type-define 'zh-CN' as the master schema for the resource
-export type MessageSchema = typeof messages['zh-CN']
+export type MessageSchema = (typeof messages)["zh-CN"];
 
 // See https://vue-i18n.intlify.dev/guide/advanced/typescript.html#global-resource-schema-type-definition
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-declare module 'vue-i18n' {
+declare module "vue-i18n" {
   // define the locale messages schema
-  export interface DefineLocaleMessage extends MessageSchema { }
+  export interface DefineLocaleMessage extends MessageSchema {}
 
   // define the datetime format schema
-  export interface DefineDateTimeFormat { }
+  export interface DefineDateTimeFormat {}
 
   // define the number format schema
-  export interface DefineNumberFormat { }
+  export interface DefineNumberFormat {}
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
 export const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
-  locale: Cookies.get('lang') || 'zh-CN',
+  locale: "zh-CN",
   legacy: false,
   messages
-})
+});
 
 export default defineBoot(({ app }) => {
   // Set i18n instance on app
-  app.use(i18n)
-})
+  app.use(i18n);
+});

@@ -5,7 +5,9 @@
  */
 function base64UrlEncode(array: Uint8Array) {
   return btoa(String.fromCodePoint(...array))
-    .replaceAll(/\+/g, '-').replaceAll(/\//g, '_').replace(/=+$/, '')
+    .replaceAll(/\+/g, "-")
+    .replaceAll(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 /**
@@ -13,9 +15,9 @@ function base64UrlEncode(array: Uint8Array) {
  * @returns verifer code
  */
 export function generateVerifier(): string {
-  const array = new Uint8Array(32)
-  globalThis.crypto.getRandomValues(array)
-  return base64UrlEncode(array)
+  const array = new Uint8Array(32);
+  globalThis.crypto.getRandomValues(array);
+  return base64UrlEncode(array);
 }
 
 /**
@@ -24,6 +26,7 @@ export function generateVerifier(): string {
  * @returns challenge code
  */
 export async function generateCodeChallenge(codeVerifier: string) {
-  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
-    .then(buffer => base64UrlEncode(new Uint8Array(buffer)))
+  return crypto.subtle
+    .digest("SHA-256", new TextEncoder().encode(codeVerifier))
+    .then(buffer => base64UrlEncode(new Uint8Array(buffer)));
 }

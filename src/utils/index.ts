@@ -1,8 +1,7 @@
-export * from './action'
-export * from './file'
-export * from './generate'
-export * from './request'
-
+export * from "./action";
+export * from "./file";
+export * from "./generate";
+export * from "./request";
 
 /**
  * Format a duration given in milliseconds into a human-readable string
@@ -10,50 +9,53 @@ export * from './request'
  * @returns {string} - The formatted duration
  */
 export const formatDuration = (ms: number): string => {
-  if (ms === 0) return '0ms'
+  if (ms === 0) return "0ms";
 
-  const sign = ms < 0 ? '-' : ''
-  const abs = Math.abs(ms)
+  const sign = ms < 0 ? "-" : "";
+  const abs = Math.abs(ms);
 
-  const h = Math.floor(abs / 3600000)
-  const m = Math.floor((abs % 3600000) / 60000)
-  const s = (abs % 60000) / 1000
-  const msPart = abs % 1000
+  const h = Math.floor(abs / 3600000);
+  const m = Math.floor((abs % 3600000) / 60000);
+  const s = (abs % 60000) / 1000;
+  const msPart = abs % 1000;
 
-  const parts: string[] = []
+  const parts: string[] = [];
 
-  if (h > 0) parts.push(`${h}h`)
-  if (m > 0) parts.push(`${m}min`)
+  if (h > 0) parts.push(`${h}h`);
+  if (m > 0) parts.push(`${m}min`);
 
   // 只有当秒 >= 1 时才显示秒
   if (s >= 1) {
-    let secStr: string
+    let secStr: string;
     if (s >= 10) {
-      secStr = s.toFixed(1).replace(/\.0$/, '')
+      secStr = s.toFixed(1).replace(/\.0$/, "");
     } else {
-      secStr = s.toFixed(2).replace(/\.?0+$/, '')
+      secStr = s.toFixed(2).replace(/\.?0+$/, "");
     }
-    parts.push(`${secStr}s`)
+    parts.push(`${secStr}s`);
   }
   // 小于 1 秒且前面没有更高单位，才显示毫秒
   else if (parts.length === 0) {
-    if (msPart === 0) return '0ms'
-    const msStr = msPart < 10
-      ? msPart.toFixed(1).replace(/\.0$/, '')
-      : Math.round(msPart).toString()
-    parts.push(msStr + 'ms')
+    if (msPart === 0) return "0ms";
+    const msStr =
+      msPart < 10
+        ? msPart.toFixed(1).replace(/\.0$/, "")
+        : Math.round(msPart).toString();
+    parts.push(msStr + "ms");
   }
 
-  return sign + (parts.length > 0 ? parts.join('') : '0ms')
-}
+  return sign + (parts.length > 0 ? parts.join("") : "0ms");
+};
 
-export function visibleArray<T extends string | number>(array: T[], count: number): T[] {
+export function visibleArray<T extends object | string | number>(
+  array: T[],
+  count: number
+): T[] {
   if (array && array.length) {
-    return array.length > count ? array.slice(0, count) : array
+    return array.length > count ? array.slice(0, count) : array;
   }
-  return []
+  return [];
 }
-
 
 /**
  * 数据分组
@@ -61,19 +63,25 @@ export function visibleArray<T extends string | number>(array: T[], count: numbe
  * @param typeKey 分组依据
  * @returns 分组后的数据
  */
-export function groupByKey<T>(array: T[], typeKey: keyof T): { [key: string]: T[] } {
-  return array.reduce((acc: { [key: string]: T[] }, curr: T) => {
-    const typeValue = curr[typeKey] as string | number // 允许 `string` 或 `number` 类型
-    if (!typeValue) { return acc }
-    const groupKey = String(typeValue) // 确保转换为字符串，以便作为对象键
+export function groupByKey<T>(
+  array: T[],
+  typeKey: keyof T
+): { [key: string]: T[] } {
+  return array.reduce(
+    (acc: { [key: string]: T[] }, curr: T) => {
+      const typeValue = curr[typeKey] as string | number; // 允许 `string` 或 `number` 类型
+      if (!typeValue) {
+        return acc;
+      }
+      const groupKey = String(typeValue); // 确保转换为字符串，以便作为对象键
 
-    if (!acc[groupKey]) {
-      acc[groupKey] = []
-    }
-    acc[groupKey].push(curr)
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+      acc[groupKey].push(curr);
 
-    return acc
-  }, {} as { [key: string]: T[] })
+      return acc;
+    },
+    {} as { [key: string]: T[] }
+  );
 }
-
-

@@ -1,16 +1,17 @@
-import { defineConfig } from 'oxlint'
+import { defineConfig } from "oxlint";
 
 export default defineConfig({
-  $schema: './node_modules/oxlint/configuration_schema.json',
+  $schema: "./node_modules/oxlint/configuration_schema.json",
 
   ignorePatterns: [
-    '**/node_modules/',
-    'dist/',
-    'quasar.config.*.temporary.compiled*',
-    '.quasar/',
-    'src-cordova/',
-    'src-capacitor/',
-    'src/router/typed-router.d.ts'
+    "**/node_modules/",
+    "dist/",
+    "**/mockServiceworker.js",
+    "quasar.config.*.temporary.compiled*",
+    ".quasar/",
+    "src-cordova/",
+    "src-capacitor/",
+    "src/router/typed-router.d.ts"
   ],
 
   options: {
@@ -19,10 +20,10 @@ export default defineConfig({
     maxWarnings: 10
   },
 
-  plugins: ['typescript', 'vue', 'import', 'eslint', 'promise', 'unicorn'],
+  plugins: ["typescript", "vue", "import", "eslint", "promise", "unicorn"],
 
   categories: {
-    correctness: 'error'
+    correctness: "error"
     // style: 'error',
     // pedantic: 'warn',
     // suspicious: 'error',
@@ -30,9 +31,16 @@ export default defineConfig({
     // restriction: 'error'
   },
 
-  rules: {},
+  rules: {
+    // this rule, if on, would require explicit return type on the `render` function
+    "typescript/no-floating-promises": ["error", { ignoreVoid: true }],
+
+    // allow console, debugger during development only
+    "no-console": process.env.NODE_ENV === "production" ? "error" : "warn",
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn"
+  },
 
   env: {
     builtin: true
   }
-})
+});

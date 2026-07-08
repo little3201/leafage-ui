@@ -1,7 +1,7 @@
-import { api } from '@/boot/axios'
-import { SERVER_URL } from '@/constants'
-import type { Filter, Group, Pagination } from '@/types'
-import { dealFilters } from '@/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, Group, Pagination } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,42 +9,47 @@ import { dealFilters } from '@/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveGroups = (pagination: Pagination, filter?: Filter<Group>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.GROUP, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveGroups = (
+  pagination: Pagination,
+  filter?: Filter<Group>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.GROUP, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch row tree structure
  * @returns tree data
  */
 export const retrieveGroupTree = () => {
-  return api.get(`${SERVER_URL.GROUP}/tree`)
-}
+  return api.get(`${SERVER_URL.GROUP}/tree`);
+};
 
 /**
  * Retrieve members for a specific row
  * @returns realtion data
  */
 export const retrieveGroupMembers = (id: number) => {
-  return api.get(`${SERVER_URL.GROUP}/${id}/members`)
-}
+  return api.get(`${SERVER_URL.GROUP}/${id}/members`);
+};
 
 /**
  * Retrieve privileges for a specific row
  * @returns realtion data
  */
 export const retrieveGroupRoles = (id: number) => {
-  return api.get(`${SERVER_URL.GROUP}/${id}/roles`)
-}
+  return api.get(`${SERVER_URL.GROUP}/${id}/roles`);
+};
 
 /**
  * Retrieve privileges for a specific row
  * @returns realtion data
  */
 export const retrieveGroupPrivileges = (id: number) => {
-  return api.get(`${SERVER_URL.GROUP}/${id}/privileges`)
-}
+  return api.get(`${SERVER_URL.GROUP}/${id}/privileges`);
+};
 
 /**
  * Fetch a specific row
@@ -52,8 +57,8 @@ export const retrieveGroupPrivileges = (id: number) => {
  * @returns Row data
  */
 export const fetchGroup = (id: number) => {
-  return api.get(`${SERVER_URL.GROUP}/${id}`)
-}
+  return api.get(`${SERVER_URL.GROUP}/${id}`);
+};
 
 /**
  * Create a new row
@@ -61,8 +66,8 @@ export const fetchGroup = (id: number) => {
  * @returns Created row
  */
 export const createGroup = (row: Group) => {
-  return api.post(SERVER_URL.GROUP, row)
-}
+  return api.post(SERVER_URL.GROUP, row);
+};
 
 /**
  * Modify an existing row
@@ -71,8 +76,8 @@ export const createGroup = (row: Group) => {
  * @returns Modified row
  */
 export const modifyGroup = (id: number, row: Group) => {
-  return api.put(`${SERVER_URL.GROUP}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.GROUP}/${id}`, row);
+};
 
 /**
  * Enable or Disable an existing row
@@ -80,8 +85,8 @@ export const modifyGroup = (id: number, row: Group) => {
  * @returns Enable or Disable result
  */
 export const enableGroup = (id: number) => {
-  return api.patch(`${SERVER_URL.GROUP}/${id}`)
-}
+  return api.patch(`${SERVER_URL.GROUP}/${id}`);
+};
 
 /**
  * Remove a row
@@ -89,8 +94,8 @@ export const enableGroup = (id: number) => {
  * @returns Deletion status
  */
 export const removeGroup = (id: number) => {
-  return api.delete(`${SERVER_URL.GROUP}/${id}`)
-}
+  return api.delete(`${SERVER_URL.GROUP}/${id}`);
+};
 
 /**
  * Relation members for a specific row
@@ -98,8 +103,8 @@ export const removeGroup = (id: number) => {
  * @param usernames usernames
  */
 export const relationGroupMembers = (id: number, usernames: string[]) => {
-  return api.patch(`${SERVER_URL.GROUP}/${id}/members`, usernames)
-}
+  return api.patch(`${SERVER_URL.GROUP}/${id}/members`, usernames);
+};
 
 /**
  * Remove members for a specific row
@@ -107,9 +112,9 @@ export const relationGroupMembers = (id: number, usernames: string[]) => {
  * @param usernames usernames
  */
 export const removeGroupMembers = (id: number, usernames: string[]) => {
-  const params = usernames ? { usernames: usernames.join(',') } : {}
-  return api.delete(`${SERVER_URL.GROUP}/${id}/members`, { params })
-}
+  const params = usernames ? { usernames: usernames.join(",") } : {};
+  return api.delete(`${SERVER_URL.GROUP}/${id}/members`, { params });
+};
 
 /**
  * Relation roles for a specific row
@@ -117,8 +122,8 @@ export const removeGroupMembers = (id: number, usernames: string[]) => {
  * @param roleIds Role ids
  */
 export const relationGroupRoles = (id: number, roleIds: number[]) => {
-  return api.patch(`${SERVER_URL.GROUP}/${id}/roles`, roleIds)
-}
+  return api.patch(`${SERVER_URL.GROUP}/${id}/roles`, roleIds);
+};
 
 /**
  * Remove members for a specific row
@@ -126,9 +131,9 @@ export const relationGroupRoles = (id: number, roleIds: number[]) => {
  * @param roleIds Role ids
  */
 export const removeGroupRoles = (id: number, roleIds: number[]) => {
-  const params = roleIds ? { roleIds: roleIds.join(',') } : {}
-  return api.delete(`${SERVER_URL.GROUP}/${id}/roles`, { params })
-}
+  const params = roleIds ? { roleIds: roleIds.join(",") } : {};
+  return api.delete(`${SERVER_URL.GROUP}/${id}/roles`, { params });
+};
 
 /**
  * Relation privileges for a specific row
@@ -136,9 +141,17 @@ export const removeGroupRoles = (id: number, roleIds: number[]) => {
  * @param privilegeId Privilege id
  * @param action Action
  */
-export const relationGroupPrivileges = (id: number, privilegeId: number, action?: string) => {
-  return api.patch(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, {}, { params: { action } })
-}
+export const relationGroupPrivileges = (
+  id: number,
+  privilegeId: number,
+  action?: string
+) => {
+  return api.patch(
+    `${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`,
+    {},
+    { params: { action } }
+  );
+};
 
 /**
  * Remove privileges for a specific row
@@ -146,9 +159,15 @@ export const relationGroupPrivileges = (id: number, privilegeId: number, action?
  * @param privilegeId Privilege id
  * @param action Action
  */
-export const removeGroupPrivileges = (id: number, privilegeId: number, action?: string) => {
-  return api.delete(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, { params: { action } })
-}
+export const removeGroupPrivileges = (
+  id: number,
+  privilegeId: number,
+  action?: string
+) => {
+  return api.delete(`${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`, {
+    params: { action }
+  });
+};
 
 /**
  * Import rows
@@ -156,5 +175,5 @@ export const removeGroupPrivileges = (id: number, privilegeId: number, action?: 
  * @returns
  */
 export const importGroups = (file: File) => {
-  return api.postForm(`${SERVER_URL.GROUP}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.GROUP}/import`, { file: file });
+};

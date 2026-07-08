@@ -9,26 +9,24 @@
 </template>
 
 <script setup lang="ts">
-import { handleCallback, signIn } from '@/api/authentication'
-import { useUserStore } from '@/stores/user'
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useUserStore } from "@/stores/user";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 
-
-const router = useRouter()
-const userStore = useUserStore()
+const router = useRouter();
+const userStore = useUserStore();
 
 onMounted(async () => {
-  const res = await handleCallback()
+  const res = await userStore.handleCallback();
   if (res && res.status === 200) {
     userStore.$patch({
       accessToken: res.data.access_token,
       idToken: res.data.id_token
-    })
+    });
     // 路由跳转
-    await router.replace('/')
+    await router.replace("/");
   } else {
-    await signIn()
+    await userStore.signIn();
   }
-})
+});
 </script>
