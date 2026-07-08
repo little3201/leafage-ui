@@ -29,9 +29,7 @@ export default defineConfig({
 
   rules: {
     // this rule, if on, would require explicit return type on the `render` function
-    // '@typescript-eslint/explicit-function-return-type': 'off',
     "typescript/no-floating-promises": ["error", { ignoreVoid: true }],
-    "typescript/no-unsafe-assignment": "warn",
 
     // allow console, debugger during development only
     "no-console": process.env.NODE_ENV === "production" ? "error" : "warn",

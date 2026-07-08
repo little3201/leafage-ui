@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
+  "author": "wq li",
   "type": "module",
   "scripts": {
     "lint": "oxfmt && oxlint --fix",

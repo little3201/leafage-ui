@@ -5,7 +5,7 @@ import type {
   InternalAxiosRequestConfig
 } from "axios";
 import axios from "axios";
-import { signIn } from "@/api/authentication";
+import { useUserStore } from "@/stores/user";
 
 const abortControllerMap: Map<string, AbortController> = new Map();
 
@@ -40,9 +40,10 @@ api.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    const userStore = useUserStore();
     if (error.response?.status === 401) {
       cancelAllRequest();
-      signIn();
+      userStore.signIn();
     }
     return Promise.reject(error);
   }

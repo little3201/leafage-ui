@@ -11,8 +11,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
-    alias: {
-      "@": fileURLToPath(new URL("src", import.meta.url))
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("src", import.meta.url))
+      }
     },
     plugins: [
       vue(),

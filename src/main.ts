@@ -1,20 +1,20 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 
-import "src/styles/index.scss";
-import "src/styles/main.css";
+import "./styles/index.scss";
+import "./styles/main.css";
 
 // If you want to use ElMessage, import it.
 import "element-plus/theme-chalk/src/message-box.scss";
 import "element-plus/theme-chalk/src/message.scss";
 
-import { i18n } from "@/boot/i18n";
+import { i18n } from "./boot/i18n";
 import router from "./router";
 import pinia from "./stores";
 
 async function prepareApp() {
   if (!import.meta.env.DEV) {
-    const { worker } = await import("@/boot/msw-browser");
+    const { worker } = await import("./boot/msw-browser");
 
     return worker.start({
       onUnhandledRequest: "bypass"

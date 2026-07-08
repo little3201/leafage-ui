@@ -1,4 +1,3 @@
-import { getUserInfo, signIn } from "@/api/authentication";
 import { retrievePrivilegeTree } from "@/api/system/privileges";
 import type { PrivilegeTreeNode } from "@/types";
 import { useUserStore } from "@/stores/user";
@@ -6,7 +5,7 @@ import type { RouteRecordRaw } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 import { constantRouterMap } from "./routes";
 // Lazy load layout
-const BlankLayout = () => import("layouts/BlankLayout.vue");
+const BlankLayout = () => import("@/layouts/BlankLayout.vue");
 
 const modules = import.meta.glob("../pages/**/*.{vue,tsx}");
 
@@ -25,17 +24,22 @@ router.beforeEach(async (to, from) => {
   // 加载用户信息
   if (!userStore.username) {
     try {
-      const res = await getUserInfo();
+      const res = await userStore.getUserInfo();
       if (res && res.data) {
+        const data = res.data as {
+          sub?: string;
+          name?: string;
+          email?: string;
+        };
         userStore.$patch({
-          username: res.data.sub,
-          fullName: res.data.name,
-          email: res.data.email
+          username: data.sub ?? "",
+          fullName: data.name ?? "",
+          email: data.email ?? ""
         });
       }
     } catch {
       userStore.$reset();
-      signIn();
+      userStore.signIn();
       return false;
     }
   }
@@ -45,11 +49,12 @@ router.beforeEach(async (to, from) => {
     try {
       const res = await retrievePrivilegeTree();
       if (res && res.data) {
-        userStore.$patch({ privileges: res.data });
+        const privileges = res.data as PrivilegeTreeNode[];
+        userStore.$patch({ privileges });
       }
     } catch {
       userStore.$reset();
-      signIn();
+      userStore.signIn();
       return false;
     }
   }
@@ -64,7 +69,7 @@ router.beforeEach(async (to, from) => {
       router.addRoute({
         path: "/:cacheAll(.*)*",
         name: "ErrorNotFound",
-        component: () => import("pages/ErrorNotFound.vue")
+        component: () => import("@/pages/ErrorNotFound.vue")
       });
     }
 

@@ -1,5 +1,5 @@
-import BlankLayout from "layouts/BlankLayout.vue";
-import MainLayout from "layouts/MainLayout.vue";
+import BlankLayout from "@/layouts/BlankLayout.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
 import type { RouteRecordRaw } from "vue-router";
 
 export const constantRouterMap: Array<RouteRecordRaw> = [
@@ -11,44 +11,44 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
       {
         path: "",
         name: "index",
-        component: () => import("pages/IndexPage.vue")
+        component: () => import("@/pages/IndexPage.vue")
       },
       {
         path: "profile",
         name: "profile",
-        component: () => import("pages/profile/IndexPage.vue"),
+        component: () => import("@/pages/profile/IndexPage.vue"),
         children: [
           {
             path: "",
             name: "overview",
-            component: () => import("pages/profile/OverviewPage.vue")
+            component: () => import("@/pages/profile/OverviewPage.vue")
           },
           {
             path: "activities",
             name: "activities",
-            component: () => import("pages/profile/ActivityPage.vue")
+            component: () => import("@/pages/profile/ActivityPage.vue")
           },
           {
             path: "notifications",
             name: "notifications",
-            component: () => import("pages/profile/NotificationPage.vue")
+            component: () => import("@/pages/profile/NotificationPage.vue")
           },
           {
             path: "change-password",
             name: "ChangePassword",
-            component: () => import("pages/profile/ChangePassword.vue")
+            component: () => import("@/pages/profile/ChangePassword.vue")
           },
           {
             path: "sessions",
             name: "sessions",
-            component: () => import("pages/profile/SessionPage.vue")
+            component: () => import("@/pages/profile/SessionPage.vue")
           }
         ]
       },
       {
         path: "faq",
         name: "faq",
-        component: () => import("pages/faq/IndexPage.vue")
+        component: () => import("@/pages/faq/IndexPage.vue")
       }
     ]
   },
@@ -60,23 +60,23 @@ export const constantRouterMap: Array<RouteRecordRaw> = [
       {
         path: "",
         name: "info",
-        component: () => import("pages/legal/IndexPage.vue")
+        component: () => import("@/pages/legal/IndexPage.vue")
       },
       {
         path: "/privacy",
         name: "privacy",
-        component: () => import("pages/legal/privacy/IndexPage.vue")
+        component: () => import("@/pages/legal/privacy/IndexPage.vue")
       },
       {
         path: "/terms",
         name: "terms",
-        component: () => import("pages/legal/terms/IndexPage.vue")
+        component: () => import("@/pages/legal/terms/IndexPage.vue")
       }
     ]
   },
   {
     path: "/login",
     name: "login",
-    component: () => import("pages/LoginPage.vue")
+    component: () => import("@/pages/LoginPage.vue")
   }
 ];

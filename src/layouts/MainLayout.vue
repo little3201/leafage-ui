@@ -4,7 +4,6 @@ import logo from "@/assets/logo.svg";
 import EssentialList from "@/components/EssentialList.vue";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import ThemeToogle from "@/components/ThemeToogle.vue";
-import { signOut } from "@/api/authentication";
 import { globalIcons } from "@/constants";
 import { loadIcon, pageIcon } from "@/utils";
 import { useUserStore } from "@/stores/user";
@@ -21,7 +20,7 @@ const user = {
 
 function logout() {
   userStore.$reset();
-  signOut();
+  userStore.signOut();
 }
 </script>
 
