@@ -48,11 +48,11 @@ export function loadIcon(iconName: string) {
     return fullIconName;
   }
 
-  const singleIconData = icons.icons[iconName];
+  const iconData = icons.icons[iconName];
 
-  if (singleIconData) {
+  if (iconData) {
     addIcon(fullIconName, {
-      body: singleIconData.body,
+      body: iconData.body,
       width: icons.width || 24,
       height: icons.height || 24
     });

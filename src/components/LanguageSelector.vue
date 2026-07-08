@@ -1,24 +1,19 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import { langOptions } from "@/lang";
-import Cookies from "js-cookie";
 import { globalIcons } from "@/constants";
 import { loadIcon } from "@/utils";
 import { useI18n } from "vue-i18n";
+import { useAppStore } from "@/stores/app";
+
+const appStore = useAppStore();
 
 const { locale } = useI18n({ useScope: "global" });
-locale.value = Cookies.get("lang") || "zh-CN";
+locale.value = appStore.lang;
 
 function changeLang(lang: string) {
   locale.value = lang;
-  // 设置lang
-  Cookies.set("lang", lang, { secure: true, sameSite: "lax" });
-  // 修改html中lang
-  const htmlElement = document.querySelector("html");
-
-  if (htmlElement) {
-    htmlElement.setAttribute("lang", lang);
-  }
+  appStore.setLocale(lang);
 }
 </script>
 

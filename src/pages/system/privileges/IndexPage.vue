@@ -362,7 +362,7 @@ function handleInputConfirm() {
       <ElTableColumn prop="actions" :label="$t('label.actions')">
         <template #default="scope">
           <ElTag
-            v-for="(item, index) in visibleArray(scope.row.actions, 3)"
+            v-for="(item, index) in visibleArray<string>(scope.row.actions, 3)"
             :key="index"
             :type="actionTypes[item]"
             class="mr-2"

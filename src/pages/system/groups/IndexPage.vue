@@ -665,7 +665,7 @@ const rowSelected = (row: Privilege) => {
           <ElTableColumn prop="roles" :label="$t('label.roles')">
             <template #default="scope">
               <ElTag
-                v-for="(item, index) in visibleArray(scope.row.roles, 3)"
+                v-for="(item, index) in visibleArray<Role>(scope.row.roles, 3)"
                 :key="index"
                 type="primary"
                 class="mr-2"

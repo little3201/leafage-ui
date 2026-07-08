@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import messages from "@/lang";
 import { createI18n } from "vue-i18n";
 
@@ -20,7 +19,7 @@ declare module "vue-i18n" {
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 export const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
-  locale: Cookies.get("lang") || "zh-CN",
+  locale: "zh-CN",
   legacy: false,
   messages
 });
