@@ -1,5 +1,6 @@
 import { defineBoot } from "#q-app";
 import { retrievePrivilegeTree } from "@/api/system/privileges";
+import { getUserInfo, signIn } from "@/api/authentication";
 import { useUserStore } from "@/stores/user";
 import type { PrivilegeTreeNode } from "@/types";
 import type { RouteRecordRaw } from "vue-router";
@@ -14,31 +15,28 @@ export default defineBoot(({ router, store }) => {
 
     const userStore = useUserStore(store);
     if (!userStore.accessToken) {
-      await userStore.signIn();
+      await signIn();
       return false;
     }
 
     if (!userStore.username) {
       try {
-        const res = await userStore.getUserInfo();
-        userStore.$patch({
-          username: res.data.sub,
-          fullName: res.data.name
-        });
+        const res = await getUserInfo();
+        userStore.setUserinfo(res.data);
       } catch {
         userStore.$reset();
-        await userStore.signIn();
+        await signIn();
         return false;
       }
     }
 
     if (!userStore.privileges.length) {
       try {
-        const privilegesResp = await retrievePrivilegeTree();
-        userStore.$patch({ privileges: privilegesResp.data });
+        const res = await retrievePrivilegeTree();
+        userStore.setPrivileges(res.data);
       } catch {
         userStore.$reset();
-        await userStore.signIn();
+        await signIn();
         return false;
       }
     }

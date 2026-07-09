@@ -1,5 +1,5 @@
 import { defineBoot } from "#q-app";
-import { useUserStore } from "@/stores/user";
+import { signIn } from "@/api/authentication";
 import type {
   AxiosError,
   AxiosInstance,
@@ -41,10 +41,9 @@ export default defineBoot(() => {
       return response;
     },
     async (error: AxiosError) => {
-      const userStore = useUserStore();
       if (error.response?.status === 401) {
         cancelAllRequest();
-        await userStore.signIn();
+        await signIn();
       }
       return Promise.reject(error);
     }

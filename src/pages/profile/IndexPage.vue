@@ -6,18 +6,18 @@
           <q-card-section class="flex items-center">
             <q-avatar size="80px">
               <img
-                :src="`https://cdn.leafage.top/${me.username}`"
+                :src="`https://cdn.leafage.top/${userStore.username}`"
                 alt="avatar"
               />
             </q-avatar>
 
             <div class="q-ml-md">
               <span class="text-subtitle2">
-                {{ me.fullName }}
+                {{ userStore.fullName }}
               </span>
 
               <div class="text-caption">
-                <span>{{ me.username }}</span>
+                <span>{{ userStore.username }}</span>
               </div>
             </div>
           </q-card-section>
@@ -64,11 +64,6 @@ import { useUserStore } from "@/stores/user";
 import { ref } from "vue";
 
 const userStore = useUserStore();
-
-const me = {
-  username: userStore.username,
-  fullName: userStore.fullName
-};
 
 const items = ref([
   { name: "overview", icon: "overview", router: "" },

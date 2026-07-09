@@ -12,5 +12,8 @@
     "dist/": true,
     ".quasar/": true,
     "/quasar.config.js.temporary.*": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   }
 }

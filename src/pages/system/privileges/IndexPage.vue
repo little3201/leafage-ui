@@ -204,7 +204,10 @@
               "
             >
               <q-chip
-                v-for="(item, index) in visibleArray(props.row.actions, 3)"
+                v-for="(item, index) in visibleArray<string>(
+                  props.row.actions,
+                  3
+                )"
                 :key="index"
                 :label="$t(`action.${item}`)"
                 :color="actionTypes[item]"

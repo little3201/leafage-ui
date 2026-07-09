@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user";
+import { signIn, handleCallback } from "@/api/authentication";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 
@@ -17,16 +18,14 @@ const router = useRouter();
 const userStore = useUserStore();
 
 onMounted(async () => {
-  const res = await userStore.handleCallback();
+  const res = await handleCallback();
   if (res && res.status === 200) {
-    userStore.$patch({
-      accessToken: res.data.access_token,
-      idToken: res.data.id_token
-    });
+    userStore.setAccessToken(res.data.access_token);
+    userStore.setIdToken(res.data.id_token);
     // 路由跳转
     await router.replace("/");
   } else {
-    await userStore.signIn();
+    await signIn();
   }
 });
 </script>

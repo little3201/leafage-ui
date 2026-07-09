@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDuration } from "../index";
+import { formatDuration } from "../format";
 
 describe("utils", () => {
   it("formatDuration", () => {

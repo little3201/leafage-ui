@@ -28,11 +28,11 @@
           <q-btn flat rounded>
             <q-avatar size="md">
               <img
-                :src="`https://cdn.leafage.top/${user.username}`"
+                :src="`https://cdn.leafage.top/${userStore.username}`"
                 alt="avatar"
               />
             </q-avatar>
-            <span class="q-ml-sm">{{ user.username }}</span>
+            <span class="q-ml-sm">{{ userStore.username }}</span>
           </q-btn>
           <q-menu>
             <q-list separator>
@@ -42,7 +42,11 @@
                 </q-item-section>
                 <q-item-section>{{ $t("page.profile") }}</q-item-section>
               </q-item>
-              <q-item clickable v-close-popup @click="userStore.signOut()">
+              <q-item
+                clickable
+                v-close-popup
+                @click="signOut(userStore.idToken)"
+              >
                 <q-item-section side>
                   <q-icon name="sym_r_logout" />
                 </q-item-section>
@@ -106,6 +110,7 @@ import { useQuasar } from "quasar";
 import { useUserStore } from "@/stores/user";
 import { pageIcons } from "@/constants";
 import { ref } from "vue";
+import { signOut } from "@/api/authentication";
 import EssentialList from "@/components/EssentialList.vue";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import ThemeToogle from "@/components/ThemeToogle.vue";
@@ -114,9 +119,4 @@ const $q = useQuasar();
 const userStore = useUserStore();
 
 const leftDrawerOpen = ref<boolean>(false);
-
-const user = {
-  username: userStore.username,
-  privileges: userStore.privileges
-};
 </script>
