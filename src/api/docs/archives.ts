@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Archive, Filter, Pagination } from 'src/types'
-import { dealFilters } from 'src/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Archive, Filter, Pagination } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveArchives = (pagination: Pagination, filter?: Filter<Archive>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.ARCHIVE, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveArchives = (
+  pagination: Pagination,
+  filter?: Filter<Archive>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.ARCHIVE, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveArchives = (pagination: Pagination, filter?: Filter<Archive
  * @returns Row data
  */
 export const fetchArchive = (id: number) => {
-  return api.get(`${SERVER_URL.ARCHIVE}/${id}`)
-}
+  return api.get(`${SERVER_URL.ARCHIVE}/${id}`);
+};
 
 /**
  * Create a new row
@@ -29,8 +34,8 @@ export const fetchArchive = (id: number) => {
  * @returns Created row
  */
 export const createArchive = (row: Archive) => {
-  return api.post(SERVER_URL.ARCHIVE, row)
-}
+  return api.post(SERVER_URL.ARCHIVE, row);
+};
 
 /**
  * Modify an existing row
@@ -39,8 +44,8 @@ export const createArchive = (row: Archive) => {
  * @returns Modified row
  */
 export const modifyArchive = (id: number, row: Archive) => {
-  return api.put(`${SERVER_URL.ARCHIVE}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.ARCHIVE}/${id}`, row);
+};
 
 /**
  * Enable or Disable an existing row
@@ -48,8 +53,8 @@ export const modifyArchive = (id: number, row: Archive) => {
  * @returns Enable or Disable result
  */
 export const enableArchive = (id: number) => {
-  return api.patch(`${SERVER_URL.ARCHIVE}/${id}`)
-}
+  return api.patch(`${SERVER_URL.ARCHIVE}/${id}`);
+};
 
 /**
  * Remove a row
@@ -57,8 +62,8 @@ export const enableArchive = (id: number) => {
  * @returns Deletion status
  */
 export const removeArchive = (id: number) => {
-  return api.delete(`${SERVER_URL.ARCHIVE}/${id}`)
-}
+  return api.delete(`${SERVER_URL.ARCHIVE}/${id}`);
+};
 
 /**
  * Import rows
@@ -66,5 +71,5 @@ export const removeArchive = (id: number) => {
  * @returns
  */
 export const importArchives = (file: File) => {
-  return api.postForm(`${SERVER_URL.ARCHIVE}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.ARCHIVE}/import`, { file: file });
+};

@@ -1,56 +1,51 @@
 {
-  "name": "leafage",
+  "name": "leafage-ui",
   "version": "0.0.1",
-  "description": "A system based on RBAC.",
-  "productName": "leafage",
-  "author": "wq.li <little3201@163.com>",
   "private": true,
+  "description": "A system based on RBAC.",
+  "author": "wq.li <little3201@163.com>",
   "type": "module",
   "scripts": {
-    "lint": "eslint -c ./eslint.config.js ./src*/**/*.{js,mjs,cjs,ts,mts,vue}",
+    "lint": "oxfmt && oxlint --fix",
+    "lint:check": "oxfmt --check && oxlint",
     "dev": "quasar dev",
     "build": "quasar build",
     "test": "vitest",
-    "coverage": "vitest run --coverage",
     "lint:lint-staged": "lint-staged",
     "prepare": "husky"
   },
   "dependencies": {
-    "apexcharts": "^5.12.0",
-    "axios": "^1.16.1",
+    "@quasar/extras": "^2.0.2",
+    "apexcharts": "^5.16.0",
+    "axios": "^1.18.1",
     "highlight.js": "^11.11.1",
     "pinia": "^3.0.4",
-    "quasar": "^2.19.3",
-    "vue": "^3.5.34",
-    "vue-i18n": "^11.4.4",
-    "vue-router": "^5.0.7"
+    "quasar": "^2.21.1",
+    "vue": "^3.5.39",
+    "vue-i18n": "^11.4.6",
+    "vue-router": "^5.1.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
-    "@eslint/js": "^9.39.4",
-    "@intlify/unplugin-vue-i18n": "^11.2.3",
-    "@quasar/app-vite": "^2.6.0",
-    "@quasar/extras": "^1.18.0",
-    "@types/node": "^24.12.4",
-    "@vitest/coverage-v8": "^4.1.7",
-    "@vue/eslint-config-typescript": "^14.7.0",
-    "autoprefixer": "^10.5.0",
-    "eslint": "^9.39.4",
-    "eslint-plugin-vue": "^10.9.1",
-    "globals": "^17.6.0",
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@intlify/unplugin-vue-i18n": "^11.2.4",
+    "@quasar/app-vite": "^3.0.1",
+    "@types/node": "^24.13.3",
+    "autoprefixer": "^10.5.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "msw": "^2.14.6",
-    "typescript": "^5.9.3",
-    "vite-plugin-checker": "^0.12.0",
-    "vitest": "^4.1.7",
-    "vue-tsc": "^3.3.1"
+    "lint-staged": "^17.0.8",
+    "msw": "^2.15.0",
+    "oxfmt": "^0.57.0",
+    "oxlint": "^1.73.0",
+    "oxlint-tsgolint": "^0.24.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10",
+    "vue-tsc": "^3.3.7"
   },
+  "packageManager": "pnpm@10.28.0",
   "msw": {
     "workerDirectory": [
       "public"
     ]
-  },
-  "packageManager": "pnpm@10.28.0"
+  }
 }

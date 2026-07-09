@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Dictionary, Filter, Pagination } from 'src/types'
-import { dealFilters } from 'src/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Dictionary, Filter, Pagination } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveDictionaries = (pagination: Pagination, filter?: Filter<Dictionary>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.DICTIONARY, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveDictionaries = (
+  pagination: Pagination,
+  filter?: Filter<Dictionary>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.DICTIONARY, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Get row subset
@@ -20,8 +25,8 @@ export const retrieveDictionaries = (pagination: Pagination, filter?: Filter<Dic
  * @returns Subset data
  */
 export const retrieveDictionarySubset = (id: number | null) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/subset`, { params: { id } })
-}
+  return api.get(`${SERVER_URL.DICTIONARY}/subset`, { params: { id } });
+};
 
 /**
  * Fetch a specific row
@@ -29,8 +34,8 @@ export const retrieveDictionarySubset = (id: number | null) => {
  * @returns Row data
  */
 export const fetchDictionary = (id: number) => {
-  return api.get(`${SERVER_URL.DICTIONARY}/${id}`)
-}
+  return api.get(`${SERVER_URL.DICTIONARY}/${id}`);
+};
 
 /**
  * Create a new row
@@ -38,8 +43,8 @@ export const fetchDictionary = (id: number) => {
  * @returns Created row
  */
 export const createDictionary = (row: Dictionary) => {
-  return api.post(SERVER_URL.DICTIONARY, row)
-}
+  return api.post(SERVER_URL.DICTIONARY, row);
+};
 
 /**
  * Modify an existing row
@@ -48,8 +53,8 @@ export const createDictionary = (row: Dictionary) => {
  * @returns Modified row
  */
 export const modifyDictionary = (id: number, row: Dictionary) => {
-  return api.put(`${SERVER_URL.DICTIONARY}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.DICTIONARY}/${id}`, row);
+};
 
 /**
  * Enable or Disable an existing row
@@ -57,8 +62,8 @@ export const modifyDictionary = (id: number, row: Dictionary) => {
  * @returns Enable or Disable result
  */
 export const enableDictionary = (id: number) => {
-  return api.patch(`${SERVER_URL.DICTIONARY}/${id}`)
-}
+  return api.patch(`${SERVER_URL.DICTIONARY}/${id}`);
+};
 
 /**
  * Remove a row
@@ -66,8 +71,8 @@ export const enableDictionary = (id: number) => {
  * @returns Deletion status
  */
 export const removeDictionary = (id: number) => {
-  return api.delete(`${SERVER_URL.DICTIONARY}/${id}`)
-}
+  return api.delete(`${SERVER_URL.DICTIONARY}/${id}`);
+};
 
 /**
  * Import rows
@@ -75,5 +80,5 @@ export const removeDictionary = (id: number) => {
  * @returns
  */
 export const importDictionaries = (file: File) => {
-  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, { file: file });
+};

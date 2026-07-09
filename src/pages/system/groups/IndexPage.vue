@@ -1,108 +1,261 @@
 <template>
   <q-page padding>
     <q-dialog v-model="visible" persistent>
-      <q-card style="min-width: 25em;">
+      <q-card style="min-width: 25em">
         <q-form @submit="onSubmit">
           <q-card-section>
-            <div class="text-h6">{{ form.id ? $t('action.modify') : $t('action.create') }}</div>
+            <div class="text-h6">{{
+              form.id ? $t("action.modify") : $t("action.create")
+            }}</div>
           </q-card-section>
 
           <q-card-section>
-            <q-input outlined dense v-model="form.name" :label="$t('label.name')" lazy-rules
-              :rules="[val => val && val.length > 0 || $t('placeholder.inputText')]" />
-
-            <q-input outlined dense v-model="form.description" :label="$t('label.description')" type="textarea" />
+            <q-input
+              outlined
+              dense
+              v-model="form.name"
+              :label="$t('label.name')"
+              lazy-rules
+              :rules="[
+                val => (val && val.length > 0) || $t('placeholder.inputText')
+              ]"
+            />
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn title="cancel" type="reset" unelevated :label="$t('action.cancel')" v-close-popup />
-            <q-btn title="submit" type="submit" flat :label="$t('action.submit')" color="primary" />
+            <q-btn
+              title="cancel"
+              type="reset"
+              unelevated
+              :label="$t('action.cancel')"
+              v-close-popup
+            />
+            <q-btn
+              title="submit"
+              type="submit"
+              flat
+              :label="$t('action.submit')"
+              color="primary"
+            />
           </q-card-actions>
-
         </q-form>
       </q-card>
     </q-dialog>
 
-    <q-table ref="tableRef" flat selection="multiple" v-model:selected="selected" :rows="rows" :columns="columns"
-      row-key="id" :pagination="pagination" :loading="loading" :filter="filter" binary-state-sort @request="onRequest"
-      class="full-width col">
-      <template v-slot:top-left>
-        <q-input dense debounce="300" filled v-model="filter.name!.value" placeholder="Search">
-          <template v-slot:prepend>
-            <q-icon name="sym_r_search" />
+    <div class="row q-gutter-md">
+      <div class="col-2">
+        <q-card flat>
+          <q-card-section>
+            <q-tree
+              :nodes="treeDatas"
+              node-key="id"
+              label-key="name"
+              v-model:selected="treeSelected"
+              @update:selected="refresh()"
+            />
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col">
+        <q-table
+          ref="tableRef"
+          flat
+          selection="multiple"
+          v-model:selected="selected"
+          :rows="rows"
+          :columns="columns"
+          row-key="id"
+          :pagination="pagination"
+          :loading="loading"
+          :filter="filter"
+          binary-state-sort
+          @request="onRequest"
+          class="full-width col"
+        >
+          <template v-slot:top-left>
+            <q-input
+              dense
+              debounce="300"
+              filled
+              v-model="filter.name!.value"
+              placeholder="Search"
+            >
+              <template v-slot:prepend>
+                <q-icon name="sym_r_search" />
+              </template>
+            </q-input>
+            <q-btn
+              title="refresh"
+              round
+              padding="xs"
+              flat
+              color="primary"
+              class="q-ml-sm"
+              :disable="loading"
+              icon="sym_r_refresh"
+              @click="refresh"
+            />
           </template>
-        </q-input>
-        <q-btn title="refresh" round padding="xs" flat color="primary" class="q-ml-sm" :disable="loading"
-          icon="sym_r_refresh" @click="refresh" />
-      </template>
-      <template v-slot:top-right>
-        <q-btn title="create" round padding="xs" color="primary" class="q-ml-sm" :disable="loading" icon="sym_r_add"
-          @click="saveRow()" />
-        <q-btn title="import" round padding="xs" flat color="primary" class="q-mx-sm" :disable="loading"
-          icon="sym_r_database_upload" @click="importRow" />
-        <q-btn title="export" round padding="xs" flat color="primary" icon="sym_r_file_export"
-          @click="exportTable(columns, rows)" />
-      </template>
+          <template v-slot:top-right>
+            <q-btn
+              title="create"
+              round
+              padding="xs"
+              color="primary"
+              class="q-ml-sm"
+              :disable="loading"
+              icon="sym_r_add"
+              @click="saveRow()"
+            />
+            <q-btn
+              title="import"
+              round
+              padding="xs"
+              flat
+              color="primary"
+              class="q-mx-sm"
+              :disable="loading"
+              icon="sym_r_database_upload"
+              @click="importRow"
+            />
+            <q-btn
+              title="export"
+              round
+              padding="xs"
+              flat
+              color="primary"
+              icon="sym_r_file_export"
+              @click="exportTable(columns, rows)"
+            />
+          </template>
 
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ $t(`label.${col.label}`) }}
-          </q-th>
-        </q-tr>
-      </template>
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th auto-width />
+              <q-th v-for="col in props.cols" :key="col.name" :props="props">
+                {{ $t(`label.${col.label}`) }}
+              </q-th>
+            </q-tr>
+          </template>
 
-      <template v-slot:body-cell-members="props">
-        <q-td :props="props">
-          <template v-if="props.row.members && props.row.members.length > 0">
-            <q-avatar v-for="(item, index) in visibleArray(props.row.members, 5)" :key="index" size="32px"
-              :style="{ left: `${index * -2}px`, border: '2px solid white' }">
-              <img :src="`https://cdn.leafage.top/${item}`" :alt="`avater_${index}`" />
-            </q-avatar>
-            <q-chip color="primary" text-color="white" class="q-mr-xs" size="sm" v-if="props.row.members.length > 5">
-              + {{ props.row.members.length - 5 }}
-              <q-tooltip>
-                <q-avatar v-for="(item, index) in props.row.members.slice(5)" :key="index" size="3em"
-                  :style="{ left: `${(index as number) * -2}px`, border: '2px solid white' }">
-                  <img :src="`https://cdn.leafage.top/${item}`" :alt="`avater_${index}`" />
+          <template v-slot:body-cell-members="props">
+            <q-td :props="props">
+              <template
+                v-if="props.row.members && props.row.members.length > 0"
+              >
+                <q-avatar
+                  v-for="(member, index) in visibleArray<User>(
+                    props.row.members,
+                    5
+                  )"
+                  :key="index"
+                  size="32px"
+                  :style="{
+                    left: `${index * -2}px`,
+                    border: '2px solid white'
+                  }"
+                >
+                  <img
+                    :src="`https://cdn.leafage.top/${member.username}`"
+                    :alt="`avater_${index}`"
+                  />
                 </q-avatar>
-              </q-tooltip>
-            </q-chip>
+                <q-chip
+                  color="primary"
+                  text-color="white"
+                  class="q-mr-xs"
+                  size="sm"
+                  v-if="props.row.members.length > 5"
+                >
+                  + {{ props.row.members.length - 5 }}
+                  <q-tooltip>
+                    <q-avatar
+                      v-for="(member, index) in props.row.members.slice(5)"
+                      :key="index"
+                      size="3em"
+                      :style="{
+                        left: `${(index as number) * -2}px`,
+                        border: '2px solid white'
+                      }"
+                    >
+                      <img
+                        :src="`https://cdn.leafage.top/${member.username}`"
+                        :alt="`avater_${index}`"
+                      />
+                    </q-avatar>
+                  </q-tooltip>
+                </q-chip>
+              </template>
+            </q-td>
           </template>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-enabled="props">
-        <q-td :props="props">
-          <q-toggle v-model="props.row.enabled" @update:model-value="enableRow(props.row.id)" size="sm"
-            color="positive" />
-        </q-td>
-      </template>
-      <template v-slot:body-cell-id="props">
-        <q-td :props="props">
-          <q-btn title="modify" padding="xs" flat round color="primary" icon="sym_r_edit"
-            @click="saveRow(props.row.id)" />
-          <q-btn title="relation" padding="xs" flat round color="positive" icon="sym_r_link"
-            @click="relationRow(props.row.id)" class="q-mx-sm" />
-          <q-btn title="delete" padding="xs" flat round color="negative" icon="sym_r_delete"
-            @click="removeRow(props.row.id)" />
-        </q-td>
-      </template>
-    </q-table>
+          <template v-slot:body-cell-enabled="props">
+            <q-td :props="props">
+              <q-toggle
+                v-model="props.row.enabled"
+                @update:model-value="enableRow(props.row.id)"
+                size="sm"
+                color="positive"
+              />
+            </q-td>
+          </template>
+          <template v-slot:body-cell-id="props">
+            <q-td :props="props">
+              <q-btn
+                title="modify"
+                padding="xs"
+                flat
+                round
+                color="primary"
+                icon="sym_r_edit"
+                @click="saveRow(props.row.id)"
+              />
+              <q-btn
+                title="relation"
+                padding="xs"
+                flat
+                round
+                color="positive"
+                icon="sym_r_link"
+                @click="relationRow(props.row.id)"
+                class="q-mx-sm"
+              />
+              <q-btn
+                title="delete"
+                padding="xs"
+                flat
+                round
+                color="negative"
+                icon="sym_r_delete"
+                @click="removeRow(props.row.id)"
+              />
+            </q-td>
+          </template>
+        </q-table>
+      </div>
+    </div>
 
     <!-- import -->
     <q-dialog v-model="importVisible" persistent>
       <q-card>
         <q-card-section class="flex items-center q-pb-none">
-          <div class="text-h6">{{ $t('action.import') }}</div>
+          <div class="text-h6">{{ $t("action.import") }}</div>
           <q-space />
           <q-btn icon="sym_r_close" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
-          <q-uploader flat bordered :headers="[{ name: 'Authorization', value: `Bearer ${userStore.accessToken}` }]"
+          <q-uploader
+            flat
+            bordered
+            :headers="[
+              {
+                name: 'Authorization',
+                value: `Bearer ${userStore.accessToken}`
+              }
+            ]"
             :factory="onUpload"
-            accept=".csv,.xls,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+            accept=".csv,.xls,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+          />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -110,183 +263,218 @@
 </template>
 
 <script setup lang="ts">
-import type { QTable, QTableColumn, QTableProps } from 'quasar'
-import { Notify } from 'quasar'
-import { createGroup, enableGroup, fetchGroup, importGroups, modifyGroup, removeGroup, retrieveGroups } from 'src/api/system/groups'
-import type { Filter, Group, Pagination } from 'src/types'
-import { exportTable, visibleArray } from 'src/utils'
-import { useUserStore } from 'stores/user'
-import { onMounted, reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import {
+  createGroup,
+  enableGroup,
+  fetchGroup,
+  importGroups,
+  modifyGroup,
+  removeGroup,
+  retrieveGroups,
+  retrieveGroupTree
+} from "@/api/system/groups";
+import { useUserStore } from "@/stores/user";
+import type { Filter, Group, Pagination, User, TreeNode } from "@/types";
+import { exportTable, visibleArray } from "@/utils";
+import type { QTable, QTableColumn, QTableProps } from "quasar";
+import { Notify } from "quasar";
+import { onMounted, reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
+const userStore = useUserStore();
 
-const { t } = useI18n()
-const userStore = useUserStore()
+const visible = ref<boolean>(false);
+const importVisible = ref<boolean>(false);
 
-const visible = ref<boolean>(false)
-const importVisible = ref<boolean>(false)
+const treeDatas = ref<TreeNode[]>([]);
+const treeSelected = ref<string>("");
 
-const tableRef = ref<QTable>()
-const rows = ref<Array<Group>>([])
+const tableRef = ref<QTable>();
+const rows = ref<Array<Group>>([]);
 const filter = reactive<Filter<Group>>({
-  name: { op: 'like', value: undefined }
-})
-const loading = ref<boolean>(false)
+  name: { op: "like", value: undefined },
+  superiorId: { op: "eq", value: null }
+});
+const loading = ref<boolean>(false);
 
 const initialValues: Group = {
   id: null,
-  name: '',
+  name: "",
+  superiorId: null,
   enabled: true
-}
-const form = ref<Group>({ ...initialValues })
+};
+const form = ref<Group>({ ...initialValues });
 
 const pagination = ref({
-  sortBy: '',
+  sortBy: "",
   descending: false,
   page: 1,
   rowsPerPage: 7,
   rowsNumber: 0
-})
+});
 
-const selected = ref([])
+const selected = ref([]);
 
 const columns: QTableColumn<Group>[] = [
-  { name: 'name', label: 'name', align: 'left', field: 'name', sortable: true },
-  { name: 'members', label: 'members', align: 'center', field: 'members' },
-  { name: 'enabled', label: 'enabled', align: 'center', field: 'enabled' },
-  { name: 'description', label: 'description', field: 'description' },
-  { name: 'id', label: 'actions', field: 'id' }
-]
+  { name: "name", label: "name", align: "left", field: "name", sortable: true },
+  { name: "members", label: "members", align: "center", field: "members" },
+  { name: "enabled", label: "enabled", align: "center", field: "enabled" },
+  { name: "id", label: "actions", field: "id" }
+];
 
-onMounted(() => {
-  refresh()
-})
+onMounted(async () => {
+  await requestTree();
+  refresh();
+});
+
+/**
+ * 查询树
+ */
+async function requestTree() {
+  try {
+    const res = await retrieveGroupTree();
+    treeDatas.value = res.data;
+  } catch (error) {
+    treeDatas.value = [];
+    throw error;
+  }
+}
 
 /**
  * 查询列表
  */
-async function onRequest(props: Parameters<NonNullable<QTableProps['onRequest']>>[0]) {
-  loading.value = true
+async function onRequest(
+  props: Parameters<NonNullable<QTableProps["onRequest"]>>[0]
+) {
+  loading.value = true;
 
-  const { page, rowsPerPage, sortBy, descending } = props.pagination
-  const params: Pagination = { page, size: rowsPerPage }
+  const { page, rowsPerPage, sortBy, descending } = props.pagination;
+  const params: Pagination = { page, size: rowsPerPage };
   if (sortBy) {
-    params.sortBy = sortBy
-    params.descending = descending
+    params.sortBy = sortBy;
+    params.descending = descending;
   }
 
+  filter.superiorId!.value = treeSelected.value
+    ? Number(treeSelected.value)
+    : null;
   try {
-    const res = await retrieveGroups(params, filter)
-    pagination.value.page = page
-    pagination.value.rowsPerPage = rowsPerPage
-    pagination.value.sortBy = sortBy
-    pagination.value.descending = descending
+    const res = await retrieveGroups(params, filter);
+    pagination.value.page = page;
+    pagination.value.rowsPerPage = rowsPerPage;
+    pagination.value.sortBy = sortBy;
+    pagination.value.descending = descending;
 
-    rows.value = res.data.content
-    pagination.value.rowsNumber = res.data.totalElements
+    rows.value = res.data.content;
+    pagination.value.rowsNumber = res.data.totalElements;
   } catch (error) {
-    rows.value = []
-    pagination.value.rowsNumber = 0
+    rows.value = [];
+    pagination.value.rowsNumber = 0;
 
-    throw error
+    throw error;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function importRow() {
-  importVisible.value = true
+  importVisible.value = true;
 }
 
 function refresh() {
-  tableRef.value?.requestServerInteraction()
+  tableRef.value?.requestServerInteraction();
 }
 
 function relationRow(id: number) {
   // id
-  alert(id)
+  alert(id);
 }
 
 async function enableRow(id: number) {
-  await enableGroup(id)
-  refresh()
+  await enableGroup(id);
+  refresh();
 }
 
 async function saveRow(id?: number) {
-  form.value = { ...initialValues }
+  form.value = { ...initialValues };
   // You can populate the form with existing user data based on the id
   if (id) {
     try {
-      const res = await fetchGroup(id)
-      form.value = res.data
+      const res = await fetchGroup(id);
+      form.value = res.data;
     } catch (error) {
-      form.value = { ...initialValues }
-      throw error
+      form.value = { ...initialValues };
+      throw error;
     }
   }
-  visible.value = true
+  visible.value = true;
 }
 
 async function removeRow(id: number) {
   try {
-    await removeGroup(id)
-    refresh()
+    await removeGroup(id);
+    refresh();
     Notify.create({
-      message: t('message.success', { action: t('action.remove') }),
-      type: 'positive',
-    })
+      message: t("message.success", { action: t("action.remove") }),
+      type: "positive"
+    });
   } catch (error) {
     Notify.create({
-      message: t('message.error', { action: t('action.remove') }),
-      type: 'negative',
-    })
-    throw error
+      message: t("message.error", { action: t("action.remove") }),
+      type: "negative"
+    });
+    throw error;
   }
 }
 
 async function onSubmit() {
   try {
     if (form.value.id) {
-      await modifyGroup(form.value.id, form.value)
+      await modifyGroup(form.value.id, form.value);
     } else {
-      await createGroup(form.value)
+      await createGroup(form.value);
     }
-    visible.value = false
+    visible.value = false;
     Notify.create({
-      message: t('message.success', { action: form.value.id ? t('action.modify') : t('action.create') }),
-      type: 'positive',
-    })
+      message: t("message.success", {
+        action: form.value.id ? t("action.modify") : t("action.create")
+      }),
+      type: "positive"
+    });
 
-    refresh()
+    refresh();
   } catch (error) {
     Notify.create({
-      message: t('message.error', { action: form.value.id ? t('action.modify') : t('action.create') }),
-      type: 'negative',
-    })
-    throw error
+      message: t("message.error", {
+        action: form.value.id ? t("action.modify") : t("action.create")
+      }),
+      type: "negative"
+    });
+    throw error;
   }
 }
 
 async function onUpload(files: readonly File[]) {
   if (!files || files.length === 0 || !files[0]) {
-    throw new Error('No file provided')
+    throw new Error("No file provided");
   }
   try {
-    const res = await importGroups(files[0])
-    importVisible.value = false
+    const res = await importGroups(files[0]);
+    importVisible.value = false;
     Notify.create({
-      message: t('message.success', { action: t('action.import') }),
-      type: 'positive',
-    })
+      message: t("message.success", { action: t("action.import") }),
+      type: "positive"
+    });
 
-    refresh()
-    return res.data
+    refresh();
+    return res.data;
   } catch (error) {
     Notify.create({
-      message: t('message.error', { action: t('action.import') }),
-      type: 'negative',
-    })
-    throw error
+      message: t("message.error", { action: t("action.import") }),
+      type: "negative"
+    });
+    throw error;
   }
 }
 </script>

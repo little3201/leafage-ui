@@ -5,16 +5,19 @@
         <q-card flat>
           <q-card-section class="flex items-center">
             <q-avatar size="80px">
-              <img :src="`https://cdn.leafage.top/${me.username}`" alt="avatar" />
+              <img
+                :src="`https://cdn.leafage.top/${userStore.username}`"
+                alt="avatar"
+              />
             </q-avatar>
 
             <div class="q-ml-md">
               <span class="text-subtitle2">
-                {{ me.fullName }}
+                {{ userStore.fullName }}
               </span>
 
               <div class="text-caption">
-                <span>{{ me.username }}</span>
+                <span>{{ userStore.username }}</span>
               </div>
             </div>
           </q-card-section>
@@ -23,11 +26,18 @@
     </div>
 
     <div class="row q-col-gutter-md">
-      <div style="width: 256px;">
+      <div style="width: 256px">
         <q-card flat>
           <q-card-section>
             <q-list>
-              <q-item exact clickable v-ripple v-for="item in items" :key="item.name" :to="`/profile/${item.router}`">
+              <q-item
+                exact
+                clickable
+                v-ripple
+                v-for="item in items"
+                :key="item.name"
+                :to="`/profile/${item.router}`"
+              >
                 <q-item-section avatar>
                   <q-icon :name="`sym_r_${item.icon}`" />
                 </q-item-section>
@@ -50,22 +60,16 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from 'stores/user'
-import { ref } from 'vue'
+import { useUserStore } from "@/stores/user";
+import { ref } from "vue";
 
-
-const userStore = useUserStore()
-
-const me = {
-  username: userStore.username,
-  fullName: userStore.fullName
-}
+const userStore = useUserStore();
 
 const items = ref([
-  { name: 'overview', icon: 'overview', router: '' },
-  { name: 'notifications', icon: 'notifications', router: 'notifications' },
-  { name: 'sessions', icon: 'bigtop_updates', router: 'sessions' },
-  { name: 'changePassword', icon: 'key', router: 'change-password' },
-  { name: 'activities', icon: 'browse_activity', router: 'activities' },
-])
+  { name: "overview", icon: "overview", router: "" },
+  { name: "notifications", icon: "notifications", router: "notifications" },
+  { name: "sessions", icon: "bigtop_updates", router: "sessions" },
+  { name: "changePassword", icon: "key", router: "change-password" },
+  { name: "activities", icon: "browse_activity", router: "activities" }
+]);
 </script>

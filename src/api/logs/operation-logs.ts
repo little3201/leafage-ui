@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, OperationLog, Pagination } from 'src/types'
-import { dealFilters } from 'src/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, OperationLog, Pagination } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveOperationLogs = (pagination: Pagination, filter?: Filter<OperationLog>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.OPERATION_LOG, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveOperationLogs = (
+  pagination: Pagination,
+  filter?: Filter<OperationLog>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.OPERATION_LOG, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveOperationLogs = (pagination: Pagination, filter?: Filter<Op
  * @returns Row data
  */
 export const fetchOperationLog = (id: number) => {
-  return api.get(`${SERVER_URL.OPERATION_LOG}/${id}`)
-}
+  return api.get(`${SERVER_URL.OPERATION_LOG}/${id}`);
+};
 
 /**
  * Remove a row
@@ -29,13 +34,13 @@ export const fetchOperationLog = (id: number) => {
  * @returns Deletion status
  */
 export const removeOperationLog = (id: number) => {
-  return api.delete(`${SERVER_URL.OPERATION_LOG}/${id}`)
-}
+  return api.delete(`${SERVER_URL.OPERATION_LOG}/${id}`);
+};
 
 /**
  * Remove all rows
  * @returns Deletion status
  */
 export const clearOperationLogs = () => {
-  return api.delete(`${SERVER_URL.OPERATION_LOG}`)
-}
+  return api.delete(`${SERVER_URL.OPERATION_LOG}`);
+};

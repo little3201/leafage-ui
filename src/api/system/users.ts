@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, User } from 'src/types'
-import { dealFilters } from 'src/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, Pagination, User } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveUsers = (pagination: Pagination, filter?: Filter<User>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveUsers = (
+  pagination: Pagination,
+  filter?: Filter<User>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.USER, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveUsers = (pagination: Pagination, filter?: Filter<User>) => 
  * @returns Row data
  */
 export const fetchUser = (id: number) => {
-  return api.get(`${SERVER_URL.USER}/${id}`)
-}
+  return api.get(`${SERVER_URL.USER}/${id}`);
+};
 
 /**
  * Create a new row
@@ -29,8 +34,8 @@ export const fetchUser = (id: number) => {
  * @returns Created row
  */
 export const createUser = (row: User) => {
-  return api.post(SERVER_URL.USER, row)
-}
+  return api.post(SERVER_URL.USER, row);
+};
 
 /**
  * Modify an existing row
@@ -39,8 +44,8 @@ export const createUser = (row: User) => {
  * @returns Modified row
  */
 export const modifyUser = (id: number, row: User) => {
-  return api.put(`${SERVER_URL.USER}/${id}`, row)
-}
+  return api.put(`${SERVER_URL.USER}/${id}`, row);
+};
 
 /**
  * Enable or Disable an existing row
@@ -48,8 +53,8 @@ export const modifyUser = (id: number, row: User) => {
  * @returns Enable or Disable result
  */
 export const enableUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}`)
-}
+  return api.patch(`${SERVER_URL.USER}/${id}`);
+};
 
 /**
  * Unlock an existing row
@@ -57,8 +62,8 @@ export const enableUser = (id: number) => {
  * @returns Unlock result
  */
 export const unlockUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}/unlock`)
-}
+  return api.patch(`${SERVER_URL.USER}/${id}/unlock`);
+};
 
 /**
  * Remove a row
@@ -66,8 +71,8 @@ export const unlockUser = (id: number) => {
  * @returns Deletion status
  */
 export const removeUser = (id: number) => {
-  return api.delete(`${SERVER_URL.USER}/${id}`)
-}
+  return api.delete(`${SERVER_URL.USER}/${id}`);
+};
 
 /**
  * Relation privileges for a specific row
@@ -75,10 +80,15 @@ export const removeUser = (id: number) => {
  * @param privilegeIds Privilege id
  * @param actions Actions
  */
-export const relationUsersPrivileges = (privilegeId: number, relations: { key: number | string, actions: string[] }[]) => {
-  const datas = relations.map(item => { return { username: item.key, actions: item.actions } })
-  return api.patch(`${SERVER_URL.USER}/privileges/${privilegeId}`, datas)
-}
+export const relationUsersPrivileges = (
+  privilegeId: number,
+  relations: { key: number | string; actions: string[] }[]
+) => {
+  const datas = relations.map(item => {
+    return { username: item.key, actions: item.actions };
+  });
+  return api.patch(`${SERVER_URL.USER}/privileges/${privilegeId}`, datas);
+};
 
 /**
  * Remove privileges for a specific row
@@ -86,14 +96,23 @@ export const relationUsersPrivileges = (privilegeId: number, relations: { key: n
  * @param privilegeIds Privilege id
  * @param actions Actions
  */
-export const removeUsersPrivileges = (username: string, privilegeId: number, actions?: string[]) => {
+export const removeUsersPrivileges = (
+  username: string,
+  privilegeId: number,
+  actions?: string[]
+) => {
   if (actions && actions.length > 0) {
-    const params = { actions: actions.join(',') }
-    return api.delete(`${SERVER_URL.USER}/${username}/privileges/${privilegeId}`, { params })
+    const params = { actions: actions.join(",") };
+    return api.delete(
+      `${SERVER_URL.USER}/${username}/privileges/${privilegeId}`,
+      { params }
+    );
   } else {
-    return api.delete(`${SERVER_URL.USER}/${username}/privileges/${privilegeId}`)
+    return api.delete(
+      `${SERVER_URL.USER}/${username}/privileges/${privilegeId}`
+    );
   }
-}
+};
 
 /**
  * Import rows
@@ -101,5 +120,5 @@ export const removeUsersPrivileges = (username: string, privilegeId: number, act
  * @returns
  */
 export const importUsers = (file: File) => {
-  return api.postForm(`${SERVER_URL.USER}/import`, { file: file })
-}
+  return api.postForm(`${SERVER_URL.USER}/import`, { file: file });
+};

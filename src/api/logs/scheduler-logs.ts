@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, SchedulerLog } from 'src/types'
-import { dealFilters } from 'src/utils'
+import { api } from "@/boot/axios";
+import { SERVER_URL } from "@/constants";
+import type { Filter, Pagination, SchedulerLog } from "@/types";
+import { dealFilters } from "@/utils";
 
 /**
  * Retrieve rows
@@ -9,10 +9,15 @@ import { dealFilters } from 'src/utils'
  * @param filters Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSchedulerLogs = (pagination: Pagination, filter?: Filter<SchedulerLog>) => {
-  const filters = dealFilters(filter)
-  return api.get(SERVER_URL.SCHEDULER_LOG, { params: { ...pagination, page: pagination.page - 1, filters } })
-}
+export const retrieveSchedulerLogs = (
+  pagination: Pagination,
+  filter?: Filter<SchedulerLog>
+) => {
+  const filters = dealFilters(filter);
+  return api.get(SERVER_URL.SCHEDULER_LOG, {
+    params: { ...pagination, page: pagination.page - 1, filters }
+  });
+};
 
 /**
  * Fetch a specific row
@@ -20,8 +25,8 @@ export const retrieveSchedulerLogs = (pagination: Pagination, filter?: Filter<Sc
  * @returns Row data
  */
 export const fetchSchedulerLog = (id: number) => {
-  return api.get(`${SERVER_URL.SCHEDULER_LOG}/${id}`)
-}
+  return api.get(`${SERVER_URL.SCHEDULER_LOG}/${id}`);
+};
 
 /**
  * Remove a row
@@ -29,13 +34,13 @@ export const fetchSchedulerLog = (id: number) => {
  * @returns Deletion status
  */
 export const removeSchedulerLog = (id: number) => {
-  return api.delete(`${SERVER_URL.SCHEDULER_LOG}/${id}`)
-}
+  return api.delete(`${SERVER_URL.SCHEDULER_LOG}/${id}`);
+};
 
 /**
  * Remove all rows
  * @returns Deletion status
  */
 export const clearSchedulerLogs = () => {
-  return api.delete(`${SERVER_URL.SCHEDULER_LOG}`)
-}
+  return api.delete(`${SERVER_URL.SCHEDULER_LOG}`);
+};
