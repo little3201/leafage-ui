@@ -181,7 +181,7 @@
       <template v-slot:body-cell-id="props">
         <q-td :props="props">
           <q-btn
-            title="delete"
+            title="remove"
             padding="xs"
             flat
             round

@@ -220,7 +220,7 @@
                 class="q-mx-sm"
               />
               <q-btn
-                title="delete"
+                title="remove"
                 padding="xs"
                 flat
                 round
