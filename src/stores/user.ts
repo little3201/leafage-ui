@@ -13,13 +13,10 @@ export const useUserStore = defineStore("user", {
     routesAdded: false
   }),
   actions: {
-    setUserinfo(userinfo: Userinfo) {
-      this.username = userinfo.username;
-      this.fullName = userinfo.fullName;
-      this.email = userinfo.email;
-      this.accessToken = userinfo.accessToken;
-      this.idToken = userinfo.idToken;
-      this.privileges = userinfo.privileges;
+    setUserinfo(username: string, fullName: string, email: string) {
+      this.username = username;
+      this.fullName = fullName;
+      this.email = email;
     },
 
     setAccessToken(token: string) {

@@ -22,7 +22,7 @@ export default defineBoot(({ router, store }) => {
     if (!userStore.username) {
       try {
         const res = await getUserInfo();
-        userStore.setUserinfo(res.data);
+        userStore.setUserinfo(res.data.sub, "", res.data.email);
       } catch {
         userStore.$reset();
         await signIn();
@@ -30,7 +30,7 @@ export default defineBoot(({ router, store }) => {
       }
     }
 
-    if (!userStore.privileges.length) {
+    if (!userStore.privileges || userStore.privileges.length === 0) {
       try {
         const res = await retrievePrivilegeTree();
         userStore.setPrivileges(res.data);

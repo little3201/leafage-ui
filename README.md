@@ -11,7 +11,7 @@
 </div>
 
 <p align="center">
-  免费且美观的管理模板，使用 Vue 3、Vite、Pinia 和 Tailwind CSS构建。设计用于构建高效、响应式和快速加载的管理界面。
+  管理系统，多种认证授权方式（PKCE, BFF, JWT），使用 Vue 3、Vite、Pinia 和 Tailwind CSS构建。设计用于构建高效、响应式和快速加载的管理界面。
   
   后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
 </p>
@@ -31,9 +31,9 @@
 
 ## 技术栈
 
-开发框架：Vue3/React、TypeScript、Vite、Element-Plus/Quasar、Tailwind CSS
+开发框架：Vue3/React, TypeScript, Vite, Element-Plus/Quasar, Tailwind CSS
 测试框架：Vitest
-代码规范：Eslint、Husky、Lint-staged、commitlint
+代码规范：oxlint, oxfmt, Husky, Lint-staged, commitlint
 
 ## 页面预览
 
@@ -71,11 +71,12 @@
 │   └── env.d.ts            # Env.d
 ├── test/                   # Test
 └── commitlint.config.js    # Commitlint configuration
-└── eslint.config.js        # Eslint configuration
 ├── index.html              # Entry HTML file
 └── lint-staged.config.js   # Lint staged configuration
+└── oxfmt.config.ts         # oxfmt configuration
+└── oxlint.config.ts        # oxlint configuration
 ├── package.json            # Package define
 └── postcss.config.js       # Postcss configuration
 └── quasar.config.ts        # Vite configuration
-└── vitest.config.mts       # Vitest configuration
+└── vitest.config.ts       # Vitest configuration
 ```
