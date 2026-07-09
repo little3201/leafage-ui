@@ -180,8 +180,8 @@
       :class="$q.dark.isActive ? 'text-white' : 'text-black'"
     >
       <p :class="{ 'text-white': $q.dark.isActive }"
-        >Copyright &copy; {{ new Date().getFullYear() }} All Rights Reserved.</p
-      >
+        >Copyright &copy; {{ new Date().getFullYear() }} All Rights Reserved.
+      </p>
     </q-footer>
   </q-layout>
 </template>
@@ -190,11 +190,10 @@
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import ThemeToogle from "@/components/ThemeToogle.vue";
 import { useQuasar } from "quasar";
-import { useUserStore } from "@/stores/user";
+import { signIn } from "@/api/authentication";
 import { ref } from "vue";
 
 const $q = useQuasar();
-const userStore = useUserStore();
 
 const showPwd = ref<boolean>(true);
 const loading = ref<boolean>(false);
@@ -206,6 +205,6 @@ const form = ref({
 
 async function onSubmit() {
   loading.value = true;
-  await userStore.signIn();
+  await signIn();
 }
 </script>
