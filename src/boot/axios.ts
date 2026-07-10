@@ -8,7 +8,7 @@ import type {
 } from "axios";
 import axios from "axios";
 
-const abortControllerMap: Map<string, AbortController> = new Map();
+const abortControllerMap = new Map<string, AbortController>();
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.API || "/api",
@@ -19,9 +19,14 @@ const api: AxiosInstance = axios.create({
 export default defineBoot(() => {
   api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
+      const uniqueKey = generateUniqueKey(config);
+      const previousController = abortControllerMap.get(uniqueKey);
+      if (previousController) {
+        previousController.abort();
+        abortControllerMap.delete(uniqueKey);
+      }
       // 创建 AbortController 实例
       const controller = new AbortController();
-      const uniqueKey = generateUniqueKey(config);
       config.signal = controller.signal;
       abortControllerMap.set(uniqueKey, controller);
 
@@ -41,6 +46,11 @@ export default defineBoot(() => {
       return response;
     },
     async (error: AxiosError) => {
+       if (error.config) {
+        const uniqueKey = generateUniqueKey(error.config);
+        abortControllerMap.delete(uniqueKey);
+      }
+
       if (error.response?.status === 401) {
         cancelAllRequest();
         await signIn();
@@ -51,9 +61,12 @@ export default defineBoot(() => {
 });
 
 function generateUniqueKey(config: InternalAxiosRequestConfig): string {
-  const { method, url, params } = config;
-  const paramString = params ? JSON.stringify(params) : "";
-  return `${method}:${url}:${paramString}`;
+  const method = config.method ?? "get";
+  const url = config.url ?? "";
+  const params = config.params ? JSON.stringify(config.params) : "";
+  const data = config.data ? JSON.stringify(config.data) : "";
+
+  return `${method}:${url}:${params}:${data}`;
 }
 
 function cancelAllRequest() {
