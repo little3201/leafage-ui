@@ -20,7 +20,7 @@ for (let i = 1; i < 28; i++) {
     params: ["GET"].includes(httpMethod)
       ? "page=1"
       : ["PUT", "PATCH", "DELETE"].includes(httpMethod)
-        ? "id=1"
+        ? `id=${i}`
         : "",
     ip: "192.168.0.1",
     body: ["POST", "PUT", "PATCH"].includes(httpMethod)

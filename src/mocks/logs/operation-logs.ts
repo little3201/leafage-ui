@@ -30,7 +30,7 @@ for (let i = 1; i < 28; i++) {
     params: ["retrieve"].includes(action)
       ? "page=1"
       : ["preview", "fetch", "remove"].includes(action)
-        ? "id=1"
+        ? `id=${i}`
         : "",
     response: ["create", "modify", "config"].includes(action)
       ? '{"username":"test"}'
