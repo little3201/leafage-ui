@@ -1,14 +1,34 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Role, RoleMembers, RolePrivileges } from "@/types";
+import type { Role, RoleMembers, RolePrivileges, User } from "@/types";
 import { applyFilters } from "../util";
 
 const datas: Role[] = [];
+const users: User[] = [];
+
+for (let i = 1; i < 5; i++) {
+  const row: User = {
+    id: i,
+    username:
+      ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
+        Math.floor(Math.random() * 5)
+      ] || "admin",
+    fullName: "Name_" + i,
+    email: "use***" + "@**t.com",
+    status:
+      ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
+        Math.floor(Math.random() * 5)
+      ] || "unknown",
+    enabled: i % 2 > 0
+  };
+  users.push(row);
+}
 
 for (let i = 1; i < 28; i++) {
   const data: Role = {
     id: i,
     name: "Role_" + i,
+    members: users.filter((_, index) => index < Math.floor(Math.random() * 5)),
     enabled: i % 3 > 0
   };
   datas.push(data);

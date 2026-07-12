@@ -5,6 +5,7 @@ import type {
   GroupMembers,
   GroupPrivileges,
   GroupRoles,
+  Role,
   TreeNode,
   User
 } from "@/types";
@@ -12,6 +13,7 @@ import { applyFilters } from "../util";
 
 const datas: Group[] = [];
 const users: User[] = [];
+const roles: Role[] = [];
 
 for (let i = 1; i < 5; i++) {
   const row: User = {
@@ -31,6 +33,16 @@ for (let i = 1; i < 5; i++) {
   users.push(row);
 }
 
+for (let i = 1; i < 5; i++) {
+  const row: Role = {
+    id: i,
+    name: "Role_" + i,
+    members: users.filter((_, index) => index < Math.floor(Math.random() * 5)),
+    enabled: i % 3 > 0
+  };
+  roles.push(row);
+}
+
 for (let i = 1; i < 28; i++) {
   const superiorId = Math.floor(Math.random() * 12) || null;
   const row: Group = {
@@ -38,6 +50,7 @@ for (let i = 1; i < 28; i++) {
     superiorId: superiorId,
     name: "Group_" + i,
     members: users.filter((_, index) => index < Math.floor(Math.random() * 5)),
+    roles: roles.filter((_, index) => index < Math.floor(Math.random() * 5)),
     enabled: true
   };
   datas.push(row);
@@ -54,7 +67,7 @@ for (let i = 1; i < 14; i++) {
   members.push(row);
 }
 
-const roles: GroupRoles[] = [];
+const groupRoles: GroupRoles[] = [];
 
 for (let i = 1; i < 14; i++) {
   const row: GroupRoles = {
@@ -62,7 +75,7 @@ for (let i = 1; i < 14; i++) {
     roleId: i,
     groupId: i
   };
-  roles.push(row);
+  groupRoles.push(row);
 }
 
 const privileges: GroupPrivileges[] = [];
@@ -137,7 +150,7 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/roles`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const filtered = roles.filter(item => item.groupId === Number(id));
+      const filtered = groupRoles.filter(item => item.groupId === Number(id));
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json([]);
