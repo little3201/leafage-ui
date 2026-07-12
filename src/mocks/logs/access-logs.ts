@@ -16,6 +16,7 @@ for (let i = 1; i < 28; i++) {
         Math.floor(Math.random() * 5)
       ] || "unknown",
     httpMethod: httpMethod,
+    targetId: ["PUT", "PATCH", "DELETE"].includes(httpMethod) ? i : undefined,
     params: ["GET"].includes(httpMethod)
       ? "page=1"
       : ["PUT", "PATCH", "DELETE"].includes(httpMethod)

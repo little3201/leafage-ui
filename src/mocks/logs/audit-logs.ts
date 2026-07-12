@@ -13,7 +13,16 @@ for (let i = 1; i < 28; i++) {
   const row: AuditLog = {
     id: i,
     action: action,
-    targetId: action !== "create" ? i : undefined,
+    targetId: [
+      "remoe",
+      "modify",
+      "patch",
+      "relation",
+      "config",
+      "fetch"
+    ].includes(action)
+      ? i
+      : undefined,
     module:
       ["users", "groups", "roles", "logs", "files"][
         Math.floor(Math.random() * 5)

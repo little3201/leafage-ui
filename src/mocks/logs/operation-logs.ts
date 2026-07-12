@@ -17,6 +17,16 @@ for (let i = 1; i < 28; i++) {
         Math.floor(Math.random() * 5)
       ] || "unknown",
     action: action,
+    targetId: [
+      "remoe",
+      "modify",
+      "patch",
+      "relation",
+      "config",
+      "fetch"
+    ].includes(action)
+      ? i
+      : undefined,
     params: ["retrieve"].includes(action)
       ? "page=1"
       : ["preview", "fetch", "remove"].includes(action)
