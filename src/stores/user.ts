@@ -15,8 +15,8 @@ export const useUserStore = defineStore("user", {
 
       function traverse(nodes: PrivilegeTreeNode[]) {
         for (const node of nodes) {
-          if (node.meta?.path) {
-            map.set(node.meta.path, new Set(node.meta.actions ?? []));
+          if (node.name) {
+            map.set(node.name, new Set(node.meta.actions ?? []));
           }
 
           if (node.children?.length) {
