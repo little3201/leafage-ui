@@ -2,6 +2,7 @@ import { retrievePrivilegeTree } from "@/api/system/privileges";
 import type { PrivilegeTreeNode } from "@/types";
 import { useUserStore } from "@/stores/user";
 import type { RouteRecordRaw } from "vue-router";
+import { signIn, getUserInfo } from "@/api/authentication";
 import { createRouter, createWebHistory } from "vue-router";
 import { constantRouterMap } from "./routes";
 // Lazy load layout
@@ -24,22 +25,13 @@ router.beforeEach(async (to, from) => {
   // 加载用户信息
   if (!userStore.username) {
     try {
-      const res = await userStore.getUserInfo();
+      const res = await getUserInfo();
       if (res && res.data) {
-        const data = res.data as {
-          sub?: string;
-          name?: string;
-          email?: string;
-        };
-        userStore.$patch({
-          username: data.sub ?? "",
-          fullName: data.name ?? "",
-          email: data.email ?? ""
-        });
+        userStore.setUserinfo(res.data.sub, res.data.name, res.data.email);
       }
     } catch {
       userStore.$reset();
-      userStore.signIn();
+      signIn();
       return false;
     }
   }
@@ -49,12 +41,11 @@ router.beforeEach(async (to, from) => {
     try {
       const res = await retrievePrivilegeTree();
       if (res && res.data) {
-        const privileges = res.data as PrivilegeTreeNode[];
-        userStore.$patch({ privileges });
+        userStore.setPrivileges(res.data);
       }
     } catch {
       userStore.$reset();
-      userStore.signIn();
+      signIn();
       return false;
     }
   }

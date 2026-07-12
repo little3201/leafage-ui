@@ -2,16 +2,13 @@
 import { Icon } from "@iconify/vue";
 import { loadIcon } from "@/utils";
 import { useUserStore } from "@/stores/user";
+import { useAppStore } from "@/stores/app";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-const { currentRoute } = useRouter();
+const appStore = useAppStore();
 const userStore = useUserStore();
-
-const me = {
-  username: userStore.username,
-  fullName: userStore.fullName
-};
+const { currentRoute } = useRouter();
 
 const items = ref([
   { name: "overview", icon: "overview-outline", router: "" },
@@ -30,15 +27,32 @@ const items = ref([
   <ElRow class="mb-4">
     <ElCol :span="24">
       <ElCard body-class="flex items-center">
-        <ElAvatar :size="80" :src="`https://cdn.leafage.top/${me.username}`" />
+        <ElAvatar
+          :size="80"
+          :src="`https://cdn.leafage.top/${userStore.username}`"
+        />
         <div class="ml-4 flex-1">
           <span class="text-lg my-1">
-            {{ me.fullName }}
+            {{ userStore.fullName }}
           </span>
 
-          <div class="text-sm text-(--el-text-color-secondary)">
-            <span>{{ me.username }}</span>
+          <div class="text-sm text-(--el-text-color-secondary) space-x-2">
+            <span>Username: {{ userStore.username }}</span>
+            <span>Email: {{ userStore.email }}</span>
           </div>
+        </div>
+
+        <div class="inline-flex flex-col items-center">
+          <span>{{
+            new Intl.DateTimeFormat(appStore.locale, {
+              dateStyle: "medium"
+            }).format(new Date())
+          }}</span>
+          <span class="mt-2">{{
+            new Intl.DateTimeFormat(appStore.locale, {
+              weekday: "long"
+            }).format(new Date())
+          }}</span>
         </div>
       </ElCard>
     </ElCol>

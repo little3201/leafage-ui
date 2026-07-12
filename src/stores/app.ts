@@ -5,13 +5,10 @@ export const useAppStore = defineStore("app", {
   state: (): { locale: string } => ({
     locale: Cookies.get("lang") || "zh-CN"
   }),
-  getters: {
-    lang: state => state.locale
-  },
   actions: {
     setLocale(locale: string) {
       this.locale = locale;
-      Cookies.set("lang", locale);
+      Cookies.set("lang", locale, { secure: true, sameSite: "Lax" });
       // 修改html中lang
       const htmlElement = document.querySelector("html");
 

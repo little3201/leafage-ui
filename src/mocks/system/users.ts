@@ -23,11 +23,6 @@ for (let i = 1; i < 5; i++) {
 }
 
 export const usersHandlers = [
-  http.get(`/api${SERVER_URL.USERINFO}`, () => {
-    return HttpResponse.json({
-      sub: "username"
-    });
-  }),
   http.get(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {

@@ -5,9 +5,9 @@ import type {
   InternalAxiosRequestConfig
 } from "axios";
 import axios from "axios";
-import { useUserStore } from "@/stores/user";
+import { signIn } from "@/api/authentication";
 
-const abortControllerMap: Map<string, AbortController> = new Map();
+const abortControllerMap = new Map<string, AbortController>();
 
 const api: AxiosInstance = axios.create({
   baseURL: "/api",
@@ -18,9 +18,14 @@ const api: AxiosInstance = axios.create({
 // 请求拦截器
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const uniqueKey = generateUniqueKey(config);
+    const previousController = abortControllerMap.get(uniqueKey);
+    if (previousController) {
+      previousController.abort();
+      abortControllerMap.delete(uniqueKey);
+    }
     // 创建 AbortController 实例
     const controller = new AbortController();
-    const uniqueKey = generateUniqueKey(config);
     config.signal = controller.signal;
     abortControllerMap.set(uniqueKey, controller);
 
@@ -40,10 +45,14 @@ api.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
-    const userStore = useUserStore();
+    if (error.config) {
+      const uniqueKey = generateUniqueKey(error.config);
+      abortControllerMap.delete(uniqueKey);
+    }
+
     if (error.response?.status === 401) {
       cancelAllRequest();
-      userStore.signIn();
+      signIn();
     }
     return Promise.reject(error);
   }
@@ -53,13 +62,10 @@ api.interceptors.response.use(
 function generateUniqueKey(config: InternalAxiosRequestConfig): string {
   const method = config.method ?? "get";
   const url = config.url ?? "";
-  const params = config.params as
-    | Record<string, unknown>
-    | string
-    | null
-    | undefined;
-  const paramString = params ? JSON.stringify(params) : "";
-  return `${method}:${url}:${paramString}`;
+  const params = config.params ? JSON.stringify(config.params) : "";
+  const data = config.data ? JSON.stringify(config.data) : "";
+
+  return `${method}:${url}:${params}:${data}`;
 }
 
 function cancelAllRequest() {

@@ -2,7 +2,7 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.oxc": "always"
+    "source.fixAll.oxc": "explicit"
   },
   "oxc.fmt.configPath": "oxfmt.config.ts",
   "editor.defaultFormatter": "oxc.oxc-vscode",
@@ -10,5 +10,11 @@
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "search.exclude": {
     "dist/": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
   }
 }

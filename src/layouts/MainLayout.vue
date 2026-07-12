@@ -3,6 +3,7 @@ import { Icon } from "@iconify/vue";
 import logo from "@/assets/logo.svg";
 import EssentialList from "@/components/EssentialList.vue";
 import LanguageSelector from "@/components/LanguageSelector.vue";
+import { signOut } from "@/api/authentication";
 import ThemeToogle from "@/components/ThemeToogle.vue";
 import { globalIcons } from "@/constants";
 import { loadIcon, pageIcon } from "@/utils";
@@ -12,15 +13,9 @@ import { useRouter } from "vue-router";
 const { currentRoute } = useRouter();
 const userStore = useUserStore();
 
-const user = {
-  username: userStore.username,
-  fullName: userStore.fullName,
-  privileges: userStore.privileges
-};
-
 function logout() {
   userStore.$reset();
-  userStore.signOut();
+  signOut();
 }
 </script>
 
@@ -30,7 +25,7 @@ function logout() {
   >
     <div class="inline-flex grow justify-between">
       <div class="inline-flex items-center">
-        <ElImage :src="logo" alt="avatar" class="w-8 h-8" />
+        <ElImage :src="logo" alt="avatar" class="w-10 h-10" />
         <h3 class="ml-3 text-white">Project Management</h3>
       </div>
 
@@ -41,21 +36,20 @@ function logout() {
           <div class="inline-flex items-center">
             <ElAvatar
               alt="avatar"
-              :size="32"
-              :src="`https://cdn.leafage.top/${user.username}`"
+              :src="`https://cdn.leafage.top/${userStore.username}`"
             />
-            <span class="ml-2 text-white">{{ user.fullName }}</span>
+            <span class="ml-2 text-white">{{ userStore.fullName }}</span>
           </div>
           <template #dropdown>
             <div class="flex items-center space-x-2 p-4">
               <ElAvatar
                 alt="avatar"
-                :src="`https://cdn.leafage.top/${user.username}`"
+                :src="`https://cdn.leafage.top/${userStore.username}`"
               />
               <div class="inline-flex flex-col">
-                <span>{{ user.fullName }}</span>
+                <span>{{ userStore.fullName }}</span>
                 <span class="text-xs text-(--el-text-color-secondary)">{{
-                  user.username
+                  userStore.username
                 }}</span>
               </div>
             </div>
@@ -109,7 +103,7 @@ function logout() {
             class="mr-2"
           />{{ $t("page.home") }}
         </ElMenuItem>
-        <template v-for="link in user.privileges" :key="link.id">
+        <template v-for="link in userStore.privileges" :key="link.id">
           <EssentialList
             v-if="link.children && link.children.length > 0"
             :essentialLink="link"

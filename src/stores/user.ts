@@ -1,9 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import type { Userinfo } from "@/types";
-import { SERVER_URL } from "@/constants";
-import { api } from "@/boot/axios";
-
-const BASE_URL = (import.meta.env.VITE_BASE_URL as string) || "";
+import type { Userinfo, PrivilegeTreeNode } from "@/types";
 
 export const useUserStore = defineStore("user", {
   state: (): Userinfo => ({
@@ -13,15 +9,35 @@ export const useUserStore = defineStore("user", {
     privileges: [],
     routesAdded: false
   }),
+  getters: {
+    privilegeMap(state) {
+      const map = new Map<string, Set<string>>();
+
+      function traverse(nodes: PrivilegeTreeNode[]) {
+        for (const node of nodes) {
+          if (node.meta?.path) {
+            map.set(node.meta.path, new Set(node.meta.actions ?? []));
+          }
+
+          if (node.children?.length) {
+            traverse(node.children);
+          }
+        }
+      }
+
+      traverse(state.privileges);
+      return map;
+    }
+  },
   actions: {
-    signIn() {
-      globalThis.location.href = BASE_URL;
+    setUserinfo(username: string, fullName: string, email: string) {
+      this.username = username;
+      this.fullName = fullName;
+      this.email = email;
     },
-    getUserInfo() {
-      return api.get(SERVER_URL.USERINFO);
-    },
-    signOut() {
-      globalThis.location.href = BASE_URL + SERVER_URL.LOGOUT;
+
+    setPrivileges(privileges: PrivilegeTreeNode[]) {
+      this.privileges = privileges;
     }
   }
 });

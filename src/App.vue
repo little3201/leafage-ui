@@ -3,12 +3,12 @@ import en from "element-plus/es/locale/lang/en";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import zhTw from "element-plus/es/locale/lang/zh-tw";
 import { computed } from "vue";
-import { useI18n } from "vue-i18n";
+import { useAppStore } from "@/stores/app";
 
-const { locale } = useI18n({ useScope: "global" });
+const appStore = useAppStore();
 
 const lang = computed(() => {
-  switch (locale.value) {
+  switch (appStore.locale) {
     case "zh-CN":
       return zhCn;
     case "zh-TW":

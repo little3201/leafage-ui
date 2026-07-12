@@ -5,7 +5,8 @@ export const authenticationHandlers = [
   http.get(`/api${SERVER_URL.USERINFO}`, () => {
     return HttpResponse.json({
       sub: "admin",
-      name: "Administrator"
+      name: "Administrator",
+      email: "admin@example.com"
     });
   }),
 
