@@ -33,7 +33,7 @@ for (let i = 1; i < 28; i++) {
         ? `id=${i}`
         : "",
     response: ["create", "modify", "config"].includes(action)
-      ? '{"username":"test"}'
+      ? '{"name":"test"}'
       : "",
     status: ["SUCCEED", "FAILED"][Math.floor(Math.random() * 2)] || "",
     duration: Math.floor(Math.random() * 10),
