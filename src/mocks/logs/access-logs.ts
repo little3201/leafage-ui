@@ -24,7 +24,7 @@ for (let i = 1; i < 28; i++) {
         : "",
     ip: "192.168.0.1",
     body: ["POST", "PUT", "PATCH"].includes(httpMethod)
-      ? '{"username":"test"}'
+      ? '{"name":"test"}'
       : "",
     duration: Math.floor(Math.random() * 1000),
     statusCode:
