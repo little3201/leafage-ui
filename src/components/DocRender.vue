@@ -105,7 +105,13 @@ function initUniver(documentData: Partial<IDocumentData>) {
     ]
   });
 
-  univerAPI.createUniverDoc(documentData || {});
+  const data = props.readOnly
+    ? {
+        ...documentData,
+        disabled: true
+      }
+    : documentData;
+  univerAPI.createUniverDoc(data);
 
   univerInstance = univer;
   univerAPIInstance = univerAPI;

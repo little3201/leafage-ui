@@ -17,31 +17,83 @@ for (let i = 1; i < 28; i++) {
     superiorId: superiorId || null,
     name: "Title_" + i,
     body: {
-      dataStream: "这里写的是内容，你知道吗？\r" + "这是第" + i + "行内容\r",
-      textRuns: [],
-      customBlocks: [],
-      tables: [],
-      paragraphs: [
-        {
-          startIndex: 8,
-          paragraphStyle: {
-            spaceAbove: {
-              v: 5
-            },
-            lineSpacing: 1,
-            spaceBelow: {
-              v: 0
+      id: "id_" + i,
+      body: {
+        tables: [],
+        textRuns: [],
+        dataStream: "现状如下\r\n",
+        paragraphs: [
+          {
+            startIndex: 4,
+            paragraphStyle: {
+              spaceAbove: {
+                v: 0
+              },
+              spaceBelow: {
+                v: 8
+              },
+              lineSpacing: 1.5
             }
           }
-        }
-      ],
-      sectionBreaks: [
+        ],
+        customBlocks: [],
+        customRanges: [],
+        sectionBreaks: [
+          {
+            startIndex: 5
+          }
+        ],
+        customDecorations: []
+      },
+      title: "Title_" + i,
+      locale: "zhCN",
+      footers: {},
+      headers: {},
+      drawings: {},
+      settings: {
+        zoomRatio: 1
+      },
+      resources: [
         {
-          startIndex: 9
+          data: '{"data":{},"order":[]}',
+          name: "DOC_DRAWING_PLUGIN"
         }
       ],
-      customRanges: [],
-      customDecorations: []
+      tableSource: {},
+      documentStyle: {
+        pageSize: {
+          width: 794,
+          height: 1124
+        },
+        marginTop: 50,
+        marginLeft: 50,
+        pageOrient: 0,
+        marginRight: 50,
+        marginBottom: 50,
+        marginFooter: 30,
+        marginHeader: 30,
+        renderConfig: {
+          background: {
+            rgb: "#ccc"
+          },
+          centerAngle: 0,
+          vertexAngle: 0,
+          zeroWidthParagraphBreak: 0
+        },
+        documentFlavor: 1,
+        autoHyphenation: 1,
+        defaultFooterId: "",
+        defaultHeaderId: "",
+        evenPageFooterId: "",
+        evenPageHeaderId: "",
+        evenAndOddHeaders: 0,
+        firstPageFooterId: "",
+        firstPageHeaderId: "",
+        doNotHyphenateCaps: 0,
+        consecutiveHyphenLimit: 2,
+        useFirstPageHeaderFooter: 0
+      },
+      drawingsOrder: []
     },
     ownerId: Math.floor(Math.random() * 10) || null,
     ownerType: ["REPORT", "TEMPLATE"][Math.floor(Math.random() * 2)] || null,
