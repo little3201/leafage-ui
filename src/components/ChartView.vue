@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { useDark, useEventListener } from "@vueuse/core";
+import { useEventListener } from "@vueuse/core";
 import type { ApexOptions } from "apexcharts";
+import en from "apexcharts/dist/locales/en.json";
+import zhCN from "apexcharts/dist/locales/zh-cn.json";
+import zhTW from "apexcharts/dist/locales/zh-tw.json";
 import ApexCharts from "apexcharts";
 import { isNumber } from "@/utils";
+import { useAppStore } from "@/stores/app";
+import { storeToRefs } from "pinia";
 import {
   computed,
   onActivated,
@@ -12,6 +17,7 @@ import {
   watch
 } from "vue";
 
+const appStore = useAppStore();
 const props = withDefaults(
   defineProps<{
     options: ApexOptions;
@@ -24,17 +30,27 @@ const props = withDefaults(
   }
 );
 
-const options = computed(() => {
-  return Object.assign({}, props.options, {
-    theme: {
-      mode: useDark().value ? "dark" : "light"
-    }
-  });
+const elRef = ref<HTMLElement | null>(null);
+let chartRef: ApexCharts | undefined;
+const { theme, locale } = storeToRefs(appStore);
+const isDark = ref(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+const chartLocales: Record<string, typeof en> = {
+  "en-US": en,
+  "zh-CN": zhCN,
+  "zh-TW": zhTW
+};
+const lang = computed(() => {
+  return chartLocales[locale.value].name;
 });
 
-const elRef = ref<HTMLElement | null>(null);
-
-let chartRef: ApexCharts;
+const mode = computed(() => {
+  return theme.value === "auto"
+    ? isDark.value
+      ? "dark"
+      : "light"
+    : (theme.value as "dark" | "light");
+});
 
 const styles = computed(() => {
   const width = isNumber(props.width) ? `${props.width}px` : props.width;
@@ -47,35 +63,64 @@ const styles = computed(() => {
 });
 
 const initChart = async () => {
-  if (elRef.value && props.options) {
-    // 销毁旧图表，防止重复渲染
-    if (chartRef) {
-      chartRef.destroy();
-    } else {
-      chartRef = new ApexCharts(elRef.value, options.value);
+  if (!elRef.value) return;
+
+  chartRef?.destroy();
+  chartRef = new ApexCharts(elRef.value, {
+    ...props.options,
+    theme: { mode: mode.value },
+    chart: {
+      width: styles.value.width,
+      height: styles.value.height,
+      toolbar: {
+        show: false
+      },
+      locales: [en, zhCN, zhTW],
+      defaultLocale: lang.value
     }
-    await chartRef.render();
-  }
+  });
+
+  await chartRef.render();
 };
 
+watch(theme, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    chartRef?.updateOptions({
+      theme: {
+        mode: mode.value
+      }
+    });
+  }
+});
+
+watch(locale, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    const lang = chartLocales[newVal].name;
+    chartRef?.setLocale(lang);
+    chartRef?.updateOptions({
+      chart: { defaultLocale: lang }
+    });
+  }
+});
+
 watch(
-  () => options.value,
+  () => props.options,
   async newVal => {
-    if (chartRef) {
-      // 第二个参数 true 表示对图表强制更新
-      await chartRef.updateOptions(newVal, true, false);
-    }
-  },
-  {
-    deep: true
+    if (!chartRef) return;
+    await chartRef.updateOptions({
+      ...newVal,
+      theme: { mode: mode.value }
+    });
   }
 );
 
 const resizeHandler = () => {
-  if (chartRef) {
-    chartRef.destroy();
-    void initChart();
-  }
+  chartRef?.updateOptions({
+    chart: {
+      width: styles.value.width,
+      height: styles.value.height
+    }
+  });
 };
 
 useEventListener(document, "transitionend", evt => {

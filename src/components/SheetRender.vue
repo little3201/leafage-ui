@@ -5,20 +5,20 @@ import UniverPresetSheetsCoreZhCN from "@univerjs/preset-sheets-core/locales/zh-
 import UniverPresetSheetsCoreZhTW from "@univerjs/preset-sheets-core/locales/zh-TW";
 import type { FUniver, IWorkbookData, Univer } from "@univerjs/presets";
 import { createUniver, LocaleType, mergeLocales } from "@univerjs/presets";
-import { useDark } from "@vueuse/core";
+import { useAppStore } from "@/stores/app";
 import type { Ref } from "vue";
+import { storeToRefs } from "pinia";
 import { inject, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
 
 import "@univerjs/preset-sheets-core/lib/index.css";
 
+const appStore = useAppStore();
 const props = defineProps<{
   data: Partial<IWorkbookData>;
   readOnly?: boolean;
 }>();
 
-const { locale } = useI18n({ useScope: "global" });
-const isDark = useDark();
+const { theme, locale } = storeToRefs(appStore);
 const container = ref<HTMLElement | null>(null);
 
 const saveMethod = inject<Ref<(() => unknown) | undefined>>("saveData");
@@ -32,9 +32,9 @@ const locales: { [key: string]: LocaleType } = {
   "en-US": LocaleType.EN_US
 };
 
-watch(isDark, (newVal, oldVal) => {
+watch(theme, (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    univerAPIInstance?.toggleDarkMode(newVal);
+    univerAPIInstance?.toggleDarkMode(newVal === "dark");
   }
 });
 
@@ -75,7 +75,7 @@ function initUniver(workbookData: Partial<IWorkbookData>) {
 
   // 重新创建
   const { univer, univerAPI } = createUniver({
-    darkMode: isDark.value,
+    darkMode: theme.value === "dark",
     locale: locales[locale.value] || LocaleType.ZH_CN,
     locales: {
       [LocaleType.ZH_CN]: mergeLocales(UniverPresetSheetsCoreZhCN),

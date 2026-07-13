@@ -2,8 +2,9 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 import Cookies from "js-cookie";
 
 export const useAppStore = defineStore("app", {
-  state: (): { locale: string } => ({
-    locale: Cookies.get("lang") || "zh-CN"
+  state: (): { locale: string; theme: string } => ({
+    locale: Cookies.get("lang") || "zh-CN",
+    theme: Cookies.get("theme") || "light"
   }),
   actions: {
     setLocale(locale: string) {

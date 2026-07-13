@@ -94,6 +94,15 @@ const items = [
                 state.fullName ? $t("action.save") : $t("action.modify")
               }}</ElButton
             >
+            <ElButton
+              v-if="state.fullName"
+              link
+              type="default"
+              class="mt-2 ml-4"
+              @click="state.fullName = !state.fullName"
+            >
+              {{ $t("action.cancel") }}
+            </ElButton>
           </ElCol>
         </ElRow>
         <ElRow>
@@ -122,6 +131,15 @@ const items = [
               @click="state.email = !state.email"
             >
               {{ state.email ? $t("action.save") : $t("action.modify") }}
+            </ElButton>
+            <ElButton
+              v-if="state.email"
+              link
+              type="default"
+              class="mt-2 ml-4"
+              @click="state.email = !state.email"
+            >
+              {{ $t("action.cancel") }}
             </ElButton>
           </ElCol>
         </ElRow>
