@@ -1,11 +1,11 @@
 import type { AudtiMetadata } from "../global";
 
-export interface Schedule extends AudtiMetadata {
+export interface CalendarEvent extends AudtiMetadata {
   title: string;
   location?: string;
-  startDate: string;
-  endDate: string;
-  type: "primary" | "success" | "warning" | "danger";
+  startDate: Date;
+  endDate: Date;
+  type: string;
 }
 
 export interface SchedulerLog extends AudtiMetadata {

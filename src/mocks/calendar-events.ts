@@ -1,42 +1,24 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Schedule } from "@/types";
+import type { CalendarEvent } from "@/types";
 
-const datas: Record<string, Schedule[]> = {};
+const events: CalendarEvent[] = [];
 
 const today = new Date();
 for (let i = 1; i < Math.floor(Math.random() * 30); i++) {
-  const day = new Date(today.getTime() + i * 86400000);
-
-  const schedules: Schedule[] = [];
-  for (let j = 1; j < Math.floor(Math.random() * 5); j++) {
-    const event: Schedule = {
-      id: j,
-      title:
-        [
-          "公司年会",
-          "部门团建",
-          "产品发布",
-          "法定节假日",
-          "双十一大促",
-          "系统维护"
-        ][Math.floor(Math.random() * 6)] || "今日事件",
-      startDate: day.toISOString().split("T")[0] || "",
-      endDate:
-        new Date(today.getTime() + Math.random() * 7 * 86400000)
-          .toISOString()
-          .split("T")[0] || "",
-      type:
-        (
-          ["primary", "success", "warning", "danger"] as Array<
-            "primary" | "success" | "warning" | "danger"
-          >
-        )[Math.floor(Math.random() * 4)] || "primary"
-    };
-    schedules.push(event);
-  }
-
-  datas[day.getDate()] = schedules;
+  const event: CalendarEvent = {
+    id: i,
+    title: "Event title_" + i,
+    startDate: new Date(
+      today.getTime() + Math.floor(Math.random() * 5) * 86400000
+    ),
+    endDate: new Date(today.getTime() + Math.random() * 7 * 86400000),
+    type:
+      ["primary", "success", "warning", "danger", "info"][
+        Math.floor(Math.random() * 6)
+      ] || "primary"
+  };
+  events.push(event);
 }
 
 export const calendarEventHandlers = [
@@ -66,11 +48,11 @@ export const calendarEventHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
 
-    return HttpResponse.json(datas);
+    return HttpResponse.json(events);
   }),
   http.post(`/api${SERVER_URL.CALENDAR_EVENT}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = (await request.json()) as Schedule;
+    const newData = (await request.json()) as CalendarEvent;
 
     // Don't forget to declare a semantic "201 Created"
     // response and send back the newly created Row!
@@ -81,7 +63,7 @@ export const calendarEventHandlers = [
     async ({ params, request }) => {
       const { id } = params;
       // Read the intercepted request body as JSON.
-      const newData = (await request.json()) as Schedule;
+      const newData = (await request.json()) as CalendarEvent;
 
       if (id && newData) {
         // Don't forget to declare a semantic "201 Created"

@@ -82,6 +82,10 @@ body {
   vertical-align: baseline !important;
 }
 
+.el-calendar {
+  --el-calendar-cell-width: 110px !important;
+}
+
 .cell {
   .el-form-item {
     margin-bottom: 0px;

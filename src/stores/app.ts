@@ -16,6 +16,11 @@ export const useAppStore = defineStore("app", {
       if (htmlElement) {
         htmlElement.setAttribute("lang", locale);
       }
+    },
+
+    setTheme(theme: string) {
+      this.theme = theme;
+      Cookies.set("theme", theme, { secure: true, sameSite: "Lax" });
     }
   }
 });

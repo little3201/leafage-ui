@@ -4,7 +4,8 @@ import { useUserStore } from "@/stores/user";
 import type { RouteRecordRaw } from "vue-router";
 import { signIn, getUserInfo } from "@/api/authentication";
 import { createRouter, createWebHistory } from "vue-router";
-import { constantRouterMap } from "./routes";
+import { routes } from "./routes";
+
 // Lazy load layout
 const BlankLayout = () => import("@/layouts/BlankLayout.vue");
 
@@ -13,7 +14,7 @@ const modules = import.meta.glob("../pages/**/*.{vue,tsx}");
 // Create router instance
 const router = createRouter({
   history: createWebHistory(),
-  routes: constantRouterMap,
+  routes: routes,
   scrollBehavior: () => ({ left: 0, top: 0 })
 });
 

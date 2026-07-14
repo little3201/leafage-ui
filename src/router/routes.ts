@@ -2,7 +2,7 @@ import BlankLayout from "@/layouts/BlankLayout.vue";
 import MainLayout from "@/layouts/MainLayout.vue";
 import type { RouteRecordRaw } from "vue-router";
 
-export const constantRouterMap: Array<RouteRecordRaw> = [
+export const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "home",

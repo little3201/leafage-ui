@@ -75,6 +75,7 @@ const initChart = async () => {
       toolbar: {
         show: false
       },
+      background: "transparent",
       locales: [en, zhCN, zhTW],
       defaultLocale: lang.value
     }

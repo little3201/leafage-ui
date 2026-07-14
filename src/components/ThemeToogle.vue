@@ -3,24 +3,22 @@ import { Icon } from "@iconify/vue";
 import { useDark, useToggle } from "@vueuse/core";
 import { globalIcons } from "@/constants";
 import { loadIcon } from "@/utils";
-import Cookies from "js-cookie";
+import { useAppStore } from "@/stores/app";
 
+const appStore = useAppStore();
 const isDark = useDark({
   storageKey: "theme",
   storage: {
     getItem(key) {
-      return Cookies.get(key) ?? null;
+      return appStore.theme;
     },
 
-    setItem(key, value) {
-      Cookies.set(key, value, {
-        secure: true,
-        sameSite: "Lax"
-      });
+    setItem(_key, value) {
+      appStore.setTheme(value);
     },
 
-    removeItem(key) {
-      Cookies.remove(key);
+    removeItem(_key) {
+      appStore.setTheme("");
     }
   }
 });
