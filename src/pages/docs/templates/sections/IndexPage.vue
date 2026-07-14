@@ -34,7 +34,7 @@ const treeRef = ref<TreeInstance>();
 const treeData = ref<TreeData>([]);
 const treeLoading = ref<boolean>(false);
 const selectedTreeId = ref<string>("");
-const filterText = ref("");
+const filterText = ref<string>("");
 
 const saveLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);

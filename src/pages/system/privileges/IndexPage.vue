@@ -66,8 +66,8 @@ const rules = reactive<FormRules<typeof form>>({
   name: [{ required: true, trigger: "blur" }],
   path: [{ required: true, trigger: "blur" }]
 });
-const inputValue = ref("");
-const inputVisible = ref(false);
+const inputValue = ref<string>("");
+const inputVisible = ref<boolean>(false);
 const InputRef = ref<InputInstance>();
 
 onMounted(async () => {

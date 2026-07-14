@@ -23,8 +23,8 @@ const props = defineProps<{
 const formRef = ref<FormInstance>();
 const fields = ref<Array<SectionField>>([]);
 const editable = ref<Record<number, boolean>>({});
-const loading = ref(false);
-const saveLoading = ref(false);
+const loading = ref<boolean>(false);
+const saveLoading = ref<boolean>(false);
 
 const initialValues: SectionField = {
   id: null,

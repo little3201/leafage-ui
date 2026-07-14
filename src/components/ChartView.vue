@@ -33,7 +33,9 @@ const props = withDefaults(
 const elRef = ref<HTMLElement | null>(null);
 let chartRef: ApexCharts | undefined;
 const { theme, locale } = storeToRefs(appStore);
-const isDark = ref(window.matchMedia("(prefers-color-scheme: dark)").matches);
+const isDark = ref<boolean>(
+  window.matchMedia("(prefers-color-scheme: dark)").matches
+);
 
 const chartLocales: Record<string, typeof en> = {
   "en-US": en,

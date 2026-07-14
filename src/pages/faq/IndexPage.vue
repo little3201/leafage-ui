@@ -4,7 +4,7 @@ import { globalIcons } from "@/constants";
 import { actionIcon, loadIcon } from "@/utils";
 import { ref } from "vue";
 
-const searchQuery = ref("");
+const searchQuery = ref<string>("");
 const faqList = [
   {
     name: "1",

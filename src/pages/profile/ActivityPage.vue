@@ -2,7 +2,7 @@
 import { actionTypes } from "@/constants";
 import { ref } from "vue";
 
-// 仓库数据模拟
+// 数据模拟
 const activities = ref([
   {
     id: 4,

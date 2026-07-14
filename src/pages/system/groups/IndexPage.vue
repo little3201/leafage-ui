@@ -67,7 +67,7 @@ const authorizeTableRef = ref<TableInstance>();
 const treeEl = ref<TreeInstance>();
 const treeLoading = ref<boolean>(false);
 const treeSelected = ref<string>("");
-const filterText = ref("");
+const filterText = ref<string>("");
 
 const groupTree = ref<TreeNode[]>([]);
 const saveLoading = ref<boolean>(false);

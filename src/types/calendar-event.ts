@@ -1,4 +1,4 @@
-import type { AudtiMetadata } from "../global";
+import type { AudtiMetadata } from "./global";
 
 export interface CalendarEvent extends AudtiMetadata {
   title: string;
@@ -14,13 +14,4 @@ export interface EventSegment {
   end: Date;
   row: number;
   key: string | number;
-}
-
-export interface SchedulerLog extends AudtiMetadata {
-  name: string;
-  startTime?: Date;
-  duration?: number;
-  nextExecuteTime?: Date;
-  status?: string;
-  record?: string;
 }

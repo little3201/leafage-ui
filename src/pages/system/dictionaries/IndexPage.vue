@@ -31,7 +31,7 @@ const { t } = useI18n();
 const treeRef = ref<TreeInstance>();
 const treeLoading = ref<boolean>(false);
 const treeSelected = ref<string>("");
-const filterText = ref("");
+const filterText = ref<string>("");
 
 const loading = ref<boolean>(false);
 const datas = ref<Array<Dictionary>>([]);

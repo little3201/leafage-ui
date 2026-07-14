@@ -27,7 +27,7 @@ const visibleFields = computed(() =>
   fields.value.filter(field => field.field !== "id")
 );
 const datas = ref<Array<SectionData>>([]);
-const saveLoading = ref(false);
+const saveLoading = ref<boolean>(false);
 const editable = ref<Record<number, boolean>>({});
 
 onMounted(async () => {
