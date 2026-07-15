@@ -106,7 +106,7 @@ export const regionsHandlers = [
   http.patch(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }

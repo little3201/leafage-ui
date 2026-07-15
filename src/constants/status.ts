@@ -23,3 +23,8 @@ export const schemaStatus: { [key: string]: "primary" | "success" | "info" } = {
   PUBLISHED: "success",
   ARCHIVED: "info"
 };
+
+export const messageStatus: { [key: string]: "primary" | "info" } = {
+  READ: "info",
+  UNREAD: "primary"
+};

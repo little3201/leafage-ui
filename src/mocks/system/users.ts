@@ -97,7 +97,7 @@ export const usersHandlers = [
   http.patch(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }
@@ -105,7 +105,7 @@ export const usersHandlers = [
   http.patch(`/api${SERVER_URL.USER}/:id/unlock`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }

@@ -26,7 +26,8 @@ export const actionIcons: Record<string, string> = {
   show: "undereye-rounded",
   sync: "sync-rounded",
   add: "add-rounded",
-  more: "more-horiz"
+  more: "more-horiz",
+  publish: "send-outline-rounded"
 };
 
 export const pageIcons: Record<string, string> = {
@@ -52,10 +53,13 @@ export const pageIcons: Record<string, string> = {
   archives: "assignment-add-outline-rounded",
   modules: "modeling-outline-rounded",
   fragments: "code-rounded",
-  reports: "assignment-add-outline-rounded",
+  reports: "report-outline-rounded",
   regions: "location-on-outline-rounded",
   docs: "drive-file-move-outline-rounded",
-  templates: "assignment-add-outline-rounded"
+  templates: "temple-hindu-outline-rounded",
+  messages: "business-messages-outline-rounded",
+  sent: "outgoing-mail-outline-rounded",
+  inbox: "inbox-outline-rounded"
 };
 
 export const globalIcons: Record<string, string> = {

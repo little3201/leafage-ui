@@ -1,47 +1,45 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Dictionary } from "@/types";
+import type { Message, User } from "@/types";
 import { applyFilters } from "../util";
 
-const datas: Dictionary[] = [
-  100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
-].map(item => {
-  return {
-    id: item,
-    superiorId: null,
-    name: "Name_" + item,
-    enabled: true,
-    count: 1
-  };
-});
+export const datas: Message[] = [];
+const users: User[] = [];
 
-for (let i = 1; i < 28; i++) {
-  const superiorId =
-    [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000][
-      Math.floor(Math.random() * 10)
-    ] || null;
-  const row: Dictionary = {
+for (let i = 1; i < 5; i++) {
+  const row: User = {
     id: i,
-    superiorId: superiorId,
-    name: "Sub_Name_" + i,
-    enabled: true
+    username:
+      ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
+        Math.floor(Math.random() * 5)
+      ] || "admin",
+    fullName: "Name_" + i,
+    email: "use***" + "@**t.com"
+  };
+  users.push(row);
+}
+for (let i = 1; i < 18; i++) {
+  const random = Math.floor(Math.random() * 3);
+  const row: Message = {
+    id: i,
+    title: "The message title_" + i,
+    sender: "admin",
+    type: ["系统公告", "部门通知", "全员信", "通知"][
+      Math.floor(Math.random() * 4)
+    ],
+    receiver:
+      random / 2 > 0
+        ? null
+        : users.filter((_, index) => index < Math.floor(Math.random() * 5)),
+    status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
+    body: "This is the message body, Do you know what append with the system, it'is very nice, do you like it?",
+    publishedAt: random === 1 ? new Date() : undefined
   };
   datas.push(row);
 }
 
-export const dictionariesHandlers = [
-  http.get(`/api${SERVER_URL.DICTIONARY}/subset`, ({ request }) => {
-    const searchParams = new URL(request.url).searchParams;
-    const id = searchParams.get("id");
-    if (id) {
-      return HttpResponse.json(
-        datas.filter(item => item.superiorId === Number(id))
-      );
-    } else {
-      return HttpResponse.json(datas.filter(item => item.superiorId === null));
-    }
-  }),
-  http.get(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
+export const messagesHandlers = [
+  http.get(`/api${SERVER_URL.MESSAGE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
       const filtered = datas.find(item => item.id === Number(id));
@@ -50,7 +48,7 @@ export const dictionariesHandlers = [
       return HttpResponse.json();
     }
   }),
-  http.get(`/api${SERVER_URL.DICTIONARY}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.MESSAGE}`, ({ request }) => {
     const url = new URL(request.url);
     const page = url.searchParams.get("page");
     const size = url.searchParams.get("size");
@@ -72,25 +70,9 @@ export const dictionariesHandlers = [
 
     return HttpResponse.json(data);
   }),
-  http.post(`/api${SERVER_URL.DICTIONARY}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.MESSAGE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const data = await request.formData();
-    const file = data.get("file");
-
-    if (!file) {
-      return new HttpResponse("Missing document", { status: 400 });
-    }
-
-    if (!(file instanceof File)) {
-      return new HttpResponse("Uploaded document is not a File", {
-        status: 400
-      });
-    }
-    return HttpResponse.json();
-  }),
-  http.post(`/api${SERVER_URL.DICTIONARY}`, async ({ request }) => {
-    // Read the intercepted request body as JSON.
-    const newData = (await request.json()) as Dictionary;
+    const newData = (await request.json()) as Message;
 
     // Push the new Row to the map of all Row.
     datas.push(newData);
@@ -99,10 +81,10 @@ export const dictionariesHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 });
   }),
-  http.put(`/api${SERVER_URL.DICTIONARY}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.MESSAGE}/:id`, async ({ params, request }) => {
     const { id } = params;
     // Read the intercepted request body as JSON.
-    const newData = (await request.json()) as Dictionary;
+    const newData = (await request.json()) as Message;
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
@@ -112,7 +94,7 @@ export const dictionariesHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.MESSAGE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);
@@ -120,7 +102,7 @@ export const dictionariesHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.delete(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.MESSAGE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params;
@@ -134,10 +116,10 @@ export const dictionariesHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    // Delete the Dictionary from the "allDictionarys" map.
+    // Delete the Row from the "allRow" map.
     datas.pop();
 
-    // Respond with a "200 OK" response and the deleted Dictionary.
+    // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json();
   })
 ];

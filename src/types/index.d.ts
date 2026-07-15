@@ -33,3 +33,5 @@ export * from "./region";
 
 // file record
 export * from "./file-record";
+
+export * from "./messages";

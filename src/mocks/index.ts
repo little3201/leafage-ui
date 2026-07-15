@@ -6,6 +6,8 @@ import { sectionsHandlers } from "./docs/sections";
 import { templatesHandlers } from "./docs/templates";
 import { connectionsHandlers } from "./exploiters/connections";
 import { fragmentsHandlers } from "./exploiters/fragments";
+import { messagesHandlers } from "./messages";
+import { messageInboxHandlers } from "./messages/inbox";
 import { modulesHandlers } from "./exploiters/modules";
 import { samplesHandlers } from "./exploiters/samples";
 import { schemesHandlers } from "./exploiters/schemes";
@@ -14,7 +16,7 @@ import { fileRecordsHandlers } from "./file-records";
 import { accessLogsHandlers } from "./logs/access-logs";
 import { auditLogsHandlers } from "./logs/audit-logs";
 import { operationLogsHandlers } from "./logs/operation-logs";
-import { schedulerLogsHandlers } from "./logs/scheduler-logs";
+import { schedulerLogsHandlers } from "./scheduler/logs";
 import { regionsHandlers } from "./regions";
 import { dictionariesHandlers } from "./system/dictionaries";
 import { groupsHandlers } from "./system/groups";
@@ -32,6 +34,8 @@ export const handlers = [
   ...fileRecordsHandlers,
   ...fragmentsHandlers,
   ...groupsHandlers,
+  ...messagesHandlers,
+  ...messageInboxHandlers,
   ...modulesHandlers,
   ...operationLogsHandlers,
   ...privilegesHandlers,

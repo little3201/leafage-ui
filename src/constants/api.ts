@@ -9,6 +9,9 @@ export const SERVER_URL = {
   LOGIN: "/login", // login
   LOGOUT: "/logout", // 登出
 
+  MESSAGE: SERVER_PREFIX.HYPERVISOR.concat("/messages"), // 消息
+  MESSAGE_INBOX: SERVER_PREFIX.HYPERVISOR.concat("/message-inbox"), // 我的消息
+
   // hypervisor
   USER: SERVER_PREFIX.HYPERVISOR.concat("/users"), // 用户
   ROLE: SERVER_PREFIX.HYPERVISOR.concat("/roles"), // 角色

@@ -6,7 +6,7 @@ import {
   clearSchedulerLogs,
   removeSchedulerLog,
   retrieveSchedulerLogs
-} from "@/api/logs/scheduler-logs";
+} from "@/api/scheduler/logs";
 import { actionTypes, shceduleStatus, shceduleStatusIcon } from "@/constants";
 import type { Filter, Pagination, SchedulerLog } from "@/types";
 import { actionIcon, exportToCSV, formatDuration, hasAction } from "@/utils";

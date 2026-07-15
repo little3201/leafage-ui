@@ -50,7 +50,7 @@ const importLoading = ref<boolean>(false);
 const exportLoading = ref<boolean>(false);
 
 const filter = reactive<Filter<Dictionary>>({
-  superiorId: { op: "eq", value: null },
+  superiorId: { op: "eq", value: undefined },
   name: { op: "like", value: undefined }
 });
 

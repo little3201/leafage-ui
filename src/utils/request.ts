@@ -7,9 +7,11 @@ import type { Filter } from "@/types";
  * @returns {string} - The resolved path
  */
 export function pathResolve(parentPath: string, path: string): string {
-  if (!path) return "";
+  if (!parentPath && !path) return "";
+  if (!path) return parentPath.replace(/\/+$/, "");
   const childPath = path.startsWith("/") ? path : `/${path}`;
-  return `${parentPath}${childPath}`.replace(/\/\//g, "/").trim();
+  const fullPath = parentPath + childPath;
+  return fullPath.replace(/\/\//g, "/").trim();
 }
 
 export function dealFilters<T>(

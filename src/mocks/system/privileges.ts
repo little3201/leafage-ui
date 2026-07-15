@@ -637,6 +637,36 @@ const treeNodes: PrivilegeTreeNode[] = [
         children: []
       }
     ]
+  },
+  {
+    id: 26,
+    name: "messages",
+    meta: {
+      path: "messages",
+      component: "#"
+    },
+    children: [
+      {
+        id: 26,
+        name: "sent",
+        meta: {
+          path: "",
+          component: "messages",
+          actions: ["create", "modify", "remove", "publish"]
+        },
+        children: []
+      },
+      {
+        id: 26,
+        name: "inbox",
+        meta: {
+          path: "inbox",
+          component: "messages/inbox",
+          actions: ["remove", "read"]
+        },
+        children: []
+      }
+    ]
   }
 ];
 
@@ -819,7 +849,7 @@ export const privilegesHandlers = [
   http.patch(`/api${SERVER_URL.PRIVILEGE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }

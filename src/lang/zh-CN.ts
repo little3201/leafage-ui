@@ -103,7 +103,12 @@ export default {
     attachment: "附件",
     owner: "所有者",
     all: "全部",
-    mode: "模式"
+    unread: "未读",
+    readAll: "全部已读",
+    mode: "模式",
+    sender: "发送人",
+    receiver: "接收人",
+    publishedAt: "发布时间"
   },
 
   action: {
@@ -148,7 +153,8 @@ export default {
     data: "数据",
     addItem: "添加项目",
     section: "章节",
-    member: "成员"
+    member: "成员",
+    publish: "发布"
   },
 
   page: {
@@ -180,7 +186,10 @@ export default {
     reports: "报告",
     archives: "档案",
     templates: "模板",
-    sections: "章节"
+    sections: "章节",
+    messages: "消息中心",
+    sent: "发消息",
+    inbox: "收信箱"
   },
 
   github: "Github",

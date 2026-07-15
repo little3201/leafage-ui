@@ -46,7 +46,7 @@ export type Filter<T> = Partial<{
                 | "between"
                 | "notBetween"
             : FilterOperator;
-    value: T[K] | undefined;
+    value: T[K] | null | undefined;
   };
 }>;
 

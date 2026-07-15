@@ -103,7 +103,12 @@ export default {
     attachment: "Attachment",
     owner: "Owner",
     all: "All",
-    mode: "Mode"
+    unread: "Unread",
+    readAll: "Read All",
+    mode: "Mode",
+    sender: "Sender",
+    receiver: "Receiver",
+    publishedAt: "Published At"
   },
 
   action: {
@@ -148,7 +153,8 @@ export default {
     data: "Data",
     addItem: "Add Item",
     section: "Section",
-    member: "Member"
+    member: "Member",
+    publish: "Publish"
   },
 
   page: {
@@ -180,7 +186,10 @@ export default {
     reports: "Reports",
     archives: "Archives",
     templates: "Schemas",
-    sections: "Sections"
+    sections: "Sections",
+    messages: "Messages",
+    sent: "Sent",
+    inbox: "Inbox"
   },
 
   github: "Github",

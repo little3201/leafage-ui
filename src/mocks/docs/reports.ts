@@ -96,7 +96,7 @@ export const reportsHandlers = [
   http.patch(`/api${SERVER_URL.REPORT}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }

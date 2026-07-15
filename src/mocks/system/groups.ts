@@ -23,12 +23,7 @@ for (let i = 1; i < 5; i++) {
         Math.floor(Math.random() * 5)
       ] || "admin",
     fullName: "Name_" + i,
-    email: "use***" + "@**t.com",
-    status:
-      ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        Math.floor(Math.random() * 5)
-      ] || "unknown",
-    enabled: i % 2 > 0
+    email: "use***" + "@**t.com"
   };
   users.push(row);
 }
@@ -236,7 +231,7 @@ export const groupsHandlers = [
   http.patch(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }

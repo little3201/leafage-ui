@@ -304,7 +304,7 @@ export const sectionsHandlers = [
   http.patch(`/api${SERVER_URL.SECTION}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }
