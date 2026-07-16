@@ -1,19 +1,20 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { FileRecord } from "@/types";
+import type { FileRecord, FileCategory, FileStatistics } from "@/types";
 import { applyFilters } from "./util";
 
 const datas: FileRecord[] = [];
+const statistics: FileStatistics[] = [];
 
 for (let i = 1; i < 18; i++) {
-  const randomIndex = Math.floor(Math.random() * 6);
+  const random = Math.floor(Math.random() * 7);
   const data: FileRecord = {
     id: i,
-    superiorId: randomIndex || null,
+    superiorId: random || null,
     name:
       "test" +
         i +
-        [".jpg", ".png", ".pdf", ".zip", ".docx", ".xlsx"][randomIndex] || "",
+        [".jpg", ".png", ".pdf", ".zip", ".docx", ".xlsx", ""][random] || "",
     contentType:
       [
         "image/jpg",
@@ -22,17 +23,29 @@ for (let i = 1; i < 18; i++) {
         "application/zip",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      ][randomIndex] || "",
-    size: Math.floor(Math.random() * 100000),
-    path: "/path/to/test" + i,
-    directory: randomIndex === null ? true : false,
+      ][random] || "",
+    size: Math.floor(Math.random() * 10000000),
+    path: random > 5 ? "" : "/path/to/test" + i,
+    directory: random === 6 ? true : false,
     enabled: i % 2 > 0,
     lastModifiedDate: new Date()
   };
   datas.push(data);
 }
 
+const categories: FileCategory[] = ["image", "video", "document", "other"];
+for (const key of categories) {
+  statistics.push({
+    key,
+    count: Math.floor(Math.random() * 99),
+    size: Math.floor(Math.random() * 10000000000)
+  });
+}
+
 export const fileRecordsHandlers = [
+  http.get(`/api${SERVER_URL.FILE}/statistics`, () => {
+    return HttpResponse.json(statistics);
+  }),
   http.get(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {

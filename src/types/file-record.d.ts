@@ -10,3 +10,11 @@ export interface FileRecord extends AudtiMetadata {
   directory: boolean;
   enabled?: boolean;
 }
+
+export type FileCategory = "image" | "video" | "document" | "other";
+
+export interface FileStatistics {
+  key: FileCategory;
+  count: number;
+  size: number;
+}

@@ -8,10 +8,11 @@ import {
   enableFile,
   removeFile,
   retrieveFiles,
+  statisticsFile,
   uploadFile
 } from "@/api/file-records";
-import { actionTypes, globalIcons } from "@/constants";
-import type { FileRecord, Filter, Pagination } from "@/types";
+import { actionTypes, globalIcons, fileStatisticsType } from "@/constants";
+import type { FileRecord, Filter, Pagination, FileStatistics } from "@/types";
 import {
   actionIcon,
   download,
@@ -19,11 +20,12 @@ import {
   hasAction,
   loadIcon
 } from "@/utils";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
+const visible = ref<boolean>(false);
 const loading = ref<boolean>(false);
 const uploadLoading = ref<boolean>(false);
 const datas = ref<Array<FileRecord>>([]);
@@ -50,10 +52,18 @@ const initialValues: FileRecord = {
   directory: false
 };
 const data = ref<FileRecord>({ ...initialValues });
-const visible = ref<boolean>(false);
+
+const statistics = ref<Array<FileStatistics>>([]);
+// 总大小
+const totalSize = computed(() =>
+  statistics.value.reduce((sum, item) => sum + item.size, 0)
+);
 
 onMounted(async () => {
   await load();
+
+  const res = await statisticsFile();
+  statistics.value = res.data;
 });
 
 /**
@@ -236,32 +246,49 @@ function onUploadError() {
             type="dashboard"
             :percentage="46"
             :stroke-width="16"
-            :width="200"
+            :width="220"
           >
             <template #default>
               <span class="block text-sm">Free Space</span>
-              <span class="block mt-2">23G/50G</span>
+              <span class="block mt-2">{{
+                formatFileSize(50 * 1024 * 1024 * 1000 - totalSize)
+              }}</span>
             </template>
           </ElProgress>
+          <div>Total Space: 50G</div>
         </div>
-        <ul class="flex-col space-y-4 list-none px-0">
-          <li index="images" class="flex items-center space-x-2">
-            <ElButton title="images" circle type="success" size="large">
+        <ul
+          class="flex flex-col list-none px-0 divide-y divide-(--el-border-color)"
+        >
+          <li
+            v-for="item in statistics"
+            :key="item.key"
+            :index="item.key"
+            class="inline-flex items-center space-x-2 py-2"
+          >
+            <ElButton
+              title="images"
+              circle
+              :type="fileStatisticsType[item.key]"
+              size="large"
+            >
               <Icon
-                :icon="loadIcon(globalIcons['image'])"
+                :icon="loadIcon(globalIcons[item.key])"
                 width="1.5em"
                 height="1.5em"
               />
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
-              <span>Images</span>
-              <span class="text-xs text-(--el-text-color-secondary)"
-                >234 files</span
-              >
+              <span>{{ item.key }}</span>
+              <span class="text-xs text-(--el-text-color-secondary)">
+                {{ item.count }} files
+              </span>
             </div>
-            <span class="text-(--el-text-color-regular)">14GB</span>
+            <span class="text-(--el-text-color-regular)">{{
+              formatFileSize(item.size)
+            }}</span>
           </li>
-          <li index="media" class="flex items-center space-x-2">
+          <!-- <li index="media" class="flex items-center space-x-2 py-2">
             <ElButton title="media" circle type="primary" size="large">
               <Icon
                 :icon="loadIcon(globalIcons['video'])"
@@ -271,13 +298,13 @@ function onUploadError() {
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Media</span>
-              <span class="text-xs text-(--el-text-color-secondary)"
-                >234 files</span
-              >
+              <span class="text-xs text-(--el-text-color-secondary)">
+                234 files
+              </span>
             </div>
             <span class="text-(--el-text-color-regular)">5GB</span>
           </li>
-          <li index="documents" class="flex items-center space-x-2">
+          <li index="documents" class="flex items-center space-x-2 py-2">
             <ElButton title="documents" circle type="warning" size="large">
               <Icon
                 :icon="loadIcon(globalIcons['doc'])"
@@ -287,12 +314,28 @@ function onUploadError() {
             </ElButton>
             <div class="inline-flex flex-1 flex-col">
               <span>Documents</span>
-              <span class="text-xs text-(--el-text-color-secondary)"
-                >234 files</span
-              >
+              <span class="text-xs text-(--el-text-color-secondary)">
+                234 files
+              </span>
             </div>
             <span class="text-(--el-text-color-regular)">4GB</span>
           </li>
+          <li index="other" class="inline-flex items-center space-x-2 py-2">
+            <ElButton title="folders" circle type="info" size="large">
+              <Icon
+                :icon="loadIcon(globalIcons['other'])"
+                width="1.5em"
+                height="1.5em"
+              />
+            </ElButton>
+            <div class="inline-flex flex-1 flex-col">
+              <span>Other</span>
+              <span class="text-xs text-(--el-text-color-secondary)">
+                234 files
+              </span>
+            </div>
+            <span class="text-(--el-text-color-regular)">14GB</span>
+          </li> -->
         </ul>
       </ElCard>
     </ElCol>
@@ -310,7 +353,7 @@ function onUploadError() {
                 :key="index"
                 @click="handleBreadcrumbClick(index)"
               >
-                {{ data.name }}
+                {{ row.name }}
               </ElBreadcrumbItem>
             </ElBreadcrumb>
           </ElCol>
@@ -392,27 +435,7 @@ function onUploadError() {
                 link
                 @click="onRowClick(scope.row)"
               >
-                <Icon
-                  v-if="scope.row.directory"
-                  :icon="loadIcon(globalIcons['folder'])"
-                  width="2em"
-                  height="2em"
-                />
-                <template v-else-if="scope.row.contentType">
-                  <Icon
-                    v-if="scope.row.contentType.includes('image')"
-                    :icon="loadIcon(globalIcons['image'])"
-                    width="2em"
-                    height="2em"
-                  />
-                  <Icon
-                    v-else
-                    :icon="loadIcon(globalIcons['doc'])"
-                    width="2em"
-                    height="2em"
-                  />
-                </template>
-                <span class="ml-2">{{ scope.row.name }}</span>
+                <span>{{ scope.row.name }}</span>
               </ElButton>
             </template>
           </ElTableColumn>
@@ -454,47 +477,49 @@ function onUploadError() {
           </ElTableColumn>
           <ElTableColumn :label="$t('label.actions')">
             <template #default="scope">
-              <ElButton
-                v-if="scope.row.enabled && hasAction($route.name, 'disable')"
-                title="disable"
-                :type="actionTypes['disable']"
-                link
-                @click="disableRow(scope.row.id)"
-              >
-                <Icon
-                  :icon="actionIcon('disable')"
-                  width="1.25em"
-                  height="1.25em"
-                />{{ $t("action.disable") }}
-              </ElButton>
-              <ElButton
-                v-else-if="hasAction($route.name, 'enable')"
-                title="enable"
-                :type="actionTypes['enable']"
-                link
-                @click="enableRow(scope.row.id)"
-              >
-                <Icon
-                  :icon="actionIcon('enable')"
-                  width="1.25em"
-                  height="1.25em"
-                />{{ $t("action.enable") }}
-              </ElButton>
-              <ElButton
-                v-if="scope.row.enabled && hasAction($route.name, 'download')"
-                title="download"
-                type="success"
-                link
-                @click="
-                  downloadRow(scope.row.id, scope.row.name, scope.row.type)
-                "
-              >
-                <Icon
-                  :icon="actionIcon('download')"
-                  width="1.25em"
-                  height="1.25em"
-                />{{ $t("action.download") }}
-              </ElButton>
+              <template v-if="scope.row.directory === false">
+                <ElButton
+                  v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+                  title="disable"
+                  :type="actionTypes['disable']"
+                  link
+                  @click="disableRow(scope.row.id)"
+                >
+                  <Icon
+                    :icon="actionIcon('disable')"
+                    width="1.25em"
+                    height="1.25em"
+                  />{{ $t("action.disable") }}
+                </ElButton>
+                <ElButton
+                  v-else-if="hasAction($route.name, 'enable')"
+                  title="enable"
+                  :type="actionTypes['enable']"
+                  link
+                  @click="enableRow(scope.row.id)"
+                >
+                  <Icon
+                    :icon="actionIcon('enable')"
+                    width="1.25em"
+                    height="1.25em"
+                  />{{ $t("action.enable") }}
+                </ElButton>
+                <ElButton
+                  v-if="scope.row.enabled && hasAction($route.name, 'download')"
+                  title="download"
+                  type="success"
+                  link
+                  @click="
+                    downloadRow(scope.row.id, scope.row.name, scope.row.type)
+                  "
+                >
+                  <Icon
+                    :icon="actionIcon('download')"
+                    width="1.25em"
+                    height="1.25em"
+                  />{{ $t("action.download") }}
+                </ElButton>
+              </template>
               <ElButton
                 v-if="hasAction($route.name, 'remove')"
                 title="remove"

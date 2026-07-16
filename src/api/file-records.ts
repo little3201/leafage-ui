@@ -29,6 +29,15 @@ export const fetchFile = (id: number) => {
 };
 
 /**
+ * Statistics
+ * @param id Row ID
+ * @returns Row data
+ */
+export const statisticsFile = () => {
+  return api.get(`${SERVER_URL.FILE}/statistics`);
+};
+
+/**
  * Enable an existing row
  * @param id Row ID
  * @returns Enable result

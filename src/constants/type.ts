@@ -89,3 +89,12 @@ export const httpTypes: {
   PATCH: "info",
   DELETE: "danger"
 };
+
+export const fileStatisticsType: {
+  [key: string]: "success" | "warning" | "info" | "primary";
+} = {
+  image: "success",
+  video: "warning",
+  document: "primary",
+  other: "info"
+};
