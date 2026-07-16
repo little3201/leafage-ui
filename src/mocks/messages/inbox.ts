@@ -36,18 +36,21 @@ for (let i = 1; i < 18; i++) {
         : users.filter((_, index) => index < Math.floor(Math.random() * 5)),
     status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
     body: "This is the message body, Do you know what append with the system, it'is very nice, do you like it?",
-    publishedAt: random === 1 ? new Date() : undefined
+    publishedAt:
+      random === 1
+        ? new Date(new Date().setDate(new Date().getDate() - i))
+        : undefined
   };
   messages.push(row);
 }
 
 for (let i = 1; i < 18; i++) {
-  const random = Math.floor(Math.random() * 17);
+  const random = Math.floor(Math.random() * 2);
   const row: MessageInbox = {
     id: i,
     message: messages[random],
     receiver: "admin",
-    status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
+    status: ["READ", "UNREAD"][random],
     readAt: random === 2 ? new Date() : undefined
   };
   datas.push(row);

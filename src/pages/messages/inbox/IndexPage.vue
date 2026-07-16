@@ -16,7 +16,7 @@ import {
 } from "@/api/messages/inbox";
 import type { Filter, Pagination, Message, MessageInbox, User } from "@/types";
 import { actionIcon } from "@/utils";
-import { onMounted, reactive, ref, computed } from "vue";
+import { onMounted, reactive, ref, computed, watch } from "vue";
 
 const loading = ref<boolean>(false);
 const datas = ref<Array<MessageInbox>>([]);
@@ -28,19 +28,33 @@ const pagination = reactive<Pagination>({
 });
 
 const status = ref("");
-const filter = reactive<Filter<Message>>({
-  title: { op: "eq", value: undefined },
+const filter = reactive<Filter<MessageInbox>>({
   status: { op: "eq", value: status.value }
 });
+const search = ref<string>("");
 
 const initialValues: Message = {
   id: null,
   title: "",
-  scope: "all",
+  scope: "ALL",
   type: null,
   receiver: null
 };
 const data = ref<Message>({ ...initialValues });
+
+const messages = computed<Array<Message>>(() => {
+  const keyword = search.value.trim();
+
+  const filtered = keyword
+    ? datas.value.filter(item => item.message.title.includes(keyword))
+    : datas.value;
+
+  return filtered
+    .sort((a, b) =>
+      dayjs(b.message.publishedAt).diff(dayjs(a.message.publishedAt))
+    )
+    .map(item => item.message);
+});
 
 const receiverText = computed(() => {
   if (!data.value.receiver) {
@@ -105,7 +119,7 @@ async function onRadioChange(value: string) {
     <ElCol :span="6" :xl="4">
       <ElCard>
         <ElInput
-          v-model="filter.title!.value"
+          v-model="search"
           clearable
           :placeholder="$t('placeholder.search')"
         >
@@ -114,7 +128,7 @@ async function onRadioChange(value: string) {
           </template>
         </ElInput>
 
-        <div class="mt-4 flex items-center justify-between">
+        <div class="my-4 flex items-center justify-between">
           <ElRadioGroup v-model="status" fill="#409eff" @change="onRadioChange">
             <ElRadioButton :label="$t('label.all')" value="" />
             <ElRadioButton :label="$t('label.unread')" value="UNREAD" />
@@ -125,20 +139,22 @@ async function onRadioChange(value: string) {
           </ElButton>
         </div>
 
-        <ElScrollbar height="calc(100vh - 280px)">
-          <ul v-if="datas && datas.length > 0" class="list-none pl-0 space-y-2">
+        <ElScrollbar height="calc(100vh - 296px)">
+          <ul
+            v-if="messages && messages.length > 0"
+            class="list-none p-0 my-0! space-y-2"
+          >
             <li
-              v-for="data in datas"
-              @click="readRow(data.message)"
-              class="border border-(--el-card-border-color) rounded-(--el-border-radius-base) px-4 hover:bg-(--el-fill-color) cursor-pointer"
+              v-for="message in messages"
+              @click="readRow(message)"
+              class="border border-(--el-border-color) rounded-(--el-border-radius-base) px-4 hover:bg-(--el-fill-color) cursor-pointer"
             >
-              <h4
-                >{{ data.message?.title }}
-                <ElTag>{{ data.message.type }}</ElTag></h4
-              >
-              <ElText line-clamp="2">{{ data.message?.body }}</ElText>
+              <h4>
+                {{ message?.title }} <ElTag>{{ message.type }}</ElTag>
+              </h4>
+              <ElText line-clamp="2">{{ message?.body }}</ElText>
               <p class="text-xs">{{
-                dayjs(data.message?.publishedAt).format("YYYY-MM-DD HH:mm:ss")
+                dayjs(message?.publishedAt).format("YYYY-MM-DD HH:mm:ss")
               }}</p>
             </li>
           </ul>

@@ -9,6 +9,7 @@ import { globalIcons } from "@/constants";
 import { loadIcon, pageIcon } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
+import MessageMini from "@/components/MessageMini.vue";
 
 const { currentRoute } = useRouter();
 const userStore = useUserStore();
@@ -32,6 +33,7 @@ function logout() {
       <div class="inline-flex justify-end items-center space-x-4">
         <ThemeToogle />
         <LanguageSelector />
+        <MessageMini :messages="[]" />
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
             <ElAvatar

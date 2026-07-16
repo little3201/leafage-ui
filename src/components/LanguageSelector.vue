@@ -5,6 +5,7 @@ import { globalIcons } from "@/constants";
 import { loadIcon } from "@/utils";
 import { useI18n } from "vue-i18n";
 import { useAppStore } from "@/stores/app";
+import { ElPopper } from "element-plus";
 
 const appStore = useAppStore();
 

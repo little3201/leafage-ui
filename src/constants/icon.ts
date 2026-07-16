@@ -78,7 +78,8 @@ export const globalIcons: Record<string, string> = {
   person: "person-outline-rounded",
   key: "key-vertical-outline-rounded",
   dark: "dark-mode-outline-rounded",
-  light: "light-mode-outline-rounded"
+  light: "light-mode-outline-rounded",
+  ring: "notifications-outline-rounded"
 };
 
 export const shceduleStatusIcon: Record<string, string> = {

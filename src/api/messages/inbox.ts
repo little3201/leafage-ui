@@ -1,6 +1,6 @@
 import { api } from "@/boot/axios";
 import { SERVER_URL } from "@/constants";
-import type { Filter, Pagination, Message } from "@/types";
+import type { Filter, Pagination, MessageInbox } from "@/types";
 import { dealFilters } from "@/utils";
 
 /**
@@ -11,7 +11,7 @@ import { dealFilters } from "@/utils";
  */
 export const retrieveMessageInbox = (
   pagination: Pagination,
-  filter?: Filter<Message>
+  filter?: Filter<MessageInbox>
 ) => {
   const filters = dealFilters(filter);
   return api.get(SERVER_URL.MESSAGE_INBOX, {
