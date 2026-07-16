@@ -453,7 +453,7 @@ async function removeRow(id: number, name: string) {
           table-layout="auto"
         >
           <ElTableColumn type="selection" />
-          <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+          <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
           <ElTableColumn prop="name" :label="$t('label.name')" />
           <ElTableColumn
             prop="areaCode"
@@ -473,7 +473,7 @@ async function removeRow(id: number, name: string) {
                 class="mr-1"
               />
               <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-                scope.row.enabled ? "Y" : "N"
+                scope.row.enabled ? $t("label.yes") : $t("label.no")
               }}</ElText>
             </template>
           </ElTableColumn>

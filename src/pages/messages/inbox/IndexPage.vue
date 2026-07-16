@@ -36,6 +36,7 @@ const filter = reactive<Filter<Message>>({
 const initialValues: Message = {
   id: null,
   title: "",
+  scope: "all",
   type: null,
   receiver: null
 };

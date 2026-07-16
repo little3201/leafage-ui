@@ -5,6 +5,7 @@ export interface Message extends AudtiMetadata {
   title: string;
   body?: string;
   sender?: string;
+  scope: string;
   type: string | null;
   receiver: User[] | null;
   status?: string;

@@ -3,7 +3,7 @@
 
 export default {
   label: {
-    no: "序號",
+    serial: "序號",
     title: "標題",
     template: "模板",
     actions: "操作",
@@ -108,7 +108,9 @@ export default {
     mode: "模式",
     sender: "送出人",
     receiver: "接收人",
-    publishedAt: "發佈時間"
+    publishedAt: "發佈時間",
+    yes: "是",
+    no: "否"
   },
 
   action: {
@@ -222,11 +224,13 @@ export default {
     removeWarning:
       "此操作無法撤銷。這將永久移除 <strong>{module}/{data}</strong>。",
     removeButtonText: "我明白，移除它！",
-
-    disableWarning: "数据停用后，当前数据及关联数据将不可用。",
+    disableWarning: "資料停用後，目前資料及關聯資料將無法使用。",
     disableButtonText: "我明白，停用它！",
     clearWarning: "此操作無法撤銷。這將永久移除所有項目。",
     clearButtonText: "我明白，移除所有項目。",
+    publishWarning:
+      "點擊確定後，當前 <strong>{data}</strong> 訊息將立即發布給接收人。",
+    publishButtonText: "我確定，立即發布",
     welcome: "嗨！歡迎回來",
     subtitle: "請填寫您的帳號和密碼，讓我們繼續探索",
     forgotPassword: "忘記密碼 ？"

@@ -333,7 +333,7 @@ async function onSectionSave() {
       table-layout="auto"
     >
       <ElTableColumn type="selection" />
-      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="title" :label="$t('label.title')">
         <template #default="scope">
           <ElButton
@@ -453,18 +453,13 @@ async function onSectionSave() {
           <ElFormItem :label="$t('label.template')" prop="schemaId">
             <ElSelect
               v-model="form.schemaId"
+              :options="templates"
+              :props="{ value: 'id', label: 'name' }"
               :disabled="form.id != null"
               :placeholder="
                 $t('placeholder.selectText', { field: $t('label.template') })
               "
-            >
-              <ElOption
-                v-for="(item, index) in templates"
-                :key="index"
-                :label="item.name"
-                :value="item.id!"
-              />
-            </ElSelect>
+            />
           </ElFormItem>
         </ElCol>
       </ElRow>

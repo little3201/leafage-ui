@@ -3,7 +3,7 @@
 
 export default {
   label: {
-    no: "NO.",
+    serial: "NO.",
     title: "Title",
     template: "Template",
     actions: "Actions",
@@ -108,7 +108,9 @@ export default {
     mode: "Mode",
     sender: "Sender",
     receiver: "Receiver",
-    publishedAt: "Published At"
+    publishedAt: "Published At",
+    yes: "Yes",
+    no: "No"
   },
 
   action: {
@@ -222,13 +224,15 @@ export default {
     removeWarning:
       "This action cannot be undone. This will permanently remove the <strong>{module}/{data}</strong>.",
     removeButtonText: "I understand, remove it.",
-
     disableWarning:
       "After disabling the data, the current data and associated data will be unavailable.",
     disableButtonText: "I understand, disable it!",
     clearWarning:
       "This action cannot be undone. This will permanently remove all items.",
-    clearButtonText: "I understand, remove all.",
+    clearButtonText: "I understand, clear all.",
+    publishWarning:
+      "After clicking OK, the current message <strong>{data}</strong> will be immediately sent to the recipient.",
+    publishButtonText: "I'm sure, release immediately.",
     welcome: "Hi! Welcome Back.",
     subtitle: "Please sign in to continue exploring.",
     forgotPassword: "Forgot The Password ?"

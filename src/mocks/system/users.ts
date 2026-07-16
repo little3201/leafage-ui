@@ -5,12 +5,10 @@ import { applyFilters } from "../util";
 
 const datas: User[] = [];
 
-for (let i = 1; i < 5; i++) {
+for (let i = 1; i < 6; i++) {
   const row: User = {
     id: i,
-    username: ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
-      Math.floor(Math.random() * 5)
-    ],
+    username: ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][i],
     fullName: "Name_" + i,
     email: "use***" + "@**t.com",
     status:
@@ -94,7 +92,15 @@ export const usersHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.USER}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.USER}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

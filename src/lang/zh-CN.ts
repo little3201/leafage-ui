@@ -3,7 +3,7 @@
 
 export default {
   label: {
-    no: "序号",
+    serial: "序号",
     title: "标题",
     template: "模板",
     actions: "操作",
@@ -108,7 +108,9 @@ export default {
     mode: "模式",
     sender: "发送人",
     receiver: "接收人",
-    publishedAt: "发布时间"
+    publishedAt: "发布时间",
+    yes: "是",
+    no: "否"
   },
 
   action: {
@@ -222,11 +224,13 @@ export default {
     removeWarning:
       "当前操作无法撤销，将永久移除 <strong>{module}/{data}</strong>。",
     removeButtonText: "我明白，移除它！",
-
     disableWarning: "数据停用后，当前数据及关联数据将不可用。",
     disableButtonText: "我明白，停用它！",
     clearWarning: "此操作无法撤销。这将永久移除所有项目。",
     clearButtonText: "我明白，移除所有项目。",
+    publishWarning:
+      "点击确定后，当前 <strong>{data}</strong> 消息将立即发布给接收人。",
+    publishButtonText: "我确定，立即发布",
     welcome: "嗨！欢迎回来",
     subtitle: "请填写您的账号和密码，让我们继续探索",
     forgotPassword: "忘记密码 ？"

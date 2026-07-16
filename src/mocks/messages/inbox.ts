@@ -26,6 +26,7 @@ for (let i = 1; i < 18; i++) {
     id: i,
     title: "The message title_" + i,
     sender: "admin",
+    scope: "ALL",
     type: ["系统公告", "部门通知", "全员信", "通知"][
       Math.floor(Math.random() * 4)
     ],

@@ -26,6 +26,7 @@ for (let i = 1; i < 18; i++) {
     size: Math.floor(Math.random() * 100000),
     path: "/path/to/test" + i,
     directory: randomIndex === null ? true : false,
+    enabled: i % 2 > 0,
     lastModifiedDate: new Date()
   };
   datas.push(data);
@@ -76,6 +77,22 @@ export const fileRecordsHandlers = [
     }
 
     return HttpResponse.json(datas[0]);
+  }),
+  http.patch(`/api${SERVER_URL.FILE}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.FILE}/:id/disable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
   }),
   http.delete(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"

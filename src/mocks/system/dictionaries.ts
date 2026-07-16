@@ -10,7 +10,7 @@ const datas: Dictionary[] = [
     id: item,
     superiorId: null,
     name: "Name_" + item,
-    enabled: true,
+    enabled: Math.floor(Math.random() * 2) > 0,
     count: 1
   };
 });
@@ -24,7 +24,7 @@ for (let i = 1; i < 28; i++) {
     id: i,
     superiorId: superiorId,
     name: "Sub_Name_" + i,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   };
   datas.push(row);
 }
@@ -112,7 +112,15 @@ export const dictionariesHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.DICTIONARY}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.DICTIONARY}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

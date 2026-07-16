@@ -378,7 +378,7 @@ function onUploadError() {
           row-key="id"
           table-layout="auto"
         >
-          <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+          <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
           <ElTableColumn
             show-overflow-tooltip
             prop="name"
@@ -434,7 +434,7 @@ function onUploadError() {
                 class="mr-1"
               />
               <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-                scope.row.enabled ? "Y" : "N"
+                scope.row.enabled ? $t("label.yes") : $t("label.no")
               }}</ElText>
             </template>
           </ElTableColumn>

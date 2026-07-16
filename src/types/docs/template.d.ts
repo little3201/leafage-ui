@@ -5,4 +5,5 @@ export interface Template extends AudtiMetadata {
   type: "WORD" | "EXCEL";
   version: number;
   status?: string;
+  enabled?: boolean;
 }

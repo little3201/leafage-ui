@@ -19,7 +19,7 @@ const datas: Privilege[] = [
     redirect: "users",
     name: "system",
     count: 5,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 7,
@@ -29,7 +29,7 @@ const datas: Privilege[] = [
     redirect: "operation",
     name: "logs",
     count: 3,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 12,
@@ -37,9 +37,17 @@ const datas: Privilege[] = [
     path: "regions",
     component: "regions",
     name: "regions",
-    actions: ["create", "modify", "remove", "import", "export"],
+    actions: [
+      "create",
+      "modify",
+      "remove",
+      "import",
+      "export",
+      "enable",
+      "disable"
+    ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 13,
@@ -47,9 +55,9 @@ const datas: Privilege[] = [
     path: "files",
     component: "files",
     name: "files",
-    actions: ["upload", "download", "remove"],
+    actions: ["upload", "download", "remove", "enable", "disable"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 14,
@@ -59,7 +67,7 @@ const datas: Privilege[] = [
     name: "exploiters",
     redirect: "schemes",
     count: 1,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 22,
@@ -69,7 +77,7 @@ const datas: Privilege[] = [
     component: "#",
     redirect: "/docs/reports",
     count: 1,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   }
 ];
 
@@ -88,10 +96,11 @@ const subDatas: Privilege[] = [
       "export",
       "relation",
       "authorize",
-      "enable"
+      "enable",
+      "disable"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 3,
@@ -106,10 +115,11 @@ const subDatas: Privilege[] = [
       "import",
       "export",
       "enable",
+      "disable",
       "unlock"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 4,
@@ -117,9 +127,9 @@ const subDatas: Privilege[] = [
     path: "privileges",
     component: "system/privileges",
     name: "privileges",
-    actions: ["modify", "import", "export", "enable"],
+    actions: ["modify", "import", "export", "enable", "disable"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 5,
@@ -135,10 +145,11 @@ const subDatas: Privilege[] = [
       "export",
       "relation",
       "authorize",
-      "enable"
+      "enable",
+      "disable"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 6,
@@ -146,9 +157,17 @@ const subDatas: Privilege[] = [
     path: "dictionaries",
     component: "system/dictionaries",
     name: "dictionaries",
-    actions: ["create", "modify", "remove", "import", "export", "enable"],
+    actions: [
+      "create",
+      "modify",
+      "remove",
+      "import",
+      "export",
+      "enable",
+      "disable"
+    ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 8,
@@ -158,7 +177,7 @@ const subDatas: Privilege[] = [
     name: "operationLogs",
     actions: ["clear", "export", "remove"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 9,
@@ -168,7 +187,7 @@ const subDatas: Privilege[] = [
     name: "accessLogs",
     actions: ["clear", "export", "remove"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 10,
@@ -178,7 +197,7 @@ const subDatas: Privilege[] = [
     name: "auditLogs",
     actions: ["remove", "export"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 11,
@@ -188,7 +207,7 @@ const subDatas: Privilege[] = [
     name: "schedulerLogs",
     actions: ["clear", "export", "remove"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 15,
@@ -205,10 +224,11 @@ const subDatas: Privilege[] = [
       "sync",
       "config",
       "execute",
-      "enable"
+      "enable",
+      "disable"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 16,
@@ -218,7 +238,7 @@ const subDatas: Privilege[] = [
     component: "exploiters/scripts",
     actions: ["create", "modify", "remove", "import", "export"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 17,
@@ -227,7 +247,7 @@ const subDatas: Privilege[] = [
     name: "codes",
     component: "exploiters/codes",
     count: 3,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 18,
@@ -237,7 +257,7 @@ const subDatas: Privilege[] = [
     component: "exploiters/connections",
     actions: ["create", "modify", "remove", "import", "export"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 19,
@@ -252,10 +272,11 @@ const subDatas: Privilege[] = [
       "import",
       "export",
       "config",
-      "enable"
+      "enable",
+      "disable"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 20,
@@ -270,10 +291,11 @@ const subDatas: Privilege[] = [
       "import",
       "export",
       "config",
-      "enable"
+      "enable",
+      "disable"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 21,
@@ -288,10 +310,11 @@ const subDatas: Privilege[] = [
       "import",
       "export",
       "config",
-      "enable"
+      "enable",
+      "disable"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 23,
@@ -301,7 +324,7 @@ const subDatas: Privilege[] = [
     component: "docs/archives",
     actions: ["create", "modify", "remove", "import", "export", "section"],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 24,
@@ -309,9 +332,18 @@ const subDatas: Privilege[] = [
     superiorId: 22,
     path: "templates",
     component: "docs/templates",
-    actions: ["create", "modify", "remove", "import", "export", "section"],
+    actions: [
+      "create",
+      "modify",
+      "remove",
+      "import",
+      "export",
+      "section",
+      "enable",
+      "disable"
+    ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   },
   {
     id: 25,
@@ -329,7 +361,7 @@ const subDatas: Privilege[] = [
       "data"
     ],
     count: 0,
-    enabled: true
+    enabled: Math.floor(Math.random() * 2) > 0
   }
 ];
 
@@ -357,7 +389,8 @@ const treeNodes: PrivilegeTreeNode[] = [
             "export",
             "relation",
             "authorize",
-            "enable"
+            "enable",
+            "disable"
           ]
         }
       },
@@ -374,6 +407,7 @@ const treeNodes: PrivilegeTreeNode[] = [
             "import",
             "export",
             "enable",
+            "disable",
             "unlock"
           ]
         }
@@ -392,7 +426,8 @@ const treeNodes: PrivilegeTreeNode[] = [
             "export",
             "relation",
             "authorize",
-            "enable"
+            "enable",
+            "disable"
           ]
         }
       },
@@ -402,7 +437,15 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: "dictionaries",
           component: "system/dictionaries",
-          actions: ["create", "modify", "remove", "import", "export", "enable"]
+          actions: [
+            "create",
+            "modify",
+            "remove",
+            "import",
+            "export",
+            "enable",
+            "disable"
+          ]
         }
       },
       {
@@ -411,7 +454,7 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: "privileges",
           component: "system/privileges",
-          actions: ["modify", "import", "export", "enable"]
+          actions: ["modify", "import", "export", "enable", "disable"]
         }
       }
     ]
@@ -469,7 +512,15 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: "regions",
       component: "regions",
-      actions: ["create", "modify", "remove", "import", "export", "enable"]
+      actions: [
+        "create",
+        "modify",
+        "remove",
+        "import",
+        "export",
+        "enable",
+        "disable"
+      ]
     }
   },
   {
@@ -478,7 +529,7 @@ const treeNodes: PrivilegeTreeNode[] = [
     meta: {
       path: "files",
       component: "files",
-      actions: ["download", "upload", "remove"]
+      actions: ["download", "upload", "remove", "enable", "disable"]
     }
   },
   {
@@ -504,7 +555,8 @@ const treeNodes: PrivilegeTreeNode[] = [
             "export",
             "config",
             "execute",
-            "enable"
+            "enable",
+            "disable"
           ]
         }
       },
@@ -514,7 +566,15 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: "scripts",
           component: "exploiters/scripts",
-          actions: ["create", "modify", "remove", "import", "export", "enable"]
+          actions: [
+            "create",
+            "modify",
+            "remove",
+            "import",
+            "export",
+            "enable",
+            "disable"
+          ]
         }
       },
       {
@@ -548,7 +608,8 @@ const treeNodes: PrivilegeTreeNode[] = [
                 "import",
                 "export",
                 "config",
-                "enable"
+                "enable",
+                "disable"
               ]
             }
           },
@@ -565,7 +626,8 @@ const treeNodes: PrivilegeTreeNode[] = [
                 "import",
                 "export",
                 "config",
-                "enable"
+                "enable",
+                "disable"
               ]
             }
           },
@@ -581,7 +643,8 @@ const treeNodes: PrivilegeTreeNode[] = [
                 "remove",
                 "import",
                 "export",
-                "enable"
+                "enable",
+                "disable"
               ]
             }
           }
@@ -614,7 +677,16 @@ const treeNodes: PrivilegeTreeNode[] = [
         meta: {
           path: "templates",
           component: "docs/templates",
-          actions: ["create", "modify", "remove", "import", "export", "section"]
+          actions: [
+            "create",
+            "modify",
+            "remove",
+            "import",
+            "export",
+            "section",
+            "enable",
+            "disable"
+          ]
         },
         children: []
       },
@@ -720,7 +792,7 @@ for (let i = 1; i < 25; i++) {
       privilegeId: i,
       name: actions[j - 1],
       type: actionTypes[actions[j - 1]] || null,
-      enabled: true
+      enabled: Math.floor(Math.random() * 2) > 0
     };
     privilegeActions.push(row);
   }
@@ -846,7 +918,15 @@ export const privilegesHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.PRIVILEGE}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.PRIVILEGE}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.PRIVILEGE}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

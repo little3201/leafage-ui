@@ -103,7 +103,15 @@ export const regionsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.REGION}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.REGION}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

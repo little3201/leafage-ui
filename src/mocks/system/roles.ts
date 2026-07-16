@@ -146,7 +146,15 @@ export const rolesHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.ROLE}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.ROLE}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.ROLE}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

@@ -51,10 +51,12 @@ defineExpose({
     :rules="rules"
     label-position="top"
   >
-    <ElFormItem :label="$t('label.no')" prop="sequence">
+    <ElFormItem :label="$t('label.serial')" prop="sequence">
       <ElInputNumber
         v-model="sectionForm.sequence"
-        :placeholder="$t('placeholder.inputText', { field: $t('label.no') })"
+        :placeholder="
+          $t('placeholder.inputText', { field: $t('label.serial') })
+        "
       />
     </ElFormItem>
     <ElFormItem :label="$t('label.name')" prop="name">

@@ -6,14 +6,14 @@ import { applyFilters } from "../util";
 const datas: Template[] = [];
 
 for (let i = 1; i < 28; i++) {
+  const random = Math.floor(Math.random() * 3);
   const row: Template = {
     id: i,
     name: "Name_" + i,
     type: (["WORD", "EXCEL"] as const)[Math.floor(Math.random() * 2)],
     version: Math.floor(Math.random() * 3) + 1,
-    status:
-      ["DRAFT", "PUBLISHED", "ARCHIVED"][Math.floor(Math.random() * 3)] ||
-      "unknown",
+    status: ["DRAFT", "PUBLISHED", "ARCHIVED"][random],
+    enabled: random < 2 ? (i % 3 > 0 ? false : true) : true,
     lastModifiedDate: new Date()
   };
   datas.push(row);
@@ -88,7 +88,15 @@ export const templatesHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

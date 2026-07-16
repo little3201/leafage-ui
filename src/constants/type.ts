@@ -37,7 +37,7 @@ export const templateTypes: { [key: string]: "primary" | "success" } = {
   EXCEL: "success"
 };
 
-export const schemeScopeTypes: { [key: string]: "primary" | "success" } = {
+export const scopeTypes: { [key: string]: "primary" | "success" } = {
   ALL: "success",
   PARTIAL: "primary"
 };

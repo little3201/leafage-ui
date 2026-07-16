@@ -46,7 +46,7 @@ for (let i = 1; i < 28; i++) {
     name: "Group_" + i,
     members: users.filter((_, index) => index < Math.floor(Math.random() * 5)),
     roles: roles.filter((_, index) => index < Math.floor(Math.random() * 5)),
-    enabled: true
+    enabled: i % 3 > 0
   };
   datas.push(row);
 }
@@ -228,7 +228,15 @@ export const groupsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.GROUP}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

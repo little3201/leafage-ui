@@ -336,7 +336,7 @@ function formatSchemas(cellValue: number): string {
       table-layout="auto"
     >
       <ElTableColumn type="selection" />
-      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="title" :label="$t('label.title')">
         <template #default="scope">
           <ElButton
@@ -462,17 +462,12 @@ function formatSchemas(cellValue: number): string {
             <ElSelect
               v-model="form.schemaId"
               :disabled="form.id != null"
+              :options="templates"
+              :props="{ value: 'id', label: 'name' }"
               :placeholder="
                 $t('placeholder.selectText', { field: $t('label.template') })
               "
-            >
-              <ElOption
-                v-for="(item, index) in templates"
-                :key="index"
-                :label="item.name"
-                :value="item.id!"
-              />
-            </ElSelect>
+            />
           </ElFormItem>
         </ElCol>
       </ElRow>

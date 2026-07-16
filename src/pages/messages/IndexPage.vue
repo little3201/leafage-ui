@@ -8,18 +8,24 @@ import {
   removeMessage,
   retrieveMessages
 } from "@/api/messages";
-import { actionTypes, messageStatus } from "@/constants";
-import type { Filter, Pagination, Message } from "@/types";
+import { retrieveDictionarySubset } from "@/api/system/dictionaries";
+import { retrieveUsers } from "@/api/system/users";
+import { actionTypes, messageStatus, scopeTypes } from "@/constants";
+import type { Filter, Pagination, Message, Dictionary, User } from "@/types";
 import { actionIcon, hasAction } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const visible = ref<boolean>(false);
-const loading = ref<boolean>(false);
 const datas = ref<Array<Message>>([]);
 const total = ref<number>(0);
+
+const users = ref<Array<User>>([]);
+const typeOptions = ref<Array<Dictionary>>([]);
+
+const visible = ref<boolean>(false);
+const loading = ref<boolean>(false);
 const saveLoading = ref<boolean>(false);
 
 const tableRef = ref<TableInstance>();
@@ -37,6 +43,7 @@ const formRef = ref<FormInstance>();
 const initialValues: Message = {
   id: null,
   title: "",
+  scope: "ALL",
   type: null,
   receiver: null
 };
@@ -54,6 +61,9 @@ const rules = reactive<FormRules<typeof form>>({
 
 onMounted(async () => {
   await load();
+
+  const typeRes = await retrieveDictionarySubset(900);
+  typeOptions.value = typeRes.data;
 });
 
 /**
@@ -80,13 +90,53 @@ async function load() {
 }
 
 /**
+ * 加载列表
+ */
+async function loadUsers(query: string) {
+  const filter: Filter<User> = {
+    fullName: { op: "like", value: query }
+  };
+  const res = await retrieveUsers({ page: 1, size: 10 }, filter);
+  users.value = res.data.content;
+}
+
+/**
  * 新增、编辑弹出框
- * @param id 主键
+ * @param row 数据
  */
 function saveRow(row?: Message) {
   form.value = row ? { ...row } : { ...initialValues };
 
   visible.value = true;
+}
+
+/**
+ * 发布
+ * @param row 数据
+ */
+async function publishRow(row: Message) {
+  await ElMessageBox.confirm(
+    t("tips.publishWarning", {
+      data: row.title
+    }),
+    t("tips.confirm"),
+    {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
+      confirmButtonType: "warning",
+      confirmButtonClass: "w-full",
+      confirmButtonText: t("tips.publishButtonText"),
+      type: "warning"
+    }
+  ).then(async () => {
+    try {
+      await load();
+      ElMessage.success(t("message.success", { action: t("action.remove") }));
+    } catch (error) {
+      ElMessage.error(t("message.error", { action: t("action.remove") }));
+      throw error;
+    }
+  });
 }
 
 /**
@@ -106,7 +156,6 @@ function showRow(row: Message) {
  * @param startTime 开始时间
  */
 async function removeRow(id: number, name: string, startTime: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", {
       module: t("page.schedulerLogs"),
@@ -166,6 +215,16 @@ async function onSubmit(formEl: FormInstance) {
     }
   }
 }
+
+/**
+ * select change
+ * @param value selected value
+ */
+function handleChange(value: string) {
+  if (value === "ALL") {
+    form.value.receiver = null;
+  }
+}
 </script>
 
 <template>
@@ -218,7 +277,7 @@ async function onSubmit(formEl: FormInstance) {
       table-layout="auto"
     >
       <ElTableColumn type="selection" />
-      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="title" :label="$t('label.title')">
         <template #default="scope">
           <ElButton
@@ -265,9 +324,14 @@ async function onSubmit(formEl: FormInstance) {
         sortable
       >
         <template #default="scope">
-          <ElTag :type="messageStatus[scope.row.status]" round>
-            {{ scope.row.status }}
-          </ElTag>
+          <ElBadge
+            is-dot
+            :type="messageStatus[scope.row.status]"
+            class="mr-1"
+          />
+          <ElText :type="messageStatus[scope.row.status]">{{
+            scope.row.status
+          }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="publishedAt" :label="$t('label.publishedAt')">
@@ -295,11 +359,13 @@ async function onSubmit(formEl: FormInstance) {
             />{{ $t("action.modify") }}
           </ElButton>
           <ElButton
-            v-if="hasAction($route.name, 'publish')"
+            v-if="
+              scope.row.status === 'DRAFT' && hasAction($route.name, 'publish')
+            "
             title="modify"
             :type="actionTypes['publish']"
             link
-            @click="saveRow(scope.row)"
+            @click="publishRow(scope.row)"
           >
             <Icon
               :icon="actionIcon('publish')"
@@ -345,7 +411,7 @@ async function onSubmit(formEl: FormInstance) {
     v-model="visible"
     :title="form.id ? $t('action.modify') : $t('action.create')"
     :show-close="false"
-    width="400"
+    width="480"
   >
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
@@ -355,6 +421,70 @@ async function onSubmit(formEl: FormInstance) {
               v-model="form.title"
               :placeholder="
                 $t('placeholder.inputText', { field: $t('label.title') })
+              "
+            />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem :label="$t('label.type')" prop="type">
+            <ElSelect
+              v-model="form.type"
+              :options="typeOptions"
+              :props="{ value: 'name', label: 'name' }"
+              :placeholder="
+                $t('placeholder.selectText', { field: $t('label.type') })
+              "
+            />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem :label="$t('label.scope')" prop="scope">
+            <ElSelect
+              v-model="form.scope"
+              :disabled="form.id != undefined"
+              @change="handleChange"
+            >
+              <ElOption
+                v-for="(_, value) in scopeTypes"
+                :key="value"
+                :value="value"
+                :label="value"
+              />
+            </ElSelect>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow>
+        <ElCol>
+          <ElFormItem :label="$t('label.receiver')" prop="receiver">
+            <ElSelect
+              v-model="form.receiver"
+              clearable
+              multiple
+              filterable
+              remote
+              :remote-method="loadUsers"
+              :disabled="form.scope === 'ALL'"
+              :options="users"
+              :props="{ value: 'username', label: 'fullName' }"
+              :placeholder="
+                $t('placeholder.selectText', { field: $t('label.receiver') })
+              "
+            />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow>
+        <ElCol>
+          <ElFormItem :label="$t('label.body')" prop="body">
+            <ElInput
+              v-model="form.body"
+              :rows="4"
+              type="textarea"
+              :placeholder="
+                $t('placeholder.inputText', { field: $t('label.body') })
               "
             />
           </ElFormItem>

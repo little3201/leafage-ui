@@ -350,7 +350,7 @@ function onUpload(options: UploadRequestOptions) {
       table-layout="auto"
     >
       <ElTableColumn type="selection" />
-      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="username" :label="$t('label.username')" sortable>
         <template #default="scope">
           <div class="flex items-center space-x-2">
@@ -390,7 +390,7 @@ function onUpload(options: UploadRequestOptions) {
             class="mr-1"
           />
           <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-            scope.row.enabled ? "Y" : "N"
+            scope.row.enabled ? $t("label.yes") : $t("label.no")
           }}</ElText>
         </template>
       </ElTableColumn>

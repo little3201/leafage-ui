@@ -643,7 +643,7 @@ const rowSelected = (row: Privilege) => {
           table-layout="auto"
         >
           <ElTableColumn type="selection" />
-          <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+          <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
           <ElTableColumn prop="name" :label="$t('label.name')" />
           <ElTableColumn prop="members" :label="$t('label.members')">
             <template #default="scope">
@@ -701,7 +701,7 @@ const rowSelected = (row: Privilege) => {
                 class="mr-1"
               />
               <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-                scope.row.enabled ? "Y" : "N"
+                scope.row.enabled ? $t("label.yes") : $t("label.no")
               }}</ElText>
             </template>
           </ElTableColumn>

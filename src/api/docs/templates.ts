@@ -48,6 +48,24 @@ export const modifyTemplate = (id: number, row: Template) => {
 };
 
 /**
+ * Enable an existing row
+ * @param id Row ID
+ * @returns Enable result
+ */
+export const enableTemplate = (id: number) => {
+  return api.patch(`${SERVER_URL.TEMPLATE}/${id}/enable`);
+};
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export const disableTemplate = (id: number) => {
+  return api.patch(`${SERVER_URL.TEMPLATE}/${id}/disable`);
+};
+
+/**
  * Remove a row
  * @param id Row ID
  * @returns Deletion status

@@ -213,7 +213,7 @@ async function clearRows() {
       table-layout="auto"
     >
       <ElTableColumn type="selection" />
-      <ElTableColumn type="index" :label="$t('label.no')" width="55" />
+      <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="url" :label="$t('label.url')" sortable>
         <template #default="scope">
           <ElButton title="url" type="primary" link @click="showRow(scope.row)">
