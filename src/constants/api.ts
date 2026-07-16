@@ -12,6 +12,9 @@ export const SERVER_URL = {
   MESSAGE: SERVER_PREFIX.HYPERVISOR.concat("/messages"), // 消息
   MESSAGE_INBOX: SERVER_PREFIX.HYPERVISOR.concat("/message-inbox"), // 我的消息
 
+  SCHEDULER: SERVER_PREFIX.HYPERVISOR.concat("/schedulers"), // 任务管理
+  SCHEDULER_LOG: SERVER_PREFIX.HYPERVISOR.concat("/scheduler-logs"), // 调度日志
+
   // hypervisor
   USER: SERVER_PREFIX.HYPERVISOR.concat("/users"), // 用户
   ROLE: SERVER_PREFIX.HYPERVISOR.concat("/roles"), // 角色
@@ -21,7 +24,6 @@ export const SERVER_URL = {
   ACCESS_LOG: SERVER_PREFIX.HYPERVISOR.concat("/access-logs"), // 访问日志
   AUDIT_LOG: SERVER_PREFIX.HYPERVISOR.concat("/audit-logs"), // 审计日志
   OPERATION_LOG: SERVER_PREFIX.HYPERVISOR.concat("/operation-logs"), // 操作日志
-  SCHEDULER_LOG: SERVER_PREFIX.HYPERVISOR.concat("/scheduler-logs"), // 调度日志
   CALENDAR_EVENT: SERVER_PREFIX.HYPERVISOR.concat("/calendar-events"), // 日历事件
 
   // assets

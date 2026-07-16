@@ -59,7 +59,9 @@ export const pageIcons: Record<string, string> = {
   templates: "temple-hindu-outline-rounded",
   messages: "business-messages-outline-rounded",
   sent: "outgoing-mail-outline-rounded",
-  inbox: "inbox-outline-rounded"
+  inbox: "inbox-outline-rounded",
+  schedulers: "schedule-outline-rounded",
+  tasks: "task-alt-rounded"
 };
 
 export const globalIcons: Record<string, string> = {

@@ -12,7 +12,7 @@ export * from "./system/user";
 export * from "./logs/access";
 export * from "./logs/audit";
 export * from "./logs/operation";
-export * from "./logs/scheduler";
+export * from "./schedulers";
 
 // exploiters
 export * from "./exploiters/connection";

@@ -110,7 +110,9 @@ export default {
     receiver: "接收人",
     publishedAt: "发布时间",
     yes: "是",
-    no: "否"
+    no: "否",
+    task: "任务",
+    corn: "Corn表达式"
   },
 
   action: {
@@ -191,7 +193,9 @@ export default {
     sections: "章节",
     messages: "消息中心",
     sent: "发消息",
-    inbox: "收信箱"
+    inbox: "收信箱",
+    schedulers: "任务调度",
+    tasks: "任务管理"
   },
 
   github: "Github",

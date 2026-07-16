@@ -195,12 +195,20 @@ async function removeRow(id: number, module: string, action: string) {
         </template>
       </ElTableColumn>
       <ElTableColumn prop="targetId" :label="$t('label.targetId')" />
-      <ElTableColumn prop="oldValue" :label="$t('label.oldValue')">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="oldValue"
+        :label="$t('label.oldValue')"
+      >
         <template #default="scope">
           <ElText class="w-56" truncated>{{ scope.row.oldValue }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="newValue" :label="$t('label.newValue')">
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="newValue"
+        :label="$t('label.newValue')"
+      >
         <template #default="scope">
           <ElText class="w-56" truncated>{{ scope.row.newValue }}</ElText>
         </template>

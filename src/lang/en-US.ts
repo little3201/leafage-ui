@@ -110,7 +110,9 @@ export default {
     receiver: "Receiver",
     publishedAt: "Published At",
     yes: "Yes",
-    no: "No"
+    no: "No",
+    task: "Task",
+    corn: "Corn"
   },
 
   action: {
@@ -191,7 +193,9 @@ export default {
     sections: "Sections",
     messages: "Messages",
     sent: "Sent",
-    inbox: "Inbox"
+    inbox: "Inbox",
+    schedulers: "Schedulers",
+    tasks: "Tasks"
   },
 
   github: "Github",

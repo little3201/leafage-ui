@@ -16,6 +16,7 @@ import { fileRecordsHandlers } from "./file-records";
 import { accessLogsHandlers } from "./logs/access-logs";
 import { auditLogsHandlers } from "./logs/audit-logs";
 import { operationLogsHandlers } from "./logs/operation-logs";
+import { schedulersHandlers } from "./scheduler";
 import { schedulerLogsHandlers } from "./scheduler/logs";
 import { regionsHandlers } from "./regions";
 import { dictionariesHandlers } from "./system/dictionaries";
@@ -43,6 +44,7 @@ export const handlers = [
   ...rolesHandlers,
   ...samplesHandlers,
   ...sectionsHandlers,
+  ...schedulersHandlers,
   ...schedulerLogsHandlers,
   ...schemesHandlers,
   ...scriptsHandlers,
