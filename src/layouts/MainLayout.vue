@@ -13,6 +13,7 @@ import MessageMini from "@/components/MessageMini.vue";
 
 const { currentRoute } = useRouter();
 const userStore = useUserStore();
+const appTitle = import.meta.env.VITE_APP_TITLE;
 
 function logout() {
   userStore.$reset();
@@ -27,7 +28,7 @@ function logout() {
     <div class="inline-flex grow justify-between">
       <div class="inline-flex items-center">
         <ElImage :src="logo" alt="avatar" class="w-10 h-10" />
-        <h3 class="ml-3 text-white">Project Management</h3>
+        <h3 class="ml-3 text-white">{{ appTitle }}</h3>
       </div>
 
       <div class="inline-flex justify-end items-center space-x-4">
