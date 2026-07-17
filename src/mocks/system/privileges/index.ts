@@ -15,6 +15,7 @@ import { root_logs, nodes_logs, tree_logs } from "./logs";
 import { root_regions, nodes_regions, tree_regions } from "./regions";
 import { root_files, nodes_files, tree_files } from "./file-records";
 import { root_docs, nodes_docs, tree_docs } from "./docs";
+import { root_audits, nodes_audits, tree_audits } from "./audits";
 import {
   root_schedulers,
   nodes_schedulers,
@@ -34,7 +35,8 @@ const datas: Privilege[] = [
   root_logs,
   root_regions,
   root_files,
-  root_schedulers
+  root_schedulers,
+  root_audits
 ];
 const subDatas: Privilege[] = [
   ...nodes_system,
@@ -44,7 +46,8 @@ const subDatas: Privilege[] = [
   ...nodes_logs,
   ...nodes_regions,
   ...nodes_files,
-  ...nodes_schedulers
+  ...nodes_schedulers,
+  ...nodes_audits
 ];
 const treeNodes: PrivilegeTreeNode[] = [
   ...tree_system,
@@ -54,7 +57,8 @@ const treeNodes: PrivilegeTreeNode[] = [
   ...tree_logs,
   ...tree_regions,
   ...tree_files,
-  ...tree_schedulers
+  ...tree_schedulers,
+  ...tree_audits
 ];
 
 const privilegeActions: PrivilegeAction[] = [];

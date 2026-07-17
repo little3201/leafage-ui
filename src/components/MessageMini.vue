@@ -68,7 +68,7 @@ async function readRows() {
         <span>通知</span>
 
         <ElButton link type="primary" @click="readRows()">
-          {{ $t("label.readAll") }}
+          {{ $t("action.readAll") }}
         </ElButton>
       </div>
 

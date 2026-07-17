@@ -14,7 +14,7 @@ export const nodes_schedulers: Privilege[] = [
   {
     id: 30,
     superiorId: 11,
-    name: "index",
+    name: "tasks",
     path: "",
     component: "schedulers",
     actions: ["create", "modify", "remove", "enable", "disable"],

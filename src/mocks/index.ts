@@ -1,4 +1,6 @@
 import { authenticationHandlers } from "./authentication";
+import { auditLogsHandlers } from "./audits/logs";
+import { auditPatrolsHandlers } from "./audits/patrols";
 import { calendarEventHandlers } from "./calendar-events";
 import { archivesHandlers } from "./docs/archives";
 import { reportsHandlers } from "./docs/reports";
@@ -14,7 +16,6 @@ import { schemesHandlers } from "./exploiters/schemes";
 import { scriptsHandlers } from "./exploiters/scripts";
 import { fileRecordsHandlers } from "./file-records";
 import { accessLogsHandlers } from "./logs/access-logs";
-import { auditLogsHandlers } from "./logs/audit-logs";
 import { operationLogsHandlers } from "./logs/operation-logs";
 import { schedulersHandlers } from "./scheduler";
 import { schedulerLogsHandlers } from "./scheduler/logs";
@@ -28,6 +29,7 @@ import { usersHandlers } from "./system/users";
 export const handlers = [
   ...accessLogsHandlers,
   ...auditLogsHandlers,
+  ...auditPatrolsHandlers,
   ...authenticationHandlers,
   ...calendarEventHandlers,
   ...connectionsHandlers,

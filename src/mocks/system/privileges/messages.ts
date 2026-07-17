@@ -13,7 +13,7 @@ export const root_messages: Privilege = {
 export const nodes_messages: Privilege[] = [
   {
     id: 27,
-    superiorId: 7,
+    superiorId: 26,
     path: "sent",
     component: "messages",
     name: "sent",
@@ -23,7 +23,7 @@ export const nodes_messages: Privilege[] = [
   },
   {
     id: 28,
-    superiorId: 7,
+    superiorId: 26,
     path: "inbox",
     component: "messages/inbox",
     name: "inbox",
@@ -58,7 +58,7 @@ export const tree_messages: PrivilegeTreeNode[] = [
         meta: {
           path: "inbox",
           component: "messages/inbox",
-          actions: ["remove", "read"]
+          actions: ["remove"]
         },
         children: []
       }

@@ -104,7 +104,6 @@ export default {
     owner: "Owner",
     all: "All",
     unread: "Unread",
-    readAll: "Read All",
     mode: "Mode",
     sender: "Sender",
     receiver: "Receiver",
@@ -158,7 +157,8 @@ export default {
     addItem: "Add Item",
     section: "Section",
     member: "Member",
-    publish: "Publish"
+    publish: "Publish",
+    readAll: "Read All"
   },
 
   page: {
@@ -182,10 +182,8 @@ export default {
     scripts: "Scripts",
     samples: "Samples",
     logs: "Logs",
-    operationLogs: "Operation Log",
-    accessLogs: "Access Log",
-    auditLogs: "Audit Log",
-    schedulerLogs: "Scheduler Log",
+    operationLogs: "Operation Logs",
+    accessLogs: "Access Logs",
     docs: "Docs",
     reports: "Reports",
     archives: "Archives",
@@ -195,7 +193,11 @@ export default {
     sent: "Sent",
     inbox: "Inbox",
     schedulers: "Schedulers",
-    tasks: "Tasks"
+    schedulerLogs: "Scheduler Logs",
+    tasks: "Tasks",
+    audits: "Safety Audits",
+    patrols: "Safety Patrols",
+    auditLogs: "Audit Logs"
   },
 
   github: "Github",

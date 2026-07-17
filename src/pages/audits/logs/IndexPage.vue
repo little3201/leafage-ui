@@ -2,7 +2,7 @@
 import { Icon } from "@iconify/vue";
 import type { TableInstance } from "element-plus";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { removeAuditLog, retrieveAuditLogs } from "@/api/logs/audit-logs";
+import { removeAuditLog, retrieveAuditLogs } from "@/api/audits/logs";
 import { actionTypes } from "@/constants";
 import type { AuditLog, Filter, Pagination } from "@/types";
 import { actionIcon, exportToCSV, formatDuration, hasAction } from "@/utils";

@@ -40,8 +40,8 @@ export const pageIcons: Record<string, string> = {
   dictionaries: "book-3-outline-rounded",
   logs: "lab-profile-outline-rounded",
   operationLogs: "clinical-notes-outline-rounded",
-  accessLogs: "sticky-note-2-outline-rounded",
-  auditLogs: "note-alt-outline-rounded",
+  accessLogs: "note-alt-outline-rounded",
+  auditLogs: "list-alt-check-outline-rounded",
   schedulerLogs: "event-note-outline-rounded",
   scripts: "terminal-rounded",
   exploiters: "build-outline-rounded",
@@ -61,7 +61,9 @@ export const pageIcons: Record<string, string> = {
   sent: "outgoing-mail-outline-rounded",
   inbox: "inbox-outline-rounded",
   schedulers: "schedule-outline-rounded",
-  tasks: "task-alt-rounded"
+  tasks: "task-alt-rounded",
+  audits: "safety-check-outline-rounded",
+  patrols: "person-shield-outline-rounded"
 };
 
 export const globalIcons: Record<string, string> = {

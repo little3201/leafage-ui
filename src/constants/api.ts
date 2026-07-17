@@ -15,6 +15,9 @@ export const SERVER_URL = {
   SCHEDULER: SERVER_PREFIX.HYPERVISOR.concat("/schedulers"), // 任务管理
   SCHEDULER_LOG: SERVER_PREFIX.HYPERVISOR.concat("/scheduler-logs"), // 调度日志
 
+  AUDIT_PATROL: SERVER_PREFIX.HYPERVISOR.concat("/audit-patrols"), // 审计人员
+  AUDIT_LOG: SERVER_PREFIX.HYPERVISOR.concat("/audit-logs"), // 审计日志
+
   // hypervisor
   USER: SERVER_PREFIX.HYPERVISOR.concat("/users"), // 用户
   ROLE: SERVER_PREFIX.HYPERVISOR.concat("/roles"), // 角色
@@ -22,7 +25,6 @@ export const SERVER_URL = {
   GROUP: SERVER_PREFIX.HYPERVISOR.concat("/groups"), // 分组
   DICTIONARY: SERVER_PREFIX.HYPERVISOR.concat("/dictionaries"), // 字典
   ACCESS_LOG: SERVER_PREFIX.HYPERVISOR.concat("/access-logs"), // 访问日志
-  AUDIT_LOG: SERVER_PREFIX.HYPERVISOR.concat("/audit-logs"), // 审计日志
   OPERATION_LOG: SERVER_PREFIX.HYPERVISOR.concat("/operation-logs"), // 操作日志
   CALENDAR_EVENT: SERVER_PREFIX.HYPERVISOR.concat("/calendar-events"), // 日历事件
 

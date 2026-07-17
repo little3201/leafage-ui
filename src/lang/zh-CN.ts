@@ -104,7 +104,6 @@ export default {
     owner: "所有者",
     all: "全部",
     unread: "未读",
-    readAll: "全部已读",
     mode: "模式",
     sender: "发送人",
     receiver: "接收人",
@@ -158,7 +157,8 @@ export default {
     addItem: "添加项目",
     section: "章节",
     member: "成员",
-    publish: "发布"
+    publish: "发布",
+    readAll: "全部已读"
   },
 
   page: {
@@ -184,8 +184,6 @@ export default {
     logs: "日志记录",
     operationLogs: "操作日志",
     accessLogs: "访问日志",
-    auditLogs: "审计日志",
-    schedulerLogs: "调度日志",
     docs: "文档管理",
     reports: "报告",
     archives: "档案",
@@ -195,7 +193,11 @@ export default {
     sent: "发消息",
     inbox: "收信箱",
     schedulers: "任务调度",
-    tasks: "任务管理"
+    schedulerLogs: "调度日志",
+    tasks: "任务管理",
+    audits: "安全审计",
+    patrols: "审计人员",
+    auditLogs: "审计日志"
   },
 
   github: "Github",

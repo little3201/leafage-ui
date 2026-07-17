@@ -11,10 +11,3 @@ export interface Message extends AudtiMetadata {
   status?: string;
   publishedAt?: Date;
 }
-
-export interface MessageInbox extends AudtiMetadata {
-  message: Message;
-  receiver: string;
-  status?: string;
-  readAt?: Date;
-}

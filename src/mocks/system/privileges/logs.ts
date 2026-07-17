@@ -31,16 +31,6 @@ export const nodes_logs: Privilege[] = [
     actions: ["clear", "export", "remove"],
     count: 0,
     enabled: Math.floor(Math.random() * 2) > 0
-  },
-  {
-    id: 10,
-    superiorId: 7,
-    path: "audit",
-    component: "logs/audit",
-    name: "auditLogs",
-    actions: ["remove", "export"],
-    count: 0,
-    enabled: Math.floor(Math.random() * 2) > 0
   }
 ];
 
@@ -70,15 +60,6 @@ export const tree_logs: PrivilegeTreeNode[] = [
           path: "access",
           component: "logs/access",
           actions: ["clear", "remove", "export"]
-        }
-      },
-      {
-        id: 10,
-        name: "auditLogs",
-        meta: {
-          path: "audit",
-          component: "logs/audit",
-          actions: ["remove", "export"]
         }
       }
     ]

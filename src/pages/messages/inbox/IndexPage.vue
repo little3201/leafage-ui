@@ -135,7 +135,7 @@ async function onRadioChange(value: string) {
           </ElRadioGroup>
 
           <ElButton link type="primary" @click="readRows()">
-            {{ $t("label.readAll") }}
+            {{ $t("action.readAll") }}
           </ElButton>
         </div>
 
