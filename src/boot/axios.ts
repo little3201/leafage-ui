@@ -33,7 +33,7 @@ export default defineBoot(() => {
       return config;
     },
     (error: AxiosError) => {
-      return Promise.reject(error);
+      throw error;
     }
   );
 

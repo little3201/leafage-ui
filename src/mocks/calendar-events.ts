@@ -5,13 +5,12 @@ import type { CalendarEvent } from "@/types";
 
 const events: CalendarEvent[] = [];
 
-const today = new Date();
 for (let i = 1; i < randomInt(30); i++) {
   const event: CalendarEvent = {
     id: i,
     title: "Event title_" + i,
-    startDate: new Date(today.getTime() + randomInt(5) * 86400000),
-    endDate: new Date(today.getTime() + randomInt(7 * 86400000)),
+    startDate: new Date(Date.now() + randomInt(5) * 86400000),
+    endDate: new Date(Date.now() + randomInt(7 * 86400000)),
     type:
       ["primary", "success", "warning", "danger", "info"][randomInt(6)] ||
       "primary"

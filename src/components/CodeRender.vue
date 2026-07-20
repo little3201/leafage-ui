@@ -17,8 +17,8 @@ import "highlight.js/styles/github-dark.min.css";
 import { computed } from "vue";
 
 const props = defineProps<{
-  content: string | undefined;
-  language?: string | undefined;
+  content?: string;
+  language?: string;
 }>();
 
 const highlightResult = computed<HighlightResult | null>(() => {
