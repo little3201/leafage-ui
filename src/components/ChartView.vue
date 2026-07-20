@@ -31,7 +31,8 @@ const props = withDefaults(
 );
 
 const elRef = ref<HTMLElement | null>(null);
-let chartRef: ApexCharts | undefined;
+let chart: ApexCharts;
+
 const { theme, locale } = storeToRefs(appStore);
 const isDark = ref<boolean>(
   window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -54,6 +55,22 @@ const mode = computed(() => {
     : (theme.value as "dark" | "light");
 });
 
+const options = computed(
+  () =>
+    ({
+      ...props.options,
+      theme: {
+        ...props.options.theme,
+        mode: mode.value
+      },
+      chart: {
+        ...props.options.chart,
+        locales: [en, zhCN, zhTW],
+        defaultLocale: lang.value
+      }
+    }) satisfies ApexOptions
+);
+
 const styles = computed(() => {
   const width = isNumber(props.width) ? `${props.width}px` : props.width;
   const height = isNumber(props.height) ? `${props.height}px` : props.height;
@@ -67,28 +84,18 @@ const styles = computed(() => {
 const initChart = async () => {
   if (!elRef.value) return;
 
-  chartRef?.destroy();
-  chartRef = new ApexCharts(elRef.value, {
-    ...props.options,
-    theme: { mode: mode.value },
-    chart: {
-      width: styles.value.width,
-      height: styles.value.height,
-      toolbar: {
-        show: false
-      },
-      background: "transparent",
-      locales: [en, zhCN, zhTW],
-      defaultLocale: lang.value
+  if (options.value) {
+    if (chart) {
+      chart.destroy();
     }
-  });
-
-  await chartRef.render();
+    chart = new ApexCharts(elRef.value, options.value);
+    await chart?.render();
+  }
 };
 
 watch(theme, (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    chartRef?.updateOptions({
+    chart?.updateOptions({
       theme: {
         mode: mode.value
       }
@@ -99,26 +106,15 @@ watch(theme, (newVal, oldVal) => {
 watch(locale, (newVal, oldVal) => {
   if (newVal !== oldVal) {
     const lang = chartLocales[newVal].name;
-    chartRef?.setLocale(lang);
-    chartRef?.updateOptions({
+    chart?.setLocale(lang);
+    chart?.updateOptions({
       chart: { defaultLocale: lang }
     });
   }
 });
 
-watch(
-  () => props.options,
-  async newVal => {
-    if (!chartRef) return;
-    await chartRef.updateOptions({
-      ...newVal,
-      theme: { mode: mode.value }
-    });
-  }
-);
-
 const resizeHandler = () => {
-  chartRef?.updateOptions({
+  chart?.updateOptions({
     chart: {
       width: styles.value.width,
       height: styles.value.height
@@ -137,13 +133,13 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  if (chartRef) {
-    chartRef.destroy();
+  if (chart) {
+    chart.destroy();
   }
 });
 
 onActivated(() => {
-  if (chartRef) {
+  if (chart) {
     void resizeHandler();
   }
 });

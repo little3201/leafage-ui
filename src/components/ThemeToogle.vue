@@ -9,7 +9,7 @@ const appStore = useAppStore();
 const isDark = useDark({
   storageKey: "theme",
   storage: {
-    getItem(key) {
+    getItem() {
       return appStore.theme;
     },
 
@@ -17,7 +17,7 @@ const isDark = useDark({
       appStore.setTheme(value);
     },
 
-    removeItem(_key) {
+    removeItem() {
       appStore.setTheme("");
     }
   }
