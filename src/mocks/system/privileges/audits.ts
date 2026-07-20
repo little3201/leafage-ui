@@ -1,4 +1,5 @@
 import type { Privilege, PrivilegeTreeNode } from "@/types";
+import { randomInt } from "../../util";
 
 export const root_audits: Privilege = {
   id: 10,
@@ -7,7 +8,7 @@ export const root_audits: Privilege = {
   component: "#",
   name: "audits",
   count: 2,
-  enabled: Math.floor(Math.random() * 2) > 0
+  enabled: randomInt(2) > 0
 };
 
 export const nodes_audits: Privilege[] = [
@@ -19,7 +20,7 @@ export const nodes_audits: Privilege[] = [
     name: "audits",
     actions: ["create", "modify", "remove"],
     count: 0,
-    enabled: Math.floor(Math.random() * 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 33,
@@ -29,7 +30,7 @@ export const nodes_audits: Privilege[] = [
     name: "auditLogs",
     actions: ["remove", "export"],
     count: 0,
-    enabled: Math.floor(Math.random() * 2) > 0
+    enabled: randomInt(2) > 0
   }
 ];
 

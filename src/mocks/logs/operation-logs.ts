@@ -1,32 +1,38 @@
 import { http, HttpResponse } from "msw";
 import { actionTypes, SERVER_URL } from "@/constants";
 import type { OperationLog } from "@/types";
-import { applyFilters } from "../util";
+import { applyFilters, randomInt } from "../util";
 
 const datas: OperationLog[] = [];
 
 for (let i = 1; i < 28; i++) {
   const action =
-    Object.keys(actionTypes)[
-      Math.floor(Math.random() * Object.keys(actionTypes).length)
-    ] || "";
+    Object.keys(actionTypes)[randomInt(Object.keys(actionTypes).length)] || "";
   const row: OperationLog = {
     id: i,
     module:
-      ["users", "groups", "roles", "logs", "files"][
-        Math.floor(Math.random() * 5)
-      ] || "unknown",
+      ["users", "groups", "roles", "logs", "files"][randomInt(5)] || "unknown",
     action: action,
+    targetId: [
+      "remoe",
+      "modify",
+      "patch",
+      "relation",
+      "config",
+      "fetch"
+    ].includes(action)
+      ? i
+      : null,
     params: ["retrieve"].includes(action)
       ? "page=1"
       : ["preview", "fetch", "remove"].includes(action)
-        ? "id=1"
+        ? `id=${i}`
         : "",
     response: ["create", "modify", "config"].includes(action)
-      ? '{"username":"test"}'
+      ? '{"name":"test"}'
       : "",
-    status: ["SUCCEED", "FAILED"][Math.floor(Math.random() * 2)] || "",
-    duration: Math.floor(Math.random() * 10),
+    status: ["SUCCEED", "FAILED"][randomInt(2)] || "",
+    duration: randomInt(10),
     operator: "admin",
     operatedAt: new Date()
   };

@@ -1,42 +1,34 @@
 import { http, HttpResponse } from "msw";
-import { actionTypes, SERVER_URL } from "@/constants";
-import type { AuditLog } from "@/types";
-import { applyFilters } from "../util";
+import { SERVER_URL } from "@/constants";
+import type { SchedulerLog } from "@/types";
+import { applyFilters, randomInt } from "../util";
 
-const datas: AuditLog[] = [];
+const datas: SchedulerLog[] = [];
 
 for (let i = 1; i < 28; i++) {
-  const action =
-    Object.keys(actionTypes)[
-      Math.floor(Math.random() * Object.keys(actionTypes).length)
-    ] || "";
-  const row: AuditLog = {
+  const status =
+    ["PENDING", "RUNNING", "SUCCESS", "FAILED", "CANCELED"][randomInt(5)] ||
+    "unknown";
+  const row: SchedulerLog = {
     id: i,
-    action: action,
-    targetId: action !== "create" ? i : null,
-    module:
-      ["users", "groups", "roles", "logs", "files"][
-        Math.floor(Math.random() * 5)
-      ] || "unknown",
-    oldValue: ["create", "modify", "patch", "relation", "config"].includes(
-      action
-    )
-      ? '{"theme:"light"}'
-      : "",
-    newValue: ["create", "modify", "patch", "relation", "config"].includes(
-      action
-    )
-      ? '{"theme:"dark"}'
-      : "",
-    ip: "192.168.0.4",
-    status: ["SUCCEED", "FAILED"][Math.floor(Math.random() * 2)] || "",
-    duration: Math.floor(Math.random() * 1000) || null
+    name: "Name_" + i,
+    startTime: new Date(),
+    duration: ["PENDING", "RUNNING", "CANCELED"].includes(status)
+      ? 0
+      : randomInt(1000),
+    nextExecuteTime: new Date(),
+    status: status,
+    record: ["SUCCESS"].includes(status)
+      ? "执行完成，无错误"
+      : ["FAILED"].includes(status)
+        ? "执行失败，错误： xxxx"
+        : ""
   };
   datas.push(row);
 }
 
-export const auditLogsHandlers = [
-  http.get(`/api${SERVER_URL.AUDIT_LOG}/:id`, ({ params }) => {
+export const schedulerLogsHandlers = [
+  http.get(`/api${SERVER_URL.SCHEDULER_LOG}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
       const filtered = datas.find(item => item.id === Number(id));
@@ -45,7 +37,7 @@ export const auditLogsHandlers = [
       return HttpResponse.json();
     }
   }),
-  http.get(`/api${SERVER_URL.AUDIT_LOG}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.SCHEDULER_LOG}`, ({ request }) => {
     const url = new URL(request.url);
     const page = url.searchParams.get("page");
     const size = url.searchParams.get("size");
@@ -65,7 +57,7 @@ export const auditLogsHandlers = [
 
     return HttpResponse.json(data);
   }),
-  http.delete(`/api${SERVER_URL.AUDIT_LOG}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.SCHEDULER_LOG}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params;
@@ -79,7 +71,7 @@ export const auditLogsHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    // Remove the Row from the "allRow" map.
+    // Delete the Row from the "allRow" map.
     datas.pop();
 
     // Respond with a "200 OK" response and the deleted Row.

@@ -1,7 +1,7 @@
+import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Dictionary } from "@/types";
-import { http, HttpResponse } from "msw";
-import { applyFilters } from "../util";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Dictionary[] = [
   100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
@@ -9,30 +9,28 @@ const datas: Dictionary[] = [
   return {
     id: item,
     superiorId: null,
-    name: "name_" + item,
-    enabled: true,
+    name: "Name_" + item,
+    enabled: randomInt(2) > 0,
     count: 1
   };
 });
 
 for (let i = 1; i < 28; i++) {
-  const superiorId: number | null =
-    [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000][
-      Math.floor(Math.random() * 10)
-    ] || null;
+  const superiorId =
+    [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000][randomInt(10)] || null;
   const row: Dictionary = {
     id: i,
     superiorId: superiorId,
-    name: "sub_name_" + i,
-    enabled: true
+    name: "Sub_Name_" + i,
+    enabled: randomInt(2) > 0
   };
   datas.push(row);
 }
 
 export const dictionariesHandlers = [
   http.get(`/api${SERVER_URL.DICTIONARY}/subset`, ({ request }) => {
-    const url = new URL(request.url);
-    const id = url.searchParams.get("id");
+    const searchParams = new URL(request.url).searchParams;
+    const id = searchParams.get("id");
     if (id) {
       return HttpResponse.json(
         datas.filter(item => item.superiorId === Number(id))
@@ -44,7 +42,7 @@ export const dictionariesHandlers = [
   http.get(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const filtered = datas.filter(item => item.id === Number(id));
+      const filtered = datas.find(item => item.id === Number(id));
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json();
@@ -110,15 +108,23 @@ export const dictionariesHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.DICTIONARY}/:id/enable`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }
   }),
-  http.delete("/api/dictionaries/:id", ({ params }) => {
+  http.patch(`/api${SERVER_URL.DICTIONARY}/:id/disable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.delete(`/api${SERVER_URL.DICTIONARY}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params;
@@ -136,6 +142,6 @@ export const dictionariesHandlers = [
     datas.pop();
 
     // Respond with a "200 OK" response and the deleted Dictionary.
-    return HttpResponse.json(deletedData);
+    return HttpResponse.json();
   })
 ];

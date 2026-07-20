@@ -1,4 +1,5 @@
 import type { Privilege, PrivilegeTreeNode } from "@/types";
+import { randomInt } from "../../util";
 
 export const root_messages: Privilege = {
   id: 26,
@@ -7,7 +8,7 @@ export const root_messages: Privilege = {
   name: "messages",
   component: "#",
   count: 3,
-  enabled: Math.floor(Math.random() * 2) > 0
+  enabled: randomInt(2) > 0
 };
 
 export const nodes_messages: Privilege[] = [
@@ -19,7 +20,7 @@ export const nodes_messages: Privilege[] = [
     name: "sent",
     actions: ["create", "modify", "remove", "publish"],
     count: 0,
-    enabled: Math.floor(Math.random() * 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 28,
@@ -29,7 +30,7 @@ export const nodes_messages: Privilege[] = [
     name: "inbox",
     actions: ["remove", "read"],
     count: 0,
-    enabled: Math.floor(Math.random() * 2) > 0
+    enabled: randomInt(2) > 0
   }
 ];
 

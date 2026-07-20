@@ -1,3 +1,4 @@
+// 操作类型
 export const actionTypes: {
   [key: string]:
     | "primary"

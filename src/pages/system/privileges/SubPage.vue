@@ -130,6 +130,7 @@
                 : 'sym_r_keyboard_arrow_right'
             "
           />
+          <div v-else style="width: 40px"></div>
         </q-td>
         <q-td v-for="col in props.cols" :key="col.name">
           <div v-if="col.name === 'id'" class="text-right">
@@ -158,7 +159,10 @@
             "
           >
             <q-chip
-              v-for="(item, index) in visibleArray(props.row.actions, 3)"
+              v-for="(item, index) in visibleArray<string>(
+                props.row.actions,
+                3
+              )"
               :key="index"
               :label="$t(`action.${item}`)"
               :color="actionTypes[item]"

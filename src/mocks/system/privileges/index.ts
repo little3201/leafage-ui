@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { SERVER_URL } from "@/constants";
+import { actionTypes, SERVER_URL } from "@/constants";
 import type {
   GroupPrivileges,
   Privilege,
@@ -7,7 +7,7 @@ import type {
   PrivilegeTreeNode,
   UserPrivileges
 } from "@/types";
-import { applyFilters } from "../../util";
+import { applyFilters, randomInt } from "../../util";
 import { root_system, nodes_system, tree_system } from "./system";
 import { root_messages, nodes_messages, tree_messages } from "./messages";
 import { root_logs, nodes_logs, tree_logs } from "./logs";
@@ -61,6 +61,21 @@ const treeNodes: PrivilegeTreeNode[] = [
 ];
 
 const privilegeActions: PrivilegeAction[] = [];
+const actions: string[] = [
+  "create",
+  "modify",
+  "remove",
+  "clear",
+  "import",
+  "export",
+  "upload",
+  "download",
+  "unlock",
+  "relation",
+  "authorize",
+  "config",
+  "execute"
+];
 
 const groups: GroupPrivileges[] = [];
 
@@ -72,6 +87,20 @@ for (let i = 1; i < 28; i++) {
     actions: ["create", "modify", "remove", "import", "export"]
   };
   groups.push(row);
+}
+
+for (let i = 1; i < 25; i++) {
+  const count = randomInt(actions.length) + 1;
+  for (let j = 1; j <= count; j++) {
+    const row: PrivilegeAction = {
+      id: j + 1,
+      privilegeId: i,
+      name: actions[j - 1] || "",
+      type: actionTypes[actions[j - 1] ?? ""] || null,
+      enabled: randomInt(2) > 0
+    };
+    privilegeActions.push(row);
+  }
 }
 
 const users: UserPrivileges[] = [];
@@ -159,9 +188,7 @@ export const privilegesHandlers = [
         Number(page) * Number(size),
         (Number(page) + 1) * Number(size)
       ),
-      page: {
-        totalElements: filtered.length
-      }
+      totalElements: filtered.length
     };
 
     return HttpResponse.json(data);

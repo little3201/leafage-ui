@@ -1,26 +1,26 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Fragment } from "@/types";
+import type { Template } from "@/types";
 import { applyFilters, randomInt } from "../util";
 
-const datas: Fragment[] = [];
+const datas: Template[] = [];
 
-for (let i = 1; i < 29; i++) {
-  const row: Fragment = {
+for (let i = 1; i < 28; i++) {
+  const random = randomInt(3);
+  const row: Template = {
     id: i,
-    name: "name_" + i,
-    language: ["java", "vue", "ts"][randomInt(3)] || "",
-    imports: 'import { Example } from "example"',
-    body: "this is body for code",
-    version: i,
-    enabled: i % 3 > 0,
+    name: "Name_" + i,
+    type: (["WORD", "EXCEL"] as const)[randomInt(2)] || "WORD",
+    version: random + 1,
+    status: ["DRAFT", "PUBLISHED", "ARCHIVED"][random] || "DRAFT",
+    enabled: random < 2 ? (i % 3 > 0 ? false : true) : true,
     lastModifiedDate: new Date()
   };
   datas.push(row);
 }
 
-export const fragmentsHandlers = [
-  http.get(`/api${SERVER_URL.FRAGMENT}/:id`, ({ params }) => {
+export const templatesHandlers = [
+  http.get(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
       const filtered = datas.find(item => item.id === Number(id));
@@ -29,7 +29,7 @@ export const fragmentsHandlers = [
       return HttpResponse.json();
     }
   }),
-  http.get(`/api${SERVER_URL.FRAGMENT}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.TEMPLATE}`, ({ request }) => {
     const url = new URL(request.url);
     const page = url.searchParams.get("page");
     const size = url.searchParams.get("size");
@@ -37,8 +37,6 @@ export const fragmentsHandlers = [
     const filtersStr = url.searchParams.get("filters");
     const filtered = applyFilters(datas, filtersStr);
 
-    // Construct a JSON response with the list of all Row
-    // as the response body.
     const data = {
       content: filtered.slice(
         Number(page) * Number(size),
@@ -46,10 +44,9 @@ export const fragmentsHandlers = [
       ),
       totalElements: filtered.length
     };
-
     return HttpResponse.json(data);
   }),
-  http.post(`/api${SERVER_URL.FRAGMENT}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.TEMPLATE}/import`, async ({ request }) => {
     // Read the intercepted request body as JSON.
     const data = await request.formData();
     const file = data.get("file");
@@ -65,9 +62,9 @@ export const fragmentsHandlers = [
     }
     return HttpResponse.json();
   }),
-  http.post(`/api${SERVER_URL.FRAGMENT}`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.TEMPLATE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = (await request.json()) as Fragment;
+    const newData = (await request.json()) as Template;
 
     // Push the new Row to the map of all Row.
     datas.push(newData);
@@ -76,10 +73,10 @@ export const fragmentsHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 });
   }),
-  http.put(`/api${SERVER_URL.FRAGMENT}/:id`, async ({ params, request }) => {
+  http.put(`/api${SERVER_URL.TEMPLATE}/:id`, async ({ params, request }) => {
     const { id } = params;
     // Read the intercepted request body as JSON.
-    const newData = (await request.json()) as Fragment;
+    const newData = (await request.json()) as Template;
 
     if (id && newData) {
       // Don't forget to declare a semantic "201 Created"
@@ -89,7 +86,7 @@ export const fragmentsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.FRAGMENT}/:id/enable`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/enable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);
@@ -97,7 +94,7 @@ export const fragmentsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.FRAGMENT}/:id/disable`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);
@@ -105,7 +102,7 @@ export const fragmentsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.delete(`/api${SERVER_URL.FRAGMENT}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params;

@@ -1,26 +1,29 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Fragment } from "@/types";
+import type { SafetyPatrol } from "@/types";
 import { applyFilters, randomInt } from "../util";
 
-const datas: Fragment[] = [];
+const datas: SafetyPatrol[] = [];
 
-for (let i = 1; i < 29; i++) {
-  const row: Fragment = {
+for (let i = 1; i < 6; i++) {
+  const row: SafetyPatrol = {
     id: i,
-    name: "name_" + i,
-    language: ["java", "vue", "ts"][randomInt(3)] || "",
-    imports: 'import { Example } from "example"',
-    body: "this is body for code",
-    version: i,
-    enabled: i % 3 > 0,
-    lastModifiedDate: new Date()
+    username:
+      ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][i] || "",
+    fullName: "Name_" + i,
+    email: "use***" + "@**t.com",
+    status:
+      ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
+        randomInt(5)
+      ] || "unknown",
+    role: "audit",
+    enabled: i % 2 > 0
   };
   datas.push(row);
 }
 
-export const fragmentsHandlers = [
-  http.get(`/api${SERVER_URL.FRAGMENT}/:id`, ({ params }) => {
+export const auditPatrolsHandlers = [
+  http.get(`/api${SERVER_URL.AUDIT_PATROL}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
       const filtered = datas.find(item => item.id === Number(id));
@@ -29,7 +32,7 @@ export const fragmentsHandlers = [
       return HttpResponse.json();
     }
   }),
-  http.get(`/api${SERVER_URL.FRAGMENT}`, ({ request }) => {
+  http.get(`/api${SERVER_URL.AUDIT_PATROL}`, ({ request }) => {
     const url = new URL(request.url);
     const page = url.searchParams.get("page");
     const size = url.searchParams.get("size");
@@ -49,25 +52,9 @@ export const fragmentsHandlers = [
 
     return HttpResponse.json(data);
   }),
-  http.post(`/api${SERVER_URL.FRAGMENT}/import`, async ({ request }) => {
+  http.post(`/api${SERVER_URL.AUDIT_PATROL}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const data = await request.formData();
-    const file = data.get("file");
-
-    if (!file) {
-      return new HttpResponse("Missing document", { status: 400 });
-    }
-
-    if (!(file instanceof File)) {
-      return new HttpResponse("Uploaded document is not a File", {
-        status: 400
-      });
-    }
-    return HttpResponse.json();
-  }),
-  http.post(`/api${SERVER_URL.FRAGMENT}`, async ({ request }) => {
-    // Read the intercepted request body as JSON.
-    const newData = (await request.json()) as Fragment;
+    const newData = (await request.json()) as SafetyPatrol;
 
     // Push the new Row to the map of all Row.
     datas.push(newData);
@@ -76,20 +63,23 @@ export const fragmentsHandlers = [
     // response and send back the newly created Row!
     return HttpResponse.json(newData, { status: 201 });
   }),
-  http.put(`/api${SERVER_URL.FRAGMENT}/:id`, async ({ params, request }) => {
-    const { id } = params;
-    // Read the intercepted request body as JSON.
-    const newData = (await request.json()) as Fragment;
+  http.put(
+    `/api${SERVER_URL.AUDIT_PATROL}/:id`,
+    async ({ params, request }) => {
+      const { id } = params;
+      // Read the intercepted request body as JSON.
+      const newData = (await request.json()) as SafetyPatrol;
 
-    if (id && newData) {
-      // Don't forget to declare a semantic "201 Created"
-      // response and send back the newly created Row!
-      return HttpResponse.json({ ...newData, id: id }, { status: 202 });
-    } else {
-      return HttpResponse.error();
+      if (id && newData) {
+        // Don't forget to declare a semantic "201 Created"
+        // response and send back the newly created Row!
+        return HttpResponse.json({ ...newData, id: id }, { status: 202 });
+      } else {
+        return HttpResponse.error();
+      }
     }
-  }),
-  http.patch(`/api${SERVER_URL.FRAGMENT}/:id/enable`, ({ params }) => {
+  ),
+  http.patch(`/api${SERVER_URL.AUDIT_PATROL}/:id/enable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);
@@ -97,7 +87,7 @@ export const fragmentsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.FRAGMENT}/:id/disable`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.AUDIT_PATROL}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);
@@ -105,7 +95,7 @@ export const fragmentsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.delete(`/api${SERVER_URL.FRAGMENT}/:id`, ({ params }) => {
+  http.delete(`/api${SERVER_URL.AUDIT_PATROL}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params;
@@ -119,7 +109,7 @@ export const fragmentsHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    // Delete the Row from the "allRow" map.
+    // Remove the Row from the "allRow" map.
     datas.pop();
 
     // Respond with a "200 OK" response and the deleted Row.

@@ -7,7 +7,7 @@ export interface Section extends AudtiMetadata {
   name: string;
   sequence?: number;
   level?: number;
-  body: string;
+  body: Record<string, unknown>;
   count?: number;
 }
 

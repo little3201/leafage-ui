@@ -18,9 +18,16 @@ export const userStatus: {
   DISABLED: "negative"
 };
 
-export const schemaStatus: { [key: string]: "primary" | "positive" | "info" } =
-  {
-    DRAFT: "primary",
-    PUBLISHED: "positive",
-    ARCHIVED: "info"
-  };
+export const schemaStatus: { [key: string]: "primary" | "success" | "info" } = {
+  DRAFT: "primary",
+  PUBLISHED: "success",
+  ARCHIVED: "info"
+};
+
+export const messageStatus: {
+  [key: string]: "primary" | "success" | "warning";
+} = {
+  DRAFT: "primary",
+  PUBLISHED: "success",
+  REVOKED: "warning"
+};
