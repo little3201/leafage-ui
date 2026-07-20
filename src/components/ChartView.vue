@@ -99,7 +99,7 @@ watch(theme, (newVal, oldVal) => {
 watch(locale, (newVal, oldVal) => {
   if (newVal !== oldVal) {
     const newLang = chartLocales[newVal]?.name ?? "en-US";
-    chart?.setLocale?.(newLang);
+    chart?.setLocale(newLang);
     chart?.updateOptions?.({
       chart: { defaultLocale: newLang }
     });
