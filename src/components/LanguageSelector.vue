@@ -1,6 +1,6 @@
 <template>
   <q-btn title="translate" icon="sym_r_translate" round flat dense>
-    <q-menu>
+    <q-menu :offset="[0, 10]">
       <q-list dense separator>
         <q-item
           clickable

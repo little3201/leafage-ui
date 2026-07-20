@@ -17,15 +17,12 @@
           />
         </q-toolbar-title>
         <div class="q-mx-md">
-          <!-- theme -->
           <ThemeToogle />
-          <!-- language -->
           <LanguageSelector class="q-mx-sm" />
-          <!-- faq -->
           <q-btn flat round dense title="faq" icon="sym_r_help" to="/faq" />
         </div>
         <div class="cursor-pointer">
-          <q-btn flat rounded>
+          <div flat rounded>
             <q-avatar size="md">
               <img
                 :src="`https://cdn.leafage.top/${userStore.username}`"
@@ -33,8 +30,8 @@
               />
             </q-avatar>
             <span class="q-ml-sm">{{ userStore.username }}</span>
-          </q-btn>
-          <q-menu>
+          </div>
+          <q-menu :offset="[0, 10]">
             <q-list separator>
               <q-item to="/profile">
                 <q-item-section side>

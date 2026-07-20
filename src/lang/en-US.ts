@@ -3,7 +3,7 @@
 
 export default {
   label: {
-    no: "NO.",
+    serial: "NO.",
     title: "Title",
     template: "Template",
     actions: "Actions",
@@ -102,13 +102,24 @@ export default {
     imports: "Imports",
     attachment: "Attachment",
     owner: "Owner",
-    all: "All"
+    all: "All",
+    unread: "Unread",
+    mode: "Mode",
+    sender: "Sender",
+    receiver: "Receiver",
+    publishedAt: "Published At",
+    yes: "Yes",
+    no: "No",
+    task: "Task",
+    corn: "Corn"
   },
 
   action: {
     search: "Search",
     retrieve: "Retrieve",
     fetch: "Fetch",
+    tree: "Retrieve Tree",
+    subset: "Retrieve subset",
     import: "Import",
     export: "Export",
     submit: "Submit",
@@ -132,6 +143,7 @@ export default {
     authorize: "Authorize",
     more: "More",
     enable: "Enable",
+    disable: "Disable",
     unlock: "Unlock",
     view: "View",
     save: "Save",
@@ -143,7 +155,10 @@ export default {
     continue: "Continue",
     data: "Data",
     addItem: "Add Item",
-    section: "Section"
+    section: "Section",
+    member: "Member",
+    publish: "Publish",
+    readAll: "Read All"
   },
 
   page: {
@@ -167,15 +182,22 @@ export default {
     scripts: "Scripts",
     samples: "Samples",
     logs: "Logs",
-    operationLogs: "Operation Log",
-    accessLogs: "Access Log",
-    auditLogs: "Audit Log",
-    schedulerLogs: "Scheduler Log",
+    operationLogs: "Operation Logs",
+    accessLogs: "Access Logs",
     docs: "Docs",
     reports: "Reports",
     archives: "Archives",
-    schemas: "Templates",
-    sections: "Sections"
+    templates: "Schemas",
+    sections: "Sections",
+    messages: "Messages",
+    sent: "Sent",
+    inbox: "Inbox",
+    schedulers: "Schedulers",
+    schedulerLogs: "Scheduler Logs",
+    tasks: "Tasks",
+    audits: "Safety Audits",
+    patrols: "Safety Patrols",
+    auditLogs: "Audit Logs"
   },
 
   github: "Github",
@@ -204,8 +226,19 @@ export default {
     click2Upload: "click to upload",
     fileSizeLimit: "File with a size less than {size}.",
 
-    removeConfirm: "Are you sure you want to delete the data?",
-    actionConfirm: "Action Confirm",
+    confirm: "Are you sure ?",
+    removeWarning:
+      "This action cannot be undone. This will permanently remove the <strong>{module}/{data}</strong>.",
+    removeButtonText: "I understand, remove it.",
+    disableWarning:
+      "After disabling the data, the current data and associated data will be unavailable.",
+    disableButtonText: "I understand, disable it!",
+    clearWarning:
+      "This action cannot be undone. This will permanently remove all items.",
+    clearButtonText: "I understand, clear all.",
+    publishWarning:
+      "After clicking OK, the current message <strong>{data}</strong> will be immediately sent to the recipient.",
+    publishButtonText: "I'm sure, release immediately.",
     welcome: "Hi! Welcome Back.",
     subtitle: "Please sign in to continue exploring.",
     forgotPassword: "Forgot The Password ?"

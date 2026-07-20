@@ -1,4 +1,3 @@
-import type { PrivilegeTreeNode } from "@/types";
 import type { Userinfo, PrivilegeTreeNode } from "@/types";
 import { acceptHMRUpdate, defineStore } from "pinia";
 

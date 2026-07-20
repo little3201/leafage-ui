@@ -46,7 +46,7 @@ export default defineBoot(() => {
       return response;
     },
     async (error: AxiosError) => {
-       if (error.config) {
+      if (error.config) {
         const uniqueKey = generateUniqueKey(error.config);
         abortControllerMap.delete(uniqueKey);
       }

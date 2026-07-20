@@ -17,16 +17,7 @@ describe("utils", () => {
     expect(mockedUseUserStore).not.toHaveBeenCalled();
 
     mockedUseUserStore.mockReturnValue({
-      privileges: [
-        {
-          path: "users",
-          name: "users",
-          meta: {
-            actions: ["create", "edit"]
-          },
-          children: []
-        }
-      ]
+      privilegeMap: new Map([["users", new Set(["create", "edit"])]])
     } as any);
 
     expect(hasAction("users", "create")).toBe(true);

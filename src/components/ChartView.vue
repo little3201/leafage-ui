@@ -3,9 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import type { ApexOptions } from "apexcharts";
+import type { ApexOptions, ApexLocale } from "apexcharts";
 import ApexCharts from "apexcharts";
-import { debounce, is, useQuasar } from "quasar";
+import { debounce, is } from "quasar";
+import { useAppStore } from "@/stores/app";
+import en from "apexcharts/dist/locales/en.json";
+import zhCN from "apexcharts/dist/locales/zh-cn.json";
+import zhTW from "apexcharts/dist/locales/zh-tw.json";
+import { storeToRefs } from "pinia";
 import {
   computed,
   onActivated,
@@ -15,7 +20,8 @@ import {
   watch
 } from "vue";
 
-const $q = useQuasar();
+const appStore = useAppStore();
+const { theme, locale } = storeToRefs(appStore);
 
 const props = withDefaults(
   defineProps<{
@@ -29,18 +35,14 @@ const props = withDefaults(
   }
 );
 
-const options = computed(
-  () =>
-    ({
-      ...props.options,
-      theme: {
-        mode: $q.dark.isActive ? "dark" : "light"
-      }
-    }) satisfies ApexOptions
-);
-
 const elRef = ref<HTMLElement | null>(null);
 let chart: ApexCharts;
+
+const chartLocales: Record<string, ApexLocale> = {
+  "en-US": en,
+  "zh-CN": zhCN,
+  "zh-TW": zhTW
+};
 
 const styles = computed(() => {
   const width = is.number(props.width) ? `${props.width}px` : props.width;
@@ -52,9 +54,30 @@ const styles = computed(() => {
   };
 });
 
+const lang = computed(() => {
+  return chartLocales[locale.value]?.name ?? "en-US";
+});
+
+const options = computed(
+  () =>
+    ({
+      ...props.options,
+      theme: {
+        ...props.options.theme,
+        mode: theme.value === "dark" ? "dark" : "light"
+      },
+      chart: {
+        ...props.options.chart,
+        locales: [en, zhCN, zhTW],
+        defaultLocale: lang.value
+      }
+    }) satisfies ApexOptions
+);
+
 const initChart = async () => {
-  if (elRef.value && props.options) {
-    // 销毁旧图表，防止重复渲染
+  if (!elRef.value) return;
+
+  if (options.value) {
     if (chart) {
       chart.destroy();
     }
@@ -63,18 +86,25 @@ const initChart = async () => {
   }
 };
 
-watch(
-  () => options.value,
-  async options => {
-    if (chart) {
-      // 第二个参数 true 表示对图表强制更新
-      await chart?.updateOptions(options, true, false);
-    }
-  },
-  {
-    deep: true
+watch(theme, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    chart?.updateOptions({
+      theme: {
+        mode: newVal === "dark" ? "dark" : "light"
+      }
+    });
   }
-);
+});
+
+watch(locale, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    const newLang = chartLocales[newVal]?.name ?? "en-US";
+    chart?.setLocale?.(newLang);
+    chart?.updateOptions?.({
+      chart: { defaultLocale: newLang }
+    });
+  }
+});
 
 const resizeHandler = debounce(async () => {
   if (chart) {

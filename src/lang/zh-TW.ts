@@ -3,7 +3,7 @@
 
 export default {
   label: {
-    no: "序號",
+    serial: "序號",
     title: "標題",
     template: "模板",
     actions: "操作",
@@ -67,7 +67,7 @@ export default {
     column: "列",
     areaCode: "區號",
     postalCode: "郵編",
-    enabled: "是否啟用",
+    enabled: "是否可用",
     size: "大小",
     length: "長度",
     contentType: "類型",
@@ -102,13 +102,24 @@ export default {
     imports: "引用",
     attachment: "附件",
     owner: "所有者",
-    all: "全部"
+    all: "全部",
+    unread: "未读",
+    mode: "模式",
+    sender: "送出人",
+    receiver: "接收人",
+    publishedAt: "發佈時間",
+    yes: "是",
+    no: "否",
+    task: "任務",
+    corn: "Corn表達式"
   },
 
   action: {
     search: "搜索",
-    retrieve: "查詢",
+    retrieve: "分頁查詢",
     fetch: "獲取",
+    tree: "樹查詢",
+    subset: "查詢子節點",
     import: "導入",
     export: "導出",
     submit: "提交",
@@ -132,6 +143,7 @@ export default {
     authorize: "授權",
     more: "更多",
     enable: "啟用",
+    disable: "停用",
     unlock: "解鎖",
     view: "視圖",
     save: "保存",
@@ -143,7 +155,10 @@ export default {
     continue: "繼續",
     data: "数据",
     addItem: "新增項目",
-    section: "章節"
+    section: "章節",
+    member: "成員",
+    publish: "發布",
+    readAll: "全部已读"
   },
 
   page: {
@@ -156,7 +171,7 @@ export default {
     dictionaries: "字典",
     regions: "行政區劃",
     faq: "常見問題",
-    files: "文檔管理",
+    files: "文件記錄",
     profile: "個人中心",
     exploiters: "開發工具",
     connections: "連接",
@@ -164,18 +179,25 @@ export default {
     scripts: "腳本",
     codes: "代碼",
     samples: "樣板",
-    modules: "模板",
+    modules: "模組",
     fragments: "片段",
     logs: "日誌管理",
     operationLogs: "操作紀錄",
     accessLogs: "訪問紀錄",
-    auditLogs: "審計日誌",
-    schedulerLogs: "調度日誌",
     docs: "文檔管理",
     reports: "報告",
     archives: "檔案",
-    schemas: "模板",
-    sections: "章節"
+    templates: "範本",
+    sections: "章節",
+    messages: "訊息中心",
+    sent: "發消息",
+    inbox: "收件匣",
+    schedulers: "任務調度",
+    schedulerLogs: "調度日誌",
+    tasks: "工作管理",
+    audits: "安全審計",
+    patrols: "審計人员",
+    auditLogs: "審計日誌"
   },
 
   github: "Github",
@@ -193,8 +215,6 @@ export default {
 
   message: {
     selectedTotal: "已選擇 {total} 條",
-    forbidden: "您沒有訪問此資源的權限，請聯繫管理員。",
-    notFound: "未找到您請求的資源。請檢查URL是否正確，或返回首頁。",
     success: "{action}成功。",
     error: "{action}失敗！",
     networkError: "網路錯誤或超時"
@@ -206,8 +226,17 @@ export default {
     click2Upload: "點擊上傳",
     fileSizeLimit: "檔案小於 {size}。",
 
-    removeConfirm: "是否確定要刪除這條數據？",
-    actionConfirm: "操作確認",
+    confirm: "是否確定？",
+    removeWarning:
+      "此操作無法撤銷。這將永久移除 <strong>{module}/{data}</strong>。",
+    removeButtonText: "我明白，移除它！",
+    disableWarning: "資料停用後，目前資料及關聯資料將無法使用。",
+    disableButtonText: "我明白，停用它！",
+    clearWarning: "此操作無法撤銷。這將永久移除所有項目。",
+    clearButtonText: "我明白，移除所有項目。",
+    publishWarning:
+      "點擊確定後，當前 <strong>{data}</strong> 訊息將立即發布給接收人。",
+    publishButtonText: "我確定，立即發布",
     welcome: "嗨！歡迎回來",
     subtitle: "請填寫您的帳號和密碼，讓我們繼續探索",
     forgotPassword: "忘記密碼 ？"
