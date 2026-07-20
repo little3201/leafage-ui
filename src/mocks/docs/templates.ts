@@ -13,7 +13,7 @@ for (let i = 1; i < 28; i++) {
     type: (["WORD", "EXCEL"] as const)[randomInt(2)] || "WORD",
     version: random + 1,
     status: ["DRAFT", "PUBLISHED", "ARCHIVED"][random] || "DRAFT",
-    enabled: random < 2 ? false : true,
+    enabled: random < 2,
     lastModifiedDate: new Date()
   };
   datas.push(row);

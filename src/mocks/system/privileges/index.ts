@@ -103,12 +103,11 @@ export const privilegesHandlers = [
     ({ params }) => {
       const { id, actionId } = params;
       if (id && actionId) {
-        return HttpResponse.json(
-          privilegeActions.filter(
-            item =>
-              item.privilegeId === Number(id) && item.id === Number(actionId)
-          )[0]
+        const filtered = privilegeActions.find(
+          item =>
+            item.privilegeId === Number(id) && item.id === Number(actionId)
         );
+        return HttpResponse.json(filtered);
       }
       return HttpResponse.json();
     }
