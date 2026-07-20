@@ -42,7 +42,7 @@ export const SERVER_URL = {
   SAMPLE: SERVER_PREFIX.HYPERVISOR.concat("/samples"), // 母板
   MODULE: SERVER_PREFIX.HYPERVISOR.concat("/modules"), // 模块
   FRAGMENT: SERVER_PREFIX.HYPERVISOR.concat("/fragments"), // 片段
-  CONNECTIONS: SERVER_PREFIX.HYPERVISOR.concat("/connections"), // 连接
+  CONNECTION: SERVER_PREFIX.HYPERVISOR.concat("/connections"), // 连接
 
   // docs
   ARCHIVE: SERVER_PREFIX.HYPERVISOR.concat("/archives"), // 档案
