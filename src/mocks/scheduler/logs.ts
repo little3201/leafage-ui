@@ -1,14 +1,13 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { SchedulerLog } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: SchedulerLog[] = [];
 
 for (let i = 1; i < 28; i++) {
   const status =
-    ["PENDING", "RUNNING", "SUCCESS", "FAILED", "CANCELED"][randomInt(0, 5)] ||
+    ["PENDING", "RUNNING", "SUCCESS", "FAILED", "CANCELED"][randomInt(5)] ||
     "unknown";
   const row: SchedulerLog = {
     id: i,
@@ -16,7 +15,7 @@ for (let i = 1; i < 28; i++) {
     startTime: new Date(),
     duration: ["PENDING", "RUNNING", "CANCELED"].includes(status)
       ? undefined
-      : randomInt(0, 1000),
+      : randomInt(1000),
     nextExecuteTime: new Date(),
     status: status,
     record: ["SUCCESS"].includes(status)

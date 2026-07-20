@@ -1,18 +1,17 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { AccessLog } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: AccessLog[] = [];
 
 for (let i = 1; i < 28; i++) {
   const httpMethod =
-    ["GET", "POST", "PUT", "DELETE", "PATCH"][randomInt(0, 5)] || "unknown";
+    ["GET", "POST", "PUT", "DELETE", "PATCH"][randomInt(5)] || "unknown";
   const row: AccessLog = {
     id: i,
     url:
-      ["/users", "/groups", "/roles", "/logs", "/files"][randomInt(0, 5)] ||
+      ["/users", "/groups", "/roles", "/logs", "/files"][randomInt(5)] ||
       "unknown",
     httpMethod: httpMethod,
     targetId: ["PUT", "PATCH", "DELETE"].includes(httpMethod) ? i : undefined,
@@ -25,8 +24,8 @@ for (let i = 1; i < 28; i++) {
     body: ["POST", "PUT", "PATCH"].includes(httpMethod)
       ? '{"name":"test"}'
       : "",
-    duration: randomInt(0, 1000),
-    statusCode: [200, 201, 400, 404, 500, 502][randomInt(0, 6)] || 200,
+    duration: randomInt(1000),
+    statusCode: [200, 201, 400, 404, 500, 502][randomInt(6)] || 200,
     response: "Non Content"
   };
   datas.push(row);

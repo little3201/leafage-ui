@@ -1,14 +1,13 @@
 import { http, HttpResponse } from "msw";
 import { actionTypes, SERVER_URL } from "@/constants";
 import type { AuditLog } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: AuditLog[] = [];
 
 for (let i = 1; i < 28; i++) {
   const action =
-    Object.keys(actionTypes)[randomInt(0, Object.keys(actionTypes).length)];
+    Object.keys(actionTypes)[randomInt(Object.keys(actionTypes).length)];
   const row: AuditLog = {
     id: i,
     action: action,
@@ -23,8 +22,7 @@ for (let i = 1; i < 28; i++) {
       ? i
       : undefined,
     module:
-      ["users", "groups", "roles", "logs", "files"][randomInt(0, 5)] ||
-      "unknown",
+      ["users", "groups", "roles", "logs", "files"][randomInt(5)] || "unknown",
     oldValue: ["create", "modify", "patch", "relation", "config"].includes(
       action
     )
@@ -36,8 +34,8 @@ for (let i = 1; i < 28; i++) {
       ? '{"theme:"dark"}'
       : "",
     ip: "192.168.0.4",
-    status: ["SUCCEED", "FAILED"][randomInt(0, 2)] || "",
-    duration: randomInt(0, 1000)
+    status: ["SUCCEED", "FAILED"][randomInt(2)] || "",
+    duration: randomInt(1000)
   };
   datas.push(row);
 }

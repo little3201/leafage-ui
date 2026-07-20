@@ -1,13 +1,12 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Report } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Report[] = [];
 
 for (let i = 1; i < 28; i++) {
-  const random = randomInt(0, 5) + 1;
+  const random = randomInt(5) + 1;
   const row: Report = {
     id: i,
     schemaId: random,

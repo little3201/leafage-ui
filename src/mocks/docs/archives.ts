@@ -1,13 +1,12 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Archive, Section } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Archive[] = [];
 
 for (let i = 1; i < 28; i++) {
-  const random = randomInt(0, 10) + 1;
+  const random = randomInt(10) + 1;
   const row: Archive = {
     id: i,
     title: "Title_" + i,
@@ -22,7 +21,7 @@ for (let i = 1; i < 28; i++) {
 const sections: Section[] = [];
 
 for (let i = 1; i < 28; i++) {
-  const random = randomInt(0, 27) + 1;
+  const random = randomInt(27) + 1;
   const row: Section = {
     id: i,
     name: "Section_" + i,

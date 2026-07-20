@@ -9,8 +9,7 @@ import type {
   TreeNode,
   User
 } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Group[] = [];
 const users: User[] = [];
@@ -21,7 +20,7 @@ for (let i = 1; i < 5; i++) {
     id: i,
     username:
       ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
-        randomInt(0, 5)
+        randomInt(5)
       ] || "admin",
     fullName: "Name_" + i,
     email: "use***" + "@**t.com"
@@ -33,20 +32,20 @@ for (let i = 1; i < 5; i++) {
   const row: Role = {
     id: i,
     name: "Role_" + i,
-    members: users.filter((_, index) => index < randomInt(0, 5)),
+    members: users.filter((_, index) => index < randomInt(5)),
     enabled: i % 3 > 0
   };
   roles.push(row);
 }
 
 for (let i = 1; i < 28; i++) {
-  const superiorId = randomInt(0, 12) || null;
+  const superiorId = randomInt(12) || null;
   const row: Group = {
     id: i,
     superiorId: superiorId,
     name: "Group_" + i,
-    members: users.filter((_, index) => index < randomInt(0, 5)),
-    roles: roles.filter((_, index) => index < randomInt(0, 5)),
+    members: users.filter((_, index) => index < randomInt(5)),
+    roles: roles.filter((_, index) => index < randomInt(5)),
     enabled: i % 3 > 0
   };
   datas.push(row);

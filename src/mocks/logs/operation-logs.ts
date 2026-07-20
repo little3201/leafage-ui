@@ -1,19 +1,17 @@
 import { http, HttpResponse } from "msw";
 import { actionTypes, SERVER_URL } from "@/constants";
 import type { OperationLog } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: OperationLog[] = [];
 
 for (let i = 1; i < 28; i++) {
   const action =
-    Object.keys(actionTypes)[randomInt(0, Object.keys(actionTypes).length)];
+    Object.keys(actionTypes)[randomInt(Object.keys(actionTypes).length)];
   const row: OperationLog = {
     id: i,
     module:
-      ["users", "groups", "roles", "logs", "files"][randomInt(0, 5)] ||
-      "unknown",
+      ["users", "groups", "roles", "logs", "files"][randomInt(5)] || "unknown",
     action: action,
     targetId: [
       "remoe",
@@ -33,8 +31,8 @@ for (let i = 1; i < 28; i++) {
     response: ["create", "modify", "config"].includes(action)
       ? '{"name":"test"}'
       : "",
-    status: ["SUCCEED", "FAILED"][randomInt(0, 2)] || "",
-    duration: randomInt(0, 10),
+    status: ["SUCCEED", "FAILED"][randomInt(2)] || "",
+    duration: randomInt(10),
     operator: "admin",
     operatedAt: new Date()
   };

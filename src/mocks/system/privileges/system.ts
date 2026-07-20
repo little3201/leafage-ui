@@ -1,5 +1,5 @@
 import type { Privilege, PrivilegeTreeNode } from "@/types";
-import { randomInt } from "node:crypto";
+import { randomInt } from "../../util";
 
 export const root_system: Privilege = {
   id: 1,
@@ -9,7 +9,7 @@ export const root_system: Privilege = {
   redirect: "users",
   name: "system",
   count: 5,
-  enabled: randomInt(0, 2) > 0
+  enabled: randomInt(2) > 0
 };
 
 export const nodes_system: Privilege[] = [
@@ -31,7 +31,7 @@ export const nodes_system: Privilege[] = [
       "disable"
     ],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 3,
@@ -50,7 +50,7 @@ export const nodes_system: Privilege[] = [
       "unlock"
     ],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 4,
@@ -60,7 +60,7 @@ export const nodes_system: Privilege[] = [
     name: "privileges",
     actions: ["modify", "import", "export", "enable", "disable"],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 5,
@@ -80,7 +80,7 @@ export const nodes_system: Privilege[] = [
       "disable"
     ],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 6,
@@ -98,7 +98,7 @@ export const nodes_system: Privilege[] = [
       "disable"
     ],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   }
 ];
 

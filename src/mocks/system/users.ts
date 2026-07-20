@@ -1,8 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { User } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: User[] = [];
 
@@ -14,7 +13,7 @@ for (let i = 1; i < 6; i++) {
     email: "use***" + "@**t.com",
     status:
       ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        randomInt(0, 5)
+        randomInt(5)
       ] || "unknown",
     enabled: i % 2 > 0
   };

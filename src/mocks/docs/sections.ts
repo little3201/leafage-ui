@@ -6,13 +6,12 @@ import type {
   SectionField,
   SectionTreeNode
 } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Section[] = [];
 
 for (let i = 1; i < 28; i++) {
-  const superiorId = randomInt(0, 5);
+  const superiorId = randomInt(5);
   const row: Section = {
     id: i,
     superiorId: superiorId || null,
@@ -96,10 +95,10 @@ for (let i = 1; i < 28; i++) {
       },
       drawingsOrder: []
     },
-    ownerId: randomInt(0, 10) || null,
-    ownerType: ["REPORT", "TEMPLATE"][randomInt(0, 2)] || null,
+    ownerId: randomInt(10) || null,
+    ownerType: ["REPORT", "TEMPLATE"][randomInt(2)] || null,
     sequence: i,
-    count: randomInt(0, 2) || 0
+    count: randomInt(2) || 0
   };
   datas.push(row);
 }
@@ -108,15 +107,15 @@ const fields: SectionField[] = [];
 const sectionfields = new Map<number, SectionField[]>();
 
 for (let i = 1; i < 28; i++) {
-  const sectionId = randomInt(0, 28);
+  const sectionId = randomInt(28);
   const row: SectionField = {
     id: i,
     sectionId: sectionId,
     name: "name_" + i,
-    type: ["STRING", "NUMBER", "DATE"][randomInt(0, 3)],
+    type: ["STRING", "NUMBER", "DATE"][randomInt(3)],
     field: "field_" + i,
-    length: randomInt(0, 10) + 1,
-    required: randomInt(0, 1) < 1
+    length: randomInt(10) + 1,
+    required: randomInt(1) < 1
   };
   fields.push(row);
 
@@ -134,17 +133,17 @@ function generateRandomValue(type: string, length?: number) {
       let result = "";
       const len = length || 10;
       for (let i = 0; i < len; i++) {
-        result += chars.charAt(randomInt(0, chars.length));
+        result += chars.charAt(randomInt(chars.length));
       }
       return result;
     }
     case "NUMBER":
-      return randomInt(0, 1000);
+      return randomInt(1000);
     case "DATE":
       return new Date(
-        2020 + randomInt(0, 10),
-        randomInt(0, 12),
-        randomInt(0, 28) + 1
+        2020 + randomInt(10),
+        randomInt(12),
+        randomInt(28) + 1
       ).toISOString();
     default:
       return null;

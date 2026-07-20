@@ -1,5 +1,5 @@
 import type { Privilege, PrivilegeTreeNode } from "@/types";
-import { randomInt } from "node:crypto";
+import { randomInt } from "../../util";
 
 export const root_schedulers: Privilege = {
   id: 11,
@@ -8,7 +8,7 @@ export const root_schedulers: Privilege = {
   path: "schedulers",
   component: "#",
   count: 2,
-  enabled: randomInt(0, 2) > 0
+  enabled: randomInt(2) > 0
 };
 
 export const nodes_schedulers: Privilege[] = [
@@ -20,7 +20,7 @@ export const nodes_schedulers: Privilege[] = [
     component: "schedulers",
     actions: ["create", "modify", "remove", "enable", "disable"],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 31,
@@ -30,7 +30,7 @@ export const nodes_schedulers: Privilege[] = [
     component: "schedulers/logs",
     actions: ["remove", "export", "clear"],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   }
 ];
 

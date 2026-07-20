@@ -1,5 +1,5 @@
-import { icons } from "@iconify-json/material-symbols";
-import { addIcon, iconLoaded } from "@iconify/vue";
+// import { icons } from "@iconify-json/material-symbols";
+import { iconLoaded } from "@iconify/vue";
 import { actionIcons, pageIcons } from "@/constants";
 
 /**
@@ -48,15 +48,15 @@ export function loadIcon(iconName: string) {
     return fullIconName;
   }
 
-  const iconData = icons.icons[iconName];
+  // const iconData = icons.icons[iconName];
 
-  if (iconData) {
-    addIcon(fullIconName, {
-      body: iconData.body,
-      width: icons.width || 24,
-      height: icons.height || 24
-    });
-  }
+  // if (iconData) {
+  //   addIcon(fullIconName, {
+  //     body: iconData.body,
+  //     width: icons.width || 24,
+  //     height: icons.height || 24
+  //   });
+  // }
 
   return fullIconName;
 }

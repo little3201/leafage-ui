@@ -1,8 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Message, User } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 export const datas: Message[] = [];
 const users: User[] = [];
@@ -12,7 +11,7 @@ for (let i = 1; i < 5; i++) {
     id: i,
     username:
       ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
-        randomInt(0, 5)
+        randomInt(5)
       ] || "admin",
     fullName: "Name_" + i,
     email: "use***" + "@**t.com"
@@ -20,17 +19,15 @@ for (let i = 1; i < 5; i++) {
   users.push(row);
 }
 for (let i = 1; i < 18; i++) {
-  const random = randomInt(0, 3);
+  const random = randomInt(3);
   const row: Message = {
     id: i,
     title: "The message title_" + i,
     sender: "admin",
     scope: "ALL",
-    type: ["系统公告", "部门通知", "全员信", "通知"][randomInt(0, 4)],
+    type: ["系统公告", "部门通知", "全员信", "通知"][randomInt(4)],
     receiver:
-      random / 2 > 0
-        ? null
-        : users.filter((_, index) => index < randomInt(0, 5)),
+      random / 2 > 0 ? null : users.filter((_, index) => index < randomInt(5)),
     status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
     body: "This is the message body, Do you know what append with the system, it'is very nice, do you like it?",
     publishedAt: random === 1 ? new Date() : undefined

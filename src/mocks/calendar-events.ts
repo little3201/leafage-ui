@@ -1,19 +1,19 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
+import { randomInt } from "./util";
 import type { CalendarEvent } from "@/types";
-import { randomInt } from "node:crypto";
 
 const events: CalendarEvent[] = [];
 
 const today = new Date();
-for (let i = 1; i < randomInt(0, 30); i++) {
+for (let i = 1; i < randomInt(30); i++) {
   const event: CalendarEvent = {
     id: i,
     title: "Event title_" + i,
-    startDate: new Date(today.getTime() + randomInt(0, 5) * 86400000),
-    endDate: new Date(today.getTime() + randomInt(0, 7 * 86400000)),
+    startDate: new Date(today.getTime() + randomInt(5) * 86400000),
+    endDate: new Date(today.getTime() + randomInt(7 * 86400000)),
     type:
-      ["primary", "success", "warning", "danger", "info"][randomInt(0, 6)] ||
+      ["primary", "success", "warning", "danger", "info"][randomInt(6)] ||
       "primary"
   };
   events.push(event);
@@ -27,7 +27,7 @@ export const calendarEventHandlers = [
         title: "法定假期",
         startDate: new Date().toISOString().split("T")[0] || "",
         endDate:
-          new Date(new Date().getTime() + randomInt(0, 7 * 86400000))
+          new Date(new Date().getTime() + randomInt(7 * 86400000))
             .toISOString()
             .split("T")[0] || "",
         type: "primary"

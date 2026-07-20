@@ -1,8 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Role, RoleMembers, RolePrivileges, User } from "@/types";
-import { applyFilters } from "../util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Role[] = [];
 const users: User[] = [];
@@ -12,13 +11,13 @@ for (let i = 1; i < 5; i++) {
     id: i,
     username:
       ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
-        randomInt(0, 5)
+        randomInt(5)
       ] || "admin",
     fullName: "Name_" + i,
     email: "use***" + "@**t.com",
     status:
       ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        randomInt(0, 5)
+        randomInt(5)
       ] || "unknown",
     enabled: i % 2 > 0
   };
@@ -29,7 +28,7 @@ for (let i = 1; i < 28; i++) {
   const data: Role = {
     id: i,
     name: "Role_" + i,
-    members: users.filter((_, index) => index < randomInt(0, 5)),
+    members: users.filter((_, index) => index < randomInt(5)),
     enabled: i % 3 > 0
   };
   datas.push(data);

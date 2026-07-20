@@ -1,21 +1,20 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Region } from "@/types";
-import { applyFilters } from "./util";
-import { randomInt } from "node:crypto";
+import { applyFilters, randomInt } from "./util";
 
 const datas: Region[] = [];
 
 for (let i = 1; i < 99; i++) {
-  const superiorId = randomInt(0, 34) || null;
+  const superiorId = randomInt(34) || null;
   const data: Region = {
     id: i,
     superiorId: i > 33 ? superiorId : null,
     name: "Region_" + i,
-    areaCode: randomInt(0, 100),
-    postalCode: randomInt(0, 3000),
+    areaCode: randomInt(100),
+    postalCode: randomInt(3000),
     enabled: i % 3 > 0,
-    count: i > 33 ? 0 : randomInt(0, 5) + 1
+    count: i > 33 ? 0 : randomInt(5) + 1
   };
   datas.push(data);
 }

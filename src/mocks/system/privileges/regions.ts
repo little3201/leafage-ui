@@ -1,5 +1,5 @@
 import type { Privilege, PrivilegeTreeNode } from "@/types";
-import { randomInt } from "node:crypto";
+import { randomInt } from "../../util";
 
 export const root_regions: Privilege = {
   id: 12,
@@ -17,7 +17,7 @@ export const root_regions: Privilege = {
     "disable"
   ],
   count: 0,
-  enabled: randomInt(0, 2) > 0
+  enabled: randomInt(2) > 0
 };
 
 export const nodes_regions: Privilege[] = [];

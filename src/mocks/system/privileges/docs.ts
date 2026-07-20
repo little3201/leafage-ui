@@ -1,5 +1,5 @@
 import type { Privilege, PrivilegeTreeNode } from "@/types";
-import { randomInt } from "node:crypto";
+import { randomInt } from "../../util";
 
 export const root_docs: Privilege = {
   id: 22,
@@ -9,7 +9,7 @@ export const root_docs: Privilege = {
   component: "#",
   redirect: "/docs/reports",
   count: 1,
-  enabled: randomInt(0, 2) > 0
+  enabled: randomInt(2) > 0
 };
 
 export const nodes_docs: Privilege[] = [
@@ -21,7 +21,7 @@ export const nodes_docs: Privilege[] = [
     component: "docs/archives",
     actions: ["create", "modify", "remove", "import", "export", "section"],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 24,
@@ -40,7 +40,7 @@ export const nodes_docs: Privilege[] = [
       "disable"
     ],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   },
   {
     id: 25,
@@ -58,7 +58,7 @@ export const nodes_docs: Privilege[] = [
       "data"
     ],
     count: 0,
-    enabled: randomInt(0, 2) > 0
+    enabled: randomInt(2) > 0
   }
 ];
 
