@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Dictionary } from "@/types";
 import { applyFilters } from "../util";
+import { randomInt } from "node:crypto";
 
 const datas: Dictionary[] = [
   100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
@@ -10,21 +11,20 @@ const datas: Dictionary[] = [
     id: item,
     superiorId: null,
     name: "Name_" + item,
-    enabled: Math.floor(Math.random() * 2) > 0,
+    enabled: randomInt(0, 2) > 0,
     count: 1
   };
 });
 
 for (let i = 1; i < 28; i++) {
   const superiorId =
-    [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000][
-      Math.floor(Math.random() * 10)
-    ] || null;
+    [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000][randomInt(0, 10)] ||
+    null;
   const row: Dictionary = {
     id: i,
     superiorId: superiorId,
     name: "Sub_Name_" + i,
-    enabled: Math.floor(Math.random() * 2) > 0
+    enabled: randomInt(0, 2) > 0
   };
   datas.push(row);
 }

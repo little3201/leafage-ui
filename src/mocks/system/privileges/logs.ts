@@ -1,4 +1,5 @@
 import type { Privilege, PrivilegeTreeNode } from "@/types";
+import { randomInt } from "node:crypto";
 
 export const root_logs: Privilege = {
   id: 7,
@@ -8,7 +9,7 @@ export const root_logs: Privilege = {
   redirect: "operation",
   name: "logs",
   count: 3,
-  enabled: Math.floor(Math.random() * 2) > 0
+  enabled: randomInt(0, 2) > 0
 };
 
 export const nodes_logs: Privilege[] = [
@@ -20,7 +21,7 @@ export const nodes_logs: Privilege[] = [
     name: "operationLogs",
     actions: ["clear", "export", "remove"],
     count: 0,
-    enabled: Math.floor(Math.random() * 2) > 0
+    enabled: randomInt(0, 2) > 0
   },
   {
     id: 9,
@@ -30,7 +31,7 @@ export const nodes_logs: Privilege[] = [
     name: "accessLogs",
     actions: ["clear", "export", "remove"],
     count: 0,
-    enabled: Math.floor(Math.random() * 2) > 0
+    enabled: randomInt(0, 2) > 0
   }
 ];
 

@@ -2,12 +2,13 @@ import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { FileRecord, FileCategory, FileStatistics } from "@/types";
 import { applyFilters } from "./util";
+import { randomInt } from "node:crypto";
 
 const datas: FileRecord[] = [];
 const statistics: FileStatistics[] = [];
 
 for (let i = 1; i < 18; i++) {
-  const random = Math.floor(Math.random() * 7);
+  const random = randomInt(0, 7);
   const data: FileRecord = {
     id: i,
     superiorId: random || null,
@@ -24,7 +25,7 @@ for (let i = 1; i < 18; i++) {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       ][random] || "",
-    size: Math.floor(Math.random() * 10000000),
+    size: randomInt(0, 10000000),
     path: random > 5 ? "" : "/path/to/test" + i,
     directory: random === 6 ? true : false,
     enabled: i % 2 > 0,
@@ -37,8 +38,8 @@ const categories: FileCategory[] = ["image", "video", "document", "other"];
 for (const key of categories) {
   statistics.push({
     key,
-    count: Math.floor(Math.random() * 99),
-    size: Math.floor(Math.random() * 10000000000)
+    count: randomInt(0, 99),
+    size: randomInt(0, 10000000000)
   });
 }
 

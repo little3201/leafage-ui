@@ -2,16 +2,17 @@ import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Template } from "@/types";
 import { applyFilters } from "../util";
+import { randomInt } from "node:crypto";
 
 const datas: Template[] = [];
 
 for (let i = 1; i < 28; i++) {
-  const random = Math.floor(Math.random() * 3);
+  const random = randomInt(0, 3);
   const row: Template = {
     id: i,
     name: "Name_" + i,
-    type: (["WORD", "EXCEL"] as const)[Math.floor(Math.random() * 2)],
-    version: Math.floor(Math.random() * 3) + 1,
+    type: (["WORD", "EXCEL"] as const)[randomInt(0, 2)],
+    version: random + 1,
     status: ["DRAFT", "PUBLISHED", "ARCHIVED"][random],
     enabled: random < 2 ? (i % 3 > 0 ? false : true) : true,
     lastModifiedDate: new Date()

@@ -2,15 +2,17 @@ import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Report } from "@/types";
 import { applyFilters } from "../util";
+import { randomInt } from "node:crypto";
 
 const datas: Report[] = [];
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(0, 5) + 1;
   const row: Report = {
     id: i,
-    schemaId: Math.floor(Math.random() * 5) + 1,
+    schemaId: random,
     title: "Title_" + i,
-    version: Math.floor(Math.random() * 10)
+    version: random
   };
   datas.push(row);
 }

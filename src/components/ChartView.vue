@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useEventListener } from "@vueuse/core";
-import type { ApexOptions } from "apexcharts";
+import type { ApexOptions, ApexLocale } from "apexcharts";
 import en from "apexcharts/dist/locales/en.json";
 import zhCN from "apexcharts/dist/locales/zh-cn.json";
 import zhTW from "apexcharts/dist/locales/zh-tw.json";
@@ -38,13 +38,13 @@ const isDark = ref<boolean>(
   window.matchMedia("(prefers-color-scheme: dark)").matches
 );
 
-const chartLocales: Record<string, typeof en> = {
+const chartLocales: Record<string, ApexLocale> = {
   "en-US": en,
   "zh-CN": zhCN,
   "zh-TW": zhTW
 };
 const lang = computed(() => {
-  return chartLocales[locale.value].name;
+  return chartLocales[locale.value].name ?? "zh-CN";
 });
 
 const mode = computed(() => {
@@ -105,10 +105,10 @@ watch(theme, (newVal, oldVal) => {
 
 watch(locale, (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    const lang = chartLocales[newVal].name;
-    chart?.setLocale(lang);
+    const newLang = chartLocales[newVal]?.name ?? "zh-CN";
+    chart?.setLocale(newLang);
     chart?.updateOptions({
-      chart: { defaultLocale: lang }
+      chart: { defaultLocale: newLang }
     });
   }
 });

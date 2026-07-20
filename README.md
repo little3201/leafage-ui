@@ -12,8 +12,8 @@
 
 <p align="center">
   免费且美观的管理模板，使用 Vue 3、Vite、Pinia 和 Tailwind CSS构建。设计用于构建高效、响应式和快速加载的管理界面。
-  
-  后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
+
+后台接口服务仓库： <a href="https://github.com/little3201/leafage.git">后端服务仓库</a> </br>
 </p>
 
 | 分支    | 认证模式 | 组件库                                     | 预览地址                                                                              |

@@ -9,6 +9,7 @@ import type {
   UserPrivileges
 } from "@/types";
 import { applyFilters } from "../../util";
+import { randomInt } from "node:crypto";
 import { root_system, nodes_system, tree_system } from "./system";
 import { root_messages, nodes_messages, tree_messages } from "./messages";
 import { root_logs, nodes_logs, tree_logs } from "./logs";
@@ -103,14 +104,14 @@ for (let i = 1; i < 28; i++) {
 }
 
 for (let i = 1; i < 25; i++) {
-  const count = Math.floor(Math.random() * actions.length) + 1;
+  const count = randomInt(0, actions.length) + 1;
   for (let j = 1; j <= count; j++) {
     const row: PrivilegeAction = {
       id: j + 1,
       privilegeId: i,
       name: actions[j - 1],
       type: actionTypes[actions[j - 1]] || null,
-      enabled: Math.floor(Math.random() * 2) > 0
+      enabled: randomInt(0, 2) > 0
     };
     privilegeActions.push(row);
   }

@@ -2,16 +2,18 @@ import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Archive, Section } from "@/types";
 import { applyFilters } from "../util";
+import { randomInt } from "node:crypto";
 
 const datas: Archive[] = [];
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(0, 10) + 1;
   const row: Archive = {
     id: i,
     title: "Title_" + i,
     owner: "Owner_Name_" + i,
-    schemaId: Math.floor(Math.random() * 10) + 1,
-    version: Math.floor(Math.random() * 3) + 1,
+    schemaId: random,
+    version: random,
     lastModifiedDate: new Date()
   };
   datas.push(row);
@@ -20,10 +22,11 @@ for (let i = 1; i < 28; i++) {
 const sections: Section[] = [];
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(0, 27) + 1;
   const row: Section = {
     id: i,
     name: "Section_" + i,
-    superiorId: Math.floor(Math.random() * 27) + 1,
+    superiorId: random,
     ownerType: "ARCHIVE",
     body: {
       dataStream: "这里写的是内容，你知道吗？\n" + "这是第" + i + "行内容\r\n",
@@ -52,7 +55,7 @@ for (let i = 1; i < 28; i++) {
       customRanges: [],
       customDecorations: []
     },
-    ownerId: Math.floor(Math.random() * 27) + 1
+    ownerId: random
   };
   sections.push(row);
 }
