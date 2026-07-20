@@ -33,7 +33,7 @@ for (let i = 1; i < 28; i++) {
     )
       ? '{"theme:"dark"}'
       : "",
-    ip: "192.168.0.4",
+    ip: "127.0.0.4",
     status: ["SUCCEED", "FAILED"][randomInt(2)] || "",
     duration: randomInt(1000)
   };

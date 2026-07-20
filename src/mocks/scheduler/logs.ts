@@ -20,9 +20,7 @@ for (let i = 1; i < 28; i++) {
     status: status,
     record: ["SUCCESS"].includes(status)
       ? "执行完成，无错误"
-      : ["FAILED"].includes(status)
-        ? "执行失败，错误： xxxx"
-        : ""
+      : "执行失败，错误： xxxx"
   };
   datas.push(row);
 }

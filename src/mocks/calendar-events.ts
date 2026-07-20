@@ -27,7 +27,7 @@ export const calendarEventHandlers = [
         title: "法定假期",
         startDate: new Date().toISOString().split("T")[0] || "",
         endDate:
-          new Date(new Date().getTime() + randomInt(7 * 86400000))
+          new Date(Date.now() + randomInt(7 * 86400000))
             .toISOString()
             .split("T")[0] || "",
         type: "primary"

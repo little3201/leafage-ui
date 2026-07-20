@@ -1,12 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { actionTypes, SERVER_URL } from "@/constants";
-import type {
-  GroupPrivileges,
-  Privilege,
-  PrivilegeAction,
-  PrivilegeTreeNode,
-  UserPrivileges
-} from "@/types";
+import type { Privilege, PrivilegeAction, PrivilegeTreeNode } from "@/types";
 import { applyFilters, randomInt } from "../../util";
 import { root_system, nodes_system, tree_system } from "./system";
 import { root_messages, nodes_messages, tree_messages } from "./messages";
@@ -77,18 +71,6 @@ const actions: string[] = [
   "execute"
 ];
 
-const groups: GroupPrivileges[] = [];
-
-for (let i = 1; i < 28; i++) {
-  const row: GroupPrivileges = {
-    id: i,
-    privilegeId: i < 15 ? i : i - 14,
-    groupId: i,
-    actions: ["create", "modify", "remove", "import", "export"]
-  };
-  groups.push(row);
-}
-
 for (let i = 1; i < 25; i++) {
   const count = randomInt(actions.length) + 1;
   for (let j = 1; j <= count; j++) {
@@ -101,18 +83,6 @@ for (let i = 1; i < 25; i++) {
     };
     privilegeActions.push(row);
   }
-}
-
-const users: UserPrivileges[] = [];
-
-for (let i = 1; i < 28; i++) {
-  const row: UserPrivileges = {
-    id: i,
-    privilegeId: i < 15 ? i : i - 14,
-    username: "username" + i,
-    actions: ["create", "modify", "remove", "import", "export"]
-  };
-  users.push(row);
 }
 
 export const privilegesHandlers = [

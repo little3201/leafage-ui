@@ -26,7 +26,7 @@ for (let i = 1; i < 18; i++) {
       ][random] || "",
     size: randomInt(10000000),
     path: random > 5 ? "" : "/path/to/test" + i,
-    directory: random === 6 ? true : false,
+    directory: random > 5,
     enabled: i % 2 > 0,
     lastModifiedDate: new Date()
   };
