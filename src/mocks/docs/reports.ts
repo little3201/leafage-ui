@@ -1,22 +1,31 @@
+import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Report } from "@/types";
-import { http, HttpResponse } from "msw";
-import { applyFilters } from "../util";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Report[] = [];
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(5) + 1;
   const row: Report = {
     id: i,
-    schemaId: Math.floor(Math.random() * 5) + 1,
+    schemaId: random,
     title: "Title_" + i,
-    version: Math.floor(Math.random() * 10),
-    body: "This is body content about xxx"
+    version: random
   };
   datas.push(row);
 }
 
 export const reportsHandlers = [
+  http.get(`/api${SERVER_URL.REPORT}/:id/template`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      const filtered = datas.find(item => item.id === Number(id));
+      return HttpResponse.json(filtered);
+    } else {
+      return HttpResponse.json();
+    }
+  }),
   http.get(`/api${SERVER_URL.REPORT}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
@@ -39,9 +48,7 @@ export const reportsHandlers = [
         Number(page) * Number(size),
         (Number(page) + 1) * Number(size)
       ),
-      page: {
-        totalElements: filtered.length
-      }
+      totalElements: filtered.length
     };
     return HttpResponse.json(data);
   }),
@@ -88,7 +95,7 @@ export const reportsHandlers = [
   http.patch(`/api${SERVER_URL.REPORT}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }

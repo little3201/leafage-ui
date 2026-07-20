@@ -3,6 +3,7 @@ import type { AudtiMetadata } from "../global";
 export interface OperationLog extends AudtiMetadata {
   module: string;
   action: string;
+  targetId: number | null;
   params: string;
   response?: string;
   status?: string;

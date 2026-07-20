@@ -1,16 +1,24 @@
 import { authenticationHandlers } from "./authentication";
+import { auditLogsHandlers } from "./audits/logs";
+import { auditPatrolsHandlers } from "./audits/patrols";
 import { calendarEventHandlers } from "./calendar-events";
+import { archivesHandlers } from "./docs/archives";
+import { reportsHandlers } from "./docs/reports";
+import { sectionsHandlers } from "./docs/sections";
+import { templatesHandlers } from "./docs/templates";
 import { connectionsHandlers } from "./exploiters/connections";
 import { fragmentsHandlers } from "./exploiters/fragments";
+import { messagesHandlers } from "./messages";
+import { messageInboxHandlers } from "./messages/inbox";
 import { modulesHandlers } from "./exploiters/modules";
 import { samplesHandlers } from "./exploiters/samples";
 import { schemesHandlers } from "./exploiters/schemes";
 import { scriptsHandlers } from "./exploiters/scripts";
 import { fileRecordsHandlers } from "./file-records";
 import { accessLogsHandlers } from "./logs/access-logs";
-import { auditLogsHandlers } from "./logs/audit-logs";
 import { operationLogsHandlers } from "./logs/operation-logs";
-import { schedulerLogsHandlers } from "./logs/scheduler-logs";
+import { schedulersHandlers } from "./scheduler";
+import { schedulerLogsHandlers } from "./scheduler/logs";
 import { regionsHandlers } from "./regions";
 import { dictionariesHandlers } from "./system/dictionaries";
 import { groupsHandlers } from "./system/groups";
@@ -20,6 +28,7 @@ import { usersHandlers } from "./system/users";
 export const handlers = [
   ...accessLogsHandlers,
   ...auditLogsHandlers,
+  ...auditPatrolsHandlers,
   ...authenticationHandlers,
   ...calendarEventHandlers,
   ...connectionsHandlers,
@@ -27,13 +36,20 @@ export const handlers = [
   ...fileRecordsHandlers,
   ...fragmentsHandlers,
   ...groupsHandlers,
+  ...messagesHandlers,
+  ...messageInboxHandlers,
   ...modulesHandlers,
   ...operationLogsHandlers,
   ...privilegesHandlers,
   ...regionsHandlers,
   ...samplesHandlers,
+  ...sectionsHandlers,
+  ...schedulersHandlers,
   ...schedulerLogsHandlers,
   ...schemesHandlers,
   ...scriptsHandlers,
-  ...usersHandlers
+  ...usersHandlers,
+  ...archivesHandlers,
+  ...reportsHandlers,
+  ...templatesHandlers
 ];

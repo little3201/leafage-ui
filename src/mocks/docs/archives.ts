@@ -1,17 +1,18 @@
+import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Archive, Section } from "@/types";
-import { http, HttpResponse } from "msw";
-import { applyFilters } from "../util";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Archive[] = [];
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(10) + 1;
   const row: Archive = {
     id: i,
     title: "Title_" + i,
     owner: "Owner_Name_" + i,
-    schemaId: Math.floor(Math.random() * 10) + 1,
-    version: Math.floor(Math.random() * 3) + 1,
+    schemaId: random,
+    version: random,
     lastModifiedDate: new Date()
   };
   datas.push(row);
@@ -20,13 +21,40 @@ for (let i = 1; i < 28; i++) {
 const sections: Section[] = [];
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(27) + 1;
   const row: Section = {
     id: i,
     name: "Section_" + i,
-    superiorId: Math.floor(Math.random() * 27) + 1,
+    superiorId: random,
     ownerType: "ARCHIVE",
-    body: "This is body of section " + i,
-    ownerId: Math.floor(Math.random() * 27) + 1
+    body: {
+      dataStream: "这里写的是内容，你知道吗？\n" + "这是第" + i + "行内容\r\n",
+      textRuns: [],
+      customBlocks: [],
+      tables: [],
+      paragraphs: [
+        {
+          startIndex: 8,
+          paragraphStyle: {
+            spaceAbove: {
+              v: 5
+            },
+            lineSpacing: 1,
+            spaceBelow: {
+              v: 0
+            }
+          }
+        }
+      ],
+      sectionBreaks: [
+        {
+          startIndex: 9
+        }
+      ],
+      customRanges: [],
+      customDecorations: []
+    },
+    ownerId: random
   };
   sections.push(row);
 }
@@ -79,9 +107,7 @@ export const archivesHandlers = [
         Number(page) * Number(size),
         (Number(page) + 1) * Number(size)
       ),
-      page: {
-        totalElements: filtered.length
-      }
+      totalElements: filtered.length
     };
     return HttpResponse.json(data);
   }),
@@ -128,7 +154,7 @@ export const archivesHandlers = [
   http.patch(`/api${SERVER_URL.ARCHIVE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }

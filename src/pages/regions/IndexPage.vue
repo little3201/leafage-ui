@@ -174,7 +174,7 @@
                     @click="saveRow(props.row.id)"
                   />
                   <q-btn
-                    title="delete"
+                    title="remove"
                     padding="xs"
                     flat
                     round

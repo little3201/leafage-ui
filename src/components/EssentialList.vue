@@ -1,5 +1,5 @@
 <template>
-  <q-expansion-item :content-inset-level="0.3">
+  <q-expansion-item :content-inset-level="0.4">
     <template #header>
       <q-item-section side>
         <q-icon :name="`sym_r_${pageIcons[essentialLink.name]}`" />

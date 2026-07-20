@@ -1,22 +1,21 @@
+import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { Region } from "@/types";
-import { http, HttpResponse } from "msw";
-import { applyFilters } from "./util";
+import { applyFilters, randomInt } from "./util";
 
 const datas: Region[] = [];
 
-for (let i = 1; i < 34; i++) {
-  const superiorId = Math.floor(Math.random() * 12) || null;
+for (let i = 1; i < 99; i++) {
+  const superiorId = randomInt(34) || null;
   const data: Region = {
     id: i,
-    name: "region_" + i,
-    superiorId: superiorId,
-    areaCode: Math.floor(Math.random() * 100),
-    postalCode: Math.floor(Math.random() * 3000),
+    superiorId: i > 33 ? superiorId : null,
+    name: "Region_" + i,
+    areaCode: randomInt(100),
+    postalCode: randomInt(3000),
     enabled: i % 3 > 0,
-    count: i
+    count: i > 33 ? 0 : randomInt(5) + 1
   };
-
   datas.push(data);
 }
 
@@ -35,8 +34,7 @@ export const regionsHandlers = [
   http.get(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const res = datas.find(item => item.id === Number(id));
-      return HttpResponse.json(res);
+      return HttpResponse.json(datas.find(item => item.id === Number(id)));
     } else {
       return HttpResponse.json();
     }
@@ -51,7 +49,6 @@ export const regionsHandlers = [
 
     // Construct a JSON response with the list of all Row
     // as the response body.
-
     const data = {
       content: Array.from(
         filtered.slice(
@@ -59,7 +56,7 @@ export const regionsHandlers = [
           (Number(page) + 1) * Number(size)
         )
       ),
-      totalElements: datas.length
+      totalElements: filtered.length
     };
 
     return HttpResponse.json(data);
@@ -104,10 +101,18 @@ export const regionsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.REGION}/:id/enable`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.REGION}/:id/disable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }
@@ -130,6 +135,6 @@ export const regionsHandlers = [
     datas.pop();
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData);
+    return HttpResponse.json();
   })
 ];

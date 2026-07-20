@@ -8,7 +8,7 @@ const REDIRECT_URI = `${window.location.origin}/callback`;
 export async function signIn() {
   const codeVerifier = generateVerifier();
   localStorage.setItem("code_verifier", codeVerifier);
-  const state = Math.random().toString(36).substring(2);
+  const state = crypto.randomUUID();
   localStorage.setItem("state", state);
 
   const challenge = await generateCodeChallenge(codeVerifier);

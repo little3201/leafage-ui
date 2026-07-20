@@ -1,41 +1,56 @@
-import { SERVER_URL } from "@/constants";
-import type { FileRecord } from "@/types";
 import { http, HttpResponse } from "msw";
-import { applyFilters } from "./util";
+import { SERVER_URL } from "@/constants";
+import type { FileRecord, FileCategory, FileStatistics } from "@/types";
+import { applyFilters, randomInt } from "./util";
 
 const datas: FileRecord[] = [];
+const statistics: FileStatistics[] = [];
 
-for (let i = 1; i < 28; i++) {
-  const randomIndex = Math.floor(Math.random() * 6);
+for (let i = 1; i < 18; i++) {
+  const random = randomInt(7);
   const data: FileRecord = {
     id: i,
-    superiorId: Math.floor(Math.random() * 6) || null,
+    superiorId: random || null,
     name:
-      "file_name_" +
+      "test" +
         i +
-        [".jpg", ".png", ".pdf", ".zip", ".txt", ".gif"][randomIndex] || "",
+        [".jpg", ".png", ".pdf", ".zip", ".docx", ".xlsx", ""][random] || "",
     contentType:
       [
         "image/jpg",
         "image/png",
         "application/pdf",
         "application/zip",
-        "application/octet-stream",
-        "image/gif"
-      ][randomIndex] || "unknown",
-    size: Math.floor(Math.random() * 100000),
-    path: "/path/to/test" + i,
-    directory: false,
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      ][random] || "",
+    size: randomInt(10000000),
+    path: random > 5 ? "" : "/path/to/test" + i,
+    directory: random > 5,
+    enabled: i % 2 > 0,
     lastModifiedDate: new Date()
   };
   datas.push(data);
 }
 
+const categories: FileCategory[] = ["image", "video", "document", "other"];
+for (const key of categories) {
+  statistics.push({
+    key,
+    count: randomInt(99),
+    size: randomInt(10000000000)
+  });
+}
+
 export const fileRecordsHandlers = [
+  http.get(`/api${SERVER_URL.FILE}/statistics`, () => {
+    return HttpResponse.json(statistics);
+  }),
   http.get(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json(datas.find(item => item.id === Number(id)));
+      const filtered = datas.find(item => item.id === Number(id));
+      return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json();
     }
@@ -48,8 +63,6 @@ export const fileRecordsHandlers = [
     const filtersStr = url.searchParams.get("filters");
     const filtered = applyFilters(datas, filtersStr);
 
-    // Construct a JSON response with the list of all Row
-    // as the response body.
     const data = {
       content: filtered.slice(
         Number(page) * Number(size),
@@ -76,7 +89,23 @@ export const fileRecordsHandlers = [
 
     return HttpResponse.json(datas[0]);
   }),
-  http.delete(`/api${SERVER_URL.FILE}`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.FILE}/:id/enable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.FILE}/:id/disable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.delete(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
     const { id } = params;
@@ -94,6 +123,6 @@ export const fileRecordsHandlers = [
     datas.pop();
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData);
+    return HttpResponse.json();
   })
 ];

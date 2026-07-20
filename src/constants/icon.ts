@@ -26,7 +26,8 @@ export const actionIcons: Record<string, string> = {
   show: "undereye",
   sync: "sync",
   add: "add",
-  more: "more_horiz"
+  more: "more_horiz",
+  publish: "send"
 };
 
 export const pageIcons: Record<string, string> = {
@@ -38,8 +39,8 @@ export const pageIcons: Record<string, string> = {
   dictionaries: "book_3",
   logs: "lab_profile",
   operationLogs: "clinical_notes",
-  accessLogs: "sticky_note_2",
-  auditLogs: "note_alt",
+  accessLogs: "note_alt",
+  auditLogs: "list_alt",
   schedulerLogs: "event_note",
   scripts: "terminal",
   exploiters: "build",
@@ -54,7 +55,14 @@ export const pageIcons: Record<string, string> = {
   reports: "assignment_add",
   regions: "location_on",
   docs: "drive_file_move",
-  templates: "assignment_add"
+  templates: "temple_hindu",
+  messages: "business_messages",
+  sent: "outgoing_mail",
+  inbox: "inbox",
+  schedulers: "schedule",
+  tasks: "task_alt",
+  audits: "safety_check",
+  patrols: "person_shield"
 };
 
 export const globalIcons: Record<string, string> = {
@@ -73,7 +81,8 @@ export const globalIcons: Record<string, string> = {
   person: "person",
   key: "key_vertical",
   dark: "dark_mode",
-  light: "light_mode"
+  light: "light_mode",
+  ring: "notifications"
 };
 
 export const shceduleStatusIcon: { [key: string]: string } = {

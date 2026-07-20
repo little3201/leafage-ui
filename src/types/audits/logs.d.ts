@@ -8,5 +8,5 @@ export interface AuditLog extends AudtiMetadata {
   newValue?: string;
   ip?: string;
   status?: string;
-  duration: number | null;
+  duration?: number;
 }

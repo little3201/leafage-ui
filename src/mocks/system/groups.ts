@@ -1,13 +1,13 @@
+import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type {
   Group,
-  User,
   GroupMembers,
   GroupPrivileges,
-  TreeNode
+  TreeNode,
+  User
 } from "@/types";
-import { http, HttpResponse } from "msw";
-import { applyFilters } from "../util";
+import { applyFilters, randomInt } from "../util";
 
 const datas: Group[] = [];
 const users: User[] = [];
@@ -17,27 +17,22 @@ for (let i = 1; i < 5; i++) {
     id: i,
     username:
       ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
-        Math.floor(Math.random() * 5)
+        randomInt(5)
       ] || "admin",
     fullName: "Name_" + i,
-    email: "use***" + "@**t.com",
-    status:
-      ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        Math.floor(Math.random() * 5)
-      ] || "unknown",
-    enabled: i % 2 > 0
+    email: "use***" + "@**t.com"
   };
   users.push(row);
 }
 
 for (let i = 1; i < 28; i++) {
-  const superiorId = Math.floor(Math.random() * 12) || null;
+  const superiorId = randomInt(12) || null;
   const row: Group = {
     id: i,
-    name: "group_" + i,
     superiorId: superiorId,
-    members: users.filter((_, index) => index < Math.floor(Math.random() * 5)),
-    enabled: true
+    name: "Group_" + i,
+    members: users.filter((_, index) => index < randomInt(5)),
+    enabled: i % 3 > 0
   };
   datas.push(row);
 }
@@ -134,7 +129,7 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const filtered = datas.filter(item => item.id === Number(id));
+      const filtered = datas.find(item => item.id === Number(id));
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json();
@@ -197,28 +192,53 @@ export const groupsHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/enable`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/disable`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }
   }),
   http.patch(
-    `/api${SERVER_URL.GROUP}/privileges/:privilegeId`,
+    `/api${SERVER_URL.GROUP}/:id/members`,
     async ({ params, request }) => {
+      const { id } = params;
       const data = await request.json();
-      const { privilegeId } = params;
-      if (privilegeId && data) {
+      if (id && data) {
+        return HttpResponse.json();
+      } else {
+        return HttpResponse.error();
+      }
+    }
+  ),
+  http.patch(
+    `/api${SERVER_URL.GROUP}/:id/roles`,
+    async ({ params, request }) => {
+      const { id } = params;
+      const data = await request.json();
+      if (id && data) {
+        return HttpResponse.json();
+      } else {
+        return HttpResponse.error();
+      }
+    }
+  ),
+  http.patch(
+    `/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`,
+    ({ params, request }) => {
+      const { id, privilegeId } = params;
+      const searchParams = new URL(request.url).searchParams;
+      const action = searchParams.get("action");
+      if (id && privilegeId && action) {
         return HttpResponse.json();
       } else {
         return HttpResponse.error();
@@ -262,6 +282,6 @@ export const groupsHandlers = [
     datas.pop();
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData);
+    return HttpResponse.json();
   })
 ];

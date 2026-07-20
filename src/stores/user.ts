@@ -1,5 +1,4 @@
-import type { PrivilegeTreeNode } from "@/types";
-import type { Userinfo } from "@/types";
+import type { Userinfo, PrivilegeTreeNode } from "@/types";
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
@@ -12,6 +11,26 @@ export const useUserStore = defineStore("user", {
     privileges: [] as PrivilegeTreeNode[],
     routesAdded: false
   }),
+  getters: {
+    privilegeMap(state) {
+      const map = new Map<string, Set<string>>();
+
+      function traverse(nodes: PrivilegeTreeNode[]) {
+        for (const node of nodes) {
+          if (node.meta.path) {
+            map.set(node.meta.path, new Set(node.meta.actions ?? []));
+          }
+
+          if (node.children?.length) {
+            traverse(node.children);
+          }
+        }
+      }
+
+      traverse(state.privileges);
+      return map;
+    }
+  },
   actions: {
     setUserinfo(username: string, fullName: string, email: string) {
       this.username = username;

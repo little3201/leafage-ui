@@ -3,7 +3,7 @@
 
 export default {
   label: {
-    no: "序号",
+    serial: "序号",
     title: "标题",
     template: "模板",
     actions: "操作",
@@ -67,7 +67,7 @@ export default {
     column: "列",
     areaCode: "区号",
     postalCode: "邮编",
-    enabled: "是否启用",
+    enabled: "是否可用",
     size: "大小",
     length: "长度",
     contentType: "类型",
@@ -102,13 +102,24 @@ export default {
     imports: "引用",
     attachment: "附件",
     owner: "所有者",
-    all: "全部"
+    all: "全部",
+    unread: "未读",
+    mode: "模式",
+    sender: "发送人",
+    receiver: "接收人",
+    publishedAt: "发布时间",
+    yes: "是",
+    no: "否",
+    task: "任务",
+    corn: "Corn表达式"
   },
 
   action: {
     search: "搜索",
-    retrieve: "查询",
+    retrieve: "分页查询",
     fetch: "获取",
+    tree: "树查询",
+    subset: "查询子节点",
     import: "导入",
     export: "导出",
     submit: "提交",
@@ -132,6 +143,7 @@ export default {
     authorize: "授权",
     more: "更多",
     enable: "启用",
+    disable: "停用",
     unlock: "解锁",
     view: "视图",
     save: "保存",
@@ -143,7 +155,10 @@ export default {
     continue: "继续",
     data: "数据",
     addItem: "添加项目",
-    section: "章节"
+    section: "章节",
+    member: "成员",
+    publish: "发布",
+    readAll: "全部已读"
   },
 
   page: {
@@ -156,7 +171,7 @@ export default {
     dictionaries: "字典",
     regions: "行政区划",
     faq: "常见问题",
-    files: "文件管理",
+    files: "文件记录",
     exploiters: "开发工具",
     connections: "连接",
     schemes: "方案",
@@ -169,13 +184,20 @@ export default {
     logs: "日志记录",
     operationLogs: "操作日志",
     accessLogs: "访问日志",
-    auditLogs: "审计日志",
-    schedulerLogs: "调度日志",
     docs: "文档管理",
     reports: "报告",
     archives: "档案",
-    schemas: "模板",
-    sections: "章节"
+    templates: "模板",
+    sections: "章节",
+    messages: "消息中心",
+    sent: "发消息",
+    inbox: "收信箱",
+    schedulers: "任务调度",
+    schedulerLogs: "调度日志",
+    tasks: "任务管理",
+    audits: "安全审计",
+    patrols: "审计人员",
+    auditLogs: "审计日志"
   },
 
   github: "Github",
@@ -204,8 +226,17 @@ export default {
     click2Upload: "点击上传",
     fileSizeLimit: "文件小于 {size}。",
 
-    removeConfirm: "是否确定要删除这条数据？",
-    actionConfirm: "操作确认",
+    confirm: "是否确定？",
+    removeWarning:
+      "当前操作无法撤销，将永久移除 <strong>{module}/{data}</strong>。",
+    removeButtonText: "我明白，移除它！",
+    disableWarning: "数据停用后，当前数据及关联数据将不可用。",
+    disableButtonText: "我明白，停用它！",
+    clearWarning: "此操作无法撤销。这将永久移除所有项目。",
+    clearButtonText: "我明白，移除所有项目。",
+    publishWarning:
+      "点击确定后，当前 <strong>{data}</strong> 消息将立即发布给接收人。",
+    publishButtonText: "我确定，立即发布",
     welcome: "嗨！欢迎回来",
     subtitle: "请填写您的账号和密码，让我们继续探索",
     forgotPassword: "忘记密码 ？"

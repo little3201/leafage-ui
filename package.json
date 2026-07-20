@@ -16,14 +16,14 @@
   },
   "dependencies": {
     "@quasar/extras": "^2.0.2",
-    "apexcharts": "^5.16.0",
+    "apexcharts": "^6.3.0",
     "axios": "^1.18.1",
     "highlight.js": "^11.11.1",
-    "pinia": "^3.0.4",
-    "quasar": "^2.21.1",
-    "vue": "^3.5.39",
+    "pinia": "^4.0.2",
+    "quasar": "^2.21.4",
+    "vue": "^3.5.40",
     "vue-i18n": "^11.4.6",
-    "vue-router": "^5.1.0"
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
@@ -31,13 +31,13 @@
     "@intlify/unplugin-vue-i18n": "^11.2.4",
     "@quasar/app-vite": "^3.0.1",
     "@types/node": "^24.13.3",
-    "autoprefixer": "^10.5.2",
+    "autoprefixer": "^10.5.4",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.8",
+    "lint-staged": "^17.1.0",
     "msw": "^2.15.0",
-    "oxfmt": "^0.57.0",
-    "oxlint": "^1.73.0",
-    "oxlint-tsgolint": "^0.24.0",
+    "oxfmt": "^0.59.0",
+    "oxlint": "^1.74.0",
+    "oxlint-tsgolint": "^0.25.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",
     "vue-tsc": "^3.3.7"

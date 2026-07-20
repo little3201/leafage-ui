@@ -5,7 +5,7 @@ export * from "./request";
 export * from "./format";
 
 export function visibleArray<T>(array: T[], count: number): T[] {
-  if (array && array.length) {
+  if (array?.length) {
     return array.length > count ? array.slice(0, count) : array;
   }
   return [];

@@ -49,7 +49,7 @@ function wrapCsvValue(
   formatted =
     formatted === void 0 || formatted === null ? "" : String(formatted);
 
-  formatted = formatted.split('"').join('""');
+  formatted = formatted.replaceAll('"', '""');
 
   return `"${formatted}"`;
 }

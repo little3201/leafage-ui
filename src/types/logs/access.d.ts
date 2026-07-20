@@ -3,7 +3,7 @@ import type { AudtiMetadata } from "../global";
 export interface AccessLog extends AudtiMetadata {
   url: string;
   httpMethod: string;
-  targetId?: number;
+  targetId: number | null;
   params?: string;
   body?: string;
   ip: string;

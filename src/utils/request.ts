@@ -14,7 +14,7 @@ export function pathResolve(
     return "";
   }
   const childPath = path.startsWith("/") ? path : `/${path}`;
-  return `${parentPath}${childPath}`.replaceAll(/\/\//g, "/").trim();
+  return `${parentPath}${childPath}`.replaceAll("//", "/").trim();
 }
 
 export function dealFilters<T>(filters?: Filter<T>): string | undefined {

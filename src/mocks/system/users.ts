@@ -1,22 +1,21 @@
+import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { User } from "@/types";
-import { http, HttpResponse } from "msw";
-import { applyFilters } from "../util";
+import { applyFilters, randomInt } from "../util";
 
 const datas: User[] = [];
 
-for (let i = 1; i < 5; i++) {
+for (let i = 0; i < 5; i++) {
   const row: User = {
-    id: i,
+    id: i + 1,
     username:
-      ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
-        Math.floor(Math.random() * 5)
-      ] || "admin",
+      ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][i + 1] ||
+      "admin",
     fullName: "Name_" + i,
     email: "use***" + "@**t.com",
     status:
       ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        Math.floor(Math.random() * 5)
+        randomInt(5)
       ] || "unknown",
     enabled: i % 2 > 0
   };
@@ -24,29 +23,11 @@ for (let i = 1; i < 5; i++) {
 }
 
 export const usersHandlers = [
-  http.get(`/api${SERVER_URL.USERINFO}`, () => {
-    return HttpResponse.json({
-      sub: "username"
-    });
-  }),
-  http.get(`/api${SERVER_URL.USER}/me`, () => {
-    return HttpResponse.json({
-      id: 1,
-      enabled: true,
-      lastModifiedDate: null,
-      username: "admin",
-      fullname: "勒布朗 詹姆斯 雷蒙",
-      avatar: "/svg/logo.svg",
-      email: "test@test.com",
-      accountExpiresAt: null,
-      accountNonLocked: true,
-      credentialsExpiresAt: null
-    });
-  }),
   http.get(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json(datas.find(item => item.id === Number(id)));
+      const filtered = datas.find(item => item.id === Number(id));
+      return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json();
     }
@@ -58,6 +39,7 @@ export const usersHandlers = [
 
     const filtersStr = url.searchParams.get("filters");
     const filtered = applyFilters(datas, filtersStr);
+
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
@@ -110,10 +92,26 @@ export const usersHandlers = [
       return HttpResponse.error();
     }
   }),
-  http.patch(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.USER}/:id/enable`, ({ params }) => {
     const { id } = params;
     if (id) {
-      return HttpResponse.json();
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.USER}/:id/disable`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.USER}/:id/unlock`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
     } else {
       return HttpResponse.error();
     }
@@ -159,6 +157,6 @@ export const usersHandlers = [
     datas.pop();
 
     // Respond with a "200 OK" response and the deleted Row.
-    return HttpResponse.json(deletedData);
+    return HttpResponse.json();
   })
 ];
