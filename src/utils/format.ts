@@ -23,9 +23,9 @@ export const formatDuration = (ms: number): string => {
   if (s >= 1) {
     let secStr: string;
     if (s >= 10) {
-      secStr = s.toFixed(1).replace(/\.0$/, "");
+      secStr = Number(s.toFixed(1)).toString();
     } else {
-      secStr = s.toFixed(2).replace(/\.?0+$/, "");
+      secStr = Number(s.toFixed(2)).toString();
     }
     parts.push(`${secStr}s`);
   }

@@ -5,8 +5,8 @@
  */
 function base64UrlEncode(array: Uint8Array) {
   return btoa(String.fromCodePoint(...array))
-    .replaceAll(/\+/g, "-")
-    .replaceAll(/\//g, "_")
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
     .replace(/=+$/, "");
 }
 
