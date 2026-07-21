@@ -110,10 +110,12 @@
           debounce="300"
           filled
           v-model="filter.name!.value"
+          clearable
+          style="max-width: 200px"
           placeholder="Search"
         >
           <template v-slot:prepend>
-            <q-icon name="sym_r_search" />
+            <q-icon :name="actionIcon('search')" />
           </template>
         </q-input>
         <q-btn
@@ -124,7 +126,7 @@
           color="primary"
           class="q-ml-sm"
           :disable="loading"
-          icon="sym_r_refresh"
+          :icon="actionIcon('refresh')"
           @click="refresh"
         />
       </template>
@@ -137,7 +139,7 @@
           color="primary"
           class="q-mx-sm"
           :disable="loading"
-          icon="sym_r_database_upload"
+          :icon="actionIcon('import')"
           @click="importRow"
         />
         <q-btn
@@ -146,7 +148,7 @@
           padding="xs"
           flat
           color="primary"
-          icon="sym_r_file_export"
+          :icon="actionIcon('export')"
           @click="exportTable(columns, rows)"
         />
       </template>
@@ -185,7 +187,7 @@
                 flat
                 round
                 color="primary"
-                icon="sym_r_edit"
+                :icon="actionIcon('modify')"
                 @click="saveRow(col.value)"
               />
             </div>
@@ -267,7 +269,7 @@
         <q-card-section class="flex items-center q-pb-none">
           <div class="text-h6">{{ $t("action.import") }}</div>
           <q-space />
-          <q-btn icon="sym_r_close" flat round dense v-close-popup />
+          <q-btn :icon="actionIcon('cancel')" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
@@ -302,7 +304,7 @@ import {
 import { actionTypes, pageIcons } from "@/constants";
 import { useUserStore } from "@/stores/user";
 import type { Dictionary, Filter, Pagination, Privilege } from "@/types";
-import { exportTable, visibleArray } from "@/utils";
+import { exportTable, visibleArray, actionIcon } from "@/utils";
 import type { QTable, QTableColumn, QTableProps } from "quasar";
 import { Notify } from "quasar";
 import { onMounted, reactive, ref } from "vue";

@@ -1,5 +1,11 @@
 <template>
-  <q-btn title="translate" icon="sym_r_translate" round flat dense>
+  <q-btn
+    title="translate"
+    :icon="loadIcon(globalIcons['translate'])"
+    round
+    flat
+    dense
+  >
     <q-menu :offset="[0, 10]">
       <q-list dense separator>
         <q-item
@@ -22,6 +28,8 @@ import type { QuasarLanguage } from "quasar";
 import { useQuasar } from "quasar";
 import { useAppStore } from "@/stores/app";
 import languages from "quasar/lang/index.json";
+import { loadIcon } from "@/utils";
+import { globalIcons } from "@/constants";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 

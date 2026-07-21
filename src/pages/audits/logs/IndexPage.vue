@@ -5,7 +5,7 @@
         <q-card-section class="flex items-center q-pb-none">
           <div class="text-h6">{{ $t("page.auditLogs") }}</div>
           <q-space />
-          <q-btn icon="sym_r_close" flat round dense v-close-popup />
+          <q-btn :icon="actionIcon('cancel')" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
@@ -76,10 +76,12 @@
           debounce="300"
           filled
           v-model="filter.module!.value"
+          clearable
+          style="max-width: 200px"
           placeholder="Search"
         >
           <template v-slot:prepend>
-            <q-icon name="sym_r_search" />
+            <q-icon :name="actionIcon('search')" />
           </template>
         </q-input>
         <q-btn
@@ -90,39 +92,18 @@
           color="primary"
           class="q-ml-sm"
           :disable="loading"
-          icon="sym_r_refresh"
+          :icon="actionIcon('refresh')"
           @click="refresh"
         />
       </template>
       <template v-slot:top-right>
-        <q-input
-          dense
-          debounce="300"
-          v-model="filter.module!.value"
-          placeholder="Search"
-        >
-          <template v-slot:append>
-            <q-icon name="sym_r_search" />
-          </template>
-        </q-input>
-        <q-btn
-          title="refresh"
-          round
-          padding="xs"
-          flat
-          color="primary"
-          class="q-mx-sm"
-          :disable="loading"
-          icon="sym_r_refresh"
-          @click="refresh"
-        />
         <q-btn
           title="export"
           round
           padding="xs"
           flat
           color="primary"
-          icon="sym_r_file_export"
+          :icon="actionIcon('export')"
           @click="exportTable(columns, rows)"
         />
       </template>
@@ -185,7 +166,7 @@
             flat
             round
             color="negative"
-            icon="sym_r_delete"
+            :icon="actionIcon('remove')"
             @click="removeRow(props.row.id)"
           />
         </q-td>
@@ -201,10 +182,10 @@ import {
   retrieveAuditLogs
 } from "@/api/logs/audit-logs";
 import type { AuditLog, Filter, Pagination } from "@/types";
-import { exportTable, formatDuration } from "@/utils";
+import { actionIcon, exportTable, formatDuration, loadIcon } from "@/utils";
 import type { QTable, QTableColumn, QTableProps } from "quasar";
 import { Notify } from "quasar";
-import { actionTypes } from "@/constants";
+import { actionTypes, globalIcons } from "@/constants";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -224,8 +205,7 @@ const initialValues: AuditLog = {
   action: "",
   targetId: null,
   module: "",
-  ip: "",
-  duration: null
+  ip: ""
 };
 const row = ref<AuditLog>({ ...initialValues });
 

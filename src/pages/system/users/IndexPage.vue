@@ -89,10 +89,12 @@
           debounce="300"
           filled
           v-model="filter.username!.value"
+          clearable
+          style="max-width: 200px"
           placeholder="Search"
         >
           <template v-slot:prepend>
-            <q-icon name="sym_r_search" />
+            <q-icon :name="actionIcon('search')" />
           </template>
         </q-input>
         <q-btn
@@ -103,7 +105,7 @@
           color="primary"
           class="q-ml-sm"
           :disable="loading"
-          icon="sym_r_refresh"
+          :icon="actionIcon('refresh')"
           @click="refresh"
         />
       </template>
@@ -115,7 +117,7 @@
           color="primary"
           class="q-ml-sm"
           :disable="loading"
-          icon="sym_r_add"
+          :icon="actionIcon('create')"
           @click="saveRow()"
         />
         <q-btn
@@ -126,7 +128,7 @@
           color="primary"
           class="q-mx-sm"
           :disable="loading"
-          icon="sym_r_database_upload"
+          :icon="actionIcon('import')"
           @click="importRow"
         />
         <q-btn
@@ -135,7 +137,7 @@
           padding="xs"
           flat
           color="primary"
-          icon="sym_r_file_export"
+          :icon="actionIcon('export')"
           @click="exportTable(columns, rows)"
         />
       </template>
@@ -197,7 +199,7 @@
             flat
             round
             color="positive"
-            icon="sym_r_lock_open"
+            :icon="actionIcon('unlock')"
             @click="unlockRow(props.row.id)"
           />
           <q-btn
@@ -206,7 +208,7 @@
             flat
             round
             color="primary"
-            icon="sym_r_edit"
+            :icon="actionIcon('modify')"
             @click="saveRow(props.row.id)"
             class="q-mx-sm"
           />
@@ -216,7 +218,7 @@
             flat
             round
             color="negative"
-            icon="sym_r_delete"
+            :icon="actionIcon('remove')"
             @click="removeRow(props.row.id)"
           />
         </q-td>
@@ -229,7 +231,7 @@
         <q-card-section class="flex items-center q-pb-none">
           <div class="text-h6">{{ $t("action.import") }}</div>
           <q-space />
-          <q-btn icon="sym_r_close" flat round dense v-close-popup />
+          <q-btn :icon="actionIcon('cancel')" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
@@ -265,7 +267,7 @@ import {
 import { userStatus } from "@/constants";
 import { useUserStore } from "@/stores/user";
 import type { Filter, Pagination, User } from "@/types";
-import { exportTable } from "@/utils";
+import { exportTable, actionIcon } from "@/utils";
 import type { QTable, QTableColumn, QTableProps } from "quasar";
 import { Notify } from "quasar";
 import { onMounted, reactive, ref } from "vue";

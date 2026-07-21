@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar>
         <q-img alt="logo" src="/logo.svg" width="2em" height="2em" />
-        <q-toolbar-title :shrink="true"> Project Management </q-toolbar-title>
+        <q-toolbar-title :shrink="true">{{ appTitle }}</q-toolbar-title>
         <q-toolbar-title>
           <q-btn
             title="drawer"
@@ -12,14 +12,13 @@
             flat
             round
             icon="sym_r_menu"
-            @click="leftDrawerOpen = !leftDrawerOpen"
+            @click="miniState = !miniState"
             class="cursor-pointer"
           />
         </q-toolbar-title>
         <div class="q-mx-md">
           <ThemeToogle />
           <LanguageSelector class="q-mx-sm" />
-          <q-btn flat round dense title="faq" icon="sym_r_help" to="/faq" />
         </div>
         <div class="cursor-pointer">
           <div flat rounded>
@@ -35,9 +34,15 @@
             <q-list separator>
               <q-item to="/profile">
                 <q-item-section side>
-                  <q-icon name="sym_r_manage_accounts" />
+                  <q-icon :name="loadIcon(globalIcons['profile'])" />
                 </q-item-section>
                 <q-item-section>{{ $t("page.profile") }}</q-item-section>
+              </q-item>
+              <q-item to="/faq">
+                <q-item-section side>
+                  <q-icon :name="loadIcon(globalIcons['help'])" />
+                </q-item-section>
+                <q-item-section>{{ $t("page.faq") }}</q-item-section>
               </q-item>
               <q-item
                 clickable
@@ -45,7 +50,7 @@
                 @click="signOut(userStore.idToken)"
               >
                 <q-item-section side>
-                  <q-icon name="sym_r_logout" />
+                  <q-icon :name="loadIcon(globalIcons['logout'])" />
                 </q-item-section>
                 <q-item-section>{{ $t("action.signout") }}</q-item-section>
               </q-item>
@@ -55,11 +60,11 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" :width="240">
+    <q-drawer show-if-above :mini="miniState" side="left" :width="240">
       <q-list>
         <q-item exact to="/">
           <q-item-section side>
-            <q-icon :name="`sym_r_${pageIcons.home}`" />
+            <q-icon :name="pageIcon('home')" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t("page.home") }}</q-item-label>
@@ -73,9 +78,9 @@
             :parent-path="`/${link.meta.path}`"
           />
 
-          <q-item v-else :to="`/${link.meta.path}`">
+          <q-item exact v-else :to="`/${link.meta.path}`">
             <q-item-section side>
-              <q-icon :name="`sym_r_${pageIcons[link.name]}`" />
+              <q-icon :name="pageIcon(link.name)" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t(`page.${link.name}`) }}</q-item-label>
@@ -103,17 +108,21 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from "quasar";
 import { useUserStore } from "@/stores/user";
-import { pageIcons } from "@/constants";
+import { globalIcons } from "@/constants";
 import { ref } from "vue";
+import { loadIcon, pageIcon } from "@/utils";
 import { signOut } from "@/api/authentication";
 import EssentialList from "@/components/EssentialList.vue";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import ThemeToogle from "@/components/ThemeToogle.vue";
 
-const $q = useQuasar();
 const userStore = useUserStore();
 
-const leftDrawerOpen = ref<boolean>(false);
+const appTitle = import.meta.env.APP_TITLE;
+const miniState = ref<boolean>(false);
+
+function onDrawerClick() {
+  miniState.value = !miniState.value;
+}
 </script>

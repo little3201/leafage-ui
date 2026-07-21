@@ -5,7 +5,7 @@
         <q-card-section class="flex items-center q-pb-none">
           <div class="text-h6">{{ $t("page.schedulerLogs") }}</div>
           <q-space />
-          <q-btn icon="sym_r_close" flat round dense v-close-popup />
+          <q-btn :icon="actionIcon('cancel')" flat round dense v-close-popup />
         </q-card-section>
 
         <q-card-section>
@@ -81,10 +81,12 @@
           debounce="300"
           filled
           v-model="filter.name!.value"
+          clearable
+          style="max-width: 200px"
           placeholder="Search"
         >
           <template v-slot:prepend>
-            <q-icon name="sym_r_search" />
+            <q-icon :name="actionIcon('search')" />
           </template>
         </q-input>
         <q-btn
@@ -95,7 +97,7 @@
           color="primary"
           class="q-ml-sm"
           :disable="loading"
-          icon="sym_r_refresh"
+          :icon="actionIcon('refresh')"
           @click="refresh"
         />
       </template>
@@ -107,7 +109,7 @@
           flat
           color="negative"
           class="q-mx-sm"
-          icon="sym_r_clear_all"
+          :icon="actionIcon('clear')"
         />
         <q-btn
           title="export"
@@ -115,7 +117,7 @@
           padding="xs"
           flat
           color="primary"
-          icon="sym_r_file_export"
+          :icon="actionIcon('export')"
           @click="exportTable(columns, rows)"
         />
       </template>
@@ -186,7 +188,7 @@
             flat
             round
             color="negative"
-            icon="sym_r_delete"
+            :icon="actionIcon('remove')"
             @click="removeRow(props.row.id)"
           />
         </q-td>
@@ -203,7 +205,7 @@ import {
 } from "@/api/logs/scheduler-logs";
 import { shceduleStatus, shceduleStatusIcon } from "@/constants";
 import type { Filter, Pagination, SchedulerLog } from "@/types";
-import { exportTable, formatDuration } from "@/utils";
+import { exportTable, formatDuration, actionIcon } from "@/utils";
 import type { QTable, QTableColumn, QTableProps } from "quasar";
 import { date, Notify } from "quasar";
 import { onMounted, reactive, ref } from "vue";
@@ -222,8 +224,7 @@ const loading = ref<boolean>(false);
 
 const initialValues: SchedulerLog = {
   id: null,
-  name: "",
-  duration: null
+  name: ""
 };
 const row = ref<SchedulerLog>({ ...initialValues });
 

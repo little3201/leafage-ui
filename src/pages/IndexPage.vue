@@ -14,8 +14,5 @@ import { lineOptions } from "@/mocks/charts-data";
 import type { ApexOptions } from "apexcharts";
 import { reactive } from "vue";
 
-// 获取指数
-const lineOptionsData = reactive<ApexOptions | object>(
-  lineOptions
-) as ApexOptions;
+const lineOptionsData = reactive<ApexOptions | object>(lineOptions);
 </script>
