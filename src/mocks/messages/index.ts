@@ -91,6 +91,22 @@ export const messagesHandlers = [
       return HttpResponse.error();
     }
   }),
+  http.patch(`/api${SERVER_URL.MESSAGE}/:id/publish`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.MESSAGE}/:id/revoke`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
   http.patch(`/api${SERVER_URL.MESSAGE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {

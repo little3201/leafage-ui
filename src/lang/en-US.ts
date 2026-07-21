@@ -158,6 +158,7 @@ export default {
     section: "Section",
     member: "Member",
     publish: "Publish",
+    revoke: "Revoke",
     readAll: "Read All"
   },
 
@@ -239,6 +240,11 @@ export default {
     publishWarning:
       "After clicking OK, the current message <strong>{data}</strong> will be immediately sent to the recipient.",
     publishButtonText: "I'm sure, release immediately.",
+    revokeWarning:
+      "After clicking OK, the current message <strong>{data}</strong> will be revoked immediately, read message cannot be revoked.",
+    revokeButtonText: "I'm sure, revoke immediately.",
+    revokeTimeoutText:
+      "The message was sent over 30 minutes ago, so it can't be undone.",
     welcome: "Hi! Welcome Back.",
     subtitle: "Please sign in to continue exploring.",
     forgotPassword: "Forgot The Password ?"

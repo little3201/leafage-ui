@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 import logo from "@/assets/logo.svg";
 import EssentialList from "@/components/EssentialList.vue";
@@ -9,7 +10,7 @@ import { globalIcons } from "@/constants";
 import { loadIcon, pageIcon } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
-import MessageMini from "@/components/MessageMini.vue";
+import MessagePanel from "@/components/MessagePanel.vue";
 
 const { currentRoute } = useRouter();
 const userStore = useUserStore();
@@ -34,7 +35,7 @@ function logout() {
       <div class="inline-flex justify-end items-center space-x-4">
         <ThemeToogle />
         <LanguageSelector />
-        <MessageMini :messages="[]" />
+        <MessagePanel />
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
             <ElAvatar
@@ -96,34 +97,32 @@ function logout() {
   </ElHeader>
 
   <ElAside class="fixed top-15 h-screen bg-(--el-bg-color)">
-    <ElScrollbar>
-      <ElMenu router unique-opened :default-active="currentRoute.fullPath">
-        <ElMenuItem :index="'/'">
+    <ElMenu router unique-opened :default-active="currentRoute.fullPath">
+      <ElMenuItem :index="'/'">
+        <Icon
+          :icon="pageIcon('home')"
+          width="1.25em"
+          height="1.25em"
+          class="mr-2"
+        />{{ $t("page.home") }}
+      </ElMenuItem>
+      <template v-for="link in userStore.privileges" :key="link.id">
+        <EssentialList
+          v-if="link.children && link.children.length > 0"
+          :essentialLink="link"
+          :parent-path="`/${link.meta.path}`"
+        />
+        <ElMenuItem v-else :index="`/${link.meta.path}`">
           <Icon
-            :icon="pageIcon('home')"
+            :icon="pageIcon(link.name)"
             width="1.25em"
             height="1.25em"
             class="mr-2"
-          />{{ $t("page.home") }}
-        </ElMenuItem>
-        <template v-for="link in userStore.privileges" :key="link.id">
-          <EssentialList
-            v-if="link.children && link.children.length > 0"
-            :essentialLink="link"
-            :parent-path="`/${link.meta.path}`"
           />
-          <ElMenuItem v-else :index="`/${link.meta.path}`">
-            <Icon
-              :icon="pageIcon(link.name)"
-              width="1.25em"
-              height="1.25em"
-              class="mr-2"
-            />
-            {{ $t(`page.${link.name}`) }}
-          </ElMenuItem>
-        </template>
-      </ElMenu>
-    </ElScrollbar>
+          {{ $t(`page.${link.name}`) }}
+        </ElMenuItem>
+      </template>
+    </ElMenu>
   </ElAside>
 
   <ElMain class="min-h-[calc(100vh-120px)] ml-(--el-aside-width) mt-15">

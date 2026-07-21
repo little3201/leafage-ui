@@ -55,12 +55,14 @@ async function readRows() {
   <ElPopover placement="bottom" :width="350" trigger="click">
     <template #reference>
       <ElButton title="messages" link>
-        <Icon
-          :icon="loadIcon(globalIcons['ring'])"
-          class="text-white"
-          width="1.5em"
-          height="1.5em"
-        />
+        <ElBadge is-dot :hidden="messages.length === 0">
+          <Icon
+            :icon="loadIcon(globalIcons['ring'])"
+            class="text-white"
+            width="1.5em"
+            height="1.5em"
+          />
+        </ElBadge>
       </ElButton>
     </template>
     <div>

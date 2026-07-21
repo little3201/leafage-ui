@@ -6,6 +6,8 @@ import {
   createMessage,
   modifyMessage,
   removeMessage,
+  publishMessage,
+  revokeMessage,
   retrieveMessages
 } from "@/api/messages";
 import { retrieveDictionarySubset } from "@/api/system/dictionaries";
@@ -114,10 +116,12 @@ function saveRow(row?: Message) {
  * 发布
  * @param row 数据
  */
-async function publishRow(row: Message) {
+async function publishRow(id: number, title: string) {
+  if (!id) return;
+
   await ElMessageBox.confirm(
     t("tips.publishWarning", {
-      data: row.title
+      data: title
     }),
     t("tips.confirm"),
     {
@@ -130,23 +134,49 @@ async function publishRow(row: Message) {
     }
   ).then(async () => {
     try {
+      await publishMessage(id);
       await load();
-      ElMessage.success(t("message.success", { action: t("action.remove") }));
+      ElMessage.success(t("message.success", { action: t("action.publish") }));
     } catch (error) {
-      ElMessage.error(t("message.error", { action: t("action.remove") }));
+      ElMessage.error(t("message.error", { action: t("action.publish") }));
       throw error;
     }
   });
 }
 
 /**
- * 详情
- * @param row 数据
+ * 撤销
+ * @param id 主键
  */
-function showRow(row: Message) {
-  form.value = row ? { ...row } : { ...initialValues };
+async function revokeRow(id: number, title: string, publishedAt: Date) {
+  if (!id) return;
+  if (dayjs(new Date()).diff(publishedAt, "minute") > 30) {
+    ElMessage.warning(t("tips.revokeTimeoutText"));
+  }
 
-  visible.value = true;
+  await ElMessageBox.confirm(
+    t("tips.revokeWarning", {
+      data: title
+    }),
+    t("tips.confirm"),
+    {
+      dangerouslyUseHTMLString: true,
+      showCancelButton: false,
+      confirmButtonType: "warning",
+      confirmButtonClass: "w-full",
+      confirmButtonText: t("tips.revokeButtonText"),
+      type: "warning"
+    }
+  ).then(async () => {
+    try {
+      await revokeMessage(id);
+      await load();
+      ElMessage.success(t("message.success", { action: t("action.revoke") }));
+    } catch (error) {
+      ElMessage.error(t("message.error", { action: t("action.revoke") }));
+      throw error;
+    }
+  });
 }
 
 /**
@@ -278,18 +308,7 @@ function handleChange(value: string) {
     >
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
-      <ElTableColumn prop="title" :label="$t('label.title')">
-        <template #default="scope">
-          <ElButton
-            title="title"
-            type="primary"
-            link
-            @click="showRow(scope.row)"
-          >
-            {{ scope.row.title }}
-          </ElButton>
-        </template>
-      </ElTableColumn>
+      <ElTableColumn prop="title" :label="$t('label.title')" />
       <ElTableColumn prop="type" :label="$t('label.type')">
         <template #default="scope">
           <ElTag>{{ scope.row.type }}</ElTag>
@@ -316,7 +335,11 @@ function handleChange(value: string) {
           <span v-else>所有人</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="body" :label="$t('label.body')" />
+      <ElTableColumn
+        show-overflow-tooltip
+        prop="body"
+        :label="$t('label.body')"
+      />
       <ElTableColumn
         prop="status"
         :label="$t('label.status')"
@@ -345,49 +368,71 @@ function handleChange(value: string) {
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
-          <ElButton
-            v-if="hasAction($route.name, 'modify')"
-            title="modify"
-            :type="actionTypes['modify']"
-            link
-            @click="saveRow(scope.row)"
-          >
-            <Icon
-              :icon="actionIcon('modify')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.modify") }}
-          </ElButton>
-          <ElButton
+          <template v-if="scope.row.status === 'DRAFT'">
+            <ElButton
+              v-if="hasAction($route.name, 'modify')"
+              title="modify"
+              :type="actionTypes['modify']"
+              link
+              @click="saveRow(scope.row)"
+            >
+              <Icon
+                :icon="actionIcon('modify')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.modify") }}
+            </ElButton>
+            <ElButton
+              v-if="hasAction($route.name, 'publish')"
+              title="modify"
+              :type="actionTypes['publish']"
+              link
+              @click="publishRow(scope.row.id, scope.row.title)"
+            >
+              <Icon
+                :icon="actionIcon('publish')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.publish") }}
+            </ElButton>
+            <ElButton
+              v-if="hasAction($route.name, 'remove')"
+              title="remove"
+              :type="actionTypes['remove']"
+              link
+              @click="
+                removeRow(scope.row.id, scope.row.name, scope.row.startTime)
+              "
+            >
+              <Icon
+                :icon="actionIcon('remove')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.remove") }}
+            </ElButton>
+          </template>
+          <template
             v-if="
-              scope.row.status === 'DRAFT' && hasAction($route.name, 'publish')
-            "
-            title="modify"
-            :type="actionTypes['publish']"
-            link
-            @click="publishRow(scope.row)"
-          >
-            <Icon
-              :icon="actionIcon('publish')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.publish") }}
-          </ElButton>
-          <ElButton
-            v-if="hasAction($route.name, 'remove')"
-            title="remove"
-            :type="actionTypes['remove']"
-            link
-            @click="
-              removeRow(scope.row.id, scope.row.name, scope.row.startTime)
+              scope.row.status === 'PUBLISHED' &&
+              dayjs(new Date()).diff(scope.row.publishedAt, 'minute') <= 30
             "
           >
-            <Icon
-              :icon="actionIcon('remove')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.remove") }}
-          </ElButton>
+            <ElButton
+              v-if="hasAction($route.name, 'revoke')"
+              title="revoke"
+              :type="actionTypes['revoke']"
+              link
+              @click="
+                revokeRow(scope.row.id, scope.row.title, scope.row.publishedAt)
+              "
+            >
+              <Icon
+                :icon="actionIcon('revoke')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.revoke") }}
+            </ElButton>
+          </template>
         </template>
       </ElTableColumn>
     </ElTable>

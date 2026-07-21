@@ -96,9 +96,12 @@ export function applyFilters<T>(datas: T[], filtersDsl?: string | null): T[] {
 }
 
 export function randomInt(max: number): number {
-  const array = new Uint32Array(1);
+  if (max <= 0) {
+    throw new Error("max must be greater than 0");
+  }
 
+  const array = new Uint32Array(1);
   crypto.getRandomValues(array);
 
-  return array[0] % max;
+  return (array[0] ?? 0) % max;
 }

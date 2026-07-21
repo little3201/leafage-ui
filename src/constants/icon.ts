@@ -27,7 +27,8 @@ export const actionIcons: Record<string, string> = {
   sync: "sync-rounded",
   add: "add-rounded",
   more: "more-horiz",
-  publish: "send-outline-rounded"
+  publish: "send-outline-rounded",
+  revoke: "settings-backup-restore-rounded"
 };
 
 export const pageIcons: Record<string, string> = {

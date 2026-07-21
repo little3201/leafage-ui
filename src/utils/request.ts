@@ -11,7 +11,7 @@ export function pathResolve(parentPath: string, path: string): string {
   if (!path) return parentPath.replace(/\/+$/, "");
   const childPath = path.startsWith("/") ? path : `/${path}`;
   const fullPath = parentPath + childPath;
-  return fullPath.replace(/\/\//g, "/").trim();
+  return fullPath.replace("//", "/").trim();
 }
 
 export function dealFilters<T>(

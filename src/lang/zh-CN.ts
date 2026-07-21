@@ -158,6 +158,7 @@ export default {
     section: "章节",
     member: "成员",
     publish: "发布",
+    revoke: "撤销",
     readAll: "全部已读"
   },
 
@@ -237,6 +238,10 @@ export default {
     publishWarning:
       "点击确定后，当前 <strong>{data}</strong> 消息将立即发布给接收人。",
     publishButtonText: "我确定，立即发布",
+    revokeWarning:
+      "点击确定后，当前 <strong>{data}</strong> 消息将立即撤销，已读消息无法撤销。",
+    revokeButtonText: "我确定，立即撤销",
+    revokeTimeoutText: "消息发布时间已超过30分钟，无法撤销。",
     welcome: "嗨！欢迎回来",
     subtitle: "请填写您的账号和密码，让我们继续探索",
     forgotPassword: "忘记密码 ？"

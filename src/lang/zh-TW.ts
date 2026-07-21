@@ -158,6 +158,7 @@ export default {
     section: "章節",
     member: "成員",
     publish: "發布",
+    revoke: "撤銷",
     readAll: "全部已读"
   },
 
@@ -237,6 +238,10 @@ export default {
     publishWarning:
       "點擊確定後，當前 <strong>{data}</strong> 訊息將立即發布給接收人。",
     publishButtonText: "我確定，立即發布",
+    revokeWarning:
+      "點擊確定後，當前 <strong>{data}</strong> 訊息將立即撤銷，已讀訊息無法撤銷。",
+    revokeButtonText: "我確定，立即撤銷",
+    revokeTimeoutText: "消息發佈時間已超過30分鐘，無法撤銷。",
     welcome: "嗨！歡迎回來",
     subtitle: "請填寫您的帳號和密碼，讓我們繼續探索",
     forgotPassword: "忘記密碼 ？"

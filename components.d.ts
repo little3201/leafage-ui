@@ -80,6 +80,7 @@ declare module 'vue' {
     EssentialList: typeof import('./src/components/EssentialList.vue')['default']
     LanguageSelector: typeof import('./src/components/LanguageSelector.vue')['default']
     MessageMini: typeof import('./src/components/MessageMini.vue')['default']
+    MessagePanel: typeof import('./src/components/MessagePanel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SheetRender: typeof import('./src/components/SheetRender.vue')['default']

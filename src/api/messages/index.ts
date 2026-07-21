@@ -48,17 +48,35 @@ export const modifyMessage = (id: number, row: Message) => {
 };
 
 /**
- * Modify an existing row
+ * Publish
  * @param id Row ID
- * @returns Modified row
+ * @returns Publish status
+ */
+export const publishMessage = (id: number) => {
+  return api.patch(`${SERVER_URL.MESSAGE}/${id}/publish`);
+};
+
+/**
+ * Revoke
+ * @param id Row ID
+ * @returns Revoke status
+ */
+export const revokeMessage = (id: number) => {
+  return api.patch(`${SERVER_URL.MESSAGE}/${id}/revoke`);
+};
+
+/**
+ * Read an existing row
+ * @param id Row ID
+ * @returns Read status
  */
 export const readMessage = (id: number) => {
   return api.patch(`${SERVER_URL.MESSAGE}/${id}`);
 };
 
 /**
- * Modify an existing row
- * @returns Modified row
+ * Read all
+ * @returns Read status
  */
 export const readMessages = () => {
   return api.patch(`${SERVER_URL.MESSAGE}/read`);

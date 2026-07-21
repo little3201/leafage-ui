@@ -18,7 +18,7 @@ export const nodes_messages: Privilege[] = [
     path: "sent",
     component: "messages",
     name: "sent",
-    actions: ["create", "modify", "remove", "publish"],
+    actions: ["create", "modify", "remove", "publish", "revoke"],
     count: 0,
     enabled: randomInt(2) > 0
   },
@@ -49,7 +49,7 @@ export const tree_messages: PrivilegeTreeNode[] = [
         meta: {
           path: "",
           component: "messages",
-          actions: ["create", "modify", "remove", "publish"]
+          actions: ["create", "modify", "remove", "publish", "revoke"]
         },
         children: []
       },

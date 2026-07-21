@@ -27,9 +27,9 @@ for (let i = 1; i < 18; i++) {
     title: "The message title_" + i,
     sender: "admin",
     scope: "ALL",
-    type: ["系统公告", "部门通知", "全员信", "通知"][randomInt(4)],
+    type: ["系统公告", "全员信", "部门通知"][random],
     receiver:
-      random / 2 > 0 ? null : users.filter((_, index) => index < randomInt(5)),
+      random < 2 ? null : users.filter((_, index) => index < randomInt(5)),
     status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
     body: "This is the message body, Do you know what append with the system, it'is very nice, do you like it?",
     publishedAt:
@@ -44,7 +44,7 @@ for (let i = 1; i < 18; i++) {
   const random = randomInt(2);
   const row: MessageInbox = {
     id: i,
-    message: messages[random],
+    message: messages[i],
     receiver: "admin",
     status: ["READ", "UNREAD"][random],
     readAt: random === 2 ? new Date() : undefined
