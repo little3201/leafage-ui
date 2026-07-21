@@ -5,6 +5,7 @@ import type { RouteRecordRaw } from "vue-router";
 import { signIn, getUserInfo } from "@/api/authentication";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "./routes";
+import Cookies from "js-cookie";
 
 // Lazy load layout
 const BlankLayout = () => import("@/layouts/BlankLayout.vue");
@@ -72,6 +73,22 @@ router.beforeEach(async (to, from) => {
     return { path: to.fullPath, replace: true, query: to.query, hash: to.hash };
   }
   return true;
+});
+
+router.afterEach(to => {
+  const pageInfo = {
+    path: to.path,
+    query: to.fullPath.includes("?")
+      ? to.fullPath.substring(to.fullPath.indexOf("?"))
+      : "",
+    name: to.name,
+    params: to.params,
+    meta: to.meta
+  };
+
+  Cookies.set("current_page", JSON.stringify(pageInfo), {
+    sameSite: "Lax"
+  });
 });
 
 /**

@@ -14,10 +14,14 @@ import {
   readMessageInbox,
   readAllMessageInbox
 } from "@/api/messages/inbox";
+import { fetchMessage } from "@/api/messages";
 import type { Filter, Pagination, Message, MessageInbox, User } from "@/types";
 import { actionIcon } from "@/utils";
 import { onMounted, reactive, ref, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
+const route = useRoute();
+const router = useRouter();
 const loading = ref<boolean>(false);
 const datas = ref<Array<MessageInbox>>([]);
 const total = ref<number>(0);
@@ -66,6 +70,16 @@ const receiverText = computed(() => {
     .join(", ");
 });
 
+watch(
+  () => route.query.messageId,
+  async newVal => {
+    if (newVal) {
+      const res = await fetchMessage(Number(newVal));
+      readRow(res.data, false);
+    }
+  }
+);
+
 onMounted(async () => {
   await load();
 });
@@ -80,10 +94,20 @@ async function load() {
   datas.value = res.data.content;
   total.value = res.data.page.totalElements;
 
-  // set first data
-  if (datas.value && datas.value.length > 0 && datas.value[0].message) {
+  const messageId = route.query.messageId;
+
+  if (messageId) {
+    const target = datas.value.find(
+      item => item.message.id === Number(messageId)
+    );
+
+    if (target) {
+      await readRow(target.message, false);
+    }
+  } else if (datas.value.length > 0 && datas.value[0].message) {
     data.value = datas.value[0].message;
   }
+
   loading.value = false;
 }
 
@@ -91,10 +115,15 @@ async function load() {
  * read
  * @param row 数据
  */
-async function readRow(row: Message) {
+async function readRow(row: Message, clearQuery = true) {
   data.value = { ...row };
   if (row.id) {
     await readMessageInbox(row.id);
+  }
+  if (clearQuery && route.query.messageId) {
+    router.replace({
+      query: {}
+    });
   }
 }
 

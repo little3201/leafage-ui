@@ -33,16 +33,6 @@ async function load() {
 }
 
 /**
- * read
- * @param row 数据
- */
-async function readRow(row: Message) {
-  if (row.id) {
-    await readMessageInbox(row.id);
-  }
-}
-
-/**
  * read all
  */
 async function readRows() {
@@ -81,7 +71,14 @@ async function readRows() {
         >
           <li
             v-for="message in messages"
-            @click="readRow(message)"
+            @click="
+              () => {
+                $router.push({
+                  path: '/messages/inbox',
+                  query: { messageId: message.id }
+                });
+              }
+            "
             class="border border-(--el-border-color) rounded-(--el-border-radius-base) px-4 hover:bg-(--el-fill-color) cursor-pointer"
           >
             <h4
