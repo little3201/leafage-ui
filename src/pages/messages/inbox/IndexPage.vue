@@ -42,31 +42,25 @@ const initialValues: Message = {
   title: "",
   scope: "ALL",
   type: null,
-  receiver: null
+  receivers: []
 };
 const data = ref<Message>({ ...initialValues });
 
-const messages = computed<Array<Message>>(() => {
+const filteredDatas = computed<Array<MessageInbox>>(() => {
   const keyword = search.value.trim();
 
-  const filtered = keyword
+  return keyword
     ? datas.value.filter(item => item.message.title.includes(keyword))
     : datas.value;
-
-  return filtered
-    .sort((a, b) =>
-      dayjs(b.message.publishedAt).diff(dayjs(a.message.publishedAt))
-    )
-    .map(item => item.message);
 });
 
 const receiverText = computed(() => {
-  if (!data.value.receiver) {
+  if (!data.value.receivers?.length) {
     return "所有人";
   }
 
-  return data.value.receiver
-    .map((user: User) => `${user.fullName} (${user.email})`)
+  return data.value.receivers
+    .map((receiver: string) => `${receiver}`)
     .join(", ");
 });
 
@@ -91,7 +85,9 @@ async function load() {
   loading.value = true;
 
   const res = await retrieveMessageInbox(pagination, filter);
-  datas.value = res.data.content;
+  datas.value = res.data.content.sort((a: MessageInbox, b: MessageInbox) =>
+    dayjs(b.message.publishedAt).diff(dayjs(a.message.publishedAt))
+  );
   total.value = res.data.page.totalElements;
 
   const messageId = route.query.messageId;
@@ -104,6 +100,8 @@ async function load() {
     if (target) {
       await readRow(target.message, false);
     }
+  } else if (data.value.id) {
+    data.value = { ...data.value };
   } else if (datas.value.length > 0 && datas.value[0].message) {
     data.value = datas.value[0].message;
   }
@@ -115,10 +113,11 @@ async function load() {
  * read
  * @param row 数据
  */
-async function readRow(row: Message, clearQuery = true) {
-  data.value = { ...row };
-  if (row.id) {
+async function readRow(row: MessageInbox, clearQuery = true) {
+  data.value = { ...row.message };
+  if (row.id && row.status === "UNREAD") {
     await readMessageInbox(row.id);
+    await load();
   }
   if (clearQuery && route.query.messageId) {
     router.replace({
@@ -132,6 +131,7 @@ async function readRow(row: Message, clearQuery = true) {
  */
 async function readRows() {
   await readAllMessageInbox();
+  await load();
 }
 
 async function onRadioChange(value: string) {
@@ -170,20 +170,20 @@ async function onRadioChange(value: string) {
 
         <ElScrollbar height="calc(100vh - 296px)">
           <ul
-            v-if="messages && messages.length > 0"
+            v-if="filteredDatas && filteredDatas.length > 0"
             class="list-none p-0 my-0! space-y-2"
           >
             <li
-              v-for="message in messages"
-              @click="readRow(message)"
+              v-for="data in filteredDatas"
+              @click="readRow(data)"
               class="border border-(--el-border-color) rounded-(--el-border-radius-base) px-4 hover:bg-(--el-fill-color) cursor-pointer"
             >
-              <h4>
-                {{ message?.title }} <ElTag>{{ message.type }}</ElTag>
+              <h4 :class="data.status === 'READ' ? 'font-normal' : ''">
+                {{ data.message?.title }} <ElTag>{{ data.message.type }}</ElTag>
               </h4>
-              <ElText line-clamp="2">{{ message?.body }}</ElText>
+              <ElText line-clamp="2">{{ data.message?.body }}</ElText>
               <p class="text-xs">{{
-                dayjs(message?.publishedAt).format("YYYY-MM-DD HH:mm:ss")
+                dayjs(data.message?.publishedAt).format("YYYY-MM-DD HH:mm:ss")
               }}</p>
             </li>
           </ul>
@@ -194,22 +194,28 @@ async function onRadioChange(value: string) {
 
     <ElCol :span="18" :xl="20">
       <ElCard style="height: stretch">
-        <h2
-          >{{ data.title }} <ElTag>{{ data.type }}</ElTag></h2
-        >
-        <div class="space-x-4">
-          <ElTag>{{ $t("label.sender") }}：{{ data.sender }}</ElTag>
-          <ElTag>
-            {{ $t("label.publishedAt") }}：{{
-              dayjs(data.publishedAt).format("YYYY-MM-DD HH:mm:ss")
-            }}
-          </ElTag>
-          <ElTag>{{ $t("label.receiver") }}：{{ receiverText }} </ElTag>
+        <div v-if="Object.entries(data) && data.id">
+          <h2>
+            {{ data.title }} <ElTag>{{ data.type }}</ElTag>
+          </h2>
+          <div class="space-x-4">
+            <ElTag>{{ $t("label.sender") }}：{{ data.sender }}</ElTag>
+            <ElTag type="success">
+              {{ $t("label.publishedAt") }}：{{
+                data.publishedAt
+                  ? dayjs(data.publishedAt).format("YYYY-MM-DD HH:mm:ss")
+                  : ""
+              }}
+            </ElTag>
+            <ElTag>{{ $t("label.receiver") }}：{{ receiverText }} </ElTag>
+          </div>
+
+          <ElDivider />
+
+          <ElText size="large">{{ data.body }}</ElText>
         </div>
 
-        <ElDivider />
-
-        <ElText size="large">{{ data.body }}</ElText>
+        <ElEmpty v-else></ElEmpty>
       </ElCard>
     </ElCol>
   </ElRow>

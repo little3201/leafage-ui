@@ -38,6 +38,15 @@ export const statisticsFile = () => {
 };
 
 /**
+ * Create directory
+ * @param id Row ID
+ * @returns Enable result
+ */
+export const createDirectory = (superiorId: number | null, name: string) => {
+  return api.post(`${SERVER_URL.FILE}`, { superiorId, name });
+};
+
+/**
  * Enable an existing row
  * @param id Row ID
  * @returns Enable result

@@ -12,7 +12,12 @@ import {
 } from "@/api/messages";
 import { retrieveDictionarySubset } from "@/api/system/dictionaries";
 import { retrieveUsers } from "@/api/system/users";
-import { actionTypes, messageStatus, scopeTypes } from "@/constants";
+import {
+  actionTypes,
+  dictionaryKey,
+  messageStatus,
+  scopeTypes
+} from "@/constants";
 import type { Filter, Pagination, Message, Dictionary, User } from "@/types";
 import { actionIcon, hasAction } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
@@ -47,7 +52,7 @@ const initialValues: Message = {
   title: "",
   scope: "ALL",
   type: null,
-  receiver: null
+  receivers: []
 };
 const form = ref<Message>({ ...initialValues });
 
@@ -58,13 +63,34 @@ const rules = reactive<FormRules<typeof form>>({
       message: t("placeholder.inputText", { field: t("label.title") }),
       trigger: "blur"
     }
+  ],
+  type: [
+    {
+      required: true,
+      message: t("placeholder.selectText", { field: t("label.type") }),
+      trigger: "blur"
+    }
+  ],
+  scope: [
+    {
+      required: true,
+      message: t("placeholder.selectText", { field: t("label.scope") }),
+      trigger: "blur"
+    }
+  ],
+  body: [
+    {
+      required: true,
+      message: t("placeholder.inputText", { field: t("label.body") }),
+      trigger: "blur"
+    }
   ]
 });
 
 onMounted(async () => {
   await load();
 
-  const typeRes = await retrieveDictionarySubset(900);
+  const typeRes = await retrieveDictionarySubset(dictionaryKey.MESSAGE_TYPE);
   typeOptions.value = typeRes.data;
 });
 
@@ -107,7 +133,7 @@ async function loadUsers(query: string) {
  * @param row 数据
  */
 function saveRow(row?: Message) {
-  form.value = row ? { ...row } : { ...initialValues };
+  form.value = row ? { ...row, status: "DRAFT" } : { ...initialValues };
 
   visible.value = true;
 }
@@ -127,10 +153,10 @@ async function publishRow(id: number, title: string) {
     {
       dangerouslyUseHTMLString: true,
       showCancelButton: false,
-      confirmButtonType: "warning",
+      confirmButtonType: "success",
       confirmButtonClass: "w-full",
       confirmButtonText: t("tips.publishButtonText"),
-      type: "warning"
+      type: "success"
     }
   ).then(async () => {
     try {
@@ -252,7 +278,7 @@ async function onSubmit(formEl: FormInstance) {
  */
 function handleChange(value: string) {
   if (value === "ALL") {
-    form.value.receiver = null;
+    form.value.receivers = [];
   }
 }
 </script>
@@ -314,10 +340,10 @@ function handleChange(value: string) {
           <ElTag>{{ scope.row.type }}</ElTag>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="receiver" :label="$t('label.receiver')">
+      <ElTableColumn prop="receivers" :label="$t('label.receiver')">
         <template #default="scope">
           <div
-            v-if="scope.row.receiver && scope.row.receiver.length > 0"
+            v-if="scope.row.receivers && scope.row.receivers.length > 0"
             class="flex items-center"
           >
             <ElAvatarGroup
@@ -326,9 +352,9 @@ function handleChange(value: string) {
               collapse-avatars-tooltip
             >
               <ElAvatar
-                v-for="receiver in scope.row.receiver"
-                :key="receiver.id"
-                :src="`https://cdn.leafage.top/${receiver.username}`"
+                v-for="receiver in scope.row.receivers"
+                :key="receiver"
+                :src="`https://cdn.leafage.top/${receiver}`"
               />
             </ElAvatarGroup>
           </div>
@@ -368,7 +394,7 @@ function handleChange(value: string) {
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
         <template #default="scope">
-          <template v-if="scope.row.status === 'DRAFT'">
+          <template v-if="scope.row.status !== 'PUBLISHED'">
             <ElButton
               v-if="hasAction($route.name, 'modify')"
               title="modify"
@@ -383,7 +409,10 @@ function handleChange(value: string) {
               />{{ $t("action.modify") }}
             </ElButton>
             <ElButton
-              v-if="hasAction($route.name, 'publish')"
+              v-if="
+                scope.row.status === 'DRAFT' &&
+                hasAction($route.name, 'publish')
+              "
               title="modify"
               :type="actionTypes['publish']"
               link
@@ -505,7 +534,7 @@ function handleChange(value: string) {
         <ElCol>
           <ElFormItem :label="$t('label.receiver')" prop="receiver">
             <ElSelect
-              v-model="form.receiver"
+              v-model="form.receivers"
               clearable
               multiple
               filterable

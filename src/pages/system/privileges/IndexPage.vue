@@ -23,6 +23,7 @@ import {
   exportToCSV,
   hasAction,
   pageIcon,
+  pathResolve,
   visibleArray
 } from "@/utils";
 import { nextTick, onMounted, reactive, ref } from "vue";
@@ -63,8 +64,7 @@ const form = ref<Privilege>({ ...initialValues });
 const subset = ref<Array<Privilege>>();
 
 const rules = reactive<FormRules<typeof form>>({
-  name: [{ required: true, trigger: "blur" }],
-  path: [{ required: true, trigger: "blur" }]
+  name: [{ required: true, trigger: "blur" }]
 });
 const inputValue = ref<string>("");
 const inputVisible = ref<boolean>(false);
@@ -87,7 +87,7 @@ async function pageChange(currentPage: number, pageSize: number) {
 
 async function load(
   row?: Privilege,
-  treeNode?: unknown,
+  _treeNode?: unknown,
   resolve?: (date: Privilege[]) => void
 ) {
   loading.value = true;
@@ -214,8 +214,8 @@ async function onSubmit(formEl: FormInstance) {
           await refreshChildren(form.value.superiorId);
         }
       } catch (error) {
-        ElMessage.success(
-          t("message.success", {
+        ElMessage.error(
+          t("message.error", {
             action: form.value.id ? t("action.modify") : t("action.create")
           })
         );
@@ -367,6 +367,12 @@ function handleInputConfirm() {
             :type="actionTypes[item]"
             class="mr-2"
           >
+            <Icon
+              :icon="actionIcon(item)"
+              style="vertical-align: -3.5px"
+              width="1.25em"
+              height="1.25em"
+            />
             {{ $t(`action.${item}`) }}
           </ElTag>
           <ElPopover
@@ -385,6 +391,12 @@ function handleInputConfirm() {
               :type="actionTypes[item]"
               class="mb-2 mr-2"
             >
+              <Icon
+                :icon="actionIcon(item)"
+                style="vertical-align: -3.5px"
+                width="1.25em"
+                height="1.25em"
+              />
               {{ $t(`action.${item}`) }}
             </ElTag>
           </ElPopover>
@@ -530,7 +542,7 @@ function handleInputConfirm() {
                 v-for="item in subset"
                 :key="item.id!"
                 :label="$t(`page.${item.name}`)"
-                :value="item.path"
+                :value="`/${pathResolve(form.path, item.path)}`"
               />
             </ElSelect>
           </ElFormItem>
@@ -548,7 +560,7 @@ function handleInputConfirm() {
                 @close="handleClose(item)"
               >
                 <Icon
-                  :icon="actionIcon(actionIcons[item])"
+                  :icon="actionIcon(item)"
                   style="vertical-align: -3.5px"
                   width="1.25em"
                   height="1.25em"

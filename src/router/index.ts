@@ -102,7 +102,7 @@ export const generateRoutes = (
   const res: RouteRecordRaw[] = [];
   for (const route of routes) {
     const item: RouteRecordRaw = {
-      path: route.meta.path,
+      path: route.meta.path ? route.meta.path : "",
       name: route.name,
       redirect: route.meta.redirect,
       component: null,

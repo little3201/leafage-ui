@@ -111,7 +111,9 @@ export default {
     yes: "是",
     no: "否",
     task: "任務",
-    corn: "Corn表達式"
+    corn: "Corn表達式",
+    directory: "資料夾",
+    message: "例外訊息"
   },
 
   action: {
@@ -159,7 +161,18 @@ export default {
     member: "成員",
     publish: "發布",
     revoke: "撤銷",
-    readAll: "全部已读"
+    read: "讀取",
+    readAll: "全部已读",
+    statistics: "統計",
+    privileges: "查詢權限",
+    addPrivilege: "授權",
+    removePrivilege: "移除授權",
+    members: "查詢成員",
+    addMembers: "新增成員",
+    removeMembers: "移出成員",
+    roles: "查詢角色",
+    addRoles: "新增角色",
+    removeRoles: "移除角色"
   },
 
   page: {

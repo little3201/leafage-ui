@@ -15,7 +15,7 @@ export const nodes_messages: Privilege[] = [
   {
     id: 27,
     superiorId: 26,
-    path: "sent",
+    path: "",
     component: "messages",
     name: "sent",
     actions: ["create", "modify", "remove", "publish", "revoke"],

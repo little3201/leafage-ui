@@ -1,0 +1,12 @@
+export const dictionaryKey: Record<string, number> = {
+  COLUMN_TYPE: 100,
+  FILED_TYPE: 200,
+  FORM_TYPE: 300,
+  TS_TYPE: 400,
+  FILE_TYPE: 500,
+  SCRIPT_TYPE: 600,
+  MESSAGE_TYPE: 700,
+  LINUX: 800,
+  WINDOWS: 900,
+  MACOS: 1000
+};

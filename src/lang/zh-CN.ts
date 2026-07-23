@@ -111,7 +111,9 @@ export default {
     yes: "是",
     no: "否",
     task: "任务",
-    corn: "Corn表达式"
+    corn: "Corn表达式",
+    directory: "文件夹",
+    message: "异常消息"
   },
 
   action: {
@@ -159,7 +161,18 @@ export default {
     member: "成员",
     publish: "发布",
     revoke: "撤销",
-    readAll: "全部已读"
+    read: "读取",
+    readAll: "全部已读",
+    statistics: "统计",
+    privileges: "查询权限",
+    addPrivilege: "添加授权",
+    removePrivilege: "移除授权",
+    members: "查询成员",
+    addMembers: "添加成员",
+    removeMembers: "移出成员",
+    roles: "查询角色",
+    addRoles: "添加角色",
+    removeRoles: "移除角色"
   },
 
   page: {

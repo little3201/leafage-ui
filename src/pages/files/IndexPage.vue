@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import type { UploadRequestOptions } from "element-plus";
+import type {
+  FormInstance,
+  UploadRequestOptions,
+  FormRules
+} from "element-plus";
 import { dayjs, ElMessage, ElMessageBox } from "element-plus";
 import {
   disableFile,
   downloadFile,
   enableFile,
+  createDirectory,
   removeFile,
   retrieveFiles,
   statisticsFile,
   uploadFile
 } from "@/api/file-records";
-import { actionTypes, globalIcons, fileStatisticsType } from "@/constants";
+import { actionTypes, globalIcons, fileTypes } from "@/constants";
 import type { FileRecord, Filter, Pagination, FileStatistics } from "@/types";
 import {
   actionIcon,
@@ -26,7 +31,9 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const visible = ref<boolean>(false);
+const detailsVisible = ref<boolean>(false);
 const loading = ref<boolean>(false);
+const saveLoading = ref<boolean>(false);
 const uploadLoading = ref<boolean>(false);
 const datas = ref<Array<FileRecord>>([]);
 const total = ref<number>(0);
@@ -43,6 +50,7 @@ const filter = reactive<Filter<FileRecord>>({
   name: { op: "like", value: undefined }
 });
 
+const formRef = ref<FormInstance>();
 const initialValues: FileRecord = {
   id: null,
   superiorId: null,
@@ -51,7 +59,17 @@ const initialValues: FileRecord = {
   path: "",
   directory: false
 };
-const data = ref<FileRecord>({ ...initialValues });
+const form = ref<FileRecord>({ ...initialValues });
+
+const rules = reactive<FormRules<typeof form>>({
+  name: [
+    {
+      required: true,
+      message: t("placeholder.inputText", { field: t("label.name") }),
+      trigger: "blur"
+    }
+  ]
+});
 
 const statistics = ref<Array<FileStatistics>>([]);
 // 总大小
@@ -97,13 +115,20 @@ async function load() {
 }
 
 /**
+ * 创建文件夹
+ */
+function saveDirectory() {
+  visible.value = true;
+}
+
+/**
  * 详情
  * @param id 主键
  */
 function showRow(row: FileRecord) {
-  data.value = row ? { ...row } : { ...initialValues };
+  form.value = row ? { ...row } : { ...initialValues };
 
-  visible.value = true;
+  detailsVisible.value = true;
 }
 
 /**
@@ -197,6 +222,38 @@ async function removeRow(id: number, name: string) {
   });
 }
 
+/**
+ * 表单提交
+ */
+async function onSubmit(formEl: FormInstance) {
+  if (!formEl) return;
+
+  const valid = await formEl.validate();
+  if (valid) {
+    saveLoading.value = true;
+    try {
+      await createDirectory(currentRowId.value, form.value.name);
+      visible.value = false;
+
+      ElMessage.success(
+        t("message.success", {
+          action: t("action.create")
+        })
+      );
+      await load();
+    } catch (error) {
+      ElMessage.error(
+        t("message.error", {
+          action: t("action.create")
+        })
+      );
+      throw error;
+    } finally {
+      saveLoading.value = false;
+    }
+  }
+}
+
 async function onRowClick(row: FileRecord) {
   if (!row.id) return;
 
@@ -244,15 +301,15 @@ function onUploadError() {
         <div class="text-center my-6">
           <ElProgress
             type="dashboard"
-            :percentage="46"
+            :percentage="(totalSize / 53687091200) * 100"
             :stroke-width="16"
             :width="220"
           >
             <template #default>
               <span class="block text-sm">Free Space</span>
-              <span class="block mt-2">{{
-                formatFileSize(50 * 1024 * 1024 * 1000 - totalSize)
-              }}</span>
+              <span class="block mt-2">
+                {{ formatFileSize(53687091200 - totalSize) }}
+              </span>
             </template>
           </ElProgress>
           <div>Total Space: 50G</div>
@@ -269,11 +326,11 @@ function onUploadError() {
             <ElButton
               title="images"
               circle
-              :type="fileStatisticsType[item.key]"
+              :type="fileTypes[item.key.toLowerCase()]"
               size="large"
             >
               <Icon
-                :icon="loadIcon(globalIcons[item.key])"
+                :icon="loadIcon(globalIcons[item.key.toLowerCase()])"
                 width="1.5em"
                 height="1.5em"
               />
@@ -288,54 +345,6 @@ function onUploadError() {
               formatFileSize(item.size)
             }}</span>
           </li>
-          <!-- <li index="media" class="flex items-center space-x-2 py-2">
-            <ElButton title="media" circle type="primary" size="large">
-              <Icon
-                :icon="loadIcon(globalIcons['video'])"
-                width="1.5em"
-                height="1.5em"
-              />
-            </ElButton>
-            <div class="inline-flex flex-1 flex-col">
-              <span>Media</span>
-              <span class="text-xs text-(--el-text-color-secondary)">
-                234 files
-              </span>
-            </div>
-            <span class="text-(--el-text-color-regular)">5GB</span>
-          </li>
-          <li index="documents" class="flex items-center space-x-2 py-2">
-            <ElButton title="documents" circle type="warning" size="large">
-              <Icon
-                :icon="loadIcon(globalIcons['doc'])"
-                width="1.5em"
-                height="1.5em"
-              />
-            </ElButton>
-            <div class="inline-flex flex-1 flex-col">
-              <span>Documents</span>
-              <span class="text-xs text-(--el-text-color-secondary)">
-                234 files
-              </span>
-            </div>
-            <span class="text-(--el-text-color-regular)">4GB</span>
-          </li>
-          <li index="other" class="inline-flex items-center space-x-2 py-2">
-            <ElButton title="folders" circle type="info" size="large">
-              <Icon
-                :icon="loadIcon(globalIcons['other'])"
-                width="1.5em"
-                height="1.5em"
-              />
-            </ElButton>
-            <div class="inline-flex flex-1 flex-col">
-              <span>Other</span>
-              <span class="text-xs text-(--el-text-color-secondary)">
-                234 files
-              </span>
-            </div>
-            <span class="text-(--el-text-color-regular)">14GB</span>
-          </li> -->
         </ul>
       </ElCard>
     </ElCol>
@@ -391,6 +400,18 @@ function onUploadError() {
           </ElCol>
 
           <ElCol :span="12" class="inline-flex! justify-end space-x-3">
+            <ElButton
+              title="create"
+              plain
+              :type="actionTypes['create']"
+              @click="saveDirectory()"
+            >
+              <Icon
+                :icon="actionIcon('create')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.create") }}{{ $t("label.directory") }}
+            </ElButton>
             <ElUpload
               multiple
               :auto-upload="false"
@@ -431,11 +452,13 @@ function onUploadError() {
             <template #default="scope">
               <ElButton
                 title="name"
-                type="primary"
+                :type="scope.row.directory ? 'default' : 'primary'"
                 link
                 @click="onRowClick(scope.row)"
               >
-                <span>{{ scope.row.name }}</span>
+                <span>
+                  {{ scope.row.name }}
+                </span>
               </ElButton>
             </template>
           </ElTableColumn>
@@ -546,35 +569,71 @@ function onUploadError() {
     </ElCol>
   </ElRow>
 
+  <!-- form -->
+  <ElDialog
+    v-model="visible"
+    :title="form.id ? $t('action.modify') : $t('action.create')"
+    :show-close="false"
+    width="400"
+  >
+    <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
+      <ElRow :gutter="20">
+        <ElCol>
+          <ElFormItem :label="$t('label.name')" prop="name">
+            <ElInput
+              v-model="form.name"
+              :placeholder="
+                $t('placeholder.inputText', { field: $t('label.name') })
+              "
+            />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+    </ElForm>
+    <template #footer>
+      <ElButton title="cancel" @click="visible = false">
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t("action.cancel")
+        }}
+      </ElButton>
+      <ElButton
+        title="submit"
+        type="primary"
+        :loading="saveLoading"
+        @click="onSubmit(formRef!)"
+      >
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
+        {{ $t("action.submit") }}
+      </ElButton>
+    </template>
+  </ElDialog>
+
   <!-- details -->
-  <ElDialog v-model="visible" :title="$t('action.details')" width="400">
+  <ElDialog v-model="detailsVisible" :title="$t('action.details')" width="400">
     <div class="text-center">
       <ElImage
-        v-if="data.contentType && data.contentType.includes('image')"
-        :src="data.path"
-        class="w-full h-52 overflow-hidden"
+        v-if="form.contentType && form.contentType.includes('image')"
+        :src="form.path"
+        class="w-full h-52 border border-(--el-border-color) rounded-(--el-border-radius-base) overflow-hidden"
       />
-      <Icon
-        v-else
-        :icon="loadIcon(globalIcons['doc'])"
-        width="80"
-        height="80"
-      />
+      <h1 v-else>
+        {{ form.extension?.substring(1) }}
+      </h1>
     </div>
     <ElDescriptions :column="1" class="mt-4">
       <ElDescriptionsItem :label="$t('label.name')">{{
-        data.name
+        form.name
       }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.size')">{{
-        formatFileSize(data.size)
+        formatFileSize(form.size)
       }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.contentType')">{{
-        data.contentType
+        form.contentType
       }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.lastModifiedDate')">
         {{
-          data.lastModifiedDate
-            ? dayjs(data.lastModifiedDate).format("YYYY-MM-DD HH:mm")
+          form.lastModifiedDate
+            ? dayjs(form.lastModifiedDate).format("YYYY-MM-DD HH:mm")
             : "-"
         }}
       </ElDescriptionsItem>

@@ -5,11 +5,19 @@ export const actionTypes: {
   create: "primary",
   modify: "primary",
   upload: "primary",
+  read: "primary",
+  readAll: "primary",
+  addPrivilege: "primary",
+  addMembers: "primary",
+  addRoles: "primary",
 
+  tree: "success",
   enable: "success",
   search: "success",
   retrieve: "success",
   fetch: "success",
+  subset: "success",
+  statistics: "success",
   download: "success",
   unlock: "success",
   relation: "success",
@@ -17,14 +25,22 @@ export const actionTypes: {
   config: "success",
   field: "success",
   section: "success",
+  publish: "success",
+  privileges: "success",
+  members: "success",
+  roles: "success",
 
   import: "warning",
   export: "warning",
   execute: "warning",
   data: "warning",
   disable: "warning",
+  revoke: "warning",
 
   remove: "danger",
+  removePrivilege: "danger",
+  removeMembers: "danger",
+  removeRoles: "danger",
   clear: "danger",
 
   signin: "info",
@@ -90,7 +106,7 @@ export const httpTypes: {
   DELETE: "danger"
 };
 
-export const fileStatisticsType: {
+export const fileTypes: {
   [key: string]: "success" | "warning" | "info" | "primary";
 } = {
   image: "success",

@@ -324,7 +324,7 @@ async function clearRows() {
 
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" width="600">
-    <ElDescriptions border>
+    <ElDescriptions border label-width="80">
       <ElDescriptionsItem :label="$t('label.module')">{{
         $t(`page.${data.module}`)
       }}</ElDescriptionsItem>
@@ -340,10 +340,23 @@ async function clearRows() {
         }}</ElTag>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.params')" :span="3">
-        <ElText class="w-96" truncated>{{ data.params }}</ElText>
+        <ElText class="w-96" style="word-break: break-word">{{
+          data.params
+        }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.response')" :span="3">
-        <ElText class="w-96" truncated>{{ data.response }}</ElText>
+        <ElText class="w-96" style="word-break: break-word">{{
+          data.response
+        }}</ElText>
+      </ElDescriptionsItem>
+      <ElDescriptionsItem
+        v-if="data.message"
+        :label="$t('label.message')"
+        :span="3"
+      >
+        <ElText class="w-96" style="word-break: break-word">{{
+          data.message
+        }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.duration')">
         {{ data.duration ? formatDuration(data.duration) : "-" }}

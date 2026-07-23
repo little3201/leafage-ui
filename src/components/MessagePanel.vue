@@ -64,7 +64,7 @@ async function readRows() {
         </ElButton>
       </div>
 
-      <ElScrollbar height="400px" noresize>
+      <ElScrollbar max-height="400px" noresize>
         <ul
           v-if="messages && messages.length > 0"
           class="list-none flex flex-col p-0 my-0! space-y-2"
@@ -81,9 +81,9 @@ async function readRows() {
             "
             class="border border-(--el-border-color) rounded-(--el-border-radius-base) px-4 hover:bg-(--el-fill-color) cursor-pointer"
           >
-            <h4
-              >{{ message?.title }} <ElTag>{{ message.type }}</ElTag></h4
-            >
+            <h4>
+              {{ message?.title }} <ElTag>{{ message.type }}</ElTag>
+            </h4>
             <ElText line-clamp="2">{{ message?.body }}</ElText>
             <p class="text-xs">{{
               dayjs(message?.publishedAt).format("YYYY-MM-DD HH:mm:ss")

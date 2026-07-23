@@ -6,6 +6,7 @@ export interface OperationLog extends AudtiMetadata {
   targetId?: number;
   params: string;
   response?: string;
+  message?: string;
   status?: string;
   duration?: number;
   operator?: string;

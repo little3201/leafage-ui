@@ -31,13 +31,14 @@ import type {
   Filter,
   Pagination,
   Privilege,
+  PrivilegeTreeNode,
   Role,
   RoleMembers,
   RolePrivileges
 } from "@/types";
-import { actionIcon, exportToCSV, hasAction } from "@/utils";
+import { actionIcon, exportToCSV, hasAction, pageIcon } from "@/utils";
 import { useUserStore } from "@/stores/user";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -156,19 +157,23 @@ async function memberRow(id: number) {
  */
 async function authorizeRow(id: number) {
   authorities.value = [];
-  authorizeTableRef.value?.clearSelection();
   form.value.id = id;
 
   const res = await retrieveRolePrivileges(id);
   authorities.value = res.data.map((row: RolePrivileges) => {
-    const toogleRow = { id: row.privilegeId };
-    authorizeTableRef.value?.toggleRowSelection(toogleRow, true);
-
     authoritiesMap[row.privilegeId] = row.actions || [];
     return { privilegeId: row.privilegeId, actions: row.actions };
   });
 
   authorizeVisible.value = true;
+
+  await nextTick();
+
+  authorizeTableRef.value?.clearSelection();
+
+  res.data.forEach((row: RolePrivileges) => {
+    authorizeTableRef.value?.toggleRowSelection({ id: row.privilegeId }, true);
+  });
 }
 
 /**
@@ -335,9 +340,11 @@ async function handleTransferChange(
   }
 }
 
-async function handleActionsCheck(privilegeId: number) {
+async function handleActionsCheck(
+  privilegeId: number,
+  selectedActions: string[]
+) {
   if (!form.value.id) return;
-  const selectedActions = authoritiesMap[privilegeId];
 
   // 查找对应 privilegeId 的对象
   const keyIndex = authorities.value.findIndex(
@@ -374,8 +381,21 @@ async function handleActionsCheck(privilegeId: number) {
     await addPrivilege(form.value.id, privilegeId, selectedActions.join(","));
   }
 }
+async function onRowSelect(
+  selection: PrivilegeTreeNode[],
+  row: PrivilegeTreeNode
+) {
+  if (!form.value.id || !row.id) return;
+  const selected = selection.some(item => item.id === row.id);
 
-function rowSelected(row: Privilege) {
+  if (selected) {
+    await addPrivilege(form.value.id, row.id);
+  } else {
+    await removePrivilege(form.value.id, row.id);
+  }
+}
+
+function onActionSelected(row: Privilege) {
   if (!authorizeTableRef.value) return false;
 
   const selectedRows = authorizeTableRef.value.getSelectionRows();
@@ -626,7 +646,7 @@ function rowSelected(row: Privilege) {
     v-model="visible"
     :title="form.id ? $t('action.modify') : $t('action.create')"
     :show-close="false"
-    width="480"
+    width="400"
   >
     <ElForm ref="formRef" :model="form" :rules="rules" label-position="top">
       <ElRow :gutter="20">
@@ -661,7 +681,7 @@ function rowSelected(row: Privilege) {
   </ElDialog>
 
   <!-- member -->
-  <ElDialog v-model="relationVisible" :title="$t('action.member')" width="600">
+  <ElDialog v-model="relationVisible" :title="$t('action.member')" width="40em">
     <div style="text-align: center">
       <ElTransfer
         v-model="relations"
@@ -678,19 +698,20 @@ function rowSelected(row: Privilege) {
   <ElDialog
     v-model="authorizeVisible"
     :title="$t('action.authorize')"
-    width="57em"
+    width="80em"
   >
     <ElTable
       ref="authorizeTableRef"
       :data="userStore.privileges"
       row-key="id"
+      @select="onRowSelect"
       table-layout="auto"
     >
       <ElTableColumn type="selection" />
       <ElTableColumn prop="name" :label="$t('label.name')">
         <template #default="scope">
           <Icon
-            :icon="`material-symbols:${scope.row.meta.icon}-rounded`"
+            :icon="pageIcon(scope.row.name)"
             style="vertical-align: -3.5px"
             width="1.25em"
             height="1.25em"
@@ -703,8 +724,8 @@ function rowSelected(row: Privilege) {
         <template #default="scope">
           <ElCheckboxGroup
             v-model="authoritiesMap[scope.row.id]"
-            :disabled="!rowSelected(scope.row)"
-            @change="handleActionsCheck(scope.row.id)"
+            :disabled="!onActionSelected(scope.row)"
+            @change="handleActionsCheck(scope.row.id, $event)"
           >
             <ElCheckbox
               v-for="(item, index) in scope.row.meta.actions"

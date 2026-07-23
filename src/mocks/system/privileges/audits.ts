@@ -13,7 +13,7 @@ export const root_audits: Privilege = {
 
 export const nodes_audits: Privilege[] = [
   {
-    id: 32,
+    id: 31,
     superiorId: 10,
     path: "",
     component: "audits/patrols",
@@ -23,7 +23,7 @@ export const nodes_audits: Privilege[] = [
     enabled: randomInt(2) > 0
   },
   {
-    id: 33,
+    id: 32,
     superiorId: 10,
     path: "logs",
     component: "audits/logs",
@@ -44,7 +44,7 @@ export const tree_audits: PrivilegeTreeNode[] = [
     },
     children: [
       {
-        id: 32,
+        id: 31,
         name: "patrols",
         meta: {
           path: "",
@@ -53,7 +53,7 @@ export const tree_audits: PrivilegeTreeNode[] = [
         }
       },
       {
-        id: 33,
+        id: 32,
         name: "auditLogs",
         meta: {
           path: "logs",

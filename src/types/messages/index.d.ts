@@ -4,10 +4,10 @@ import type { User } from "./user";
 export interface Message extends AudtiMetadata {
   title: string;
   body?: string;
-  sender?: string;
   scope: string;
   type: string | null;
-  receiver: User[] | null;
+  sender?: string;
+  receivers: string[];
   status?: string;
   publishedAt?: Date;
 }

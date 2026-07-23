@@ -111,7 +111,9 @@ export default {
     yes: "Yes",
     no: "No",
     task: "Task",
-    corn: "Corn"
+    corn: "Corn",
+    directory: "Directory",
+    message: "Error message"
   },
 
   action: {
@@ -159,7 +161,18 @@ export default {
     member: "Member",
     publish: "Publish",
     revoke: "Revoke",
-    readAll: "Read All"
+    read: "Read",
+    readAll: "Read All",
+    statistics: "Statistics",
+    privileges: "Retrieve Privileges",
+    addPrivilege: "Add Privilege",
+    removePrivilege: "Remove Privilege",
+    members: "Retrieve Members",
+    addMembers: "Add Members",
+    removeMembers: "Remove Members",
+    roles: "Retrieve Roles",
+    addRoles: "Add Roles",
+    removeRoles: "Remove Roles"
   },
 
   page: {

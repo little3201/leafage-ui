@@ -13,7 +13,7 @@ export const root_schedulers: Privilege = {
 
 export const nodes_schedulers: Privilege[] = [
   {
-    id: 30,
+    id: 29,
     superiorId: 11,
     name: "tasks",
     path: "",
@@ -23,7 +23,7 @@ export const nodes_schedulers: Privilege[] = [
     enabled: randomInt(2) > 0
   },
   {
-    id: 31,
+    id: 30,
     name: "logs",
     superiorId: 11,
     path: "logs",
@@ -44,7 +44,7 @@ export const tree_schedulers: PrivilegeTreeNode[] = [
     },
     children: [
       {
-        id: 30,
+        id: 29,
         name: "tasks",
         meta: {
           path: "",
@@ -54,7 +54,7 @@ export const tree_schedulers: PrivilegeTreeNode[] = [
         children: []
       },
       {
-        id: 31,
+        id: 30,
         name: "schedulerLogs",
         meta: {
           path: "logs",

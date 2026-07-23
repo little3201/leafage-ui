@@ -59,6 +59,7 @@ function getWeekKey(date: Date) {
  * 生成 week segment
  */
 function createSegments(events: CalendarEvent[]): EventSegment[] {
+  if (!events.length) return [];
   const result: EventSegment[] = [];
 
   events.forEach(event => {

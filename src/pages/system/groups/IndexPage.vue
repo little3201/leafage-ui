@@ -888,7 +888,7 @@ const rowSelected = (row: Privilege) => {
   <ElDialog
     v-model="authorizeVisible"
     :title="$t('action.authorize')"
-    width="57em"
+    :width="activeTabName === 'privilege' ? '80em' : '40em'"
   >
     <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
       <ElTabPane

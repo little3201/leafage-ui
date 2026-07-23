@@ -14,7 +14,9 @@ import MessagePanel from "@/components/MessagePanel.vue";
 
 const { currentRoute } = useRouter();
 const userStore = useUserStore();
+
 const appTitle = import.meta.env.VITE_APP_TITLE;
+const appVersion = import.meta.env.VITE_APP_VERSION;
 
 function logout() {
   userStore.$reset();
@@ -125,31 +127,7 @@ function logout() {
     </ElMenu>
   </ElAside>
 
-  <ElMain class="min-h-[calc(100vh-120px)] ml-(--el-aside-width) mt-15">
+  <ElMain class="min-h-[calc(100vh-60px)] ml-(--el-aside-width) mt-15">
     <RouterView />
   </ElMain>
-
-  <ElFooter class="ml-(--el-aside-width) text-center">
-    <div class="text-sm mb-2 space-x-4">
-      <a
-        href="/privacy"
-        class="text-(--el-text-color-regular) no-underline hover:underline"
-        >隐私政策</a
-      >
-      <a
-        href="/terms"
-        class="text-(--el-text-color-regular) no-underline hover:underline"
-        >使用条款</a
-      >
-      <a
-        href="/legal"
-        class="text-(--el-text-color-regular) no-underline hover:underline"
-        >法律信息</a
-      >
-    </div>
-    <span class="text-sm text-(--el-text-color-regular)"
-      >Copyright &copy; 2018-{{ new Date().getFullYear() }} Leafage. All Rights
-      Reserved.</span
-    >
-  </ElFooter>
 </template>
