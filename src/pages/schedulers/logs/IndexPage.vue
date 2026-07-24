@@ -59,11 +59,18 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true;
 
-  const res = await retrieveSchedulerLogs(pagination, filter);
-  datas.value = res.data.content;
-  total.value = res.data.page.totalElements;
+  try {
+    const res = await retrieveSchedulerLogs(pagination, filter);
+    datas.value = res.data.content;
+    total.value = res.data.page.totalElements;
+  } catch (error) {
+    datas.value = [];
+    total.value = 0;
 
-  loading.value = false;
+    throw error;
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -98,7 +105,6 @@ function showRow(row: SchedulerLog) {
  * @param startTime 开始时间
  */
 async function removeRow(id: number, name: string, startTime: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", {
       module: t("page.schedulerLogs"),
@@ -130,7 +136,6 @@ async function removeRow(id: number, name: string, startTime: string) {
  * 清空
  */
 async function clearRows() {
-  // 弹出确认框
   await ElMessageBox.confirm(t("tips.clearWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,

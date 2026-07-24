@@ -54,7 +54,7 @@ api.interceptors.response.use(
       cancelAllRequest();
       signIn();
     }
-    return Promise.reject(error);
+    throw error;
   }
 );
 

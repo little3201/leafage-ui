@@ -36,9 +36,7 @@ import { actionIcons, actionTypes } from "@/constants";
 import type {
   Filter,
   Group,
-  GroupMembers,
   GroupPrivileges,
-  GroupRoles,
   Pagination,
   Privilege,
   Role,
@@ -156,39 +154,68 @@ async function onCurrentChange(data: TreeNode) {
 }
 
 async function loadUsers() {
-  const res = await retrieveUsers({ page: 1, size: 10 });
-  members.value = res.data.content;
+  try {
+    const res = await retrieveUsers({ page: 1, size: 10 });
+    members.value = res.data.content;
+  } catch (error) {
+    members.value = [];
+
+    throw error;
+  }
 }
 
 async function loadRoles() {
-  const res = await retrieveRoles({ page: 1, size: 10 });
-  roles.value = res.data.content;
+  try {
+    const res = await retrieveRoles({ page: 1, size: 10 });
+    roles.value = res.data.content;
+  } catch (error) {
+    roles.value = [];
+
+    throw error;
+  }
 }
 
 async function loadGroupUsers(id: number) {
-  const res = await retrieveGroupMembers(id);
-  relationUsers.value = res.data.map((item: GroupMembers) => item.username);
+  try {
+    const res = await retrieveGroupMembers(id);
+    relationUsers.value = res.data.map((item: User) => item.username);
+  } catch (error) {
+    relationUsers.value = [];
+
+    throw error;
+  }
 }
 
 async function loadGrouRoles(id: number) {
-  const res = await retrieveGroupRoles(id);
-  relationRoles.value = res.data.map((item: GroupRoles) => item.roleId);
+  try {
+    const res = await retrieveGroupRoles(id);
+    relationRoles.value = res.data.map((item: Role) => item.id);
+  } catch (error) {
+    relationRoles.value = [];
+
+    throw error;
+  }
 }
 
 /**
  * 加载tree
  */
 async function loadTree() {
-  treeLoading.value = true;
+  try {
+    treeLoading.value = true;
+    const res = await retrieveGroupTree();
+    groupTree.value = res.data.map((element: TreeNode) => ({
+      ...element,
+      isLeaf: !(element.children?.length && element.children?.length > 0)
+    }));
+    await load();
+  } catch (error) {
+    groupTree.value = [];
 
-  const res = await retrieveGroupTree();
-  groupTree.value = res.data.map((element: TreeNode) => ({
-    ...element,
-    isLeaf: !(element.children?.length && element.children?.length > 0)
-  }));
-  await load();
-
-  treeLoading.value = false;
+    throw error;
+  } finally {
+    treeLoading.value = false;
+  }
 }
 
 /**
@@ -207,12 +234,12 @@ async function pageChange(currentPage: number, pageSize: number) {
  */
 async function load() {
   loading.value = true;
-  if (filter.superiorId) {
-    filter.superiorId.value = treeSelected.value
-      ? Number(treeSelected.value)
-      : null;
-  }
 
+  if (!filter.superiorId) return;
+
+  filter.superiorId.value = treeSelected.value
+    ? Number(treeSelected.value)
+    : null;
   try {
     const res = await retrieveGroups(pagination, filter);
     datas.value = res.data.content;
@@ -231,9 +258,9 @@ async function load() {
  * 关联弹出框
  * @param id 主键
  */
-async function memberRow(id: number) {
+async function relationRow(id: number) {
   form.value.id = id;
-  await Promise.all([loadGroupUsers(id), loadUsers()]);
+  await Promise.all([loadGrouRoles(id), loadRoles()]);
 
   relationVisible.value = true;
 }
@@ -242,16 +269,22 @@ async function authorizeRow(id: number) {
   authorities.value = [];
   form.value.id = id;
 
-  const res = await retrieveGroupPrivileges(id);
-  authorities.value = res.data.map((row: GroupPrivileges) => {
-    const toogleRow = { id: row.privilegeId };
-    authorizeTableRef.value?.toggleRowSelection(toogleRow, true);
+  try {
+    const res = await retrieveGroupPrivileges(id);
+    authorities.value = res.data.map((row: GroupPrivileges) => {
+      const toogleRow = { id: row.privilegeId };
+      authorizeTableRef.value?.toggleRowSelection(toogleRow, true);
 
-    authoritiesMap[row.privilegeId] = row.actions || [];
-    return { privilegeId: row.privilegeId, actions: row.actions };
-  });
+      authoritiesMap[row.privilegeId] = row.actions || [];
+      return { privilegeId: row.privilegeId, actions: row.actions };
+    });
 
-  authorizeVisible.value = true;
+    authorizeVisible.value = true;
+  } catch (error) {
+    authorities.value = [];
+
+    throw error;
+  }
 }
 
 /**
@@ -383,19 +416,18 @@ async function handleTransferUserChange(
   direction: TransferDirection,
   movedKeys: TransferKey[]
 ) {
-  if (form.value.id) {
-    try {
-      if (direction === "right") {
-        await addMembers(form.value.id, value as string[]);
-      } else if (movedKeys.length) {
-        await removeMembers(form.value.id, movedKeys as string[]);
-      }
-
-      await load();
-    } catch (error) {
-      ElMessage.error(t("message.error", { action: t("action.member") }));
-      throw error;
+  if (!form.value.id) return;
+  try {
+    if (direction === "right") {
+      await addMembers(form.value.id, value as string[]);
+    } else if (movedKeys.length) {
+      await removeMembers(form.value.id, movedKeys as string[]);
     }
+
+    await load();
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.relaton") }));
+    throw error;
   }
 }
 
@@ -409,19 +441,18 @@ async function handleTransferRoleChange(
   direction: TransferDirection,
   movedKeys: TransferKey[]
 ) {
-  if (form.value.id) {
-    try {
-      if (direction === "right") {
-        await addRoles(form.value.id, value as number[]);
-      } else if (movedKeys.length) {
-        await removeRoles(form.value.id, movedKeys as number[]);
-      }
-
-      await load();
-    } catch (error) {
-      ElMessage.error(t("message.error", { action: t("action.authorize") }));
-      throw error;
+  if (!form.value.id) return;
+  try {
+    if (direction === "right") {
+      await addRoles(form.value.id, value as number[]);
+    } else if (movedKeys.length) {
+      await removeRoles(form.value.id, movedKeys as number[]);
     }
+
+    await load();
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.relation") }));
+    throw error;
   }
 }
 
@@ -460,34 +491,39 @@ async function handleActionsCheck(privilegeId: number) {
     a => a.privilegeId === privilegeId
   );
 
-  if (keyIndex >= 0) {
-    // 如果已存在该 privilegeId 对应的数据
-    const existingAction = authorities.value[keyIndex];
-    if (existingAction) {
-      for (const item of selectedActions) {
-        const itemIndex = existingAction.actions.indexOf(item);
-        if (itemIndex === -1) {
-          // 如果 actions 中没有该 item，则添加
-          existingAction.actions.push(item);
-          await addPrivilege(form.value.id, privilegeId, item);
+  try {
+    if (keyIndex >= 0) {
+      // 如果已存在该 privilegeId 对应的数据
+      const existingAction = authorities.value[keyIndex];
+      if (existingAction) {
+        for (const item of selectedActions) {
+          const itemIndex = existingAction.actions.indexOf(item);
+          if (itemIndex === -1) {
+            // 如果 actions 中没有该 item，则添加
+            existingAction.actions.push(item);
+            await addPrivilege(form.value.id, privilegeId, item);
+          }
         }
-      }
 
-      // 移除已取消选择的 actions
-      for (const existingItem of existingAction.actions) {
-        if (!selectedActions.includes(existingItem)) {
-          existingAction.actions.splice(
-            existingAction.actions.indexOf(existingItem),
-            1
-          );
-          await removePrivilege(form.value.id, privilegeId, existingItem);
+        // 移除已取消选择的 actions
+        for (const existingItem of existingAction.actions) {
+          if (!selectedActions.includes(existingItem)) {
+            existingAction.actions.splice(
+              existingAction.actions.indexOf(existingItem),
+              1
+            );
+            await removePrivilege(form.value.id, privilegeId, existingItem);
+          }
         }
       }
+    } else {
+      // 如果不存在该 privilegeId，新增数据
+      authorities.value.push({ privilegeId, actions: selectedActions });
+      await addPrivilege(form.value.id, privilegeId, selectedActions.join(","));
     }
-  } else {
-    // 如果不存在该 privilegeId，新增数据
-    authorities.value.push({ privilegeId, actions: selectedActions });
-    await addPrivilege(form.value.id, privilegeId, selectedActions.join(","));
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.authorize") }));
+    throw error;
   }
 }
 
@@ -498,10 +534,10 @@ async function handleActionsCheck(privilegeId: number) {
 async function tabChange(tab: TabPaneName) {
   activeTabName.value = tab.toString();
 
-  if (tab === "role") {
-    await loadRoles();
+  if (tab === "user") {
+    await loadUsers();
     if (form.value.id) {
-      await loadGrouRoles(form.value.id);
+      await loadGroupUsers(form.value.id);
     }
   }
 }
@@ -779,18 +815,18 @@ const rowSelected = (row: Privilege) => {
                 <template #dropdown>
                   <ElDropdownItem>
                     <ElButton
-                      v-if="hasAction($route.name, 'member')"
-                      title="member"
-                      :type="actionTypes['member']"
+                      v-if="hasAction($route.name, 'relation')"
+                      title="relation"
+                      :type="actionTypes['relation']"
                       link
-                      @click="memberRow(scope.row.id)"
+                      @click="relationRow(scope.row.id)"
                     >
                       <Icon
-                        :icon="`material-symbols:${actionIcons['member']}-rounded`"
+                        :icon="`material-symbols:${actionIcons['relation']}-rounded`"
                         width="1.25em"
                         height="1.25em"
                       />
-                      {{ $t("action.member") }}
+                      {{ $t("action.relation") }}
                     </ElButton>
                   </ElDropdownItem>
                   <ElDropdownItem>
@@ -870,17 +906,44 @@ const rowSelected = (row: Privilege) => {
     </template>
   </ElDialog>
 
-  <!-- member -->
-  <ElDialog v-model="relationVisible" :title="$t('action.member')" width="600">
+  <!-- relation -->
+  <ElDialog
+    v-model="relationVisible"
+    :title="$t('action.relation')"
+    width="600"
+  >
     <div style="text-align: center">
-      <ElTransfer
-        v-model="relationUsers"
-        :props="{ key: 'username', label: 'fullName' }"
-        :titles="[$t('label.unselected'), $t('label.selected')]"
-        filterable
-        :data="members"
-        @change="handleTransferUserChange"
-      />
+      <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
+        <ElTabPane
+          :label="$t('page.roles')"
+          name="role"
+          style="text-align: center"
+        >
+          <ElTransfer
+            v-model="relationRoles"
+            :props="{ key: 'id', label: 'name' }"
+            :titles="[$t('label.unselected'), $t('label.selected')]"
+            filterable
+            :data="roles"
+            @change="handleTransferRoleChange"
+          />
+        </ElTabPane>
+
+        <ElTabPane
+          :label="$t('page.users')"
+          name="user"
+          style="text-align: center"
+        >
+          <ElTransfer
+            v-model="relationUsers"
+            :props="{ key: 'username', label: 'fullName' }"
+            :titles="[$t('label.unselected'), $t('label.selected')]"
+            filterable
+            :data="members"
+            @change="handleTransferUserChange"
+          />
+        </ElTabPane>
+      </ElTabs>
     </div>
   </ElDialog>
 
@@ -888,67 +951,44 @@ const rowSelected = (row: Privilege) => {
   <ElDialog
     v-model="authorizeVisible"
     :title="$t('action.authorize')"
-    :width="activeTabName === 'privilege' ? '80em' : '40em'"
+    width="80em"
   >
-    <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
-      <ElTabPane
-        :label="$t('page.roles')"
-        name="role"
-        style="text-align: center"
-      >
-        <ElTransfer
-          v-model="relationRoles"
-          :props="{ key: 'id', label: 'name' }"
-          :titles="[$t('label.unselected'), $t('label.selected')]"
-          filterable
-          :data="roles"
-          @change="handleTransferRoleChange"
-        />
-      </ElTabPane>
-
-      <ElTabPane
-        :label="$t('page.privileges')"
-        name="privilege"
-        style="text-align: center"
-      >
-        <ElTable
-          ref="authorizeTableRef"
-          :data="userStore.privileges"
-          row-key="id"
-          table-layout="auto"
-        >
-          <ElTableColumn type="selection" />
-          <ElTableColumn prop="name" :label="$t('label.name')">
-            <template #default="scope">
-              <Icon
-                :icon="`material-symbols:${scope.row.meta.icon}-rounded`"
-                style="vertical-align: -3.5px"
-                width="1.25em"
-                height="1.25em"
-                class="mr-2"
-              />
-              {{ scope.row.name ? $t(`page.${scope.row.name}`) : "" }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="actions" :label="$t('label.actions')">
-            <template #default="scope">
-              <ElCheckboxGroup
-                v-model="authoritiesMap[scope.row.id]"
-                :disabled="!rowSelected(scope.row)"
-                @change="handleActionsCheck(scope.row.id)"
-              >
-                <ElCheckbox
-                  v-for="(item, index) in scope.row.meta.actions"
-                  :key="index"
-                  :label="$t(`action.${item}`)"
-                  :value="item"
-                />
-              </ElCheckboxGroup>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-      </ElTabPane>
-    </ElTabs>
+    <ElTable
+      ref="authorizeTableRef"
+      :data="userStore.privileges"
+      row-key="id"
+      table-layout="auto"
+    >
+      <ElTableColumn type="selection" />
+      <ElTableColumn prop="name" :label="$t('label.name')">
+        <template #default="scope">
+          <Icon
+            :icon="`material-symbols:${scope.row.meta.icon}-rounded`"
+            style="vertical-align: -3.5px"
+            width="1.25em"
+            height="1.25em"
+            class="mr-2"
+          />
+          {{ scope.row.name ? $t(`page.${scope.row.name}`) : "" }}
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="actions" :label="$t('label.actions')">
+        <template #default="scope">
+          <ElCheckboxGroup
+            v-model="authoritiesMap[scope.row.id]"
+            :disabled="!rowSelected(scope.row)"
+            @change="handleActionsCheck(scope.row.id)"
+          >
+            <ElCheckbox
+              v-for="(item, index) in scope.row.meta.actions"
+              :key="index"
+              :label="$t(`action.${item}`)"
+              :value="item"
+            />
+          </ElCheckboxGroup>
+        </template>
+      </ElTableColumn>
+    </ElTable>
   </ElDialog>
 </template>
 

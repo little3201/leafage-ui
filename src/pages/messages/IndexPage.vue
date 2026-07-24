@@ -110,22 +110,35 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true;
 
-  const res = await retrieveMessages(pagination, filter);
-  datas.value = res.data.content;
-  total.value = res.data.page.totalElements;
+  try {
+    const res = await retrieveMessages(pagination, filter);
+    datas.value = res.data.content;
+    total.value = res.data.page.totalElements;
+  } catch (error) {
+    datas.value = [];
+    total.value = 0;
 
-  loading.value = false;
+    throw error;
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
  * 加载列表
  */
 async function loadUsers(query: string) {
-  const filter: Filter<User> = {
-    fullName: { op: "like", value: query }
-  };
-  const res = await retrieveUsers({ page: 1, size: 10 }, filter);
-  users.value = res.data.content;
+  try {
+    const filter: Filter<User> = {
+      fullName: { op: "like", value: query }
+    };
+    const res = await retrieveUsers({ page: 1, size: 10 }, filter);
+    users.value = res.data.content;
+  } catch (error) {
+    users.value = [];
+
+    throw error;
+  }
 }
 
 /**

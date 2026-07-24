@@ -90,32 +90,40 @@ async function load(
   _treeNode?: unknown,
   resolve?: (date: Privilege[]) => void
 ) {
-  loading.value = true;
+  try {
+    loading.value = true;
 
-  if (row && row.id && resolve) {
-    const res = await retrievePrivilegeSubset(row.id);
-    const list = res.data;
-    // 处理子节点
-    list.forEach((element: Privilege) => {
-      if (element.count && element.count > 0) {
-        element.hasChildren = true;
-      }
-    });
-    resolve(list);
-  } else {
-    const res = await retrievePrivileges(pagination, filter);
-    const list = res.data.content;
-    // 处理子节点
-    list.forEach((element: Privilege) => {
-      if (element.count && element.count > 0) {
-        element.hasChildren = true;
-      }
-    });
-    datas.value = list;
-    total.value = res.data.page.totalElements;
+    if (row && row.id && resolve) {
+      const res = await retrievePrivilegeSubset(row.id);
+      const list = res.data;
+      // 处理子节点
+      list.forEach((element: Privilege) => {
+        if (element.count && element.count > 0) {
+          element.hasChildren = true;
+        }
+      });
+      resolve(list);
+    } else {
+      const res = await retrievePrivileges(pagination, filter);
+      const list = res.data.content;
+      // 处理子节点
+      list.forEach((element: Privilege) => {
+        if (element.count && element.count > 0) {
+          element.hasChildren = true;
+        }
+      });
+      datas.value = list;
+      total.value = res.data.page.totalElements;
+    }
+  } catch (error) {
+    if (resolve) {
+      resolve([]);
+    }
+
+    throw error;
+  } finally {
+    loading.value = false;
   }
-
-  loading.value = false;
 }
 
 /**
@@ -153,10 +161,13 @@ async function saveRow(row?: Privilege) {
  * 启用
  * @param id 主键
  */
-async function enableRow(id: number) {
+async function enableRow(id: number, superiorId: number | null) {
   try {
     await enablePrivilege(id);
     await load();
+    if (superiorId) {
+      await refreshChildren(superiorId);
+    }
     ElMessage.success(t("message.success", { action: t("action.enable") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.enable") }));
@@ -168,7 +179,7 @@ async function enableRow(id: number) {
  * 停用
  * @param id 主键
  */
-async function disableRow(id: number) {
+async function disableRow(id: number, superiorId: number | null) {
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,
@@ -180,6 +191,9 @@ async function disableRow(id: number) {
     try {
       await disablePrivilege(id);
       await load();
+      if (superiorId) {
+        await refreshChildren(superiorId);
+      }
       ElMessage.success(t("message.success", { action: t("action.disable") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.disable") }));
@@ -434,7 +448,7 @@ function handleInputConfirm() {
             title="disable"
             :type="actionTypes['disable']"
             link
-            @click="disableRow(scope.row.id)"
+            @click="disableRow(scope.row.id, scope.row.superiorId)"
           >
             <Icon
               :icon="actionIcon('disable')"
@@ -447,25 +461,13 @@ function handleInputConfirm() {
             title="enable"
             :type="actionTypes['enable']"
             link
-            @click="enableRow(scope.row.id)"
+            @click="enableRow(scope.row.id, scope.row.superiorId)"
           >
             <Icon
               :icon="actionIcon('enable')"
               width="1.25em"
               height="1.25em"
             />{{ $t("action.enable") }}
-          </ElButton>
-          <ElButton
-            v-if="scope.row.count > 0"
-            title="refresh"
-            link
-            @click="refreshChildren(scope.row.id)"
-          >
-            <Icon
-              :icon="actionIcon('refresh')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.refresh") }}
           </ElButton>
         </template>
       </ElTableColumn>

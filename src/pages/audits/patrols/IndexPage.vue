@@ -90,11 +90,18 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true;
 
-  const res = await retrieveSafetyPatrols(pagination, filter);
-  datas.value = res.data.content;
-  total.value = res.data.page.totalElements;
+  try {
+    const res = await retrieveSafetyPatrols(pagination, filter);
+    datas.value = res.data.content;
+    total.value = res.data.page.totalElements;
+  } catch (error) {
+    datas.value = [];
+    total.value = 0;
 
-  loading.value = false;
+    throw error;
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -203,7 +210,6 @@ function exportRows() {
  * @param username 用户名
  */
 async function removeRow(id: number, username: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", { module: t("page.users"), data: username }),
     t("tips.confirm"),

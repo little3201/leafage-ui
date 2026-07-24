@@ -267,7 +267,6 @@ async function onSubmit(formEl: FormInstance) {
  * @param name 名称
  */
 async function removeRow(id: number, name: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", { module: t("page.roles"), data: name }),
     t("tips.confirm"),
@@ -351,36 +350,42 @@ async function handleActionsCheck(
     a => a.privilegeId === privilegeId
   );
 
-  if (keyIndex >= 0) {
-    // 如果已存在该 privilegeId 对应的数据
-    const existingAction = authorities.value[keyIndex];
-    if (existingAction) {
-      for (const item of selectedActions) {
-        const itemIndex = existingAction.actions.indexOf(item);
-        if (itemIndex === -1) {
-          // 如果 actions 中没有该 item，则添加
-          existingAction.actions.push(item);
-          await addPrivilege(form.value.id, privilegeId, item);
+  try {
+    if (keyIndex >= 0) {
+      // 如果已存在该 privilegeId 对应的数据
+      const existingAction = authorities.value[keyIndex];
+      if (existingAction) {
+        for (const item of selectedActions) {
+          const itemIndex = existingAction.actions.indexOf(item);
+          if (itemIndex === -1) {
+            // 如果 actions 中没有该 item，则添加
+            existingAction.actions.push(item);
+            await addPrivilege(form.value.id, privilegeId, item);
+          }
         }
-      }
 
-      // 移除已取消选择的 actions
-      for (const existingItem of existingAction.actions) {
-        if (!selectedActions.includes(existingItem)) {
-          existingAction.actions.splice(
-            existingAction.actions.indexOf(existingItem),
-            1
-          );
-          await removePrivilege(form.value.id, privilegeId, existingItem);
+        // 移除已取消选择的 actions
+        for (const existingItem of existingAction.actions) {
+          if (!selectedActions.includes(existingItem)) {
+            existingAction.actions.splice(
+              existingAction.actions.indexOf(existingItem),
+              1
+            );
+            await removePrivilege(form.value.id, privilegeId, existingItem);
+          }
         }
       }
+    } else {
+      // 如果不存在该 privilegeId，新增数据
+      authorities.value.push({ privilegeId, actions: selectedActions });
+      await addPrivilege(form.value.id, privilegeId, selectedActions.join(","));
     }
-  } else {
-    // 如果不存在该 privilegeId，新增数据
-    authorities.value.push({ privilegeId, actions: selectedActions });
-    await addPrivilege(form.value.id, privilegeId, selectedActions.join(","));
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.authorize") }));
+    throw error;
   }
 }
+
 async function onRowSelect(
   selection: PrivilegeTreeNode[],
   row: PrivilegeTreeNode

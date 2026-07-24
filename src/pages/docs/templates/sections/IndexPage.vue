@@ -233,7 +233,6 @@ async function modifySectionContent() {
  * @param name 名称
  */
 async function removeRow(id: number, name: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", { module: t("page.sections"), data: name }),
     t("tips.confirm"),

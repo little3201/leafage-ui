@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import type { TableInstance } from "element-plus";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { removeAuditLog, retrieveAuditLogs } from "@/api/audits/logs";
+import { retrieveAuditLogs } from "@/api/audits/logs";
 import { actionTypes } from "@/constants";
 import type { AuditLog, Filter, Pagination } from "@/types";
 import { actionIcon, exportToCSV, formatDuration, hasAction } from "@/utils";
@@ -56,11 +55,18 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true;
 
-  const res = await retrieveAuditLogs(pagination, filter);
-  datas.value = res.data.content;
-  total.value = res.data.page.totalElements;
+  try {
+    const res = await retrieveAuditLogs(pagination, filter);
+    datas.value = res.data.content;
+    total.value = res.data.page.totalElements;
+  } catch (error) {
+    datas.value = [];
+    total.value = 0;
 
-  loading.value = false;
+    throw error;
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -86,40 +92,6 @@ function showRow(row: AuditLog) {
   data.value = row ? { ...row } : { ...initialValues };
 
   visible.value = true;
-}
-
-/**
- * 删除
- * @param id 主键
- * @param module 模块名称
- * @param action 操作
- */
-async function removeRow(id: number, module: string, action: string) {
-  // 弹出确认框
-  await ElMessageBox.confirm(
-    t("tips.removeWarning", {
-      module: t("page.auditLogs"),
-      data: module + " - " + action
-    }),
-    t("tips.confirm"),
-    {
-      dangerouslyUseHTMLString: true,
-      showCancelButton: false,
-      confirmButtonType: "danger",
-      confirmButtonClass: "w-full",
-      confirmButtonText: t("tips.removeButtonText"),
-      type: "warning"
-    }
-  ).then(async () => {
-    try {
-      await removeAuditLog(id);
-      await load();
-      ElMessage.success(t("message.success", { action: t("action.remove") }));
-    } catch (error) {
-      ElMessage.error(t("message.error", { action: t("action.remove") }));
-      throw error;
-    }
-  });
 }
 </script>
 
@@ -226,23 +198,6 @@ async function removeRow(id: number, module: string, action: string) {
       <ElTableColumn prop="duration" :label="$t('label.duration')">
         <template #default="scope">
           {{ formatDuration(scope.row.duration) }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
-          <ElButton
-            v-if="hasAction($route.name, 'remove')"
-            title="remove"
-            :type="actionTypes['remove']"
-            link
-            @click="removeRow(scope.row.id, scope.row.module, scope.row.action)"
-          >
-            <Icon
-              :icon="actionIcon('remove')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.remove") }}
-          </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>

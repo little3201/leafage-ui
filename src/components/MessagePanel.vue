@@ -24,12 +24,19 @@ async function load() {
   const filter: Filter<MessageInbox> = {
     status: { op: "eq", value: "UNREAD" }
   };
-  const res = await retrieveMessageInbox({ page: 1, size: 5 }, filter);
-  messages.value = res.data.content
-    .sort((a: Message, b: Message) =>
-      dayjs(b.publishedAt).diff(dayjs(a.publishedAt))
-    )
-    .map((item: MessageInbox) => item.message);
+
+  try {
+    const res = await retrieveMessageInbox({ page: 1, size: 5 }, filter);
+    messages.value = res.data.content
+      .sort((a: Message, b: Message) =>
+        dayjs(b.publishedAt).diff(dayjs(a.publishedAt))
+      )
+      .map((item: MessageInbox) => item.message);
+  } catch (error) {
+    messages.value = [];
+
+    throw error;
+  }
 }
 
 /**

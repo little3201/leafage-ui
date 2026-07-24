@@ -61,11 +61,18 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true;
 
-  const res = await retrieveAccessLogs(pagination, filter);
-  datas.value = res.data.content;
-  total.value = res.data.page.totalElements;
+  try {
+    const res = await retrieveAccessLogs(pagination, filter);
+    datas.value = res.data.content;
+    total.value = res.data.page.totalElements;
+  } catch (error) {
+    datas.value = [];
+    total.value = 0;
 
-  loading.value = false;
+    throw error;
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -100,7 +107,6 @@ function showRow(row: AccessLog) {
  * @param url URL
  */
 async function removeRow(id: number, httpMethod: string, url: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", {
       module: t("page.accessLogs"),
@@ -131,7 +137,6 @@ async function removeRow(id: number, httpMethod: string, url: string) {
  * 清空
  */
 async function clearRows() {
-  // 弹出确认框
   await ElMessageBox.confirm(t("tips.clearWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,

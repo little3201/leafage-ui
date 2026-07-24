@@ -75,11 +75,18 @@ async function pageChange(currentPage: number, pageSize: number) {
 async function load() {
   loading.value = true;
 
-  const res = await retrieveSchedulers(pagination, filter);
-  datas.value = res.data.content;
-  total.value = res.data.page.totalElements;
+  try {
+    const res = await retrieveSchedulers(pagination, filter);
+    datas.value = res.data.content;
+    total.value = res.data.page.totalElements;
+  } catch (error) {
+    datas.value = [];
+    total.value = 0;
 
-  loading.value = false;
+    throw error;
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**
@@ -174,7 +181,6 @@ async function onSubmit(formEl: FormInstance) {
  * @param startTime 开始时间
  */
 async function removeRow(id: number, name: string, startTime: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", {
       module: t("page.schedulerLogs"),

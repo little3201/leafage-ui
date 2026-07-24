@@ -84,29 +84,36 @@ onMounted(async () => {
 async function load() {
   loading.value = true;
 
-  const res = await retrieveMessageInbox(pagination, filter);
-  datas.value = res.data.content.sort((a: MessageInbox, b: MessageInbox) =>
-    dayjs(b.message.publishedAt).diff(dayjs(a.message.publishedAt))
-  );
-  total.value = res.data.page.totalElements;
-
-  const messageId = route.query.messageId;
-
-  if (messageId) {
-    const target = datas.value.find(
-      item => item.message.id === Number(messageId)
+  try {
+    const res = await retrieveMessageInbox(pagination, filter);
+    const rows = res.data.content.sort((a: MessageInbox, b: MessageInbox) =>
+      dayjs(b.message.publishedAt).diff(dayjs(a.message.publishedAt))
     );
+    total.value = res.data.page.totalElements;
 
-    if (target) {
-      await readRow(target.message, false);
+    const messageId = route.query.messageId;
+    if (messageId) {
+      const target = datas.value.find(
+        item => item.message.id === Number(messageId)
+      );
+
+      if (target) {
+        await readRow(target.message, false);
+      }
+    } else if (data.value.id) {
+      data.value = { ...data.value };
+    } else if (rows.length > 0 && rows[0].message) {
+      data.value = rows[0].message;
     }
-  } else if (data.value.id) {
-    data.value = { ...data.value };
-  } else if (datas.value.length > 0 && datas.value[0].message) {
-    data.value = datas.value[0].message;
-  }
+    datas.value = rows;
+  } catch (error) {
+    datas.value = [];
+    total.value = 0;
 
-  loading.value = false;
+    throw error;
+  } finally {
+    loading.value = false;
+  }
 }
 
 /**

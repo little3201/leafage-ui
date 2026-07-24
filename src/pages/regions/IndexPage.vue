@@ -130,17 +130,22 @@ async function loadTree(
   { data }: { data: TreeNodeData },
   resolve: (data: TreeData) => void
 ) {
-  treeLoading.value = true;
+  try {
+    treeLoading.value = true;
+    const superiorId = data.id ? Number(data.id) : null;
+    const res = await retrieveRegionSubset(superiorId);
+    const treeData = res.data.map((element: Region) => ({
+      ...element,
+      isLeaf: !(element.count && element.count > 0)
+    }));
+    resolve(treeData);
+  } catch (error) {
+    resolve([]);
 
-  const superiorId = data.id ? Number(data.id) : null;
-  const res = await retrieveRegionSubset(superiorId);
-  const treeData = res.data.map((element: Region) => ({
-    ...element,
-    isLeaf: !(element.count && element.count > 0)
-  }));
-  resolve(treeData);
-
-  treeLoading.value = false;
+    throw error;
+  } finally {
+    treeLoading.value = false;
+  }
 }
 
 /**
@@ -297,7 +302,6 @@ function onUpload(options: UploadRequestOptions) {
  * @param name 名称
  */
 async function removeRow(id: number, name: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", { module: t("page.regions"), data: name }),
     t("tips.confirm"),

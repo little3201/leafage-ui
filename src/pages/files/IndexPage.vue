@@ -197,7 +197,6 @@ function onUpload(options: UploadRequestOptions) {
  * @param name 文件名称
  */
 async function removeRow(id: number, name: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", { module: t("page.files"), data: name }),
     t("tips.confirm"),

@@ -109,8 +109,14 @@ async function loadTemplates() {
   const filter: Filter<Template> = {
     type: { op: "eq", value: "EXCEL" }
   };
-  const res = await retrieveTemplates({ page: 1, size: 10 }, filter);
-  templates.value = res.data.content;
+  try {
+    const res = await retrieveTemplates({ page: 1, size: 10 }, filter);
+    templates.value = res.data.content;
+  } catch (error) {
+    templates.value = [];
+
+    throw error;
+  }
 }
 
 /**
@@ -197,7 +203,6 @@ async function onSubmit(formEl: FormInstance) {
  * @param title 标题
  */
 async function removeRow(id: number, title: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", { module: t("page.reports"), data: title }),
     t("tips.confirm"),

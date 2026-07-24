@@ -1,5 +1,4 @@
 import type { AudtiMetadata } from "../global";
-import type { User } from "./user";
 
 export interface Message extends AudtiMetadata {
   title: string;

@@ -235,7 +235,6 @@ async function onSubmit(formEl: FormInstance) {
  * @param username 用户名
  */
 async function removeRow(id: number, username: string) {
-  // 弹出确认框
   await ElMessageBox.confirm(
     t("tips.removeWarning", { module: t("page.users"), data: username }),
     t("tips.confirm"),
