@@ -3,7 +3,7 @@
 
 export default {
   label: {
-    no: 'NO.',
+    serial: 'NO.',
     title: 'Title',
     template: 'Template',
     actions: 'Actions',
@@ -102,13 +102,26 @@ export default {
     imports: 'Imports',
     attachment: 'Attachment',
     owner: 'Owner',
-    all: 'All'
+    all: 'All',
+    unread: 'Unread',
+    mode: 'Mode',
+    sender: 'Sender',
+    receiver: 'Receiver',
+    publishedAt: 'Published At',
+    yes: 'Yes',
+    no: 'No',
+    task: 'Task',
+    corn: 'Corn',
+    directory: 'Directory',
+    message: 'Error message',
   },
 
   action: {
     search: 'Search',
     retrieve: 'Retrieve',
     fetch: 'Fetch',
+    tree: 'Retrieve Tree',
+    subset: 'Retrieve subset',
     import: 'Import',
     export: 'Export',
     submit: 'Submit',
@@ -132,6 +145,7 @@ export default {
     authorize: 'Authorize',
     more: 'More',
     enable: 'Enable',
+    disable: 'Disable',
     unlock: 'Unlock',
     view: 'View',
     save: 'Save',
@@ -143,7 +157,22 @@ export default {
     continue: 'Continue',
     data: 'Data',
     addItem: 'Add Item',
-    section: 'Section'
+    section: 'Section',
+    member: 'Member',
+    publish: 'Publish',
+    revoke: 'Revoke',
+    read: 'Read',
+    readAll: 'Read All',
+    statistics: 'Statistics',
+    privileges: 'Retrieve Privileges',
+    addPrivilege: 'Add Privilege',
+    removePrivilege: 'Remove Privilege',
+    members: 'Retrieve Members',
+    addMembers: 'Add Members',
+    removeMembers: 'Remove Members',
+    roles: 'Retrieve Roles',
+    addRoles: 'Add Roles',
+    removeRoles: 'Remove Roles',
   },
 
   page: {
@@ -167,15 +196,22 @@ export default {
     scripts: 'Scripts',
     samples: 'Samples',
     logs: 'Logs',
-    operationLogs: 'Operation Log',
-    accessLogs: 'Access Log',
-    auditLogs: 'Audit Log',
-    schedulerLogs: 'Scheduler Log',
+    operationLogs: 'Operation Logs',
+    accessLogs: 'Access Logs',
     docs: 'Docs',
     reports: 'Reports',
     archives: 'Archives',
     templates: 'Schemas',
     sections: 'Sections',
+    messages: 'Messages',
+    sent: 'Sent',
+    inbox: 'Inbox',
+    schedulers: 'Schedulers',
+    schedulerLogs: 'Scheduler Logs',
+    tasks: 'Tasks',
+    audits: 'Safety Audits',
+    patrols: 'Safety Patrols',
+    auditLogs: 'Audit Logs',
   },
 
   github: 'Github',
@@ -195,7 +231,7 @@ export default {
     selectedTotal: '{total} items selected',
     success: '{action} successful.',
     error: '{action} failed!',
-    networkError: 'Network Error.'
+    networkError: 'Network Error.',
   },
 
   tips: {
@@ -205,12 +241,25 @@ export default {
     fileSizeLimit: 'File with a size less than {size}.',
 
     confirm: 'Are you sure ?',
-    removeWarning: 'This action cannot be undone. This will permanently remove the <strong>{module}/{data}</strong>.',
+    removeWarning:
+      'This action cannot be undone. This will permanently remove the <strong>{module}/{data}</strong>.',
     removeButtonText: 'I understand, remove it.',
-    clearWarning: 'This action cannot be undone. This will permanently remove all items.',
-    clearButtonText: 'I understand, remove all.',
+    disableWarning:
+      'After disabling the data, the current data and associated data will be unavailable.',
+    disableButtonText: 'I understand, disable it!',
+    clearWarning:
+      'This action cannot be undone. This will permanently remove all items.',
+    clearButtonText: 'I understand, clear all.',
+    publishWarning:
+      'After clicking OK, the current message <strong>{data}</strong> will be immediately sent to the recipient.',
+    publishButtonText: 'I\'m sure, release immediately.',
+    revokeWarning:
+      'After clicking OK, the current message <strong>{data}</strong> will be revoked immediately, read message cannot be revoked.',
+    revokeButtonText: 'I\'m sure, revoke immediately.',
+    revokeTimeoutText:
+      'The message was sent over 30 minutes ago, so it can\'t be undone.',
     welcome: 'Hi! Welcome Back.',
     subtitle: 'Please sign in to continue exploring.',
-    forgotPassword: 'Forgot The Password ?'
-  }
+    forgotPassword: 'Forgot The Password ?',
+  },
 }

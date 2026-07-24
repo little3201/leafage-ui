@@ -1,17 +1,17 @@
+import type { Report } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Report } from 'src/types'
-import { applyFilters } from '../util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from '../util'
 
 const datas: Report[] = []
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(5) + 1
   const row: Report = {
     id: i,
-    schemaId: Math.floor(Math.random() * 5) + 1,
+    schemaId: random,
     title: 'Title_' + i,
-    version: Math.floor(Math.random() * 10),
-    body: 'This is body content about xxx'
+    version: random,
   }
   datas.push(row)
 }
@@ -44,10 +44,13 @@ export const reportsHandlers = [
     const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(
+        Number(page) * Number(size),
+        (Number(page) + 1) * Number(size),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
     return HttpResponse.json(data)
   }),
@@ -69,7 +72,7 @@ export const reportsHandlers = [
   }),
   http.post(`/api${SERVER_URL.REPORT}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Report
+    const newData = (await request.json()) as Report
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -81,24 +84,15 @@ export const reportsHandlers = [
   http.put(`/api${SERVER_URL.REPORT}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Report
+    const newData = (await request.json()) as Report
 
-    if (id && newData) {
-      // Don't forget to declare a semantic "201 Created"
-      // response and send back the newly created Row!
-      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
-    } else {
-      return HttpResponse.error()
-    }
-
+    return id && newData
+      ? HttpResponse.json({ ...newData, id }, { status: 202 })
+      : HttpResponse.error()
   }),
   http.patch(`/api${SERVER_URL.REPORT}/:id`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json(true) : HttpResponse.error()
   }),
   http.delete(`/api${SERVER_URL.REPORT}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
@@ -119,5 +113,5 @@ export const reportsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

@@ -6,7 +6,6 @@ export interface Region extends AudtiMetadata {
   areaCode?: number
   postalCode?: number
   enabled?: boolean
-  description?: string
   count?: number
   isLeaf?: boolean
 }

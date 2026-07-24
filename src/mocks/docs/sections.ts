@@ -1,21 +1,104 @@
+import type {
+  Section,
+  SectionData,
+  SectionField,
+  SectionTreeNode,
+} from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Section, SectionData, SectionField, SectionTreeNode } from 'src/types'
-import { applyFilters } from '../util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from '../util'
 
 const datas: Section[] = []
 
 for (let i = 1; i < 28; i++) {
-  const superiorId = Math.floor(Math.random() * 5)
+  const superiorId = randomInt(5)
   const row: Section = {
     id: i,
     superiorId: superiorId || null,
     name: 'Title_' + i,
-    body: 'This is body content about xxx',
-    ownerId: Math.floor(Math.random() * 10) || null,
-    ownerType: ['REPORT', 'TEMPLATE'][Math.floor(Math.random() * 2)] || null,
+    body: {
+      id: 'id_' + i,
+      body: {
+        tables: [],
+        textRuns: [],
+        dataStream: '现状如下\r\n',
+        paragraphs: [
+          {
+            startIndex: 4,
+            paragraphStyle: {
+              spaceAbove: {
+                v: 0,
+              },
+              spaceBelow: {
+                v: 8,
+              },
+              lineSpacing: 1.5,
+            },
+          },
+        ],
+        customBlocks: [],
+        customRanges: [],
+        sectionBreaks: [
+          {
+            startIndex: 5,
+          },
+        ],
+        customDecorations: [],
+      },
+      title: 'Title_' + i,
+      locale: 'zhCN',
+      footers: {},
+      headers: {},
+      drawings: {},
+      settings: {
+        zoomRatio: 1,
+      },
+      resources: [
+        {
+          data: '{"data":{},"order":[]}',
+          name: 'DOC_DRAWING_PLUGIN',
+        },
+      ],
+      tableSource: {},
+      documentStyle: {
+        pageSize: {
+          width: 794,
+          height: 1124,
+        },
+        marginTop: 50,
+        marginLeft: 50,
+        pageOrient: 0,
+        marginRight: 50,
+        marginBottom: 50,
+        marginFooter: 30,
+        marginHeader: 30,
+        renderConfig: {
+          background: {
+            rgb: '#ccc',
+          },
+          centerAngle: 0,
+          vertexAngle: 0,
+          zeroWidthParagraphBreak: 0,
+        },
+        documentFlavor: 1,
+        autoHyphenation: 1,
+        defaultFooterId: '',
+        defaultHeaderId: '',
+        evenPageFooterId: '',
+        evenPageHeaderId: '',
+        evenAndOddHeaders: 0,
+        firstPageFooterId: '',
+        firstPageHeaderId: '',
+        doNotHyphenateCaps: 0,
+        consecutiveHyphenLimit: 2,
+        useFirstPageHeaderFooter: 0,
+      },
+      drawingsOrder: [],
+    },
+    ownerId: randomInt(10) || null,
+    ownerType: ['REPORT', 'TEMPLATE'][randomInt(2)] || null,
     sequence: i,
-    count: Math.floor(Math.random() * 2) || 0
+    count: randomInt(2) || 0,
   }
   datas.push(row)
 }
@@ -24,15 +107,15 @@ const fields: SectionField[] = []
 const sectionfields = new Map<number, SectionField[]>()
 
 for (let i = 1; i < 28; i++) {
-  const sectionId = Math.floor(Math.random() * 28)
+  const sectionId = randomInt(28)
   const row: SectionField = {
     id: i,
-    sectionId: sectionId,
+    sectionId,
     name: 'name_' + i,
-    type: ['STRING', 'NUMBER', 'DATE'][Math.floor(Math.random() * 3)],
+    type: ['STRING', 'NUMBER', 'DATE'][randomInt(3)],
     field: 'field_' + i,
-    length: Math.floor(Math.random() * 10) + 1,
-    required: Math.random() < 0.5
+    length: randomInt(10) + 1,
+    required: randomInt(1) < 1,
   }
   fields.push(row)
 
@@ -42,45 +125,60 @@ for (let i = 1; i < 28; i++) {
   sectionfields.get(sectionId)?.push(row)
 }
 
-function generateRandomValue(type: string, length?: number) {
+function generateRandomValue (type: string, length?: number) {
   switch (type) {
     case 'STRING': {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      const chars
+        = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
       let result = ''
       const len = length || 10
       for (let i = 0; i < len; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length))
+        result += chars.charAt(randomInt(chars.length))
       }
       return result
     }
-    case 'NUMBER':
-      return Math.floor(Math.random() * 1000)
-    case 'DATE':
-      return new Date(2020 + Math.floor(Math.random() * 10),
-        Math.floor(Math.random() * 12),
-        Math.floor(Math.random() * 28) + 1).toISOString()
-    default:
+    case 'NUMBER': {
+      return randomInt(1000)
+    }
+    case 'DATE': {
+      return new Date(
+        2020 + randomInt(10),
+        randomInt(12),
+        randomInt(28) + 1,
+      ).toISOString()
+    }
+    default: {
       return null
+    }
   }
 }
 
 const sectionDatas: SectionData[] = []
-const uniqueSectionIds = [...new Set(fields.map(field => field.sectionId).filter((id): id is number => id !== null))]
+const uniqueSectionIds = [
+  ...new Set(
+    fields
+      .map(field => field.sectionId)
+      .filter((id): id is number => id !== null),
+  ),
+]
 
 for (const sectionId of uniqueSectionIds) {
   const sectionField = sectionfields.get(sectionId) || []
 
   // 为当前sectionId创建一个data对象，包含其所有字段的随机数据
-  const dataObj: Record<string, unknown> = {}
+  const dataObj: Record<string, string | number | boolean> = {}
   for (const field of sectionField) {
     // 使用field属性作为data对象的属性名，根据type生成相应的随机值
-    dataObj[field.field] = generateRandomValue(field.type, field.length)
+    const value = generateRandomValue(field.type, field.length)
+    if (value) {
+      dataObj[field.field] = value
+    }
   }
 
   const row: SectionData = {
     id: sectionId,
-    sectionId: sectionId,
-    data: dataObj
+    sectionId,
+    data: dataObj,
   }
   sectionDatas.push(row)
 }
@@ -89,11 +187,11 @@ export const sectionsHandlers = [
   http.get(`/api${SERVER_URL.SECTION}/subset`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const id = searchParams.get('id')
-    if (id) {
-      return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
-    } else {
-      return HttpResponse.json(datas.filter(item => item.superiorId === null))
-    }
+    return id
+      ? HttpResponse.json(
+          datas.filter(item => item.superiorId === Number(id)),
+        )
+      : HttpResponse.json(datas.filter(item => item.superiorId === null))
   }),
   http.get(`/api${SERVER_URL.SECTION}/:id/fields`, ({ params }) => {
     const { id } = params
@@ -107,7 +205,9 @@ export const sectionsHandlers = [
   http.get(`/api${SERVER_URL.SECTION}/:id/datas`, ({ params }) => {
     const { id } = params
     if (id) {
-      const filtered = sectionDatas.filter(item => item.sectionId === Number(id))
+      const filtered = sectionDatas.filter(
+        item => item.sectionId === Number(id),
+      )
       return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
@@ -116,17 +216,19 @@ export const sectionsHandlers = [
   http.get(`/api${SERVER_URL.SECTION}/:id/tree`, ({ params }) => {
     const { id } = params
     if (id) {
-      const filtered = datas.filter(item => item.superiorId === null).map(item => {
-        const node: SectionTreeNode = {
-          id: item.id,
-          name: item.name,
-          meta: {
-            sequence: item.sequence ?? 0
-          },
-          children: []
-        }
-        return node
-      })
+      const filtered = datas
+        .filter(item => item.superiorId === null)
+        .map(item => {
+          const node: SectionTreeNode = {
+            id: item.id,
+            name: item.name,
+            meta: {
+              sequence: item.sequence ?? 0,
+            },
+            children: [],
+          }
+          return node
+        })
       return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json()
@@ -150,10 +252,13 @@ export const sectionsHandlers = [
     const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(
+        Number(page) * Number(size),
+        (Number(page) + 1) * Number(size),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
     return HttpResponse.json(data)
   }),
@@ -175,7 +280,7 @@ export const sectionsHandlers = [
   }),
   http.post(`/api${SERVER_URL.SECTION}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Section
+    const newData = (await request.json()) as Section
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -187,24 +292,15 @@ export const sectionsHandlers = [
   http.put(`/api${SERVER_URL.SECTION}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Section
+    const newData = (await request.json()) as Section
 
-    if (id && newData) {
-      // Don't forget to declare a semantic "201 Created"
-      // response and send back the newly created Row!
-      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
-    } else {
-      return HttpResponse.error()
-    }
-
+    return id && newData
+      ? HttpResponse.json({ ...newData, id }, { status: 202 })
+      : HttpResponse.error()
   }),
   http.patch(`/api${SERVER_URL.SECTION}/:id`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json(true) : HttpResponse.error()
   }),
   http.delete(`/api${SERVER_URL.SECTION}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
@@ -225,5 +321,5 @@ export const sectionsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

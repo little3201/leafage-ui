@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, Template } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { Filter, Pagination, Template } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,9 +9,12 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveSchemas = (pagination: Pagination, filter?: Filter<Template>) => {
+export function retrieveTemplates (pagination: Pagination,
+  filter?: Filter<Template>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.TEMPLATE, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.TEMPLATE, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
@@ -19,7 +22,7 @@ export const retrieveSchemas = (pagination: Pagination, filter?: Filter<Template
  * @param id Row ID
  * @returns Row data
  */
-export const fetchSchema = (id: number) => {
+export function fetchTemplate (id: number) {
   return api.get(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
@@ -28,7 +31,7 @@ export const fetchSchema = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSchema = (row: Template) => {
+export function createTemplate (row: Template) {
   return api.post(SERVER_URL.TEMPLATE, row)
 }
 
@@ -38,17 +41,26 @@ export const createSchema = (row: Template) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySchema = (id: number, row: Template) => {
+export function modifyTemplate (id: number, row: Template) {
   return api.put(`${SERVER_URL.TEMPLATE}/${id}`, row)
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
-export const enableSchema = (id: number) => {
-  return api.patch(`${SERVER_URL.TEMPLATE}/${id}`)
+export function enableTemplate (id: number) {
+  return api.patch(`${SERVER_URL.TEMPLATE}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export function disableTemplate (id: number) {
+  return api.patch(`${SERVER_URL.TEMPLATE}/${id}/disable`)
 }
 
 /**
@@ -56,7 +68,7 @@ export const enableSchema = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeSchema = (id: number) => {
+export function removeTemplate (id: number) {
   return api.delete(`${SERVER_URL.TEMPLATE}/${id}`)
 }
 
@@ -65,6 +77,6 @@ export const removeSchema = (id: number) => {
  * @param file file
  * @returns
  */
-export const importSchemas = (file: File) => {
-  return api.postForm(`${SERVER_URL.TEMPLATE}/import`, { file: file })
+export function importTemplates (file: File) {
+  return api.postForm(`${SERVER_URL.TEMPLATE}/import`, { file })
 }

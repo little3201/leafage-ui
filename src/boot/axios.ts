@@ -1,22 +1,31 @@
-import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios'
 import axios from 'axios'
-import { signIn } from 'src/api/authentication'
+import { signIn } from '@/api/authentication'
 
-
-const abortControllerMap: Map<string, AbortController> = new Map()
+const abortControllerMap = new Map<string, AbortController>()
 
 const api: AxiosInstance = axios.create({
   baseURL: '/api',
-  timeout: 15000,
-  withCredentials: true
+  timeout: 15_000,
+  withCredentials: true,
 })
 
 // 请求拦截器
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const uniqueKey = generateUniqueKey(config)
+    const previousController = abortControllerMap.get(uniqueKey)
+    if (previousController) {
+      previousController.abort()
+      abortControllerMap.delete(uniqueKey)
+    }
     // 创建 AbortController 实例
     const controller = new AbortController()
-    const uniqueKey = generateUniqueKey(config)
     config.signal = controller.signal
     abortControllerMap.set(uniqueKey, controller)
 
@@ -24,7 +33,7 @@ api.interceptors.request.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error)
-  }
+  },
 )
 
 // 响应拦截器
@@ -36,27 +45,34 @@ api.interceptors.response.use(
     return response
   },
   (error: AxiosError) => {
+    if (error.config) {
+      const uniqueKey = generateUniqueKey(error.config)
+      abortControllerMap.delete(uniqueKey)
+    }
+
     if (error.response?.status === 401) {
       cancelAllRequest()
       signIn()
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 // 构建 uniqueKey 的辅助函数
-function generateUniqueKey(config: InternalAxiosRequestConfig): string {
-  const { method, url, params } = config
-  const paramString = params ? JSON.stringify(params) : ''
-  return `${method}:${url}:${paramString}`
+function generateUniqueKey (config: InternalAxiosRequestConfig): string {
+  const method = config.method ?? 'get'
+  const url = config.url ?? ''
+  const params = config.params ? JSON.stringify(config.params) : ''
+  const data = config.data ? JSON.stringify(config.data) : ''
+
+  return `${method}:${url}:${params}:${data}`
 }
 
-function cancelAllRequest() {
-  abortControllerMap.forEach(controller => {
+function cancelAllRequest () {
+  for (const controller of abortControllerMap.values()) {
     controller.abort()
-  })
+  }
   abortControllerMap.clear()
 }
 
 export { api }
-

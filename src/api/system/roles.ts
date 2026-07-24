@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, Role } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { Filter, Pagination, Role } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,16 +9,19 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveRoles = (pagination: Pagination, filter?: Filter<Role>) => {
+export function retrieveRoles (pagination: Pagination,
+  filter?: Filter<Role>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.ROLE, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.ROLE, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
  * Retrieve members for a specific row
  * @returns tree data
  */
-export const retrieveRoleMembers = (id: number) => {
+export function retrieveRoleMembers (id: number) {
   return api.get(`${SERVER_URL.ROLE}/${id}/members`)
 }
 
@@ -27,7 +30,7 @@ export const retrieveRoleMembers = (id: number) => {
  * @param id Row ID
  * @returns Role privileges
  */
-export const retrieveRolePrivileges = (id: number) => {
+export function retrieveRolePrivileges (id: number) {
   return api.get(`${SERVER_URL.ROLE}/${id}/privileges`)
 }
 
@@ -36,7 +39,7 @@ export const retrieveRolePrivileges = (id: number) => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchRole = (id: number) => {
+export function fetchRole (id: number) {
   return api.get(`${SERVER_URL.ROLE}/${id}`)
 }
 
@@ -45,7 +48,7 @@ export const fetchRole = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createRole = (row: Role) => {
+export function createRole (row: Role) {
   return api.post(SERVER_URL.ROLE, row)
 }
 
@@ -55,17 +58,26 @@ export const createRole = (row: Role) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyRole = (id: number, row: Role) => {
+export function modifyRole (id: number, row: Role) {
   return api.put(`${SERVER_URL.ROLE}/${id}`, row)
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
-export const enableRole = (id: number) => {
-  return api.patch(`${SERVER_URL.ROLE}/${id}`)
+export function enableRole (id: number) {
+  return api.patch(`${SERVER_URL.ROLE}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export function disableRole (id: number) {
+  return api.patch(`${SERVER_URL.ROLE}/${id}/disable`)
 }
 
 /**
@@ -73,7 +85,7 @@ export const enableRole = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeRole = (id: number) => {
+export function removeRole (id: number) {
   return api.delete(`${SERVER_URL.ROLE}/${id}`)
 }
 
@@ -82,7 +94,7 @@ export const removeRole = (id: number) => {
  * @param id Row ID
  * @param usernames usernames
  */
-export const addMembers = (id: number, usernames: string[]) => {
+export function addMembers (id: number, usernames: string[]) {
   return api.patch(`${SERVER_URL.ROLE}/${id}/members`, usernames)
 }
 
@@ -91,7 +103,7 @@ export const addMembers = (id: number, usernames: string[]) => {
  * @param id Row ID
  * @param usernames usernames
  */
-export const removeMembers = (id: number, usernames: string[]) => {
+export function removeMembers (id: number, usernames: string[]) {
   const params = usernames ? { usernames: usernames.join(',') } : {}
   return api.delete(`${SERVER_URL.ROLE}/${id}/members`, { params })
 }
@@ -102,8 +114,14 @@ export const removeMembers = (id: number, usernames: string[]) => {
  * @param privilegeId Privilege id
  * @param action Action
  */
-export const addPrivilege = (id: number, privilegeId: number, action?: string) => {
-  return api.patch(`${SERVER_URL.ROLE}/${id}/privileges/${privilegeId}`, {}, { params: { action } })
+export function addPrivilege (id: number,
+  privilegeId: number,
+  action?: string) {
+  return api.patch(
+    `${SERVER_URL.ROLE}/${id}/privileges/${privilegeId}`,
+    {},
+    { params: { action } },
+  )
 }
 
 /**
@@ -112,8 +130,12 @@ export const addPrivilege = (id: number, privilegeId: number, action?: string) =
  * @param privilegeId Privilege id
  * @param action Action
  */
-export const removePrivilege = (id: number, privilegeId: number, action?: string) => {
-  return api.delete(`${SERVER_URL.ROLE}/${id}/privileges/${privilegeId}`, { params: { action } })
+export function removePrivilege (id: number,
+  privilegeId: number,
+  action?: string) {
+  return api.delete(`${SERVER_URL.ROLE}/${id}/privileges/${privilegeId}`, {
+    params: { action },
+  })
 }
 
 /**
@@ -121,6 +143,6 @@ export const removePrivilege = (id: number, privilegeId: number, action?: string
  * @param file file
  * @returns
  */
-export const importRoles = (file: File) => {
-  return api.patchForm(`${SERVER_URL.ROLE}/import`, { file: file })
+export function importRoles (file: File) {
+  return api.patchForm(`${SERVER_URL.ROLE}/import`, { file })
 }

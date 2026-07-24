@@ -1,27 +1,51 @@
+import type { FileCategory, FileRecord, FileStatistics } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { FileRecord } from 'src/types'
-import { applyFilters } from './util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from './util'
 
-const datas: FileRecord[] = [
-]
+const datas: FileRecord[] = []
+const statistics: FileStatistics[] = []
 
 for (let i = 1; i < 18; i++) {
-  const randomIndex = Math.floor(Math.random() * 6)
+  const random = randomInt(7)
   const data: FileRecord = {
     id: i,
-    superiorId: randomIndex || null,
-    name: 'test' + i + ['.jpg', '.png', '.pdf', '.zip', '.docx', '.xlsx'][randomIndex] || '',
-    contentType: ['image/jpg', 'image/png', 'application/pdf', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'][randomIndex] || '',
-    size: Math.floor(Math.random() * 100000),
-    path: '/path/to/test' + i,
-    directory: randomIndex === null ? true : false,
-    lastModifiedDate: new Date()
+    superiorId: random || null,
+    name:
+      'test'
+      + i
+      + ['.jpg', '.png', '.pdf', '.zip', '.docx', '.xlsx', ''][random] || '',
+    contentType:
+      [
+        'image/jpg',
+        'image/png',
+        'application/pdf',
+        'application/zip',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      ][random] || '',
+    size: randomInt(10_000_000),
+    path: random > 5 ? '' : '/path/to/test' + i,
+    directory: random === 6 ? true : false,
+    enabled: i % 2 > 0,
+    lastModifiedDate: new Date(),
   }
   datas.push(data)
 }
 
+const categories: FileCategory[] = ['image', 'video', 'document', 'other']
+for (const key of categories) {
+  statistics.push({
+    key,
+    count: randomInt(99),
+    size: randomInt(10_000_000_000),
+  })
+}
+
 export const fileRecordsHandlers = [
+  http.get(`/api${SERVER_URL.FILE}/statistics`, () => {
+    return HttpResponse.json(statistics)
+  }),
   http.get(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -40,10 +64,13 @@ export const fileRecordsHandlers = [
     const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(
+        Number(page) * Number(size),
+        (Number(page) + 1) * Number(size),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
 
     return HttpResponse.json(data)
@@ -64,6 +91,14 @@ export const fileRecordsHandlers = [
 
     return HttpResponse.json(datas[0])
   }),
+  http.patch(`/api${SERVER_URL.FILE}/:id/enable`, ({ params }) => {
+    const { id } = params
+    return id ? HttpResponse.json(true) : HttpResponse.error()
+  }),
+  http.patch(`/api${SERVER_URL.FILE}/:id/disable`, ({ params }) => {
+    const { id } = params
+    return id ? HttpResponse.json(true) : HttpResponse.error()
+  }),
   http.delete(`/api${SERVER_URL.FILE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.
@@ -83,5 +118,5 @@ export const fileRecordsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

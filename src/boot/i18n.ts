@@ -1,25 +1,25 @@
-import zhTW from 'src//lang/zh-TW'
-import enUS from 'src/lang/en-US'
-import zhCN from 'src/lang/zh-CN'
-import Cookies from 'universal-cookie'
-import type { I18n } from 'vue-i18n'
 import { createI18n } from 'vue-i18n'
+import messages from '@/lang'
 
+export type MessageLanguages = keyof typeof messages
+// Type-define 'zh-CN' as the master schema for the resource
+export type MessageSchema = (typeof messages)['zhHans']
 
-const cookies = new Cookies(null, { path: '/' })
-export const i18n = createI18n({
+// See https://vue-i18n.intlify.dev/guide/advanced/typescript.html#global-resource-schema-type-definition
+
+declare module 'vue-i18n' {
+  // define the locale messages schema
+  export interface DefineLocaleMessage extends MessageSchema {}
+
+  // define the datetime format schema
+  export interface DefineDateTimeFormat {}
+
+  // define the number format schema
+  export interface DefineNumberFormat {}
+}
+
+export const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
+  locale: 'zhHans',
   legacy: false,
-  locale: cookies.get('lang') || 'zh-CN',
-  fallbackLocale: 'zh-CN',
-  messages: {
-    'en-US': enUS,
-    'zh-CN': zhCN,
-    'zh-TW': zhTW
-  }
-}) as I18n
-
-export const langOptions = [
-  { value: 'en-US', label: 'English(US)' },
-  { value: 'zh-CN', label: '中文（简体）' },
-  { value: 'zh-TW', label: '中文（繁體）' }
-]
+  messages,
+})

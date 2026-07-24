@@ -3,8 +3,10 @@
     <template #activator="{ props }">
       <v-list-item
         v-bind="props"
-        :prepend-icon="`mdi-${essentialLink.meta.icon}`"
-        :title="essentialLink.name"
+        color="primary"
+        :prepend-icon="pageIcon(essentialLink.name)"
+        rounded="pill"
+        :title="$t(`page.${essentialLink.name}`)"
       />
     </template>
 
@@ -16,14 +18,21 @@
         :parent-path="pathResolve(parentPath, link.meta.path)"
       />
 
-      <v-list-item v-else :prepend-icon="`mdi-${link.meta.icon}`" :title="link.name" :to="pathResolve(parentPath, link.meta.path)" />
+      <v-list-item
+        v-else
+        color="primary"
+        :prepend-icon="pageIcon(link.name)"
+        rounded="pill"
+        :title="$t(`page.${link.name}`)"
+        :to="pathResolve(parentPath, link.meta.path)"
+      />
     </template>
   </v-list-group>
 </template>
 
 <script setup lang="ts">
-import type { PrivilegeTreeNode } from 'src/types'
-import { pathResolve } from 'src/utils'
+import type { PrivilegeTreeNode } from '@/types'
+import { pageIcon, pathResolve } from '@/utils'
 
 withDefaults(defineProps<{
   essentialLink: PrivilegeTreeNode

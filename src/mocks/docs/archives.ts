@@ -1,18 +1,19 @@
+import type { Archive, Section } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Archive, Section } from 'src/types'
-import { applyFilters } from '../util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from '../util'
 
 const datas: Archive[] = []
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(10) + 1
   const row: Archive = {
     id: i,
     title: 'Title_' + i,
     owner: 'Owner_Name_' + i,
-    schemaId: Math.floor(Math.random() * 10) + 1,
-    version: Math.floor(Math.random() * 3) + 1,
-    lastModifiedDate: new Date()
+    schemaId: random,
+    version: random,
+    lastModifiedDate: new Date(),
   }
   datas.push(row)
 }
@@ -20,13 +21,40 @@ for (let i = 1; i < 28; i++) {
 const sections: Section[] = []
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(27) + 1
   const row: Section = {
     id: i,
     name: 'Section_' + i,
-    superiorId: Math.floor(Math.random() * 27) + 1,
+    superiorId: random,
     ownerType: 'ARCHIVE',
-    body: 'This is body of section ' + i,
-    ownerId: Math.floor(Math.random() * 27) + 1
+    body: {
+      dataStream: '这里写的是内容，你知道吗？\n' + '这是第' + i + '行内容\r\n',
+      textRuns: [],
+      customBlocks: [],
+      tables: [],
+      paragraphs: [
+        {
+          startIndex: 8,
+          paragraphStyle: {
+            spaceAbove: {
+              v: 5,
+            },
+            lineSpacing: 1,
+            spaceBelow: {
+              v: 0,
+            },
+          },
+        },
+      ],
+      sectionBreaks: [
+        {
+          startIndex: 9,
+        },
+      ],
+      customRanges: [],
+      customDecorations: [],
+    },
+    ownerId: random,
   }
   sections.push(row)
 }
@@ -34,20 +62,25 @@ for (let i = 1; i < 28; i++) {
 export const archivesHandlers = [
   http.get(`/api${SERVER_URL.ARCHIVE}/:id/sections`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json(sections.filter(item => item.ownerId === Number(id)))
-    } else {
-      return HttpResponse.json()
-    }
+    return id
+      ? HttpResponse.json(
+          sections.filter(item => item.ownerId === Number(id)),
+        )
+      : HttpResponse.json()
   }),
-  http.get(`/api${SERVER_URL.ARCHIVE}/:id/sections/:sectionId`, ({ params }) => {
-    const { id, sectionId } = params
-    if (id) {
-      return HttpResponse.json(sections.find(item => item.ownerId === Number(id) && item.id === Number(sectionId)))
-    } else {
-      return HttpResponse.json()
-    }
-  }),
+  http.get(
+    `/api${SERVER_URL.ARCHIVE}/:id/sections/:sectionId`,
+    ({ params }) => {
+      const { id, sectionId } = params
+      return id
+        ? HttpResponse.json(
+            sections.find(
+              item => item.ownerId === Number(id) && item.id === Number(sectionId),
+            ),
+          )
+        : HttpResponse.json()
+    },
+  ),
   http.get(`/api${SERVER_URL.ARCHIVE}/:id`, ({ params }) => {
     const { id } = params
     if (id) {
@@ -66,10 +99,13 @@ export const archivesHandlers = [
     const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(
+        Number(page) * Number(size),
+        (Number(page) + 1) * Number(size),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
     return HttpResponse.json(data)
   }),
@@ -91,7 +127,7 @@ export const archivesHandlers = [
   }),
   http.post(`/api${SERVER_URL.ARCHIVE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Archive
+    const newData = (await request.json()) as Archive
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -103,24 +139,15 @@ export const archivesHandlers = [
   http.put(`/api${SERVER_URL.ARCHIVE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Archive
+    const newData = (await request.json()) as Archive
 
-    if (id && newData) {
-      // Don't forget to declare a semantic "201 Created"
-      // response and send back the newly created Row!
-      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
-    } else {
-      return HttpResponse.error()
-    }
-
+    return id && newData
+      ? HttpResponse.json({ ...newData, id }, { status: 202 })
+      : HttpResponse.error()
   }),
   http.patch(`/api${SERVER_URL.ARCHIVE}/:id`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json(true) : HttpResponse.error()
   }),
   http.delete(`/api${SERVER_URL.ARCHIVE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
@@ -141,5 +168,5 @@ export const archivesHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

@@ -1,22 +1,32 @@
+import type { AccessLog } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { AccessLog } from 'src/types'
-import { applyFilters } from '../util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from '../util'
 
 const datas: AccessLog[] = []
 
 for (let i = 1; i < 28; i++) {
-  const httpMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'][Math.floor(Math.random() * 5)] || 'unknown'
+  const httpMethod
+    = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'][randomInt(5)] || 'unknown'
   const row: AccessLog = {
     id: i,
-    url: ['/users', '/groups', '/roles', '/logs', '/files'][Math.floor(Math.random() * 5)] || 'unknown',
-    httpMethod: httpMethod,
-    params: ['GET'].includes(httpMethod) ? 'page=1' : (['PUT', 'PATCH', 'DELETE'].includes(httpMethod) ? 'id=1' : ''),
+    url:
+      ['/users', '/groups', '/roles', '/logs', '/files'][randomInt(5)]
+      || 'unknown',
+    httpMethod,
+    targetId: ['PUT', 'PATCH', 'DELETE'].includes(httpMethod) ? i : undefined,
+    params: ['GET'].includes(httpMethod)
+      ? 'page=1'
+      : (['PUT', 'PATCH', 'DELETE'].includes(httpMethod)
+          ? `id=${i}`
+          : ''),
     ip: '192.168.0.1',
-    body: ['POST', 'PUT', 'PATCH'].includes(httpMethod) ? '{"username":"test"}' : '',
-    duration: Math.floor(Math.random() * 1000),
-    statusCode: [200, 201, 400, 404, 500, 502][Math.floor(Math.random() * 6)] || 200,
-    response: 'Non Content'
+    body: ['POST', 'PUT', 'PATCH'].includes(httpMethod)
+      ? '{"name":"test"}'
+      : '',
+    duration: randomInt(1000),
+    statusCode: [200, 201, 400, 404, 500, 502][randomInt(6)] || 200,
+    response: 'Non Content',
   }
   datas.push(row)
 }
@@ -42,10 +52,13 @@ export const accessLogsHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(
+        Number(page) * Number(size),
+        (Number(page) + 1) * Number(size),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
 
     return HttpResponse.json(data)
@@ -69,5 +82,5 @@ export const accessLogsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

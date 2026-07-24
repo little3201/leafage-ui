@@ -1,5 +1,5 @@
 <template>
-  <v-card flat>
+  <v-card class="pa-4" flat>
 
     <v-data-table-server
       v-model:items-per-page="itemsPerPage"
@@ -13,7 +13,7 @@
     >
       <template #top>
         <v-row class="justify-space-between">
-          <v-col class="d-flex" cols="3">
+          <v-col class="d-inline-flex align-center ga-1 me-auto" cols="2">
             <v-text-field
               v-model="filter.username!.value"
               clearable
@@ -28,40 +28,40 @@
             />
 
             <v-btn
+              density="compact"
               flat
-              icon="mdi-refresh"
+              :icon="actionIcon('refresh')"
               @click="refresh()"
             />
           </v-col>
 
-          <v-col align-self="center" class="d-flex justify-end" cols="2">
+          <v-col class="d-flex align-center justify-end ga-4" cols="2">
             <v-btn
-              border
-              class="me-2"
+              color="primary"
               flat
-              prepend-icon="mdi-plus"
+              :prepend-icon="actionIcon('create')"
               rounded="lg"
               text="Create"
               @click="saveRow()"
             />
 
             <v-btn
-              border
-              class="me-2"
+              color="warning"
               flat
-              prepend-icon="mdi-plus"
+              :prepend-icon="actionIcon('import')"
               rounded="lg"
               text="Import"
+              variant="outlined"
               @click="importRows()"
             />
 
             <v-btn
-              border
-              class="me-2"
+              color="warning"
               flat
-              prepend-icon="mdi-plus"
+              :prepend-icon="actionIcon('export')"
               rounded="lg"
               text="Export"
+              variant="outlined"
               @click="exportRows()"
             />
           </v-col>
@@ -81,10 +81,10 @@
       </template>
 
       <template #item.id="{ item }">
-        <div class="d-flex ga-x-2 justify-end">
-          <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" @click="saveRow(item.id!)" />
+        <div class="d-flex ga-2 justify-end">
+          <v-icon color="primary" :icon="actionIcon('modify')" @click="saveRow(item.id!)" />
 
-          <v-icon color="medium-emphasis" icon="mdi-delete" size="small" @click="removeRow(item.id!)" />
+          <v-icon color="error" :icon="actionIcon('remove')" @click="removeRow(item.id!)" />
         </div>
       </template>
     </v-data-table-server>
@@ -125,28 +125,31 @@
 </template>
 
 <script setup lang="ts">
-import type { Filter, Pagination, User } from 'src/types'
+import type { Filter, Pagination, User } from '@/types'
 import type { DataTableHeader, DataTableSortItem } from 'vuetify'
-import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers } from 'src/api/system/users'
-import { userStatus } from 'src/constants'
-import { reactive, ref, shallowRef } from 'vue'
+import { computed, reactive, ref, shallowRef } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { createUser, enableUser, fetchUser, importUsers, modifyUser, removeUser, retrieveUsers } from '@/api/system/users'
+import { userStatus } from '@/constants'
+import { actionIcon } from '@/utils'
 
+const { t } = useI18n()
 const loading = ref(true)
-const headers = ref<DataTableHeader[]>([
+const headers = computed<DataTableHeader[]>(() => [
   {
-    title: 'username',
+    title: t('label.username'),
     align: 'start',
     sortable: false,
     key: 'username',
   },
-  { title: 'email', key: 'email', sortable: false, align: 'center' },
-  { title: 'status', key: 'status', align: 'center' },
-  { title: 'enabled', key: 'enabled', align: 'start' },
-  { title: 'actions', key: 'id', sortable: false, align: 'end' },
+  { title: t('label.email'), key: 'email', sortable: false, align: 'center' },
+  { title: t('label.status'), key: 'status', align: 'center' },
+  { title: t('label.enabled'), key: 'enabled', align: 'start' },
+  { title: t('label.actions'), key: 'id', sortable: false, align: 'end' },
 ])
 
 const items = ref<Array<User>>([])
-const itemsPerPage = ref(5)
+const itemsPerPage = ref(10)
 const totalItems = ref(0)
 
 const filter = reactive<Filter<User>>({

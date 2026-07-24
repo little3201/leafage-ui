@@ -1,4 +1,5 @@
 import type { AudtiMetadata } from '../global'
+import type { PrivilegeTreeNode } from './privilege'
 
 export interface User extends AudtiMetadata {
   username: string
@@ -13,4 +14,12 @@ export interface UserPrivileges {
   username: string
   privilegeId: number
   actions?: string[]
+}
+
+export interface Userinfo {
+  username: string
+  fullName: string
+  email: string
+  privileges: PrivilegeTreeNode[]
+  routesAdded: boolean
 }

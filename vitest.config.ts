@@ -9,13 +9,13 @@ export default defineConfig({
       // Matches vitest tests in any subfolder of 'src' or into 'test/**/__tests__'
       // Matches all files with extension 'js', 'jsx', 'ts' and 'tsx'
       'src/**/__tests__/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-      'test/**/__tests__/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      // 'test/**/__tests__/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
     ],
   },
   plugins: [
-    vue()
+    vue(),
   ],
   resolve: {
     tsconfigPaths: true,
-  }
+  },
 })

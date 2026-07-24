@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { FileRecord, Filter, Pagination } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { FileRecord, Filter, Pagination } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,9 +9,12 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveFiles = (pagination: Pagination, filter?: Filter<FileRecord>) => {
+export function retrieveFiles (pagination: Pagination,
+  filter?: Filter<FileRecord>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.FILE, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.FILE, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
@@ -19,8 +22,44 @@ export const retrieveFiles = (pagination: Pagination, filter?: Filter<FileRecord
  * @param id Row ID
  * @returns Row data
  */
-export const fetchFile = (id: number) => {
+export function fetchFile (id: number) {
   return api.get(`${SERVER_URL.FILE}/${id}`)
+}
+
+/**
+ * Statistics
+ * @param id Row ID
+ * @returns Row data
+ */
+export function statisticsFile () {
+  return api.get(`${SERVER_URL.FILE}/statistics`)
+}
+
+/**
+ * Create directory
+ * @param id Row ID
+ * @returns Enable result
+ */
+export function createDirectory (superiorId: number | null, name: string) {
+  return api.post(`${SERVER_URL.FILE}`, { superiorId, name })
+}
+
+/**
+ * Enable an existing row
+ * @param id Row ID
+ * @returns Enable result
+ */
+export function enableFile (id: number) {
+  return api.patch(`${SERVER_URL.FILE}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export function disableFile (id: number) {
+  return api.patch(`${SERVER_URL.FILE}/${id}/disable`)
 }
 
 /**
@@ -28,7 +67,7 @@ export const fetchFile = (id: number) => {
  * @param file file
  * @returns Uploaded row
  */
-export const uploadFile = (file: File, superiorId?: number | null) => {
+export function uploadFile (file: File, superiorId?: number | null) {
   return api.postForm(`${SERVER_URL.FILE}/upload`, { file, superiorId })
 }
 
@@ -37,7 +76,7 @@ export const uploadFile = (file: File, superiorId?: number | null) => {
  * @param id Row ID
  * @returns data stream
  */
-export const downloadFile = (id: number) => {
+export function downloadFile (id: number) {
   return api.get(`${SERVER_URL.FILE}/${id}/download`, { responseType: 'blob' })
 }
 
@@ -46,6 +85,6 @@ export const downloadFile = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeFile = (id: number) => {
+export function removeFile (id: number) {
   return api.delete(`${SERVER_URL.FILE}/${id}`)
 }

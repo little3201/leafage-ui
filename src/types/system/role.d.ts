@@ -1,10 +1,10 @@
 import type { AudtiMetadata } from '../global'
+import type { User } from './user'
 
 export interface Role extends AudtiMetadata {
   name: string
-  members?: string[]
+  members?: User[]
   enabled?: boolean
-  description?: string
 }
 
 export interface RoleMembers {

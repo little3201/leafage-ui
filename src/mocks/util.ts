@@ -2,8 +2,12 @@
  * 解析 DSL 字符串为数组，方便 Mock 或测试使用
  * "name:eq:Tom;age:gt:18" => [{ field: 'name', op: 'eq', value: 'Tom' }, ...]
  */
-export function parseFilterString(dsl?: string): Array<{ field: string; op: string; value: string }> {
-  if (!dsl) return []
+export function parseFilterString (
+  dsl?: string,
+): Array<{ field: string, op: string, value: string }> {
+  if (!dsl) {
+    return []
+  }
 
   return dsl.split(';').map(item => {
     const [field, op, ...rest] = item.split(':')
@@ -11,7 +15,9 @@ export function parseFilterString(dsl?: string): Array<{ field: string; op: stri
       throw new Error(`Invalid filter DSL: ${item}`)
     }
     return {
-      field, op, value: decodeURIComponent(rest.join(':'))
+      field,
+      op,
+      value: decodeURIComponent(rest.join(':')),
     }
   })
 }
@@ -19,12 +25,14 @@ export function parseFilterString(dsl?: string): Array<{ field: string; op: stri
 /**
  * 在 Mock 数据中应用过滤
  */
-export function applyFilters<T>(datas: T[], filtersDsl?: string | null): T[] {
+export function applyFilters<T> (datas: T[], filtersDsl?: string | null): T[] {
   if (!filtersDsl) {
     return datas
   }
   const filters = parseFilterString(filtersDsl)
-  if (filters.length === 0) return datas
+  if (filters.length === 0) {
+    return datas
+  }
 
   return datas.filter(item => {
     return filters.every(f => {
@@ -35,7 +43,11 @@ export function applyFilters<T>(datas: T[], filtersDsl?: string | null): T[] {
       let cmpValue: string | number | boolean
       if (fieldValue instanceof Date) {
         cmpValue = fieldValue.toISOString()
-      } else if (typeof fieldValue === 'string' || typeof fieldValue === 'number' || typeof fieldValue === 'boolean') {
+      } else if (
+        typeof fieldValue === 'string'
+        || typeof fieldValue === 'number'
+        || typeof fieldValue === 'boolean'
+      ) {
         cmpValue = fieldValue
       } else if (fieldValue == null) {
         cmpValue = '' // null/undefined 用空字符串处理
@@ -44,41 +56,70 @@ export function applyFilters<T>(datas: T[], filtersDsl?: string | null): T[] {
       }
 
       switch (f.op) {
-        case 'eq':
+        case 'eq': {
           return cmpValue == val
-        case 'neq':
+        }
+        case 'neq': {
           return cmpValue != val
+        }
         case 'like':
-        case 'ilike':
-          if (typeof cmpValue !== 'string') return false
+        case 'ilike': {
+          if (typeof cmpValue !== 'string') {
+            return false
+          }
           return cmpValue.toLowerCase().includes(val.toLowerCase())
-        case 'gt':
+        }
+        case 'gt': {
           return Number(cmpValue) > Number(val)
-        case 'gte':
+        }
+        case 'gte': {
           return Number(cmpValue) >= Number(val)
-        case 'lt':
+        }
+        case 'lt': {
           return Number(cmpValue) < Number(val)
-        case 'lte':
+        }
+        case 'lte': {
           return Number(cmpValue) <= Number(val)
-        case 'in':
+        }
+        case 'in': {
           return val.split(',').includes(String(cmpValue))
-        case 'notIn':
+        }
+        case 'notIn': {
           return !val.split(',').includes(String(cmpValue))
+        }
         case 'between': {
           const [start, end] = val.split(',')
-          return Number(cmpValue) >= Number(start) && Number(cmpValue) <= Number(end)
+          return (
+            Number(cmpValue) >= Number(start) && Number(cmpValue) <= Number(end)
+          )
         }
         case 'notBetween': {
           const [start, end] = val.split(',')
-          return Number(cmpValue) < Number(start) || Number(cmpValue) > Number(end)
+          return (
+            Number(cmpValue) < Number(start) || Number(cmpValue) > Number(end)
+          )
         }
-        case 'isNull':
+        case 'isNull': {
           return fieldValue == null
-        case 'isNotNull':
+        }
+        case 'isNotNull': {
           return fieldValue != null
-        default:
+        }
+        default: {
           return true
+        }
       }
     })
   })
+}
+
+export function randomInt (max: number): number {
+  if (max <= 0) {
+    throw new Error('max must be greater than 0')
+  }
+
+  const array = new Uint32Array(1)
+  crypto.getRandomValues(array)
+
+  return (array[0] ?? 0) % max
 }

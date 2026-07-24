@@ -2,22 +2,8 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "types": ["vite/client"],
     "paths": {
-      "src": ["./src"],
-      "src/*": ["./src/*"],
-      "components": ["./src/components"],
-      "components/*": ["./src/components/*"],
-      "layouts": ["./src/layouts"],
-      "layouts/*": ["./src/layouts/*"],
-      "pages": ["./src/pages"],
-      "pages/*": ["./src/pages/*"],
-      "assets": ["./src/assets"],
-      "assets/*": ["./src/assets/*"],
-      "boot": ["./src/boot" ],
-      "boot/*": ["./src/boot/*" ],
-      "stores": ["./src/stores"],
-      "stores/*": ["./src/stores/*"],
+      "@/*": ["./src/*"]
     },
   },
   "include": [
@@ -26,9 +12,9 @@
     "src/**/*.vue",
     "*.d.ts"
   ],
-  "exclude": [
-    "src/**/__tests__/*"
-  ],
+  // "exclude": [
+  //   "src/**/__tests__/*"
+  // ],
   "vueCompilerOptions": {
     "plugins": [
       "vue-router/volar/sfc-typed-router",

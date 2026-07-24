@@ -1,18 +1,52 @@
+import type {
+  Group,
+  GroupMembers,
+  GroupPrivileges,
+  GroupRoles,
+  Role,
+  TreeNode,
+  User,
+} from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Group, GroupMembers, GroupPrivileges, GroupRoles, TreeNode } from 'src/types'
-import { applyFilters } from '../util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from '../util'
 
 const datas: Group[] = []
+const users: User[] = []
+const roles: Role[] = []
+
+for (let i = 1; i < 5; i++) {
+  const row: User = {
+    id: i,
+    username:
+      ['admin', 'zhangsan', 'lisi', 'wangmazi', 'guangtouqiang'][
+        randomInt(5)
+      ] || 'admin',
+    fullName: 'Name_' + i,
+    email: 'use***' + '@**t.com',
+  }
+  users.push(row)
+}
+
+for (let i = 1; i < 5; i++) {
+  const row: Role = {
+    id: i,
+    name: 'Role_' + i,
+    members: users.filter((_, index) => index < randomInt(5)),
+    enabled: i % 3 > 0,
+  }
+  roles.push(row)
+}
 
 for (let i = 1; i < 28; i++) {
-  const superiorId = Math.floor(Math.random() * 12) || null
+  const superiorId = randomInt(12) || null
   const row: Group = {
     id: i,
-    superiorId: superiorId,
+    superiorId,
     name: 'Group_' + i,
-    enabled: true,
-    description: 'This is region description about xxx'
+    members: users.filter((_, index) => index < randomInt(5)),
+    roles: roles.filter((_, index) => index < randomInt(5)),
+    enabled: i % 3 > 0,
   }
   datas.push(row)
 }
@@ -23,21 +57,20 @@ for (let i = 1; i < 14; i++) {
   const row: GroupMembers = {
     id: i,
     username: 'username' + i,
-    groupId: i
+    groupId: i,
   }
   members.push(row)
 }
 
-
-const roles: GroupRoles[] = []
+const groupRoles: GroupRoles[] = []
 
 for (let i = 1; i < 14; i++) {
   const row: GroupRoles = {
     id: i,
     roleId: i,
-    groupId: i
+    groupId: i,
   }
-  roles.push(row)
+  groupRoles.push(row)
 }
 
 const privileges: GroupPrivileges[] = []
@@ -47,34 +80,38 @@ for (let i = 2; i < 17; i++) {
     id: i,
     groupId: i,
     privilegeId: i,
-    actions: ['create', 'modify', 'remove', 'import', 'export']
+    actions: ['create', 'modify', 'remove', 'import', 'export'],
   }
   privileges.push(row)
 }
 
 // 将扁平数据转换为树形结构
-function buildTree(datas: Group[]): TreeNode[] {
+function buildTree (datas: Group[]): TreeNode[] {
   const map = new Map<number, TreeNode>()
   const tree: TreeNode[] = []
 
   // 第一步：创建映射，只处理有 id 的节点
-  datas.forEach(data => {
+  for (const data of datas) {
     if (data.id) {
       map.set(data.id, {
         ...data,
-        children: []
+        children: [],
       })
     }
-  })
+  }
 
   // 第二步：构建层级关系
-  datas.forEach(data => {
+  for (const data of datas) {
     // 跳过没有 id 的节点
-    if (!data.id) return
+    if (!data.id) {
+      continue
+    }
 
     const currentNode = map.get(data.id)
     // 确保当前节点存在
-    if (!currentNode) return
+    if (!currentNode) {
+      continue
+    }
 
     // 处理上级关系
     if (data.superiorId === undefined || data.superiorId === null) {
@@ -91,7 +128,7 @@ function buildTree(datas: Group[]): TreeNode[] {
         tree.push(currentNode)
       }
     }
-  })
+  }
 
   return tree
 }
@@ -112,7 +149,7 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/roles`, ({ params }) => {
     const { id } = params
     if (id) {
-      const filtered = roles.filter(item => item.groupId === Number(id))
+      const filtered = groupRoles.filter(item => item.groupId === Number(id))
       return HttpResponse.json(filtered)
     } else {
       return HttpResponse.json([])
@@ -145,10 +182,13 @@ export const groupsHandlers = [
     const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(
+        Number(page) * Number(size),
+        (Number(page) + 1) * Number(size),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
     return HttpResponse.json(data)
   }),
@@ -170,7 +210,7 @@ export const groupsHandlers = [
   }),
   http.post(`/api${SERVER_URL.GROUP}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Group
+    const newData = (await request.json()) as Group
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -182,68 +222,55 @@ export const groupsHandlers = [
   http.put(`/api${SERVER_URL.GROUP}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Group
+    const newData = (await request.json()) as Group
 
-    if (id && newData) {
-      // Don't forget to declare a semantic "201 Created"
-      // response and send back the newly created Row!
-      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
-    } else {
-      return HttpResponse.error()
-    }
-
+    return id && newData
+      ? HttpResponse.json({ ...newData, id }, { status: 202 })
+      : HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/enable`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json(true) : HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/members`, async ({ params, request }) => {
+  http.patch(`/api${SERVER_URL.GROUP}/:id/disable`, ({ params }) => {
     const { id } = params
-    const data = await request.json()
-    if (id && data) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json(true) : HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/roles`, async ({ params, request }) => {
-    const { id } = params
-    const data = await request.json()
-    if (id && data) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
-  }),
-  http.patch(`/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`, ({ params, request }) => {
-    const { id, privilegeId } = params
-    const searchParams = new URL(request.url).searchParams
-    const action = searchParams.get('action')
-    if (id && privilegeId && action) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
-  }),
-  http.delete(`/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`, ({ params }) => {
-    const { groupId, privilegeId } = params
-    if (groupId && privilegeId) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
-  }),
+  http.patch(
+    `/api${SERVER_URL.GROUP}/:id/members`,
+    async ({ params, request }) => {
+      const { id } = params
+      const data = await request.json()
+      return id && data ? HttpResponse.json() : HttpResponse.error()
+    },
+  ),
+  http.patch(
+    `/api${SERVER_URL.GROUP}/:id/roles`,
+    async ({ params, request }) => {
+      const { id } = params
+      const data = await request.json()
+      return id && data ? HttpResponse.json() : HttpResponse.error()
+    },
+  ),
+  http.patch(
+    `/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`,
+    ({ params, request }) => {
+      const { id, privilegeId } = params
+      const searchParams = new URL(request.url).searchParams
+      const action = searchParams.get('action')
+      return id && privilegeId && action ? HttpResponse.json() : HttpResponse.error()
+    },
+  ),
+  http.delete(
+    `/api${SERVER_URL.GROUP}/:groupId/privileges/:privilegeId`,
+    ({ params }) => {
+      const { groupId, privilegeId } = params
+      return groupId && privilegeId ? HttpResponse.json() : HttpResponse.error()
+    },
+  ),
   http.delete(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json() : HttpResponse.error()
   }),
   http.delete(`/api${SERVER_URL.GROUP}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
@@ -264,5 +291,5 @@ export const groupsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

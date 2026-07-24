@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, User } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { Filter, Pagination, User } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,9 +9,12 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveUsers = (pagination: Pagination, filter?: Filter<User>) => {
+export function retrieveUsers (pagination: Pagination,
+  filter?: Filter<User>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.USER, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.USER, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
@@ -19,7 +22,7 @@ export const retrieveUsers = (pagination: Pagination, filter?: Filter<User>) => 
  * @param id Row ID
  * @returns Row data
  */
-export const fetchUser = (id: number) => {
+export function fetchUser (id: number) {
   return api.get(`${SERVER_URL.USER}/${id}`)
 }
 
@@ -28,7 +31,7 @@ export const fetchUser = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createUser = (row: User) => {
+export function createUser (row: User) {
   return api.post(SERVER_URL.USER, row)
 }
 
@@ -38,17 +41,26 @@ export const createUser = (row: User) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyUser = (id: number, row: User) => {
+export function modifyUser (id: number, row: User) {
   return api.put(`${SERVER_URL.USER}/${id}`, row)
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
-export const enableUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}`)
+export function enableUser (id: number) {
+  return api.patch(`${SERVER_URL.USER}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export function disableUser (id: number) {
+  return api.patch(`${SERVER_URL.USER}/${id}/disable`)
 }
 
 /**
@@ -56,7 +68,7 @@ export const enableUser = (id: number) => {
  * @param id Row ID
  * @returns Unlock result
  */
-export const unlockUser = (id: number) => {
+export function unlockUser (id: number) {
   return api.patch(`${SERVER_URL.USER}/${id}/unlock`)
 }
 
@@ -65,7 +77,7 @@ export const unlockUser = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeUser = (id: number) => {
+export function removeUser (id: number) {
   return api.delete(`${SERVER_URL.USER}/${id}`)
 }
 
@@ -74,6 +86,6 @@ export const removeUser = (id: number) => {
  * @param file file
  * @returns
  */
-export const importUsers = (file: File) => {
-  return api.postForm(`${SERVER_URL.USER}/import`, { file: file })
+export function importUsers (file: File) {
+  return api.postForm(`${SERVER_URL.USER}/import`, { file })
 }

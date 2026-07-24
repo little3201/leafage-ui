@@ -7,7 +7,7 @@ export interface Section extends AudtiMetadata {
   name: string
   sequence?: number
   level?: number
-  body: string
+  body: Record<string, unknown>
   count?: number
 }
 
@@ -29,6 +29,6 @@ export interface SectionField extends AudtiMetadata {
 export interface SectionData extends AudtiMetadata {
   sectionId: number
   data: {
-    [key: string]: unknown
+    [key: string]: string | number | boolean
   }
 }

@@ -3,12 +3,12 @@ import type { AudtiMetadata } from '../global'
 export interface OperationLog extends AudtiMetadata {
   module: string
   action: string
+  targetId?: number
   params: string
-  body?: string
-  ip?: string
-  sessionId?: string
-  userAgent?: string
-  statusCode?: number
+  response?: string
+  message?: string
+  status?: string
+  duration?: number
   operator?: string
   operatedAt?: Date
 }

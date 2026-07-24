@@ -1,13 +1,14 @@
+import Cookies from 'universal-cookie'
 import { createVuetify } from 'vuetify'
 import { en, zhHans, zhHant } from 'vuetify/locale'
+
 import '@mdi/font/css/materialdesignicons.css'
-import '../styles/layers.css'
 import 'vuetify/styles'
 
+const cookie = new Cookies(null, { path: '/' })
 export default createVuetify({
   theme: {
-    defaultTheme: 'system',
-    utilities: false,
+    defaultTheme: cookie.get('theme') || 'system',
   },
   locale: {
     locale: 'zhHans',

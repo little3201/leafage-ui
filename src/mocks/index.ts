@@ -1,3 +1,5 @@
+import { auditLogsHandlers } from './audits/logs'
+import { auditPatrolsHandlers } from './audits/patrols'
 import { authenticationHandlers } from './authentication'
 import { calendarEventHandlers } from './calendar-events'
 import { archivesHandlers } from './docs/archives'
@@ -12,10 +14,12 @@ import { schemesHandlers } from './exploiters/schemes'
 import { scriptsHandlers } from './exploiters/scripts'
 import { fileRecordsHandlers } from './file-records'
 import { accessLogsHandlers } from './logs/access-logs'
-import { auditLogsHandlers } from './logs/audit-logs'
 import { operationLogsHandlers } from './logs/operation-logs'
-import { schedulerLogsHandlers } from './logs/scheduler-logs'
+import { messagesHandlers } from './messages'
+import { messageInboxHandlers } from './messages/inbox'
 import { regionsHandlers } from './regions'
+import { schedulersHandlers } from './scheduler'
+import { schedulerLogsHandlers } from './scheduler/logs'
 import { dictionariesHandlers } from './system/dictionaries'
 import { groupsHandlers } from './system/groups'
 import { privilegesHandlers } from './system/privileges'
@@ -25,6 +29,7 @@ import { usersHandlers } from './system/users'
 export const handlers = [
   ...accessLogsHandlers,
   ...auditLogsHandlers,
+  ...auditPatrolsHandlers,
   ...authenticationHandlers,
   ...calendarEventHandlers,
   ...connectionsHandlers,
@@ -32,6 +37,8 @@ export const handlers = [
   ...fileRecordsHandlers,
   ...fragmentsHandlers,
   ...groupsHandlers,
+  ...messagesHandlers,
+  ...messageInboxHandlers,
   ...modulesHandlers,
   ...operationLogsHandlers,
   ...privilegesHandlers,
@@ -39,11 +46,12 @@ export const handlers = [
   ...rolesHandlers,
   ...samplesHandlers,
   ...sectionsHandlers,
+  ...schedulersHandlers,
   ...schedulerLogsHandlers,
   ...schemesHandlers,
   ...scriptsHandlers,
   ...usersHandlers,
   ...archivesHandlers,
   ...reportsHandlers,
-  ...templatesHandlers
+  ...templatesHandlers,
 ]

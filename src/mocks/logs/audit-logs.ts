@@ -1,6 +1,6 @@
+import type { AuditLog } from 'src/types'
 import { http, HttpResponse } from 'msw'
 import { actionTypes, SERVER_URL } from 'src/constants'
-import type { AuditLog } from 'src/types'
 import { applyFilters } from '../util'
 
 const datas: AuditLog[] = []
@@ -9,8 +9,8 @@ for (let i = 1; i < 28; i++) {
   const action = Object.keys(actionTypes)[Math.floor(Math.random() * Object.keys(actionTypes).length)]
   const row: AuditLog = {
     id: i,
-    action: action,
-    targetId: action !== 'create' ? i : undefined,
+    action,
+    targetId: action === 'create' ? undefined : i,
     module: ['users', 'groups', 'roles', 'logs', 'files'][Math.floor(Math.random() * 5)] || 'unknown',
     oldValue: ['create', 'modify', 'patch', 'relation', 'config'].includes(action) ? '{"theme:"light"}' : '',
     newValue: ['create', 'modify', 'patch', 'relation', 'config'].includes(action) ? '{"theme:"dark"}' : '',
@@ -44,8 +44,8 @@ export const auditLogsHandlers = [
     const data = {
       content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
 
     return HttpResponse.json(data)
@@ -69,5 +69,5 @@ export const auditLogsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

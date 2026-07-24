@@ -1,14 +1,15 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { DynamicRow, Section, SectionField } from 'src/types'
-
+import type { Section, SectionData, SectionField } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
 
 /**
  * Fetch row tree structure
  * @returns tree data
  */
-export const retrieveSectionTree = (ownerId: number, ownerType: string) => {
-  return api.get(`${SERVER_URL.SECTION}/${ownerId}/tree`, { params: { ownerType } })
+export function retrieveSectionTree (ownerId: number, ownerType: string) {
+  return api.get(`${SERVER_URL.SECTION}/${ownerId}/tree`, {
+    params: { ownerType },
+  })
 }
 
 /**
@@ -16,7 +17,7 @@ export const retrieveSectionTree = (ownerId: number, ownerType: string) => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchSection = (id: number) => {
+export function fetchSection (id: number) {
   return api.get(`${SERVER_URL.SECTION}/${id}`)
 }
 
@@ -25,7 +26,7 @@ export const fetchSection = (id: number) => {
  * @param id Row ID
  * @returns Fields data
  */
-export const retrieveSectionFields = (id: number) => {
+export function retrieveSectionFields (id: number) {
   return api.get(`${SERVER_URL.SECTION}/${id}/fields`)
 }
 
@@ -34,7 +35,7 @@ export const retrieveSectionFields = (id: number) => {
  * @param id Row ID
  * @returns Datas data
  */
-export const retrieveSectionDatas = (id: number) => {
+export function retrieveSectionDatas (id: number) {
   return api.get(`${SERVER_URL.SECTION}/${id}/datas`)
 }
 
@@ -43,7 +44,7 @@ export const retrieveSectionDatas = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSection = (row: Section) => {
+export function createSection (row: Section) {
   return api.post(SERVER_URL.SECTION, row)
 }
 
@@ -52,7 +53,7 @@ export const createSection = (row: Section) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSectionField = (row: SectionField) => {
+export function createSectionField (row: SectionField) {
   return api.post(`${SERVER_URL.SECTION}/fields`, row)
 }
 
@@ -61,7 +62,7 @@ export const createSectionField = (row: SectionField) => {
  * @param row Row data
  * @returns Created row
  */
-export const createSectionData = (row: DynamicRow) => {
+export function createSectionData (row: SectionData) {
   return api.post(`${SERVER_URL.SECTION}/datas`, row)
 }
 
@@ -71,7 +72,7 @@ export const createSectionData = (row: DynamicRow) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySection = (id: number, row: Section) => {
+export function modifySection (id: number, row: Section) {
   return api.put(`${SERVER_URL.SECTION}/${id}`, row)
 }
 
@@ -81,7 +82,7 @@ export const modifySection = (id: number, row: Section) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySectionField = (id: number, row: SectionField) => {
+export function modifySectionField (id: number, row: SectionField) {
   return api.put(`${SERVER_URL.SECTION}/fields/${id}`, row)
 }
 
@@ -91,17 +92,8 @@ export const modifySectionField = (id: number, row: SectionField) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifySectionData = (id: number, row: DynamicRow) => {
+export function modifySectionData (id: number, row: SectionData) {
   return api.put(`${SERVER_URL.SECTION}/datas/${id}`, row)
-}
-
-/**
- * Enable or Disable an existing row
- * @param id Row ID
- * @returns Enable or Disable result
- */
-export const enableSection = (id: number) => {
-  return api.patch(`${SERVER_URL.SECTION}/${id}`)
 }
 
 /**
@@ -109,7 +101,7 @@ export const enableSection = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeSection = (id: number) => {
+export function removeSection (id: number) {
   return api.delete(`${SERVER_URL.SECTION}/${id}`)
 }
 
@@ -118,7 +110,7 @@ export const removeSection = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeSectionField = (id: number) => {
+export function removeSectionField (id: number) {
   return api.delete(`${SERVER_URL.SECTION}/fields/${id}`)
 }
 
@@ -127,6 +119,6 @@ export const removeSectionField = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeSectionData = (id: number) => {
+export function removeSectionData (id: number) {
   return api.delete(`${SERVER_URL.SECTION}/datas/${id}`)
 }

@@ -1,6 +1,6 @@
+import type { SchedulerLog } from 'src/types'
 import { http, HttpResponse } from 'msw'
 import { SERVER_URL } from 'src/constants'
-import type { SchedulerLog } from 'src/types'
 import { applyFilters } from '../util'
 
 const datas: SchedulerLog[] = [
@@ -14,12 +14,11 @@ for (let i = 1; i < 28; i++) {
     startTime: new Date(),
     duration: ['PENDING', 'RUNNING', 'CANCELED'].includes(status) ? undefined : Math.floor(Math.random() * 1000),
     nextExecuteTime: new Date(),
-    status: status,
+    status,
     record: ['SUCCESS'].includes(status) ? '执行完成，无错误' : (['FAILED'].includes(status) ? '执行失败，错误： xxxx' : ''),
   }
   datas.push(row)
 }
-
 
 export const schedulerLogsHandlers = [
   http.get(`/api${SERVER_URL.SCHEDULER_LOG}/:id`, ({ params }) => {
@@ -44,8 +43,8 @@ export const schedulerLogsHandlers = [
     const data = {
       content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
 
     return HttpResponse.json(data)
@@ -69,5 +68,5 @@ export const schedulerLogsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

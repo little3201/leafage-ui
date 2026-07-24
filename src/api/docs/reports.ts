@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, Report } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { Filter, Pagination, Report } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,9 +9,12 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveReports = (pagination: Pagination, filter?: Filter<Report>) => {
+export function retrieveReports (pagination: Pagination,
+  filter?: Filter<Report>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.REPORT, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.REPORT, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
@@ -19,17 +22,8 @@ export const retrieveReports = (pagination: Pagination, filter?: Filter<Report>)
  * @param id Row ID
  * @returns Row data
  */
-export const fetchReport = (id: number) => {
+export function fetchReport (id: number) {
   return api.get(`${SERVER_URL.REPORT}/${id}`)
-}
-
-/**
- * Fetch a specific row
- * @param id Row ID
- * @returns Row data
- */
-export const fetchReportTemplate = (id: number) => {
-  return api.get(`${SERVER_URL.REPORT}/${id}/template`)
 }
 
 /**
@@ -37,7 +31,7 @@ export const fetchReportTemplate = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createReport = (row: Report) => {
+export function createReport (row: Report) {
   return api.post(SERVER_URL.REPORT, row)
 }
 
@@ -47,17 +41,8 @@ export const createReport = (row: Report) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyReport = (id: number, row: Report) => {
+export function modifyReport (id: number, row: Report) {
   return api.put(`${SERVER_URL.REPORT}/${id}`, row)
-}
-
-/**
- * Enable or Disable an existing row
- * @param id Row ID
- * @returns Enable or Disable result
- */
-export const enableReport = (id: number) => {
-  return api.patch(`${SERVER_URL.REPORT}/${id}`)
 }
 
 /**
@@ -65,7 +50,7 @@ export const enableReport = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeReport = (id: number) => {
+export function removeReport (id: number) {
   return api.delete(`${SERVER_URL.REPORT}/${id}`)
 }
 
@@ -74,6 +59,6 @@ export const removeReport = (id: number) => {
  * @param file file
  * @returns
  */
-export const importReports = (file: File) => {
-  return api.postForm(`${SERVER_URL.REPORT}/import`, { file: file })
+export function importReports (file: File) {
+  return api.postForm(`${SERVER_URL.REPORT}/import`, { file })
 }

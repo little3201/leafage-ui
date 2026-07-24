@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Dictionary, Filter, Pagination } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { Dictionary, Filter, Pagination } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,9 +9,12 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveDictionaries = (pagination: Pagination, filter?: Filter<Dictionary>) => {
+export function retrieveDictionaries (pagination: Pagination,
+  filter?: Filter<Dictionary>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.DICTIONARY, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.DICTIONARY, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
@@ -19,7 +22,7 @@ export const retrieveDictionaries = (pagination: Pagination, filter?: Filter<Dic
  * @param id Row ID
  * @returns Subset data
  */
-export const retrieveDictionarySubset = (id: number | null) => {
+export function retrieveDictionarySubset (id: number | null) {
   return api.get(`${SERVER_URL.DICTIONARY}/subset`, { params: { id } })
 }
 
@@ -27,7 +30,7 @@ export const retrieveDictionarySubset = (id: number | null) => {
  * Fetch row tree structure
  * @returns tree data
  */
-export const retrieveDictionaryTree = () => {
+export function retrieveDictionaryTree () {
   return api.get(`${SERVER_URL.DICTIONARY}/tree`)
 }
 
@@ -36,7 +39,7 @@ export const retrieveDictionaryTree = () => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchDictionary = (id: number) => {
+export function fetchDictionary (id: number) {
   return api.get(`${SERVER_URL.DICTIONARY}/${id}`)
 }
 
@@ -45,7 +48,7 @@ export const fetchDictionary = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createDictionary = (row: Dictionary) => {
+export function createDictionary (row: Dictionary) {
   return api.post(SERVER_URL.DICTIONARY, row)
 }
 
@@ -55,17 +58,26 @@ export const createDictionary = (row: Dictionary) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyDictionary = (id: number, row: Dictionary) => {
+export function modifyDictionary (id: number, row: Dictionary) {
   return api.put(`${SERVER_URL.DICTIONARY}/${id}`, row)
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
-export const enableDictionary = (id: number) => {
-  return api.patch(`${SERVER_URL.DICTIONARY}/${id}`)
+export function enableDictionary (id: number) {
+  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export function disableDictionary (id: number) {
+  return api.patch(`${SERVER_URL.DICTIONARY}/${id}/disable`)
 }
 
 /**
@@ -73,7 +85,7 @@ export const enableDictionary = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeDictionary = (id: number) => {
+export function removeDictionary (id: number) {
   return api.delete(`${SERVER_URL.DICTIONARY}/${id}`)
 }
 
@@ -82,6 +94,6 @@ export const removeDictionary = (id: number) => {
  * @param file file
  * @returns
  */
-export const importDictionaries = (file: File) => {
-  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, { file: file })
+export function importDictionaries (file: File) {
+  return api.postForm(`${SERVER_URL.DICTIONARY}/import`, { file })
 }

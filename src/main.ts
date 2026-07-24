@@ -1,18 +1,16 @@
-import {i18n} from 'boot/i18n'
-import vuetify from 'boot/vuetify'
 import { createPinia } from 'pinia'
-import router from 'src/router'
 import { createApp } from 'vue'
+import { i18n } from '@/boot/i18n'
+import vuetify from '@/boot/vuetify'
+import router from '@/router'
 import App from './App.vue'
 
 // Styles
 import 'unfonts.css'
-import './styles/tailwind.css'
-import './styles/main.scss'
 
 async function prepareApp () {
   if (import.meta.env.DEV) {
-    const { worker } = await import('boot/msw-browser')
+    const { worker } = await import('@/boot/msw-browser')
 
     return worker.start({
       onUnhandledRequest: 'bypass',

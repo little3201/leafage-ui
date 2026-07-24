@@ -1,26 +1,30 @@
-import { getUserInfo, signIn } from 'src/api/authentication'
-import { retrievePrivilegeTree } from 'src/api/system/privileges'
-import type { PrivilegeTreeNode } from 'src/types'
-import { useUserStore } from 'stores/user'
+import type { PrivilegeTreeNode } from '@/types'
 import type { RouteRecordRaw } from 'vue-router'
+import Cookies from 'universal-cookie'
 import { createRouter, createWebHistory } from 'vue-router'
-import { constantRouterMap } from './routes'
-// Lazy load layout
-const BlankLayout = () => import('layouts/BlankLayout.vue')
+import { getUserInfo, signIn } from '@/api/authentication'
+import { retrievePrivilegeTree } from '@/api/system/privileges'
+import { useUserStore } from '@/stores/user'
+import { routes } from './routes'
 
+// Lazy load layout
+const BlankLayout = () => import('@/layouts/BlankLayout.vue')
 
 const modules = import.meta.glob('../pages/**/*.{vue,tsx}')
+
+const cookies = new Cookies(null, { path: '/' })
 
 // Create router instance
 const router = createRouter({
   history: createWebHistory(),
-  routes: constantRouterMap,
-  scrollBehavior: () => ({ left: 0, top: 0 })
+  routes,
+  scrollBehavior: () => ({ left: 0, top: 0 }),
 })
 
-
 router.beforeEach(async (to, from) => {
-  if (['/login'].includes(to.path)) return true
+  if (['/login'].includes(to.path)) {
+    return true
+  }
 
   const userStore = useUserStore()
 
@@ -29,11 +33,7 @@ router.beforeEach(async (to, from) => {
     try {
       const res = await getUserInfo()
       if (res && res.data) {
-        userStore.$patch({
-          username: res.data.sub,
-          fullName: res.data.name,
-          email: res.data.email
-        })
+        userStore.setUserinfo(res.data.sub, res.data.name, res.data.email)
       }
     } catch {
       userStore.$reset()
@@ -43,11 +43,11 @@ router.beforeEach(async (to, from) => {
   }
 
   // 加载权限信息
-  if (!userStore.privileges.length) {
+  if (userStore.privileges.length === 0) {
     try {
       const res = await retrievePrivilegeTree()
       if (res && res.data) {
-        userStore.$patch({ privileges: res.data })
+        userStore.setPrivileges(res.data)
       }
     } catch {
       userStore.$reset()
@@ -58,15 +58,15 @@ router.beforeEach(async (to, from) => {
 
   // 动态注册路由
   if (!userStore.routesAdded) {
-    generateRoutes(userStore.privileges).forEach((route) => {
+    for (const route of generateRoutes(userStore.privileges)) {
       router.addRoute('home', route)
-    })
+    }
 
     if (!router.hasRoute('ErrorNotFound')) {
       router.addRoute({
         path: '/:cacheAll(.*)*',
         name: 'ErrorNotFound',
-        component: () => import('pages/ErrorNotFound.vue'),
+        component: () => import('@/pages/ErrorNotFound.vue'),
       })
     }
 
@@ -79,24 +79,38 @@ router.beforeEach(async (to, from) => {
   return true
 })
 
+router.afterEach(to => {
+  const pageInfo = {
+    path: to.path,
+    query: to.fullPath.includes('?')
+      ? to.fullPath.slice(Math.max(0, to.fullPath.indexOf('?')))
+      : '',
+    name: to.name,
+    params: to.params,
+    meta: to.meta,
+  }
+
+  cookies.set('current_page', JSON.stringify(pageInfo))
+})
 
 /**
  * Generate routes dynamically based on user privileges
  * @param {PrivilegeTreeNode[]} routes - Array of privilege tree nodes
  * @returns {RouteRecordRaw[]} - Array of route records
  */
-export const generateRoutes = (routes: PrivilegeTreeNode[]): RouteRecordRaw[] => {
+export function generateRoutes (routes: PrivilegeTreeNode[]): RouteRecordRaw[] {
   const res: RouteRecordRaw[] = []
   for (const route of routes) {
     const item: RouteRecordRaw = {
-      path: route.meta.path,
+      path: route.meta.path || '',
       name: route.name,
       redirect: route.meta.redirect,
       component: null,
-      children: []
+      children: [],
     }
     if (route.meta.component) {
-      const comModule = modules[`../pages/${route.meta.component}/IndexPage.vue`]
+      const comModule
+        = modules[`../pages/${route.meta.component}/IndexPage.vue`]
       const component = route.meta.component
       if (comModule) {
         item.component = comModule

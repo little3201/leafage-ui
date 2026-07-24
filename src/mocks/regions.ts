@@ -1,21 +1,20 @@
+import type { Region } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Region } from 'src/types'
-import { applyFilters } from './util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from './util'
 
 const datas: Region[] = []
 
 for (let i = 1; i < 99; i++) {
-  const superiorId = Math.floor(Math.random() * 34) || null
+  const superiorId = randomInt(34) || null
   const data: Region = {
     id: i,
     superiorId: i > 33 ? superiorId : null,
     name: 'Region_' + i,
-    areaCode: Math.floor(Math.random() * 100),
-    postalCode: Math.floor(Math.random() * 3000),
+    areaCode: randomInt(100),
+    postalCode: randomInt(3000),
     enabled: i % 3 > 0,
-    count: i > 33 ? 0 : Math.floor(Math.random() * 5) + 1,
-    description: 'This is region description about xxx'
+    count: i > 33 ? 0 : randomInt(5) + 1,
   }
   datas.push(data)
 }
@@ -24,22 +23,17 @@ export const regionsHandlers = [
   http.get(`/api${SERVER_URL.REGION}/subset`, ({ request }) => {
     const searchParams = new URL(request.url).searchParams
     const id = searchParams.get('id')
-    if (id) {
-      return HttpResponse.json(datas.filter(item => item.superiorId === Number(id)))
-    } else {
-      return HttpResponse.json(datas.filter(item => item.superiorId === null))
-    }
+    return id
+      ? HttpResponse.json(
+          datas.filter(item => item.superiorId === Number(id)),
+        )
+      : HttpResponse.json(datas.filter(item => item.superiorId === null))
   }),
   http.get(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json(datas.find(item => item.id === Number(id)))
-    } else {
-      return HttpResponse.json()
-    }
+    return id ? HttpResponse.json(datas.find(item => item.id === Number(id))) : HttpResponse.json()
   }),
   http.get(`/api${SERVER_URL.REGION}`, ({ request }) => {
-
     const url = new URL(request.url)
     const page = url.searchParams.get('page')
     const size = url.searchParams.get('size')
@@ -50,10 +44,15 @@ export const regionsHandlers = [
     // Construct a JSON response with the list of all Row
     // as the response body.
     const data = {
-      content: Array.from(filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size))),
+      content: Array.from(
+        filtered.slice(
+          Number(page) * Number(size),
+          (Number(page) + 1) * Number(size),
+        ),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
 
     return HttpResponse.json(data)
@@ -76,7 +75,7 @@ export const regionsHandlers = [
   }),
   http.post(`/api${SERVER_URL.REGION}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Region
+    const newData = (await request.json()) as Region
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -88,24 +87,19 @@ export const regionsHandlers = [
   http.put(`/api${SERVER_URL.REGION}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Region
+    const newData = (await request.json()) as Region
 
-    if (id && newData) {
-      // Don't forget to declare a semantic "201 Created"
-      // response and send back the newly created Row!
-      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
-    } else {
-      return HttpResponse.error()
-    }
-
+    return id && newData
+      ? HttpResponse.json({ ...newData, id }, { status: 202 })
+      : HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.REGION}/:id/enable`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json(true) : HttpResponse.error()
+  }),
+  http.patch(`/api${SERVER_URL.REGION}/:id/disable`, ({ params }) => {
+    const { id } = params
+    return id ? HttpResponse.json(true) : HttpResponse.error()
   }),
   http.delete(`/api${SERVER_URL.REGION}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
@@ -126,5 +120,5 @@ export const regionsHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

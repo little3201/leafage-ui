@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Archive, Filter, Pagination } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { Archive, Filter, Pagination } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,9 +9,12 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveArchives = (pagination: Pagination, filter?: Filter<Archive>) => {
+export function retrieveArchives (pagination: Pagination,
+  filter?: Filter<Archive>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.ARCHIVE, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.ARCHIVE, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
@@ -19,7 +22,7 @@ export const retrieveArchives = (pagination: Pagination, filter?: Filter<Archive
  * @param id Row ID
  * @returns Row data
  */
-export const fetchArchive = (id: number) => {
+export function fetchArchive (id: number) {
   return api.get(`${SERVER_URL.ARCHIVE}/${id}`)
 }
 
@@ -28,7 +31,7 @@ export const fetchArchive = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createArchive = (row: Archive) => {
+export function createArchive (row: Archive) {
   return api.post(SERVER_URL.ARCHIVE, row)
 }
 
@@ -38,17 +41,8 @@ export const createArchive = (row: Archive) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyArchive = (id: number, row: Archive) => {
+export function modifyArchive (id: number, row: Archive) {
   return api.put(`${SERVER_URL.ARCHIVE}/${id}`, row)
-}
-
-/**
- * Enable or Disable an existing row
- * @param id Row ID
- * @returns Enable or Disable result
- */
-export const enableArchive = (id: number) => {
-  return api.patch(`${SERVER_URL.ARCHIVE}/${id}`)
 }
 
 /**
@@ -56,7 +50,7 @@ export const enableArchive = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeArchive = (id: number) => {
+export function removeArchive (id: number) {
   return api.delete(`${SERVER_URL.ARCHIVE}/${id}`)
 }
 
@@ -65,6 +59,6 @@ export const removeArchive = (id: number) => {
  * @param file file
  * @returns
  */
-export const importArchives = (file: File) => {
-  return api.postForm(`${SERVER_URL.ARCHIVE}/import`, { file: file })
+export function importArchives (file: File) {
+  return api.postForm(`${SERVER_URL.ARCHIVE}/import`, { file })
 }

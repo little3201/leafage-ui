@@ -1,7 +1,7 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
-import type { Filter, Pagination, Region } from 'src/types'
-import { dealFilters } from 'src/utils'
+import type { Filter, Pagination, Region } from '@/types'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
+import { dealFilters } from '@/utils'
 
 /**
  * Retrieve rows
@@ -9,9 +9,12 @@ import { dealFilters } from 'src/utils'
  * @param filter Optional filter or sort parameters
  * @returns Rows data
  */
-export const retrieveRegions = (pagination: Pagination, filter?: Filter<Region>) => {
+export function retrieveRegions (pagination: Pagination,
+  filter?: Filter<Region>) {
   const filters = dealFilters(filter)
-  return api.get(SERVER_URL.REGION, { params: { ...pagination, page: pagination.page - 1, filters } })
+  return api.get(SERVER_URL.REGION, {
+    params: { ...pagination, page: pagination.page - 1, filters },
+  })
 }
 
 /**
@@ -19,7 +22,7 @@ export const retrieveRegions = (pagination: Pagination, filter?: Filter<Region>)
  * @param id Row ID
  * @returns Subset data
  */
-export const retrieveRegionSubset = (id: number | null) => {
+export function retrieveRegionSubset (id: number | null) {
   return api.get(`${SERVER_URL.REGION}/subset`, { params: { id } })
 }
 
@@ -28,7 +31,7 @@ export const retrieveRegionSubset = (id: number | null) => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchRegion = (id: number) => {
+export function fetchRegion (id: number) {
   return api.get(`${SERVER_URL.REGION}/${id}`)
 }
 
@@ -37,7 +40,7 @@ export const fetchRegion = (id: number) => {
  * @param row Row data
  * @returns Created row
  */
-export const createRegion = (row: Region) => {
+export function createRegion (row: Region) {
   return api.post(SERVER_URL.REGION, row)
 }
 
@@ -47,17 +50,26 @@ export const createRegion = (row: Region) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyRegion = (id: number, row: Region) => {
+export function modifyRegion (id: number, row: Region) {
   return api.put(`${SERVER_URL.REGION}/${id}`, row)
 }
 
 /**
- * Enable or Disable an existing row
+ * Enable an existing row
  * @param id Row ID
- * @returns Enable or Disable result
+ * @returns Enable result
  */
-export const enableRegion = (id: number) => {
-  return api.patch(`${SERVER_URL.REGION}/${id}`)
+export function enableRegion (id: number) {
+  return api.patch(`${SERVER_URL.REGION}/${id}/enable`)
+}
+
+/**
+ * Disable an existing row
+ * @param id Row ID
+ * @returns Disable result
+ */
+export function disableRegion (id: number) {
+  return api.patch(`${SERVER_URL.REGION}/${id}/disable`)
 }
 
 /**
@@ -65,7 +77,7 @@ export const enableRegion = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeRegion = (id: number) => {
+export function removeRegion (id: number) {
   return api.delete(`${SERVER_URL.REGION}/${id}`)
 }
 
@@ -74,6 +86,6 @@ export const removeRegion = (id: number) => {
  * @param file file
  * @returns
  */
-export const importRegions = (file: File) => {
-  return api.postForm(`${SERVER_URL.REGION}/import`, { file: file })
+export function importRegions (file: File) {
+  return api.postForm(`${SERVER_URL.REGION}/import`, { file })
 }

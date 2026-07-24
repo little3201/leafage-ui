@@ -1,23 +1,23 @@
+import type { Template } from '@/types'
 import { http, HttpResponse } from 'msw'
-import { SERVER_URL } from 'src/constants'
-import type { Template } from 'src/types'
-import { applyFilters } from '../util'
+import { SERVER_URL } from '@/constants'
+import { applyFilters, randomInt } from '../util'
 
 const datas: Template[] = []
 
 for (let i = 1; i < 28; i++) {
+  const random = randomInt(3)
   const row: Template = {
     id: i,
     name: 'Name_' + i,
-    type: (['WORD', 'EXCEL'] as const)[Math.floor(Math.random() * 2)],
-    version: Math.floor(Math.random() * 3) + 1,
-    status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][Math.floor(Math.random() * 3)] || 'unknown',
-    description: 'this is description about xxx',
-    lastModifiedDate: new Date()
+    type: (['WORD', 'EXCEL'] as const)[randomInt(2)],
+    version: random + 1,
+    status: ['DRAFT', 'PUBLISHED', 'ARCHIVED'][random],
+    enabled: (random < 2) && (i % 3 > 0) ? false : true,
+    lastModifiedDate: new Date(),
   }
   datas.push(row)
 }
-
 
 export const templatesHandlers = [
   http.get(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
@@ -38,10 +38,13 @@ export const templatesHandlers = [
     const filtered = applyFilters(datas, filtersStr)
 
     const data = {
-      content: filtered.slice(Number(page) * Number(size), (Number(page) + 1) * Number(size)),
+      content: filtered.slice(
+        Number(page) * Number(size),
+        (Number(page) + 1) * Number(size),
+      ),
       page: {
-        totalElements: filtered.length
-      }
+        totalElements: filtered.length,
+      },
     }
     return HttpResponse.json(data)
   }),
@@ -63,7 +66,7 @@ export const templatesHandlers = [
   }),
   http.post(`/api${SERVER_URL.TEMPLATE}`, async ({ request }) => {
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Template
+    const newData = (await request.json()) as Template
 
     // Push the new Row to the map of all Row.
     datas.push(newData)
@@ -75,24 +78,19 @@ export const templatesHandlers = [
   http.put(`/api${SERVER_URL.TEMPLATE}/:id`, async ({ params, request }) => {
     const { id } = params
     // Read the intercepted request body as JSON.
-    const newData = await request.json() as Template
+    const newData = (await request.json()) as Template
 
-    if (id && newData) {
-      // Don't forget to declare a semantic "201 Created"
-      // response and send back the newly created Row!
-      return HttpResponse.json({ ...newData, id: id }, { status: 202 })
-    } else {
-      return HttpResponse.error()
-    }
-
+    return id && newData
+      ? HttpResponse.json({ ...newData, id }, { status: 202 })
+      : HttpResponse.error()
   }),
-  http.patch(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/enable`, ({ params }) => {
     const { id } = params
-    if (id) {
-      return HttpResponse.json()
-    } else {
-      return HttpResponse.error()
-    }
+    return id ? HttpResponse.json(true) : HttpResponse.error()
+  }),
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/disable`, ({ params }) => {
+    const { id } = params
+    return id ? HttpResponse.json(true) : HttpResponse.error()
   }),
   http.delete(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
@@ -113,5 +111,5 @@ export const templatesHandlers = [
 
     // Respond with a "200 OK" response and the deleted Row.
     return HttpResponse.json()
-  })
+  }),
 ]

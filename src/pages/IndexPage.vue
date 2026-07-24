@@ -1,100 +1,201 @@
 <template>
-  <v-container>
-    <div>
-      <v-img alt="Placeholder logo" class="mb-4" height="150" src="assets/logo.png" />
+  <v-card class="pa-4" flat>
+    <v-sheet class="d-flex" tile>
+      <v-btn
+        class="ma-2"
+        icon
+        variant="text"
+        @click="calendar?.prev()"
+      >
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
 
-      <div class="mb-8 text-center">
-        <div class="font-light -mb-1">Welcome to</div>
-        <h1 class="text-6xl font-heading font-bold">Vuetify</h1>
-      </div>
+      <v-select
+        v-model="type"
+        class="ma-2"
+        density="comfortable"
+        hide-details
+        :items="types"
+        label="type"
+        variant="outlined"
+      />
 
-      <div class="grid md:grid-cols-2 gap-4">
-        <v-card
-          class="hero-card md:col-span-2"
-          image="https://cdn.vuetifyjs.com/docs/images/one/create/feature.png"
-          rounded="3xl"
-          variant="flat"
-        >
-          <template #prepend>
-            <v-avatar class="ml-2 mr-4" icon="mdi-rocket-launch-outline" size="60" variant="tonal" />
-          </template>
+      <v-select
+        v-model="mode"
+        class="ma-2"
+        density="comfortable"
+        hide-details
+        :items="modes"
+        label="event-overlap-mode"
+        variant="outlined"
+      />
 
-          <template #image>
-            <v-img class="hidden md:flex" position="top right" />
-          </template>
+      <v-spacer />
 
-          <template #title>
-            <h2 class="text-2xl font-medium my-0">
-              Get started
-            </h2>
-          </template>
+      <v-btn
+        class="ma-2"
+        icon
+        variant="text"
+        @click="calendar?.next()"
+      >
+        <v-icon>mdi-chevron-right</v-icon>
+      </v-btn>
+    </v-sheet>
 
-          <template #subtitle>
-            <div class="leading-7">
-              Change this page by updating <v-code>components/HelloWorld.vue</v-code>.
-            </div>
-          </template>
-        </v-card>
-
-        <v-card
-          v-for="link in links"
-          :key="link.href"
-          class="
-            h-full py-3 rounded-3xl transition-[border-radius] hover:rounded-lg
-            flex items-center [&>.v-card-item]:w-full
-            group"
-          :href="link.href"
-          rel="noopener noreferrer"
-          :subtitle="link.subtitle"
-          target="_blank"
-          :title="link.title"
-          variant="flat"
-        >
-          <template #prepend>
-            <v-avatar class="ml-2 mr-4" :icon="link.icon" size="60" variant="tonal" />
-          </template>
-
-          <template #append>
-            <v-icon
-              class="ml-1 opacity-0 transition group-hover:opacity-90 group-hover:-translate-x-1"
-              icon="mdi-open-in-new"
-            />
-          </template>
-
-          <template #subtitle>
-            <div class="line-clamp-2 text-wrap">{{ link.subtitle }}</div>
-          </template>
-        </v-card>
-      </div>
-    </div>
-  </v-container>
+    <v-sheet height="600">
+      <v-calendar
+        ref="calendar"
+        v-model="value"
+        :event-color="getEventColor"
+        :event-overlap-mode="mode"
+        :event-overlap-threshold="30"
+        :events="events"
+        :type="type"
+        @change="getEvents"
+      />
+    </v-sheet>
+  </v-card>
 </template>
 
 <script setup lang="ts">
-const links = [
-  {
-    href: 'https://vuetifyjs.com/',
-    icon: 'mdi-text',
-    subtitle: 'Learn about all things Vuetify in our documentation.',
-    title: 'Documentation',
-  },
-  {
-    href: 'https://vuetifyjs.com/introduction/why-vuetify/#feature-guides',
-    icon: 'mdi-star',
-    subtitle: 'Explore available framework Features.',
-    title: 'Features',
-  },
-  {
-    href: 'https://vuetifyjs.com/components/all',
-    icon: 'mdi-widgets-outline',
-    subtitle: 'Discover components in the API Explorer.',
-    title: 'Components',
-  },
-  {
-    href: 'https://discord.vuetifyjs.com',
-    icon: 'mdi-account-group-outline',
-    subtitle: 'Connect with Vuetify developers.',
-    title: 'Community',
-  },
+import { ref } from 'vue'
+
+type CalendarEvent = {
+  name?: string
+  start: Date | string
+  end: Date | string
+  color?: string
+  timed?: boolean
+}
+
+type CalendarType = 'month' | 'week' | 'day' | '4day'
+type EventOverlapMode = 'stack' | 'column'
+
+const type = ref<CalendarType>('month')
+
+const types: CalendarType[] = [
+  'month',
+  'week',
+  'day',
+  '4day',
 ]
+
+const mode = ref<EventOverlapMode>('stack')
+
+const modes: EventOverlapMode[] = [
+  'stack',
+  'column',
+]
+
+const value = ref('')
+
+const events = ref<CalendarEvent[]>([])
+
+const colors = [
+  'blue',
+  'indigo',
+  'deep-purple',
+  'cyan',
+  'green',
+  'orange',
+  'grey-darken-1',
+]
+
+const names = [
+  'Meeting',
+  'Holiday',
+  'PTO',
+  'Travel',
+  'Event',
+  'Birthday',
+  'Conference',
+  'Party',
+]
+
+function rnd (a: number, b: number) {
+  return Math.floor(
+    (b - a + 1) * Math.random(),
+  ) + a
+}
+
+interface CalendarChange {
+  start: {
+    date: string
+  }
+  end: {
+    date: string
+  }
+}
+
+function getEvents ({
+  start,
+  end,
+}: CalendarChange) {
+  const evts: CalendarEvent[] = []
+
+  const min = new Date(
+    `${start.date}T00:00:00`,
+  )
+
+  const max = new Date(
+    `${end.date}T23:59:59`,
+  )
+
+  const days
+    = (max.getTime() - min.getTime())
+      / 86_400_000
+
+  const eventCount = rnd(
+    days,
+    days + 20,
+  )
+
+  for (let i = 0; i < eventCount; i++) {
+    const allDay = rnd(0, 3) === 0
+
+    const firstTimestamp = rnd(
+      min.getTime(),
+      max.getTime(),
+    )
+
+    const first = new Date(
+      firstTimestamp - (firstTimestamp % 900_000),
+    )
+
+    const secondTimestamp
+      = rnd(
+        2,
+        allDay ? 288 : 8,
+      ) * 900_000
+
+    const second = new Date(
+      first.getTime() + secondTimestamp,
+    )
+
+    evts.push({
+      name: names[rnd(0, names.length - 1)],
+      start: first,
+      end: second,
+      color: colors[rnd(0, colors.length - 1)],
+      timed: !allDay,
+    })
+  }
+
+  events.value = evts
+}
+
+function getEventColor (event: { color?: string }) {
+  return event.color
+}
+
+/**
+ * v-calendar实例
+ */
+interface CalendarRef {
+  prev: () => void
+  next: () => void
+}
+
+const calendar = ref<CalendarRef | null>(null)
+
 </script>

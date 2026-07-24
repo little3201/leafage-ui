@@ -1,12 +1,12 @@
-import { api } from 'boot/axios'
-import { SERVER_URL } from 'src/constants'
+import { api } from '@/boot/axios'
+import { SERVER_URL } from '@/constants'
 
 /**
  * Retrieve rows
  * @param month the month
  * @returns Rows data
  */
-export const retrieveCalendarEvents = (month: number) => {
+export function retrieveCalendarEvents (month: number) {
   return api.get(SERVER_URL.CALENDAR_EVENT, { params: { month } })
 }
 
@@ -15,7 +15,7 @@ export const retrieveCalendarEvents = (month: number) => {
  * @param id Row ID
  * @returns Row data
  */
-export const fetchCalendarEvent = (id: number) => {
+export function fetchCalendarEvent (id: number) {
   return api.get(`${SERVER_URL.CALENDAR_EVENT}/${id}`)
 }
 
@@ -24,7 +24,7 @@ export const fetchCalendarEvent = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const createCalendarEvent = (id: number) => {
+export function createCalendarEvent (id: number) {
   return api.post(`${SERVER_URL.CALENDAR_EVENT}/${id}`)
 }
 
@@ -33,7 +33,7 @@ export const createCalendarEvent = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const modifyCalendarEvent = (id: number) => {
+export function modifyCalendarEvent (id: number) {
   return api.put(`${SERVER_URL.CALENDAR_EVENT}/${id}`)
 }
 
@@ -42,6 +42,6 @@ export const modifyCalendarEvent = (id: number) => {
  * @param id Row ID
  * @returns Deletion status
  */
-export const removeCalendarEvent = (id: number) => {
+export function removeCalendarEvent (id: number) {
   return api.delete(`${SERVER_URL.CALENDAR_EVENT}/${id}`)
 }
