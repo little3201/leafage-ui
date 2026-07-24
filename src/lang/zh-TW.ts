@@ -160,6 +160,7 @@ export default {
     section: "章節",
     member: "成員",
     publish: "發布",
+    archive: "歸檔",
     revoke: "撤銷",
     read: "讀取",
     readAll: "全部已读",

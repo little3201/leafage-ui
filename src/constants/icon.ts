@@ -22,12 +22,13 @@ export const actionIcons: Record<string, string> = {
   field: "plug-connect-outline-rounded",
   section: "plug-connect-outline-rounded",
   cancel: "close-rounded",
-  submit: "check-circle-outline-rounded",
+  submit: "check-outline-rounded",
   show: "undereye-rounded",
   sync: "sync-rounded",
   add: "add-rounded",
   more: "more-horiz",
   publish: "send-outline-rounded",
+  archive: "archive-outline-rounded",
   revoke: "settings-backup-restore-rounded"
 };
 

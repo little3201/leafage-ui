@@ -28,8 +28,8 @@ for (let i = 1; i < 18; i++) {
     sender: "admin",
     scope: "ALL",
     type: ["系统公告", "全员信", "部门通知"][random],
-    receiver:
-      random < 2 ? null : users.filter((_, index) => index < randomInt(5)),
+    receivers:
+      random < 2 ? [] : users.filter((_, index) => index < randomInt(5)),
     status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
     body: "This is the message body, Do you know what append with the system, it'is very nice, do you like it?",
     publishedAt:

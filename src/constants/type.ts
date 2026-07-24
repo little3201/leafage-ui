@@ -1,3 +1,5 @@
+import { DICT_KEY } from "./dictionary";
+
 // 操作类型
 export const actionTypes: {
   [key: string]: "primary" | "success" | "warning" | "danger" | "info";
@@ -35,6 +37,7 @@ export const actionTypes: {
   execute: "warning",
   data: "warning",
   disable: "warning",
+  archive: "warning",
   revoke: "warning",
 
   remove: "danger",
@@ -67,13 +70,13 @@ export const sectionTypes: {
   IMAGE: "warning"
 };
 
-export const fieldTypes: { [key: string]: string } = {
-  STRING: "String",
-  NUMBER: "Number",
-  BOOLEAN: "Boolean",
-  DATE: "Date",
-  DATETIME: "Datetime"
-};
+export const fieldTypes = [
+  { label: "string", value: "string" },
+  { label: "number", value: "number" },
+  { label: "boolean", value: "boolean" },
+  { label: "date", value: "date" },
+  { label: "datetime", value: "datetime" }
+];
 
 export const scriptTypes: { [key: string]: "Server" | "Docker" } = {
   SERVER: "Server",
@@ -81,9 +84,9 @@ export const scriptTypes: { [key: string]: "Server" | "Docker" } = {
 };
 
 export const osTypes = [
-  { label: "Linux", value: "LINUX", dictionary: 800 },
-  { label: "Windows", value: "WINDOWS", dictionary: 900 },
-  { label: "MacOS", value: "MACOS", dictionary: 1000 }
+  { label: "Linux", value: "LINUX", dictionary: DICT_KEY.LINUX },
+  { label: "Windows", value: "WINDOWS", dictionary: DICT_KEY.WINDOWS },
+  { label: "MacOS", value: "MACOS", dictionary: DICT_KEY.MACOS }
 ];
 
 export const databaseType: { [key: string]: string } = {

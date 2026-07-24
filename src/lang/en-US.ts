@@ -160,6 +160,7 @@ export default {
     section: "Section",
     member: "Member",
     publish: "Publish",
+    archive: "Archive",
     revoke: "Revoke",
     read: "Read",
     readAll: "Read All",

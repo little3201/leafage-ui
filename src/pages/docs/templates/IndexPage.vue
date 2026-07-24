@@ -14,7 +14,9 @@ import {
   removeTemplate,
   retrieveTemplates,
   disableTemplate,
-  enableTemplate
+  enableTemplate,
+  publishTemplate,
+  archiveTemplate
 } from "@/api/docs/templates";
 import { actionTypes, schemaStatus, templateTypes } from "@/constants";
 import type { Filter, Pagination, Template } from "@/types";
@@ -170,6 +172,38 @@ function configSection(id: number, type: "WORD" | "EXCEL") {
   form.value.id = id;
   form.value.type = type;
   configVisible.value = true;
+}
+
+/**
+ * 发布
+ * @param id 主键
+ */
+async function publishRow(id: number) {
+  form.value.id = id;
+  try {
+    await publishTemplate(id);
+    await load();
+    ElMessage.success(t("message.success", { action: t("action.publish") }));
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.publish") }));
+    throw error;
+  }
+}
+
+/**
+ * 归档
+ * @param id 主键
+ */
+async function archiveRow(id: number) {
+  form.value.id = id;
+  try {
+    await archiveTemplate(id);
+    await load();
+    ElMessage.success(t("message.success", { action: t("action.archive") }));
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.archive") }));
+    throw error;
+  }
 }
 
 /**
@@ -441,6 +475,19 @@ async function onSectionSave() {
                   height="1.25em"
                 />{{ $t("action.enable") }}
               </ElButton>
+              <ElButton
+                v-if="scope.row.enabled && hasAction($route.name, 'archive')"
+                title="archive"
+                :type="actionTypes['archive']"
+                link
+                @click="archiveRow(scope.row.id)"
+              >
+                <Icon
+                  :icon="actionIcon('archive')"
+                  width="1.25em"
+                  height="1.25em"
+                />{{ $t("action.archive") }}
+              </ElButton>
             </template>
             <template v-if="scope.row.status === 'DRAFT'">
               <ElButton
@@ -457,10 +504,7 @@ async function onSectionSave() {
                 />{{ $t("action.modify") }}
               </ElButton>
               <ElButton
-                v-if="
-                  scope.row.status === 'DRAFT' &&
-                  hasAction($route.name, 'section')
-                "
+                v-if="scope.row.enabled && hasAction($route.name, 'section')"
                 title="section"
                 type="success"
                 link
@@ -471,6 +515,19 @@ async function onSectionSave() {
                   width="1.25em"
                   height="1.25em"
                 />{{ $t("action.section") }}
+              </ElButton>
+              <ElButton
+                v-if="scope.row.enabled && hasAction($route.name, 'publish')"
+                title="publish"
+                type="success"
+                link
+                @click="publishRow(scope.row.id)"
+              >
+                <Icon
+                  :icon="actionIcon('publish')"
+                  width="1.25em"
+                  height="1.25em"
+                />{{ $t("action.publish") }}
               </ElButton>
               <ElButton
                 v-if="hasAction($route.name, 'remove')"

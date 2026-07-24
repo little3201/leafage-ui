@@ -70,6 +70,7 @@ function generateUniqueKey(config: InternalAxiosRequestConfig): string {
 
 function cancelAllRequest() {
   abortControllerMap.forEach(controller => {
+    console.log(controller);
     controller.abort();
   });
   abortControllerMap.clear();

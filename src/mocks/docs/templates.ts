@@ -104,6 +104,22 @@ export const templatesHandlers = [
       return HttpResponse.error();
     }
   }),
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/publish`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
+  http.patch(`/api${SERVER_URL.TEMPLATE}/:id/archive`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      return HttpResponse.json(true);
+    } else {
+      return HttpResponse.error();
+    }
+  }),
   http.delete(`/api${SERVER_URL.TEMPLATE}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.

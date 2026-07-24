@@ -160,6 +160,7 @@ export default {
     section: "章节",
     member: "成员",
     publish: "发布",
+    archive: "归档",
     revoke: "撤销",
     read: "读取",
     readAll: "全部已读",

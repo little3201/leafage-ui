@@ -12,12 +12,7 @@ import {
 } from "@/api/messages";
 import { retrieveDictionarySubset } from "@/api/system/dictionaries";
 import { retrieveUsers } from "@/api/system/users";
-import {
-  actionTypes,
-  dictionaryKey,
-  messageStatus,
-  scopeTypes
-} from "@/constants";
+import { actionTypes, DICT_KEY, messageStatus, scopeTypes } from "@/constants";
 import type { Filter, Pagination, Message, Dictionary, User } from "@/types";
 import { actionIcon, hasAction } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
@@ -90,7 +85,7 @@ const rules = reactive<FormRules<typeof form>>({
 onMounted(async () => {
   await load();
 
-  const typeRes = await retrieveDictionarySubset(dictionaryKey.MESSAGE_TYPE);
+  const typeRes = await retrieveDictionarySubset(DICT_KEY.MESSAGE_TYPE);
   typeOptions.value = typeRes.data;
 });
 

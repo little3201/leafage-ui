@@ -5,69 +5,29 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import {
   createSectionData,
   modifySectionData,
-  removeSectionData,
-  retrieveSectionDatas,
-  retrieveSectionFields
+  removeSectionData
 } from "@/api/docs/sections";
 import type { SectionData, SectionField } from "@/types";
 import { actionIcon } from "@/utils";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
 const props = defineProps<{
   sectionId: number | null;
+  sectionFields: SectionField[];
+  sectionDatas: SectionData[];
   readOnly: boolean;
 }>();
 
 const formRef = ref<FormInstance>();
-const fields = ref<Array<SectionField>>([]);
-const visibleFields = computed(() =>
-  fields.value.filter(field => field.field !== "id")
+const fields = computed<Array<SectionField>>(() =>
+  props.sectionFields.filter(field => field.field !== "id")
 );
-const datas = ref<Array<SectionData>>([]);
+const datas = computed<Array<SectionData>>(() => props.sectionDatas);
 const saveLoading = ref<boolean>(false);
 const editable = ref<Record<number, boolean>>({});
-
-onMounted(async () => {
-  await loadFields();
-  await loadDatas();
-});
-
-watch(
-  () => props.sectionId,
-  async (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      await loadFields();
-      await loadDatas();
-    }
-  }
-);
-
-async function loadFields() {
-  if (!props.sectionId) return;
-
-  try {
-    const res = await retrieveSectionFields(props.sectionId);
-    fields.value = res.data;
-  } catch (error) {
-    fields.value = [];
-    throw error;
-  }
-}
-
-async function loadDatas() {
-  if (!props.sectionId) return;
-
-  try {
-    const res = await retrieveSectionDatas(props.sectionId);
-    datas.value = res.data;
-  } catch (error) {
-    datas.value = [];
-    throw error;
-  }
-}
 
 function addRow() {
   if (!props.sectionId) return;
@@ -102,7 +62,6 @@ async function removeRow(id: number) {
   ).then(async () => {
     try {
       await removeSectionData(id);
-      await loadDatas();
 
       ElMessage.success(t("message.success", { action: t("action.remove") }));
     } catch (error) {
@@ -126,7 +85,7 @@ async function onSubmit(row: SectionData) {
         const res = await createSectionData(row);
         editable.value[res.data.id] = false;
       }
-      await loadDatas();
+
       ElMessage.success(
         t("message.success", {
           action: row.id ? t("action.modify") : t("action.create")
@@ -152,7 +111,7 @@ async function onSubmit(row: SectionData) {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn
-        v-for="(field, index) in visibleFields"
+        v-for="(field, index) in fields"
         :key="index"
         :prop="field.field"
         :label="field.name"

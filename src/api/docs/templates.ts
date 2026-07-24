@@ -66,6 +66,24 @@ export const disableTemplate = (id: number) => {
 };
 
 /**
+ * Publish
+ * @param id Row ID
+ * @returns The result
+ */
+export const publishTemplate = (id: number) => {
+  return api.patch(`${SERVER_URL.TEMPLATE}/${id}/publish`);
+};
+
+/**
+ * Archive
+ * @param id Row ID
+ * @returns The result
+ */
+export const archiveTemplate = (id: number) => {
+  return api.patch(`${SERVER_URL.TEMPLATE}/${id}/archive`);
+};
+
+/**
  * Remove a row
  * @param id Row ID
  * @returns Deletion status

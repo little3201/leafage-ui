@@ -5,23 +5,23 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import {
   createSectionField,
   modifySectionField,
-  removeSectionField,
-  retrieveSectionFields
+  removeSectionField
 } from "@/api/docs/sections";
 import { fieldTypes } from "@/constants";
 import type { SectionField } from "@/types";
 import { actionIcon } from "@/utils";
-import { onMounted, ref, watch } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const props = defineProps<{
   sectionId: number | null;
+  sectionFields: SectionField[];
   readOnly: boolean;
 }>();
 
 const formRef = ref<FormInstance>();
-const fields = ref<Array<SectionField>>([]);
+const fields = computed<Array<SectionField>>(() => props.sectionFields);
 const editable = ref<Record<number, boolean>>({});
 const loading = ref<boolean>(false);
 const saveLoading = ref<boolean>(false);
@@ -36,41 +36,17 @@ const initialValues: SectionField = {
   required: false
 };
 
-onMounted(async () => {
-  await load();
-});
-
-watch(
-  () => props.sectionId,
-  async (newVal, oldVal) => {
-    if (newVal === oldVal) return;
-
-    await load();
-  }
-);
-
-async function load() {
-  if (!props.sectionId) return;
-  loading.value = true;
-
-  try {
-    const res = await retrieveSectionFields(props.sectionId);
-    fields.value = res.data;
-  } catch (error) {
-    fields.value = [];
-
-    throw error;
-  } finally {
-    loading.value = false;
-  }
-}
-
 function addRow() {
   fields.value.push({ ...initialValues });
+  editable.value[fields.value.length - 1] = true;
 }
 
-function modifyRow(id: number) {
-  editable.value[id] = true;
+function modifyRow(index: number) {
+  editable.value[index] = true;
+}
+
+function cancelRow(index: number) {
+  editable.value[index] = false;
 }
 
 /**
@@ -93,7 +69,6 @@ async function removeRow(id: number, name: string) {
   ).then(async () => {
     try {
       await removeSectionField(id);
-      await load();
 
       ElMessage.success(t("message.success", { action: t("action.remove") }));
     } catch (error) {
@@ -120,7 +95,7 @@ async function onSubmit(row: SectionField) {
       } else {
         await createSectionField(row);
       }
-      await load();
+
       ElMessage.success(
         t("message.success", {
           action: row.id ? t("action.modify") : t("action.create")
@@ -188,18 +163,12 @@ async function onSubmit(row: SectionField) {
               v-if="editable[scope.row.id]"
               v-model="scope.row.type"
               :disabled="scope.row.id !== null"
+              :options="fieldTypes"
               :placeholder="
                 $t('placeholder.selectText', { field: $t('label.type') })
               "
               style="width: 100px"
-            >
-              <ElOption
-                v-for="(label, value) in fieldTypes"
-                :key="value"
-                :label="label"
-                :value="value"
-              />
-            </ElSelect>
+            />
             <span v-else>{{ scope.row.type }}</span>
           </ElFormItem>
         </template>
@@ -232,51 +201,67 @@ async function onSubmit(row: SectionField) {
       <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
         <template #default="scope">
           <div class="items-center w-15">
-            <ElButton
-              title="remove"
-              circle
-              size="small"
-              type="danger"
-              plain
-              @click="removeRow(scope.row.id, scope.row.name)"
-            >
-              <Icon
-                :icon="actionIcon('cancel')"
-                width="1.25em"
-                height="1.25em"
-              />
-            </ElButton>
-            <ElButton
-              v-if="editable[scope.row.id]"
-              v-loading="saveLoading"
-              title="confirm"
-              circle
-              size="small"
-              type="success"
-              plain
-              @click="onSubmit(scope.row)"
-            >
-              <Icon
-                :icon="actionIcon('submit')"
-                width="1.25em"
-                height="1.25em"
-              />
-            </ElButton>
-            <ElButton
-              v-else
-              title="modify"
-              circle
-              size="small"
-              type="primary"
-              plain
-              @click="modifyRow(scope.row.id)"
-            >
-              <Icon
-                :icon="actionIcon('modify')"
-                width="1.25em"
-                height="1.25em"
-              />
-            </ElButton>
+            <template v-if="editable[scope.$index]">
+              <ElButton
+                v-loading="saveLoading"
+                title="confirm"
+                circle
+                size="small"
+                type="success"
+                plain
+                @click="onSubmit(scope.row)"
+              >
+                <Icon
+                  :icon="actionIcon('submit')"
+                  width="1.25em"
+                  height="1.25em"
+                />
+              </ElButton>
+              <ElButton
+                title="cancel"
+                circle
+                size="small"
+                type="danger"
+                plain
+                @click="cancelRow(scope.$index)"
+              >
+                <Icon
+                  :icon="actionIcon('cancel')"
+                  width="1.25em"
+                  height="1.25em"
+                />
+              </ElButton>
+            </template>
+            <template v-else>
+              <ElButton
+                title="modify"
+                circle
+                size="small"
+                type="primary"
+                plain
+                @click="modifyRow(scope.$index)"
+              >
+                <Icon
+                  :icon="actionIcon('modify')"
+                  width="1.25em"
+                  height="1.25em"
+                />
+              </ElButton>
+              <ElButton
+                title="cancel"
+                circle
+                size="small"
+                type="danger"
+                plain
+                @click="removeRow(scope.row.id, scope.row.name)"
+              >
+                <Icon
+                  :icon="actionIcon('remove')"
+                  width="1.25em"
+                  height="1.25em"
+                />
+              </ElButton>
+            </template>
           </div>
         </template>
       </ElTableColumn>

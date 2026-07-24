@@ -1,4 +1,4 @@
-export const dictionaryKey: Record<string, number> = {
+export const DICT_KEY: Record<string, number> = {
   COLUMN_TYPE: 100,
   FILED_TYPE: 200,
   FORM_TYPE: 300,

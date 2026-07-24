@@ -58,9 +58,6 @@ onMounted(async () => {
   await loadTree();
 });
 
-/**
- * 监听tree
- */
 watch(
   () => filterText.value,
   (newVal, oldVal) => {
@@ -68,6 +65,7 @@ watch(
     treeRef.value!.filter(newVal);
   }
 );
+
 watch(
   [() => props.ownerId, () => props.ownerType],
   async ([newOwnerId, newOwnerType]) => {
