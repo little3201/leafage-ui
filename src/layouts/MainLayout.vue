@@ -41,7 +41,7 @@ function logout() {
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
             <ElAvatar
-              alt="avatar"
+              :alt="userStore.fullName"
               :src="`https://cdn.leafage.top/${userStore.username}`"
             />
             <span class="ml-2 text-white">{{ userStore.fullName }}</span>
@@ -49,7 +49,7 @@ function logout() {
           <template #dropdown>
             <div class="flex items-center space-x-2 p-4">
               <ElAvatar
-                alt="avatar"
+                :alt="userStore.fullName"
                 :src="`https://cdn.leafage.top/${userStore.username}`"
               />
               <div class="inline-flex flex-col">

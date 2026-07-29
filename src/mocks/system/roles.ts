@@ -28,6 +28,7 @@ for (let i = 1; i < 28; i++) {
   const data: Role = {
     id: i,
     name: "Role_" + i,
+    code: "ROLE_" + i,
     members: users.filter((_, index) => index < randomInt(5)),
     enabled: i % 3 > 0
   };

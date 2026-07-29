@@ -8,6 +8,7 @@ export default {
     template: "模板",
     actions: "操作",
     name: "名稱",
+    code: "編碼",
     id: "主鍵",
     superior: "上級",
     description: "描述",

@@ -3,6 +3,7 @@ import type { User } from "./user";
 
 export interface Role extends AudtiMetadata {
   name: string;
+  code: string;
   members?: User[];
   enabled?: boolean;
 }

@@ -9,7 +9,13 @@ import {
 } from "@/api/scheduler/logs";
 import { actionTypes, shceduleStatus, shceduleStatusIcon } from "@/constants";
 import type { Filter, Pagination, SchedulerLog } from "@/types";
-import { actionIcon, exportToCSV, formatDuration, hasAction } from "@/utils";
+import {
+  actionIcon,
+  exportToCSV,
+  formatDuration,
+  hasAction,
+  loadIcon
+} from "@/utils";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -245,7 +251,7 @@ async function clearRows() {
         <template #default="scope">
           <ElTag :type="shceduleStatus[scope.row.status]" round>
             <Icon
-              :icon="`material-symbols:${shceduleStatusIcon[scope.row.status]}`"
+              :icon="loadIcon(shceduleStatusIcon[scope.row.status])"
               :class="[scope.row.status === 'RUNNING' ? 'spin' : '', 'mr-1']"
               width="1.25em"
               height="1.25em"
@@ -315,7 +321,7 @@ async function clearRows() {
       <ElDescriptionsItem :label="$t('label.status')">
         <ElTag :type="shceduleStatus[data.status || '']" round>
           <Icon
-            :icon="`material-symbols:${shceduleStatusIcon[data.status || '']}`"
+            :icon="loadIcon(shceduleStatusIcon[data.status ?? ''])"
             :class="[data.status === 'RUNNING' ? 'spin' : '', 'mr-1']"
             width="1.25em"
             height="1.25em"

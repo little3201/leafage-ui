@@ -33,6 +33,7 @@ import type {
   Privilege,
   PrivilegeTreeNode,
   Role,
+  User,
   RoleMembers,
   RolePrivileges
 } from "@/types";
@@ -81,7 +82,8 @@ const filter = reactive<Filter<Role>>({
 const formRef = ref<FormInstance>();
 const initialValues: Role = {
   id: null,
-  name: ""
+  name: "",
+  code: ""
 };
 const form = ref<Role>({ ...initialValues });
 
@@ -92,6 +94,13 @@ const rules = reactive<FormRules<typeof form>>({
       message: t("placeholder.inputText", { field: t("label.name") }),
       trigger: "blur"
     }
+  ],
+  code: [
+    {
+      required: true,
+      message: t("placeholder.inputText", { field: t("label.code") }),
+      trigger: "blur"
+    }
   ]
 });
 
@@ -100,13 +109,28 @@ onMounted(async () => {
 });
 
 async function loadUsers() {
-  const res = await retrieveUsers({ page: 1, size: 10 });
-  members.value = res.data.content;
+  try {
+    const userFilter = reactive<Filter<User>>({
+      enabled: { op: "eq", value: true }
+    });
+    const res = await retrieveUsers({ page: 1, size: 10 }, userFilter);
+    members.value = res.data.content;
+  } catch (error) {
+    members.value = [];
+
+    throw error;
+  }
 }
 
 async function loadRoleUsers(id: number) {
-  const res = await retrieveRoleMembers(id);
-  relations.value = res.data.map((item: RoleMembers) => item.username);
+  try {
+    const res = await retrieveRoleMembers(id);
+    relations.value = res.data.map((item: RoleMembers) => item.username);
+  } catch (error) {
+    relations.value = [];
+
+    throw error;
+  }
 }
 
 /**
@@ -188,12 +212,17 @@ function saveRow(row?: Role) {
 
 /**
  * 启用
- * @param id 主键
+ * @param row 数据
  */
-async function enableRow(id: number) {
+async function enableRow(row: Role) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await enableRole(id);
-    await load();
+    const res = await enableRole(id);
+    if (res.data) {
+      row.enabled = true;
+    }
     ElMessage.success(t("message.success", { action: t("action.enable") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.enable") }));
@@ -203,9 +232,12 @@ async function enableRow(id: number) {
 
 /**
  * 停用
- * @param id 主键
+ * @param row 数据
  */
-async function disableRow(id: number) {
+async function disableRow(row: Role) {
+  const id = row.id;
+  if (!id) return;
+
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,
@@ -215,8 +247,10 @@ async function disableRow(id: number) {
     type: "warning"
   }).then(async () => {
     try {
-      await disableRole(id);
-      await load();
+      const res = await disableRole(id);
+      if (res.data) {
+        row.enabled = false;
+      }
       ElMessage.success(t("message.success", { action: t("action.disable") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.disable") }));
@@ -494,6 +528,7 @@ function onActionSelected(row: Privilege) {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')" />
+      <ElTableColumn prop="code" :label="$t('label.code')" />
       <ElTableColumn prop="members" :label="$t('label.members')">
         <template #default="scope">
           <div class="flex items-center">
@@ -505,6 +540,7 @@ function onActionSelected(row: Privilege) {
               <ElAvatar
                 v-for="member in scope.row.members"
                 :key="member.id"
+                :alt="member.fullName"
                 :src="`https://cdn.leafage.top/${member.username}`"
               />
             </ElAvatarGroup>
@@ -543,7 +579,7 @@ function onActionSelected(row: Privilege) {
             title="disable"
             :type="actionTypes['disable']"
             link
-            @click="disableRow(scope.row.id)"
+            @click="disableRow(scope.row)"
           >
             <Icon
               :icon="actionIcon('disable')"
@@ -556,7 +592,7 @@ function onActionSelected(row: Privilege) {
             title="enable"
             :type="actionTypes['enable']"
             link
-            @click="enableRow(scope.row.id)"
+            @click="enableRow(scope.row)"
           >
             <Icon
               :icon="actionIcon('enable')"
@@ -661,6 +697,21 @@ function onActionSelected(row: Privilege) {
               v-model="form.name"
               :placeholder="
                 $t('placeholder.inputText', { field: $t('label.name') })
+              "
+            />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol>
+          <ElFormItem :label="$t('label.code')" prop="code">
+            <ElInput
+              v-model="form.code"
+              @input="
+                form.code = form.code.toUpperCase().replace(/[^A-Z]/g, '')
+              "
+              :placeholder="
+                $t('placeholder.inputText', { field: $t('label.code') })
               "
             />
           </ElFormItem>

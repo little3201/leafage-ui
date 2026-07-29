@@ -140,12 +140,17 @@ function saveRow(row?: User) {
 
 /**
  * 启用
- * @param id 主键
+ * @param row 数据
  */
-async function enableRow(id: number) {
+async function enableRow(row: User) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await enableUser(id);
-    await load();
+    const res = await enableUser(id);
+    if (res.data) {
+      row.enabled = true;
+    }
     ElMessage.success(t("message.success", { action: t("action.enable") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.enable") }));
@@ -155,9 +160,12 @@ async function enableRow(id: number) {
 
 /**
  * 停用
- * @param id 主键
+ * @param row 数据
  */
-async function disableRow(id: number) {
+async function disableRow(row: User) {
+  const id = row.id;
+  if (!id) return;
+
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,
@@ -167,8 +175,10 @@ async function disableRow(id: number) {
     type: "warning"
   }).then(async () => {
     try {
-      await disableUser(id);
-      await load();
+      const res = await disableUser(id);
+      if (res.data) {
+        row.enabled = false;
+      }
       ElMessage.success(t("message.success", { action: t("action.disable") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.disable") }));
@@ -354,7 +364,7 @@ function onUpload(options: UploadRequestOptions) {
         <template #default="scope">
           <div class="flex items-center space-x-2">
             <ElAvatar
-              alt="avatar"
+              :alt="scope.row.fullName"
               :src="`https://cdn.leafage.top/${scope.row.username}`"
             />
             <div class="inline-flex flex-col">
@@ -413,7 +423,7 @@ function onUpload(options: UploadRequestOptions) {
             title="disable"
             :type="actionTypes['disable']"
             link
-            @click="disableRow(scope.row.id)"
+            @click="disableRow(scope.row)"
           >
             <Icon
               :icon="actionIcon('disable')"
@@ -426,7 +436,7 @@ function onUpload(options: UploadRequestOptions) {
             title="enable"
             :type="actionTypes['enable']"
             link
-            @click="enableRow(scope.row.id)"
+            @click="enableRow(scope.row)"
           >
             <Icon
               :icon="actionIcon('enable')"

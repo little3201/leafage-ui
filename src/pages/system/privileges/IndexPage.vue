@@ -16,7 +16,7 @@ import {
   retrievePrivileges,
   retrievePrivilegeSubset
 } from "@/api/system/privileges";
-import { actionIcons, actionTypes } from "@/constants";
+import { actionTypes } from "@/constants";
 import type { Dictionary, Filter, Pagination, Privilege } from "@/types";
 import {
   actionIcon,
@@ -159,14 +159,19 @@ async function saveRow(row?: Privilege) {
 
 /**
  * 启用
- * @param id 主键
+ * @param row 数据
  */
-async function enableRow(id: number, superiorId: number | null) {
+async function enableRow(row: Privilege) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await enablePrivilege(id);
-    await load();
-    if (superiorId) {
-      await refreshChildren(superiorId);
+    const res = await enablePrivilege(id);
+    if (res.data) {
+      row.enabled = true;
+    }
+    if (row.superiorId) {
+      await refreshChildren(row.superiorId);
     }
     ElMessage.success(t("message.success", { action: t("action.enable") }));
   } catch (error) {
@@ -177,9 +182,12 @@ async function enableRow(id: number, superiorId: number | null) {
 
 /**
  * 停用
- * @param id 主键
+ * @param row 数据
  */
-async function disableRow(id: number, superiorId: number | null) {
+async function disableRow(row: Privilege) {
+  const id = row.id;
+  if (!id) return;
+
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,
@@ -189,10 +197,12 @@ async function disableRow(id: number, superiorId: number | null) {
     type: "warning"
   }).then(async () => {
     try {
-      await disablePrivilege(id);
-      await load();
-      if (superiorId) {
-        await refreshChildren(superiorId);
+      const res = await disablePrivilege(id);
+      if (res.data) {
+        row.enabled = false;
+      }
+      if (row.superiorId) {
+        await refreshChildren(row.superiorId);
       }
       ElMessage.success(t("message.success", { action: t("action.disable") }));
     } catch (error) {
@@ -448,7 +458,7 @@ function handleInputConfirm() {
             title="disable"
             :type="actionTypes['disable']"
             link
-            @click="disableRow(scope.row.id, scope.row.superiorId)"
+            @click="disableRow(scope.row)"
           >
             <Icon
               :icon="actionIcon('disable')"
@@ -461,7 +471,7 @@ function handleInputConfirm() {
             title="enable"
             :type="actionTypes['enable']"
             link
-            @click="enableRow(scope.row.id, scope.row.superiorId)"
+            @click="enableRow(scope.row)"
           >
             <Icon
               :icon="actionIcon('enable')"

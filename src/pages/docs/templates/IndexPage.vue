@@ -127,12 +127,17 @@ function saveRow(row?: Template) {
 
 /**
  * 启用
- * @param id 主键
+ * @param row 数据
  */
-async function enableRow(id: number) {
+async function enableRow(row: Template) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await enableTemplate(id);
-    await load();
+    const res = await enableTemplate(id);
+    if (res.data) {
+      row.enabled = false;
+    }
     ElMessage.success(t("message.success", { action: t("action.enable") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.enable") }));
@@ -142,9 +147,12 @@ async function enableRow(id: number) {
 
 /**
  * 停用
- * @param id 主键
+ * @param row 数据
  */
-async function disableRow(id: number) {
+async function disableRow(row: Template) {
+  const id = row.id;
+  if (!id) return;
+
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,
@@ -154,8 +162,10 @@ async function disableRow(id: number) {
     type: "warning"
   }).then(async () => {
     try {
-      await disableTemplate(id);
-      await load();
+      const res = await disableTemplate(id);
+      if (res.data) {
+        row.enabled = false;
+      }
       ElMessage.success(t("message.success", { action: t("action.disable") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.disable") }));
@@ -176,13 +186,17 @@ function configSection(id: number, type: "WORD" | "EXCEL") {
 
 /**
  * 发布
- * @param id 主键
+ * @param row 数据
  */
-async function publishRow(id: number) {
-  form.value.id = id;
+async function publishRow(row: Template) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await publishTemplate(id);
-    await load();
+    const res = await publishTemplate(id);
+    if (res.data) {
+      row.status = "PUBLISHED";
+    }
     ElMessage.success(t("message.success", { action: t("action.publish") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.publish") }));
@@ -192,13 +206,17 @@ async function publishRow(id: number) {
 
 /**
  * 归档
- * @param id 主键
+ * @param row 数据
  */
-async function archiveRow(id: number) {
-  form.value.id = id;
+async function archiveRow(row: Template) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await archiveTemplate(id);
-    await load();
+    const res = await archiveTemplate(id);
+    if (res.data) {
+      row.status = "ARCHIVED";
+    }
     ElMessage.success(t("message.success", { action: t("action.archive") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.archive") }));
@@ -454,7 +472,7 @@ async function onSectionSave() {
                 title="disable"
                 :type="actionTypes['disable']"
                 link
-                @click="disableRow(scope.row.id)"
+                @click="disableRow(scope.row)"
               >
                 <Icon
                   :icon="actionIcon('disable')"
@@ -467,7 +485,7 @@ async function onSectionSave() {
                 title="enable"
                 :type="actionTypes['enable']"
                 link
-                @click="enableRow(scope.row.id)"
+                @click="enableRow(scope.row)"
               >
                 <Icon
                   :icon="actionIcon('enable')"
@@ -521,7 +539,7 @@ async function onSectionSave() {
                 title="publish"
                 type="success"
                 link
-                @click="publishRow(scope.row.id)"
+                @click="publishRow(scope.row)"
               >
                 <Icon
                   :icon="actionIcon('publish')"

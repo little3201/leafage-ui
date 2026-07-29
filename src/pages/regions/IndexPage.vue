@@ -194,12 +194,17 @@ function saveRow(row?: Region) {
 
 /**
  * 启用
- * @param id 主键
+ * @param row 数据
  */
-async function enableRow(id: number) {
+async function enableRow(row: Region) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await enableRegion(id);
-    await load();
+    const res = await enableRegion(id);
+    if (res.data) {
+      row.enabled = true;
+    }
     ElMessage.success(t("message.success", { action: t("action.enable") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.enable") }));
@@ -209,9 +214,12 @@ async function enableRow(id: number) {
 
 /**
  * 停用
- * @param id 主键
+ * @param row 数据
  */
-async function disableRow(id: number) {
+async function disableRow(row: Region) {
+  const id = row.id;
+  if (!id) return;
+
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
     dangerouslyUseHTMLString: true,
     showCancelButton: false,
@@ -221,8 +229,10 @@ async function disableRow(id: number) {
     type: "warning"
   }).then(async () => {
     try {
-      await disableRegion(id);
-      await load();
+      const res = await disableRegion(id);
+      if (res.data) {
+        row.enabled = false;
+      }
       ElMessage.success(t("message.success", { action: t("action.disable") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.disable") }));
@@ -501,7 +511,7 @@ async function removeRow(id: number, name: string) {
                 title="disable"
                 :type="actionTypes['disable']"
                 link
-                @click="disableRow(scope.row.id)"
+                @click="disableRow(scope.row)"
               >
                 <Icon
                   :icon="actionIcon('disable')"
@@ -514,7 +524,7 @@ async function removeRow(id: number, name: string) {
                 title="enable"
                 :type="actionTypes['enable']"
                 link
-                @click="enableRow(scope.row.id)"
+                @click="enableRow(scope.row)"
               >
                 <Icon
                   :icon="actionIcon('enable')"

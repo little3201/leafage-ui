@@ -7,9 +7,15 @@ import {
   removeOperationLog,
   retrieveOperationLogs
 } from "@/api/logs/operation-logs";
-import { actionTypes } from "@/constants";
+import { actionTypes, logStatusIcon } from "@/constants";
 import type { Filter, OperationLog, Pagination } from "@/types";
-import { actionIcon, exportToCSV, formatDuration, hasAction } from "@/utils";
+import {
+  actionIcon,
+  exportToCSV,
+  formatDuration,
+  hasAction,
+  loadIcon
+} from "@/utils";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -228,7 +234,7 @@ async function clearRows() {
             link
             @click="showRow(scope.row)"
           >
-            {{ scope.row.module }}
+            {{ $t(`page.${scope.row.module}`) }}
           </ElButton>
         </template>
       </ElTableColumn>
@@ -270,6 +276,12 @@ async function clearRows() {
             :type="scope.row.status == 'SUCCEED' ? 'success' : 'warning'"
             round
           >
+            <Icon
+              :icon="loadIcon(logStatusIcon[scope.row.status])"
+              class="mr-1"
+              width="1.25em"
+              height="1.25em"
+            />
             {{ scope.row.status }}
           </ElTag>
         </template>
@@ -330,9 +342,9 @@ async function clearRows() {
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" width="600">
     <ElDescriptions border label-width="80">
-      <ElDescriptionsItem :label="$t('label.module')">{{
-        $t(`page.${data.module}`)
-      }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.module')">
+        {{ $t(`page.${data.module}`) }}
+      </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.actions')">
         <ElBadge is-dot :type="actionTypes[data.action]" class="mr-1" />
         <ElText :type="actionTypes[data.action]">{{
@@ -340,9 +352,15 @@ async function clearRows() {
         }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.status')">
-        <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>{{
-          data.status
-        }}</ElTag>
+        <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>
+          <Icon
+            :icon="loadIcon(logStatusIcon[data.status ?? ''])"
+            class="mr-1"
+            width="1.25em"
+            height="1.25em"
+          />
+          {{ data.status }}</ElTag
+        >
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.params')" :span="3">
         <ElText class="w-96" style="word-break: break-word">{{
@@ -379,3 +397,10 @@ async function clearRows() {
     </ElDescriptions>
   </ElDialog>
 </template>
+
+<style lang="scss" scoped>
+:deep(.el-tag__content) {
+  display: inline-flex;
+  align-items: center;
+}
+</style>

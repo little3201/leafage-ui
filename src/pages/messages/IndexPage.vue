@@ -150,12 +150,13 @@ function saveRow(row?: Message) {
  * 发布
  * @param row 数据
  */
-async function publishRow(id: number, title: string) {
+async function publishRow(row: Message) {
+  const id = row.id;
   if (!id) return;
 
   await ElMessageBox.confirm(
     t("tips.publishWarning", {
-      data: title
+      data: row.title
     }),
     t("tips.confirm"),
     {
@@ -168,8 +169,10 @@ async function publishRow(id: number, title: string) {
     }
   ).then(async () => {
     try {
-      await publishMessage(id);
-      await load();
+      const res = await publishMessage(id);
+      if (res.data) {
+        row.status = "PUBLISHED";
+      }
       ElMessage.success(t("message.success", { action: t("action.publish") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.publish") }));
@@ -182,15 +185,17 @@ async function publishRow(id: number, title: string) {
  * 撤销
  * @param id 主键
  */
-async function revokeRow(id: number, title: string, publishedAt: Date) {
+async function revokeRow(row: Message) {
+  const id = row.id;
   if (!id) return;
-  if (dayjs(new Date()).diff(publishedAt, "minute") > 30) {
+
+  if (dayjs(new Date()).diff(row.publishedAt, "minute") > 30) {
     ElMessage.warning(t("tips.revokeTimeoutText"));
   }
 
   await ElMessageBox.confirm(
     t("tips.revokeWarning", {
-      data: title
+      data: row.title
     }),
     t("tips.confirm"),
     {
@@ -203,8 +208,10 @@ async function revokeRow(id: number, title: string, publishedAt: Date) {
     }
   ).then(async () => {
     try {
-      await revokeMessage(id);
-      await load();
+      const res = await revokeMessage(id);
+      if (res.data) {
+        row.status = "REVOKED";
+      }
       ElMessage.success(t("message.success", { action: t("action.revoke") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.revoke") }));
@@ -424,7 +431,7 @@ function handleChange(value: string) {
               title="modify"
               :type="actionTypes['publish']"
               link
-              @click="publishRow(scope.row.id, scope.row.title)"
+              @click="publishRow(scope.row)"
             >
               <Icon
                 :icon="actionIcon('publish')"
@@ -459,9 +466,7 @@ function handleChange(value: string) {
               title="revoke"
               :type="actionTypes['revoke']"
               link
-              @click="
-                revokeRow(scope.row.id, scope.row.title, scope.row.publishedAt)
-              "
+              @click="revokeRow(scope.row)"
             >
               <Icon
                 :icon="actionIcon('revoke')"

@@ -8,6 +8,7 @@ export default {
     template: "Template",
     actions: "Actions",
     name: "Name",
+    code: "Code",
     id: "ID",
     superior: "Superior",
     description: "Description",

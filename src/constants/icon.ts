@@ -8,7 +8,7 @@ export const actionIcons: Record<string, string> = {
   upload: "upload-rounded",
   download: "download-rounded",
   unlock: "lock-open-outline-rounded",
-  relation: "link-rounded",
+  relation: "link",
   member: "group-add-outline",
   authorize: "privacy-tip-outline",
   config: "plug-connect-outline-rounded",
@@ -91,7 +91,12 @@ export const globalIcons: Record<string, string> = {
 export const shceduleStatusIcon: Record<string, string> = {
   PENDING: "pending-outline",
   RUNNING: "progress-activity",
-  SUCCESS: "check-rounded",
+  SUCCEED: "check-rounded",
   FAILED: "error-outline-rounded",
   CANCELED: "cancel-outline-rounded"
+};
+
+export const logStatusIcon: Record<string, string> = {
+  SUCCEED: "check-rounded",
+  FAILED: "error-outline-rounded"
 };

@@ -209,12 +209,17 @@ function saveRow(row?: Dictionary) {
 
 /**
  * 启用
- * @param id 主键
+ * @param row 数据
  */
-async function enableRow(id: number) {
+async function enableRow(row: Dictionary) {
+  const id = row.id;
+  if (!id) return;
+
   try {
-    await enableDictionary(id);
-    await load();
+    const res = await enableDictionary(id);
+    if (res.data) {
+      row.enabled = true;
+    }
     ElMessage.success(t("message.success", { action: t("action.enable") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.enable") }));
@@ -224,9 +229,12 @@ async function enableRow(id: number) {
 
 /**
  * 停用
- * @param id 主键
+ * @param row 数据
  */
-async function disableRow(id: number) {
+async function disableRow(row: Dictionary) {
+  const id = row.id;
+  if (!id) return;
+
   await ElMessageBox.confirm(
     t("tips.disableWarning", { module: t("page.dictionaries"), data: name }),
     t("tips.confirm"),
@@ -240,8 +248,10 @@ async function disableRow(id: number) {
     }
   ).then(async () => {
     try {
-      await disableDictionary(id);
-      await load();
+      const res = await disableDictionary(id);
+      if (res.data) {
+        row.enabled = false;
+      }
       ElMessage.success(t("message.success", { action: t("action.disable") }));
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.disable") }));
@@ -501,7 +511,7 @@ function onUpload(options: UploadRequestOptions) {
                   title="disable"
                   :type="actionTypes['disable']"
                   link
-                  @click="disableRow(scope.row.id)"
+                  @click="disableRow(scope.row)"
                 >
                   <Icon
                     :icon="actionIcon('disable')"
@@ -514,7 +524,7 @@ function onUpload(options: UploadRequestOptions) {
                   title="enable"
                   :type="actionTypes['enable']"
                   link
-                  @click="enableRow(scope.row.id)"
+                  @click="enableRow(scope.row)"
                 >
                   <Icon
                     :icon="actionIcon('enable')"

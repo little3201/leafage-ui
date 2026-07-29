@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/user";
 import { useAppStore } from "@/stores/app";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { ElAvatar } from "element-plus";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -29,6 +30,7 @@ const items = ref([
       <ElCard body-class="flex items-center">
         <ElAvatar
           :size="80"
+          :alt="userStore.fullName"
           :src="`https://cdn.leafage.top/${userStore.username}`"
         />
         <div class="ml-4 flex-1">

@@ -3,7 +3,7 @@ export const shceduleStatus: {
 } = {
   PENDING: "info",
   RUNNING: "primary",
-  SUCCESS: "success",
+  SUCCEED: "success",
   FAILED: "danger",
   CANCELED: "warning"
 };

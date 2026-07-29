@@ -2,13 +2,16 @@
 import { Icon } from "@iconify/vue";
 import type { TableInstance } from "element-plus";
 import { retrieveAuditLogs } from "@/api/audits/logs";
-import { actionTypes } from "@/constants";
+import { actionTypes, logStatusIcon } from "@/constants";
 import type { AuditLog, Filter, Pagination } from "@/types";
-import { actionIcon, exportToCSV, formatDuration, hasAction } from "@/utils";
+import {
+  actionIcon,
+  exportToCSV,
+  formatDuration,
+  hasAction,
+  loadIcon
+} from "@/utils";
 import { onMounted, reactive, ref } from "vue";
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
 
 const loading = ref<boolean>(false);
 const datas = ref<Array<AuditLog>>([]);
@@ -154,7 +157,7 @@ function showRow(row: AuditLog) {
             link
             @click="showRow(scope.row)"
           >
-            {{ scope.row.module }}
+            {{ $t(`page.${scope.row.module}`) }}
           </ElButton>
         </template>
       </ElTableColumn>
@@ -191,8 +194,15 @@ function showRow(row: AuditLog) {
           <ElTag
             :type="scope.row.status === 'SUCCEED' ? 'success' : 'danger'"
             round
-            >{{ scope.row.status }}</ElTag
           >
+            <Icon
+              :icon="loadIcon(logStatusIcon[scope.row.status])"
+              class="mr-1"
+              width="1.25em"
+              height="1.25em"
+            />
+            {{ scope.row.status }}
+          </ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="duration" :label="$t('label.duration')">
@@ -211,19 +221,25 @@ function showRow(row: AuditLog) {
   <!-- detail -->
   <ElDialog v-model="visible" :title="$t('action.details')" width="600">
     <ElDescriptions border>
-      <ElDescriptionsItem :label="$t('label.module')">{{
-        data.module
-      }}</ElDescriptionsItem>
+      <ElDescriptionsItem :label="$t('label.module')">
+        {{ $t(`page.${data.module}`) }}
+      </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.actions')">
-        <ElBadge is-dot :type="actionTypes[data.action]" class="mr-1" />
-        <ElText :type="actionTypes[data.action]">{{
+        <ElBadge is-dot :type="actionTypes[data.action ?? '']" class="mr-1" />
+        <ElText :type="actionTypes[data.action ?? '']">{{
           $t(`action.${data.action}`)
         }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.status')">
-        <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>{{
-          data.status
-        }}</ElTag>
+        <ElTag :type="data.status == 'SUCCEED' ? 'success' : 'danger'" round>
+          <Icon
+            :icon="loadIcon(logStatusIcon[data.status ?? ''])"
+            class="mr-1"
+            width="1.25em"
+            height="1.25em"
+          />
+          {{ data.status }}</ElTag
+        >
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.targetId')">{{
         data.targetId
@@ -232,10 +248,10 @@ function showRow(row: AuditLog) {
         data.ip
       }}</ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.oldValue')" :span="3">
-        <ElText class="w-96" truncated>{{ data.oldValue }}</ElText>
+        <ElText class="w-96">{{ data.oldValue }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :label="$t('label.newValue')" :span="3">
-        <ElText class="w-96" truncated>{{ data.newValue }}</ElText>
+        <ElText class="w-96">{{ data.newValue }}</ElText>
       </ElDescriptionsItem>
       <ElDescriptionsItem :span="3" :label="$t('label.duration')">
         {{ data.duration ? formatDuration(data.duration) : "" }}
@@ -243,3 +259,10 @@ function showRow(row: AuditLog) {
     </ElDescriptions>
   </ElDialog>
 </template>
+
+<style lang="scss" scoped>
+:deep(.el-tag__content) {
+  display: inline-flex;
+  align-items: center;
+}
+</style>
