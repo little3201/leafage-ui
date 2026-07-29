@@ -172,6 +172,7 @@ async function publishRow(row: Message) {
       const res = await publishMessage(id);
       if (res.data) {
         row.status = "PUBLISHED";
+        row.publishedAt = new Date();
       }
       ElMessage.success(t("message.success", { action: t("action.publish") }));
     } catch (error) {
@@ -211,6 +212,7 @@ async function revokeRow(row: Message) {
       const res = await revokeMessage(id);
       if (res.data) {
         row.status = "REVOKED";
+        row.publishedAt = undefined;
       }
       ElMessage.success(t("message.success", { action: t("action.revoke") }));
     } catch (error) {
