@@ -189,7 +189,6 @@ async function disableRow(row: Privilege) {
   if (!id) return;
 
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
-    dangerouslyUseHTMLString: true,
     showCancelButton: false,
     confirmButtonType: "danger",
     confirmButtonClass: "w-full",

@@ -239,7 +239,6 @@ async function disableRow(row: Dictionary) {
     t("tips.disableWarning", { module: t("page.dictionaries"), data: name }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",
@@ -313,7 +312,6 @@ async function removeRow(id: number, name: string) {
     t("tips.removeWarning", { module: t("page.dictionaries"), data: name }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",

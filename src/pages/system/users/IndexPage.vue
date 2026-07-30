@@ -4,6 +4,8 @@ import type {
   FormInstance,
   FormRules,
   TableInstance,
+  TransferDirection,
+  TransferKey,
   UploadRequestOptions
 } from "element-plus";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -14,12 +16,15 @@ import {
   importUsers,
   modifyUser,
   removeUser,
-  retrieveUsers,
-  unlockUser
+  addRoles,
+  removeRoles,
+  retrieveUserRoles,
+  retrieveUsers
 } from "@/api/system/users";
-import { actionTypes, userStatus } from "@/constants";
-import type { Filter, Pagination, User } from "@/types";
-import { actionIcon, exportToCSV, hasAction } from "@/utils";
+import { retrieveRoles } from "@/api/system/roles";
+import { actionTypes } from "@/constants";
+import type { Filter, Pagination, User, Role } from "@/types";
+import { actionIcon, exportToCSV, hasAction, visibleArray } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -37,6 +42,11 @@ const pagination = reactive<Pagination>({
 
 const saveLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
+
+const roleVisible = ref<boolean>(false);
+const userRoles = ref<Array<string>>([]);
+const roles = ref<Array<Role>>([]);
+
 const importLoading = ref<boolean>(false);
 const exportLoading = ref<boolean>(false);
 
@@ -49,8 +59,7 @@ const initialValues: User = {
   id: null,
   username: "",
   fullName: "",
-  email: "",
-  status: ""
+  email: ""
 };
 const form = ref<User>({ ...initialValues });
 
@@ -113,6 +122,31 @@ async function load() {
   }
 }
 
+async function loadRoles() {
+  try {
+    const roleFilter = reactive<Filter<Role>>({
+      enabled: { op: "eq", value: true }
+    });
+    const res = await retrieveRoles({ page: 1, size: 10 }, roleFilter);
+    roles.value = res.data.content;
+  } catch (error) {
+    roles.value = [];
+
+    throw error;
+  }
+}
+
+async function loadUserRoles(id: number) {
+  try {
+    const res = await retrieveUserRoles(id);
+    userRoles.value = res.data.map((item: Role) => item.id);
+  } catch (error) {
+    userRoles.value = [];
+
+    throw error;
+  }
+}
+
 /**
  * 导出
  */
@@ -167,7 +201,6 @@ async function disableRow(row: User) {
   if (!id) return;
 
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
-    dangerouslyUseHTMLString: true,
     showCancelButton: false,
     confirmButtonType: "danger",
     confirmButtonClass: "w-full",
@@ -188,19 +221,14 @@ async function disableRow(row: User) {
 }
 
 /**
- * unlock
+ * 弹出框
  * @param id 主键
  */
-async function unlockRow(id: number) {
-  try {
-    await unlockUser(id);
-    await load();
+async function configRole(id: number) {
+  form.value.id = id;
+  await Promise.all([loadUserRoles(id), loadRoles()]);
 
-    ElMessage.success(t("message.success", { action: t("action.unlock") }));
-  } catch (error) {
-    ElMessage.error(t("message.error", { action: t("action.unlock") }));
-    throw error;
-  }
+  roleVisible.value = true;
 }
 
 /**
@@ -249,7 +277,6 @@ async function removeRow(id: number, username: string) {
     t("tips.removeWarning", { module: t("page.users"), data: username }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",
@@ -273,6 +300,31 @@ async function removeRow(id: number, username: string) {
  */
 function onUpload(options: UploadRequestOptions) {
   return importUsers(options.file);
+}
+
+/**
+ * 关联角色
+ * @param value 角色
+ * @param direction 方向
+ */
+async function handleTransferRoleChange(
+  value: TransferKey[],
+  direction: TransferDirection,
+  movedKeys: TransferKey[]
+) {
+  if (!form.value.id) return;
+  try {
+    if (direction === "right") {
+      await addRoles(form.value.id, value as number[]);
+    } else if (movedKeys.length) {
+      await removeRoles(form.value.id, movedKeys as number[]);
+    }
+
+    await load();
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.roles") }));
+    throw error;
+  }
 }
 </script>
 
@@ -383,12 +435,33 @@ function onUpload(options: UploadRequestOptions) {
         prop="email"
         :label="$t('label.email')"
       />
-      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
+      <ElTableColumn prop="roles" :label="$t('label.roles')">
         <template #default="scope">
-          <ElBadge is-dot :type="userStatus[scope.row.status]" class="mr-1" />
-          <ElText :type="userStatus[scope.row.status]">{{
-            scope.row.status
-          }}</ElText>
+          <ElTag
+            v-for="(item, index) in visibleArray<Role>(scope.row.roles, 3)"
+            :key="index"
+            type="primary"
+            class="mr-2"
+          >
+            {{ item.name }}
+          </ElTag>
+          <ElPopover
+            v-if="scope.row.roles && scope.row.roles.length > 3"
+            placement="top-start"
+            trigger="hover"
+          >
+            <template #reference>
+              <ElTag type="primary"> +{{ scope.row.roles.length - 3 }} </ElTag>
+            </template>
+            <ElTag
+              v-for="(item, index) in scope.row.roles.slice(3)"
+              :key="index"
+              :type="actionTypes[item]"
+              class="mb-2 mr-2"
+            >
+              {{ item.name }}
+            </ElTag>
+          </ElPopover>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
@@ -445,19 +518,14 @@ function onUpload(options: UploadRequestOptions) {
             />{{ $t("action.enable") }}
           </ElButton>
           <ElButton
-            v-if="
-              scope.row.status == 'LOCKED' && hasAction($route.name, 'unlock')
-            "
-            title="unlock"
-            :type="actionTypes['unlock']"
+            v-if="hasAction($route.name, 'role')"
+            title="roles"
+            :type="actionTypes['role']"
             link
-            @click="unlockRow(scope.row.id)"
+            @click="configRole(scope.row.id)"
           >
-            <Icon
-              :icon="actionIcon('unlock')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.unlock") }}
+            <Icon :icon="actionIcon('role')" width="1.25em" height="1.25em" />
+            {{ $t("action.role") }}
           </ElButton>
           <ElButton
             v-if="hasAction($route.name, 'remove')"
@@ -553,5 +621,19 @@ function onUpload(options: UploadRequestOptions) {
         {{ $t("action.submit") }}
       </ElButton>
     </template>
+  </ElDialog>
+
+  <!-- roles -->
+  <ElDialog v-model="roleVisible" :title="$t('action.roles')" width="600">
+    <div style="text-align: center">
+      <ElTransfer
+        v-model="userRoles"
+        :props="{ key: 'id', label: 'name' }"
+        :titles="[$t('label.unselected'), $t('label.selected')]"
+        filterable
+        :data="roles"
+        @change="handleTransferRoleChange"
+      />
+    </div>
   </ElDialog>
 </template>

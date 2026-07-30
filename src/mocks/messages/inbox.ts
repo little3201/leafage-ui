@@ -1,24 +1,10 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Message, User, MessageInbox } from "@/types";
+import type { Message, MessageInbox } from "@/types";
 import { applyFilters, randomInt } from "../util";
 
 const messages: Message[] = [];
-const users: User[] = [];
 const datas: MessageInbox[] = [];
-
-for (let i = 1; i < 5; i++) {
-  const row: User = {
-    id: i,
-    username:
-      ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][
-        randomInt(5)
-      ] || "admin",
-    fullName: "Name_" + i,
-    email: "use***" + "@**t.com"
-  };
-  users.push(row);
-}
 
 for (let i = 1; i < 18; i++) {
   const random = randomInt(3);
@@ -28,8 +14,7 @@ for (let i = 1; i < 18; i++) {
     sender: "admin",
     scope: "ALL",
     type: ["系统公告", "全员信", "部门通知"][random],
-    receivers:
-      random < 2 ? [] : users.filter((_, index) => index < randomInt(5)),
+    targets: [],
     status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
     body: "This is the message body, Do you know what append with the system, it'is very nice, do you like it?",
     publishedAt:
@@ -45,7 +30,6 @@ for (let i = 1; i < 18; i++) {
   const row: MessageInbox = {
     id: i,
     message: messages[i],
-    receiver: "admin",
     status: ["READ", "UNREAD"][random],
     readAt: random === 2 ? new Date() : undefined
   };

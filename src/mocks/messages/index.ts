@@ -13,12 +13,7 @@ for (let i = 1; i < 18; i++) {
     scope: "ALL",
     type: ["系统公告", "部门通知", "全员信", "通知"][randomInt(4)],
     sender: "admin",
-    receivers:
-      random / 2 > 0
-        ? []
-        : ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"].filter(
-            (_, index) => index < randomInt(5)
-          ),
+    targets: [],
     status: ["DRAFT", "PUBLISHED", "REVOKED"][random] || "DRAFT",
     body: "This is the message body, Do you know what append with the system, it'is very nice, do you like it?",
     publishedAt: random === 1 ? new Date() : undefined

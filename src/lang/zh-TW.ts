@@ -107,7 +107,7 @@ export default {
     unread: "未读",
     mode: "模式",
     sender: "送出人",
-    receiver: "接收人",
+    targets: "接收對象",
     publishedAt: "發佈時間",
     yes: "是",
     no: "否",
@@ -172,6 +172,7 @@ export default {
     members: "查詢成員",
     addMembers: "新增成員",
     removeMembers: "移出成員",
+    role: "角色",
     roles: "查詢角色",
     addRoles: "新增角色",
     removeRoles: "移除角色"
@@ -243,18 +244,16 @@ export default {
     fileSizeLimit: "檔案小於 {size}。",
 
     confirm: "是否確定？",
-    removeWarning:
-      "此操作無法撤銷。這將永久移除 <strong>{module}/{data}</strong>。",
+    removeWarning: "此操作無法撤銷。這將永久移除【{module}/{data}】。",
     removeButtonText: "我明白，移除它！",
     disableWarning: "資料停用後，目前資料及關聯資料將無法使用。",
     disableButtonText: "我明白，停用它！",
     clearWarning: "此操作無法撤銷。這將永久移除所有項目。",
     clearButtonText: "我明白，移除所有項目。",
-    publishWarning:
-      "點擊確定後，當前 <strong>{data}</strong> 訊息將立即發布給接收人。",
+    publishWarning: "點擊確定後，當前【{data}】訊息將立即發布。",
     publishButtonText: "我確定，立即發布",
     revokeWarning:
-      "點擊確定後，當前 <strong>{data}</strong> 訊息將立即撤銷，已讀訊息無法撤銷。",
+      "點擊確定後，當前【{data}】訊息將立即撤銷，已讀訊息無法撤銷。",
     revokeButtonText: "我確定，立即撤銷",
     revokeTimeoutText: "消息發佈時間已超過30分鐘，無法撤銷。",
     welcome: "嗨！歡迎回來",

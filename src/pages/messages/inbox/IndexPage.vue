@@ -15,11 +15,19 @@ import {
   readAllMessageInbox
 } from "@/api/messages/inbox";
 import { fetchMessage } from "@/api/messages";
-import type { Filter, Pagination, Message, MessageInbox, User } from "@/types";
+import type {
+  Filter,
+  Pagination,
+  Message,
+  MessageInbox,
+  MessageTarget
+} from "@/types";
 import { actionIcon } from "@/utils";
 import { onMounted, reactive, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const loading = ref<boolean>(false);
@@ -42,7 +50,7 @@ const initialValues: Message = {
   title: "",
   scope: "ALL",
   type: null,
-  receivers: []
+  targets: []
 };
 const data = ref<Message>({ ...initialValues });
 
@@ -52,20 +60,6 @@ const filteredDatas = computed<Array<MessageInbox>>(() => {
   return keyword
     ? datas.value.filter(item => item.message.title.includes(keyword))
     : datas.value;
-});
-
-const receiverText = computed(() => {
-  if (!data.value.receivers?.length) {
-    return "所有人";
-  }
-
-  return data.value.receivers
-    .map((receiver: User | string) =>
-      typeof receiver === "string"
-        ? receiver
-        : receiver.fullName || receiver.username || receiver.email
-    )
-    .join(", ");
 });
 
 watch(
@@ -131,12 +125,9 @@ async function readRow(row: MessageInbox, clearQuery = true) {
     await load();
   }
   if (clearQuery && route.query.messageId) {
-    // router.replace({
-    //   query: {}
-    // });
-    if (document.visibilityState === "visible") {
-      router.replace({ query: {} });
-    }
+    router.replace({
+      query: {}
+    });
   }
 }
 
@@ -221,7 +212,6 @@ async function onRadioChange(value: string) {
                   : ""
               }}
             </ElTag>
-            <ElTag>{{ $t("label.receiver") }}：{{ receiverText }} </ElTag>
           </div>
 
           <ElDivider />

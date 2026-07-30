@@ -52,7 +52,6 @@ async function removeRow(id: number) {
     t("tips.removeWarning", { module: t("action.data"), data: id }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",

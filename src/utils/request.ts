@@ -29,7 +29,10 @@ export function dealFilters<T>(
     if (!cond) continue;
 
     const { op, value } = cond;
-
+    if (op === "null" || op === "nonnull") {
+      conditions.push(`${field}:${op}:`);
+      continue;
+    }
     // 跳过无效值
     if (value == null || value === "") {
       continue;

@@ -15,8 +15,8 @@ type FilterOperator =
   | "notIn"
   | "between"
   | "notBetween"
-  | "isNull"
-  | "isNotNull";
+  | "null"
+  | "nonnull";
 
 export type Filter<T> = Partial<{
   [K in keyof T]: {
@@ -29,12 +29,22 @@ export type Filter<T> = Partial<{
           | "notLike"
           | "in"
           | "notIn"
-          | "isNull"
-          | "isNotNull"
+          | "null"
+          | "nonnull"
       : T[K] extends number | null | undefined
-        ? "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "notIn"
+        ?
+            | "eq"
+            | "neq"
+            | "gt"
+            | "gte"
+            | "lt"
+            | "lte"
+            | "in"
+            | "notIn"
+            | "null"
+            | "nonnull"
         : T[K] extends boolean | null | undefined
-          ? "eq" | "neq" | "isNull" | "isNotNull"
+          ? "eq" | "neq" | "null" | "nonnull"
           : T[K] extends Date | string | null | undefined // 日期通常用 ISO string
             ?
                 | "eq"

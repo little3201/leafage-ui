@@ -107,7 +107,7 @@ export default {
     unread: "未读",
     mode: "模式",
     sender: "发送人",
-    receiver: "接收人",
+    targets: "接收对象",
     publishedAt: "发布时间",
     yes: "是",
     no: "否",
@@ -172,6 +172,7 @@ export default {
     members: "查询成员",
     addMembers: "添加成员",
     removeMembers: "移出成员",
+    role: "角色",
     roles: "查询角色",
     addRoles: "添加角色",
     removeRoles: "移除角色"
@@ -243,18 +244,16 @@ export default {
     fileSizeLimit: "文件小于 {size}。",
 
     confirm: "是否确定？",
-    removeWarning:
-      "当前操作无法撤销，将永久移除 <strong>{module}/{data}</strong>。",
+    removeWarning: "当前操作无法撤销，将永久移除【{module}/{data}】。",
     removeButtonText: "我明白，移除它！",
     disableWarning: "数据停用后，当前数据及关联数据将不可用。",
     disableButtonText: "我明白，停用它！",
     clearWarning: "此操作无法撤销。这将永久移除所有项目。",
     clearButtonText: "我明白，移除所有项目。",
-    publishWarning:
-      "点击确定后，当前 <strong>{data}</strong> 消息将立即发布给接收人。",
+    publishWarning: "点击确定后，当前【{data}】消息将立即发布。",
     publishButtonText: "我确定，立即发布",
     revokeWarning:
-      "点击确定后，当前 <strong>{data}</strong> 消息将立即撤销，已读消息无法撤销。",
+      "点击确定后，当前【{data}】消息将立即撤销，已读消息无法撤销。",
     revokeButtonText: "我确定，立即撤销",
     revokeTimeoutText: "消息发布时间已超过30分钟，无法撤销。",
     welcome: "嗨！欢迎回来",

@@ -7,7 +7,12 @@ export interface Message extends AudtiMetadata {
   scope: string;
   type: string | null;
   sender?: string;
-  receivers: User[] | string[];
+  targets: MessageTarget[] | number[];
   status?: string;
   publishedAt?: Date;
+}
+
+export interface MessageTarget {
+  id: number;
+  name: string;
 }

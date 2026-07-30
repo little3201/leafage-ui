@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import type { TableInstance, FormInstance, FormRules } from "element-plus";
+import type {
+  TableInstance,
+  FormInstance,
+  FormRules,
+  SelectOptionProps,
+  ElTag,
+  ElTreeSelect
+} from "element-plus";
 import { dayjs, ElMessage, ElMessageBox } from "element-plus";
 import {
   createMessage,
@@ -12,9 +19,25 @@ import {
 } from "@/api/messages";
 import { retrieveDictionarySubset } from "@/api/system/dictionaries";
 import { retrieveUsers } from "@/api/system/users";
-import { actionTypes, DICT_KEY, messageStatus, scopeTypes } from "@/constants";
-import type { Filter, Pagination, Message, Dictionary, User } from "@/types";
-import { actionIcon, hasAction } from "@/utils";
+import { retrieveGroupTree } from "@/api/system/groups";
+import { retrieveRoles } from "@/api/system/roles";
+import {
+  actionTypes,
+  DICT_KEY,
+  messageStatus,
+  messageScopeTypes
+} from "@/constants";
+import type {
+  Filter,
+  Pagination,
+  Message,
+  Dictionary,
+  User,
+  Role,
+  MessageTarget,
+  TreeNode
+} from "@/types";
+import { actionIcon, hasAction, visibleArray } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -23,7 +46,8 @@ const { t } = useI18n();
 const datas = ref<Array<Message>>([]);
 const total = ref<number>(0);
 
-const users = ref<Array<User>>([]);
+const targetOptions = ref<Array<SelectOptionProps>>([]);
+const targetTree = ref<Array<TreeNode>>([]);
 const typeOptions = ref<Array<Dictionary>>([]);
 
 const visible = ref<boolean>(false);
@@ -47,7 +71,7 @@ const initialValues: Message = {
   title: "",
   scope: "ALL",
   type: null,
-  receivers: []
+  targets: []
 };
 const form = ref<Message>({ ...initialValues });
 
@@ -119,18 +143,74 @@ async function load() {
   }
 }
 
+const searchTargets = async (value: string) => {
+  switch (form.value.scope) {
+    case "USER":
+      await loadUsers(value);
+      break;
+
+    case "GROUP":
+      await loadGroups();
+      break;
+
+    case "ROLE":
+      await loadRoles(value);
+      break;
+  }
+};
+
 /**
  * 加载列表
  */
 async function loadUsers(query: string) {
   try {
     const filter: Filter<User> = {
-      fullName: { op: "like", value: query }
+      fullName: { op: "like", value: query },
+      enabled: { op: "eq", value: true }
     };
     const res = await retrieveUsers({ page: 1, size: 10 }, filter);
-    users.value = res.data.content;
+    targetOptions.value = res.data.content.map((row: User) => ({
+      label: row.fullName,
+      value: row.id
+    }));
   } catch (error) {
-    users.value = [];
+    targetOptions.value = [];
+
+    throw error;
+  }
+}
+
+/**
+ * 加载列表
+ */
+async function loadGroups() {
+  try {
+    const res = await retrieveGroupTree();
+    targetTree.value = res.data;
+  } catch (error) {
+    targetOptions.value = [];
+
+    throw error;
+  }
+}
+
+/**
+ * 加载列表
+ */
+async function loadRoles(query: string) {
+  try {
+    const filter: Filter<Role> = {
+      name: { op: "like", value: query },
+      builtIn: { op: "eq", value: false },
+      enabled: { op: "eq", value: true }
+    };
+    const res = await retrieveRoles({ page: 1, size: 10 }, filter);
+    targetOptions.value = res.data.content.map((row: Role) => ({
+      label: row.name,
+      value: row.id
+    }));
+  } catch (error) {
+    targetOptions.value = [];
 
     throw error;
   }
@@ -141,7 +221,17 @@ async function loadUsers(query: string) {
  * @param row 数据
  */
 function saveRow(row?: Message) {
-  form.value = row ? { ...row, status: "DRAFT" } : { ...initialValues };
+  searchTargets("");
+  if (row) {
+    const targetIds = row.targets
+      ? row.targets.map(target =>
+          typeof target === "number" ? target : target.id
+        )
+      : [];
+    form.value = { ...row, targets: targetIds };
+  } else {
+    form.value = { ...initialValues };
+  }
 
   visible.value = true;
 }
@@ -160,8 +250,8 @@ async function publishRow(row: Message) {
     }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
+      customClass: "demo",
       confirmButtonType: "success",
       confirmButtonClass: "w-full",
       confirmButtonText: t("tips.publishButtonText"),
@@ -200,7 +290,6 @@ async function revokeRow(row: Message) {
     }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "warning",
       confirmButtonClass: "w-full",
@@ -237,7 +326,6 @@ async function removeRow(id: number, name: string, startTime: string) {
     }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",
@@ -293,9 +381,10 @@ async function onSubmit(formEl: FormInstance) {
  * select change
  * @param value selected value
  */
-function handleChange(value: string) {
-  if (value === "ALL") {
-    form.value.receivers = [];
+async function handleChange(value: string) {
+  form.value.targets = [];
+  if (value !== "ALL") {
+    searchTargets("");
   }
 }
 </script>
@@ -357,25 +446,50 @@ function handleChange(value: string) {
           <ElTag>{{ scope.row.type }}</ElTag>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="receivers" :label="$t('label.receiver')">
+      <ElTableColumn prop="scope" :label="$t('label.scope')">
         <template #default="scope">
-          <div
-            v-if="scope.row.receivers && scope.row.receivers.length > 0"
-            class="flex items-center"
+          <ElBadge
+            is-dot
+            :type="messageScopeTypes[scope.row.scope]"
+            class="mr-1"
+          />
+          <ElText :type="messageScopeTypes[scope.row.scope]">
+            {{ scope.row.scope }}
+          </ElText>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn prop="targets" :label="$t('label.targets')">
+        <template #default="scope">
+          <ElTag
+            v-for="(item, index) in visibleArray<MessageTarget>(
+              scope.row.targets,
+              3
+            )"
+            :key="index"
+            :type="messageScopeTypes[scope.row.scope]"
+            class="mr-2"
           >
-            <ElAvatarGroup
-              collapse-avatars
-              :max-collapse-avatars="3"
-              collapse-avatars-tooltip
+            {{ item.name }}
+          </ElTag>
+          <ElPopover
+            v-if="scope.row.targets && scope.row.targets.length > 3"
+            placement="top-start"
+            trigger="hover"
+          >
+            <template #reference>
+              <ElTag :type="messageScopeTypes[scope.row.scope]">
+                +{{ scope.row.targets.length - 3 }}
+              </ElTag>
+            </template>
+            <ElTag
+              v-for="(item, index) in scope.row.targets.slice(3)"
+              :key="index"
+              :type="messageScopeTypes[scope.row.scope]"
+              class="mb-2 mr-2"
             >
-              <ElAvatar
-                v-for="receiver in scope.row.receivers"
-                :key="receiver"
-                :src="`https://cdn.leafage.top/${receiver}`"
-              />
-            </ElAvatarGroup>
-          </div>
-          <span v-else>所有人</span>
+              {{ item.name }}
+            </ElTag>
+          </ElPopover>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -395,9 +509,9 @@ function handleChange(value: string) {
             :type="messageStatus[scope.row.status]"
             class="mr-1"
           />
-          <ElText :type="messageStatus[scope.row.status]">{{
-            scope.row.status
-          }}</ElText>
+          <ElText :type="messageStatus[scope.row.status]">
+            {{ scope.row.status }}
+          </ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="publishedAt" :label="$t('label.publishedAt')">
@@ -536,7 +650,7 @@ function handleChange(value: string) {
               @change="handleChange"
             >
               <ElOption
-                v-for="(_, value) in scopeTypes"
+                v-for="(_, value) in messageScopeTypes"
                 :key="value"
                 :value="value"
                 :label="value"
@@ -547,19 +661,32 @@ function handleChange(value: string) {
       </ElRow>
       <ElRow>
         <ElCol>
-          <ElFormItem :label="$t('label.receiver')" prop="receiver">
+          <ElFormItem :label="$t('label.targets')" prop="targets">
+            <ElTreeSelect
+              v-if="form.scope === 'GROUP'"
+              node-key="id"
+              v-model="form.targets"
+              multiple
+              show-checkbox
+              filterable
+              :data="targetTree"
+              :props="{ label: 'name' }"
+              :placeholder="
+                $t('placeholder.selectText', { field: $t('label.targets') })
+              "
+            />
             <ElSelect
-              v-model="form.receivers"
+              v-else
+              v-model="form.targets"
               clearable
               multiple
               filterable
               remote
-              :remote-method="loadUsers"
+              :remote-method="searchTargets"
               :disabled="form.scope === 'ALL'"
-              :options="users"
-              :props="{ value: 'username', label: 'fullName' }"
+              :options="targetOptions"
               :placeholder="
-                $t('placeholder.selectText', { field: $t('label.receiver') })
+                $t('placeholder.selectText', { field: $t('label.targets') })
               "
             />
           </ElFormItem>

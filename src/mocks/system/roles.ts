@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Role, RoleMembers, RolePrivileges, User } from "@/types";
+import type { Role, RolePrivileges, User } from "@/types";
 import { applyFilters, randomInt } from "../util";
 
 const datas: Role[] = [];
@@ -15,10 +15,6 @@ for (let i = 1; i < 5; i++) {
       ] || "admin",
     fullName: "Name_" + i,
     email: "use***" + "@**t.com",
-    status:
-      ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        randomInt(5)
-      ] || "unknown",
     enabled: i % 2 > 0
   };
   users.push(row);
@@ -29,7 +25,7 @@ for (let i = 1; i < 28; i++) {
     id: i,
     name: "Role_" + i,
     code: "ROLE_" + i,
-    members: users.filter((_, index) => index < randomInt(5)),
+    builtIn: i < 2,
     enabled: i % 3 > 0
   };
   datas.push(data);
@@ -47,31 +43,11 @@ for (let i = 2; i < 17; i++) {
   privileges.push(row);
 }
 
-const members: RoleMembers[] = [];
-
-for (let i = 1; i < 28; i++) {
-  const row: RoleMembers = {
-    id: i,
-    username: "username" + i,
-    roleId: i
-  };
-  members.push(row);
-}
-
 export const rolesHandlers = [
   http.get(`/api${SERVER_URL.ROLE}/:id/privileges`, ({ params }) => {
     const { id } = params;
     if (id) {
       const filtered = privileges.filter(item => item.roleId === Number(id));
-      return HttpResponse.json(filtered);
-    } else {
-      return HttpResponse.json([]);
-    }
-  }),
-  http.get(`/api${SERVER_URL.ROLE}/:id/members`, ({ params }) => {
-    const { id } = params;
-    if (id) {
-      const filtered = members.filter(item => item.roleId === Number(id));
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json([]);
@@ -164,18 +140,6 @@ export const rolesHandlers = [
     }
   }),
   http.patch(
-    `/api${SERVER_URL.ROLE}/:id/members`,
-    async ({ params, request }) => {
-      const { id } = params;
-      const data = await request.json();
-      if (id && data) {
-        return HttpResponse.json();
-      } else {
-        return HttpResponse.error();
-      }
-    }
-  ),
-  http.patch(
     `/api${SERVER_URL.ROLE}/:id/privileges/:privilegeId`,
     ({ params, request }) => {
       const { id, privilegeId } = params;
@@ -188,14 +152,6 @@ export const rolesHandlers = [
       }
     }
   ),
-  http.delete(`/api${SERVER_URL.ROLE}/:id/members`, ({ params }) => {
-    const { id } = params;
-    if (id) {
-      return HttpResponse.json();
-    } else {
-      return HttpResponse.error();
-    }
-  }),
   http.patch(
     `/api${SERVER_URL.ROLE}/privileges/:privilegeId`,
     async ({ params, request }) => {

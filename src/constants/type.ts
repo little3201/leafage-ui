@@ -117,3 +117,12 @@ export const fileTypes: {
   document: "primary",
   other: "info"
 };
+
+export const messageScopeTypes: {
+  [key: string]: "primary" | "success" | "warning" | "info";
+} = {
+  ALL: "info",
+  USER: "success",
+  GROUP: "primary",
+  ROLE: "warning"
+};

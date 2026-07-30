@@ -1,17 +1,10 @@
 import type { AudtiMetadata } from "../global";
-import type { User } from "./user";
 
 export interface Role extends AudtiMetadata {
   name: string;
   code: string;
-  members?: User[];
+  builtIn?: boolean;
   enabled?: boolean;
-}
-
-export interface RoleMembers {
-  id: number;
-  roleId: number;
-  username: string;
 }
 
 export interface RolePrivileges {

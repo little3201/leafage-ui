@@ -4,7 +4,6 @@ import type {
   FormInstance,
   FormRules,
   TableInstance,
-  TabPaneName,
   TransferDirection,
   TransferKey,
   TreeInstance,
@@ -71,10 +70,10 @@ const groupTree = ref<TreeNode[]>([]);
 const saveLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
-const activeTabName = ref<string>("role");
-const relationVisible = ref<boolean>(false);
-const relationUsers = ref<Array<string>>([]);
-const relationRoles = ref<Array<string>>([]);
+const memberVisible = ref<boolean>(false);
+const roleVisible = ref<boolean>(false);
+const groupMembers = ref<Array<string>>([]);
+const groupRoles = ref<Array<string>>([]);
 const members = ref<Array<User>>([]);
 const roles = ref<Array<Role>>([]);
 
@@ -91,7 +90,7 @@ const importLoading = ref<boolean>(false);
 const exportLoading = ref<boolean>(false);
 
 const filter = reactive<Filter<Group>>({
-  superiorId: { op: "eq", value: undefined },
+  superiorId: { op: "null", value: undefined },
   name: { op: "like", value: undefined }
 });
 
@@ -184,9 +183,9 @@ async function loadRoles() {
 async function loadGroupUsers(id: number) {
   try {
     const res = await retrieveGroupMembers(id);
-    relationUsers.value = res.data.map((item: User) => item.username);
+    groupMembers.value = res.data.map((item: User) => item.username);
   } catch (error) {
-    relationUsers.value = [];
+    groupMembers.value = [];
 
     throw error;
   }
@@ -195,9 +194,9 @@ async function loadGroupUsers(id: number) {
 async function loadGrouRoles(id: number) {
   try {
     const res = await retrieveGroupRoles(id);
-    relationRoles.value = res.data.map((item: Role) => item.id);
+    groupRoles.value = res.data.map((item: Role) => item.id);
   } catch (error) {
-    relationRoles.value = [];
+    groupRoles.value = [];
 
     throw error;
   }
@@ -243,9 +242,11 @@ async function load() {
 
   if (!filter.superiorId) return;
 
-  filter.superiorId.value = treeSelected.value
-    ? Number(treeSelected.value)
-    : null;
+  if (treeSelected.value) {
+    filter.superiorId.op = "eq";
+    filter.superiorId.value = Number(treeSelected.value);
+  }
+
   try {
     const res = await retrieveGroups(pagination, filter);
     datas.value = res.data.content;
@@ -261,14 +262,25 @@ async function load() {
 }
 
 /**
- * 关联弹出框
+ * 弹出框
  * @param id 主键
  */
-async function relationRow(id: number) {
+async function configMember(id: number) {
+  form.value.id = id;
+  await Promise.all([loadGroupUsers(id), loadUsers()]);
+
+  memberVisible.value = true;
+}
+
+/**
+ * 弹出框
+ * @param id 主键
+ */
+async function configRole(id: number) {
   form.value.id = id;
   await Promise.all([loadGrouRoles(id), loadRoles()]);
 
-  relationVisible.value = true;
+  roleVisible.value = true;
 }
 
 async function authorizeRow(id: number) {
@@ -332,7 +344,6 @@ async function disableRow(row: Group) {
   if (!id) return;
 
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
-    dangerouslyUseHTMLString: true,
     showCancelButton: false,
     confirmButtonType: "danger",
     confirmButtonClass: "w-full",
@@ -402,7 +413,6 @@ async function removeRow(id: number, name: string) {
     t("tips.removeWarning", { module: t("page.groups"), data: name }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",
@@ -442,7 +452,7 @@ async function handleTransferUserChange(
 
     await load();
   } catch (error) {
-    ElMessage.error(t("message.error", { action: t("action.relaton") }));
+    ElMessage.error(t("message.error", { action: t("action.members") }));
     throw error;
   }
 }
@@ -467,7 +477,7 @@ async function handleTransferRoleChange(
 
     await load();
   } catch (error) {
-    ElMessage.error(t("message.error", { action: t("action.relation") }));
+    ElMessage.error(t("message.error", { action: t("action.roles") }));
     throw error;
   }
 }
@@ -540,21 +550,6 @@ async function handleActionsCheck(privilegeId: number) {
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.authorize") }));
     throw error;
-  }
-}
-
-/**
- * handle tab change
- * @param tab tab name
- */
-async function tabChange(tab: TabPaneName) {
-  activeTabName.value = tab.toString();
-
-  if (tab === "user") {
-    await loadUsers();
-    if (form.value.id) {
-      await loadGroupUsers(form.value.id);
-    }
   }
 }
 
@@ -830,25 +825,38 @@ const rowSelected = (row: Privilege) => {
                   />{{ $t("action.more") }}
                 </ElButton>
                 <template #dropdown>
-                  <ElDropdownItem>
+                  <ElDropdownItem v-if="hasAction($route.name, 'member')">
                     <ElButton
-                      v-if="hasAction($route.name, 'relation')"
-                      title="relation"
-                      :type="actionTypes['relation']"
+                      title="members"
+                      :type="actionTypes['member']"
                       link
-                      @click="relationRow(scope.row.id)"
+                      @click="configMember(scope.row.id)"
                     >
                       <Icon
-                        :icon="`material-symbols:${actionIcons['relation']}-rounded`"
+                        :icon="actionIcon('member')"
                         width="1.25em"
                         height="1.25em"
                       />
-                      {{ $t("action.relation") }}
+                      {{ $t("action.member") }}
                     </ElButton>
                   </ElDropdownItem>
-                  <ElDropdownItem>
+                  <ElDropdownItem v-if="hasAction($route.name, 'role')">
                     <ElButton
-                      v-if="hasAction($route.name, 'authorize')"
+                      title="roles"
+                      :type="actionTypes['role']"
+                      link
+                      @click="configRole(scope.row.id)"
+                    >
+                      <Icon
+                        :icon="actionIcon('role')"
+                        width="1.25em"
+                        height="1.25em"
+                      />
+                      {{ $t("action.role") }}
+                    </ElButton>
+                  </ElDropdownItem>
+                  <ElDropdownItem v-if="hasAction($route.name, 'authorize')">
+                    <ElButton
                       title="authorize"
                       :type="actionTypes['authorize']"
                       link
@@ -923,44 +931,31 @@ const rowSelected = (row: Privilege) => {
     </template>
   </ElDialog>
 
-  <!-- relation -->
-  <ElDialog
-    v-model="relationVisible"
-    :title="$t('action.relation')"
-    width="600"
-  >
+  <!-- members -->
+  <ElDialog v-model="memberVisible" :title="$t('action.members')" width="600">
     <div style="text-align: center">
-      <ElTabs stretch v-model="activeTabName" @tab-change="tabChange">
-        <ElTabPane
-          :label="$t('page.roles')"
-          name="role"
-          style="text-align: center"
-        >
-          <ElTransfer
-            v-model="relationRoles"
-            :props="{ key: 'id', label: 'name' }"
-            :titles="[$t('label.unselected'), $t('label.selected')]"
-            filterable
-            :data="roles"
-            @change="handleTransferRoleChange"
-          />
-        </ElTabPane>
+      <ElTransfer
+        v-model="groupMembers"
+        :props="{ key: 'username', label: 'fullName' }"
+        :titles="[$t('label.unselected'), $t('label.selected')]"
+        filterable
+        :data="members"
+        @change="handleTransferUserChange"
+      />
+    </div>
+  </ElDialog>
 
-        <ElTabPane
-          :label="$t('page.users')"
-          name="user"
-          style="text-align: center"
-        >
-          <ElTransfer
-            v-model="relationUsers"
-            :props="{ key: 'username', label: 'fullName' }"
-            :titles="[$t('label.unselected'), $t('label.selected')]"
-            filterable
-            :data="members"
-            @change="handleTransferUserChange"
-          />
-        </ElTabPane>
-      </ElTabs>
+  <!-- roles -->
+  <ElDialog v-model="roleVisible" :title="$t('action.roles')" width="600">
+    <div style="text-align: center">
+      <ElTransfer
+        v-model="groupRoles"
+        :props="{ key: 'id', label: 'name' }"
+        :titles="[$t('label.unselected'), $t('label.selected')]"
+        filterable
+        :data="roles"
+        @change="handleTransferRoleChange"
+      />
     </div>
   </ElDialog>
 

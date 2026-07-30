@@ -114,7 +114,6 @@ async function removeRow(id: number, httpMethod: string, url: string) {
     }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",
@@ -138,7 +137,6 @@ async function removeRow(id: number, httpMethod: string, url: string) {
  */
 async function clearRows() {
   await ElMessageBox.confirm(t("tips.clearWarning"), t("tips.confirm"), {
-    dangerouslyUseHTMLString: true,
     showCancelButton: false,
     confirmButtonType: "danger",
     confirmButtonClass: "w-full",

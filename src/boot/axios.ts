@@ -44,7 +44,7 @@ api.interceptors.response.use(
 
     return response;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     if (error.config) {
       const uniqueKey = generateUniqueKey(error.config);
       abortControllerMap.delete(uniqueKey);

@@ -143,7 +143,6 @@ async function disableRow(row: SafetyPatrol) {
   if (!id) return;
 
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
-    dangerouslyUseHTMLString: true,
     showCancelButton: false,
     confirmButtonType: "danger",
     confirmButtonClass: "w-full",
@@ -224,7 +223,6 @@ async function removeRow(id: number, username: string) {
     t("tips.removeWarning", { module: t("page.users"), data: username }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",

@@ -21,11 +21,9 @@ import {
   removeMembers,
   removePrivilege,
   removeRole,
-  retrieveRoleMembers,
   retrieveRolePrivileges,
   retrieveRoles
 } from "@/api/system/roles";
-import { retrieveUsers } from "@/api/system/users";
 import { actionIcons, actionTypes } from "@/constants";
 import type {
   Filter,
@@ -34,7 +32,6 @@ import type {
   PrivilegeTreeNode,
   Role,
   User,
-  RoleMembers,
   RolePrivileges
 } from "@/types";
 import { actionIcon, exportToCSV, hasAction, pageIcon } from "@/utils";
@@ -108,31 +105,6 @@ onMounted(async () => {
   await load();
 });
 
-async function loadUsers() {
-  try {
-    const userFilter = reactive<Filter<User>>({
-      enabled: { op: "eq", value: true }
-    });
-    const res = await retrieveUsers({ page: 1, size: 10 }, userFilter);
-    members.value = res.data.content;
-  } catch (error) {
-    members.value = [];
-
-    throw error;
-  }
-}
-
-async function loadRoleUsers(id: number) {
-  try {
-    const res = await retrieveRoleMembers(id);
-    relations.value = res.data.map((item: RoleMembers) => item.username);
-  } catch (error) {
-    relations.value = [];
-
-    throw error;
-  }
-}
-
 /**
  * 分页变化
  * @param currentPage 当前页码
@@ -162,17 +134,6 @@ async function load() {
   } finally {
     loading.value = false;
   }
-}
-
-/**
- * 关联弹出框
- * @param id 主键
- */
-async function memberRow(id: number) {
-  form.value.id = id;
-  await Promise.all([loadRoleUsers(id), loadUsers()]);
-
-  relationVisible.value = true;
 }
 
 /**
@@ -239,7 +200,6 @@ async function disableRow(row: Role) {
   if (!id) return;
 
   await ElMessageBox.confirm(t("tips.disableWarning"), t("tips.confirm"), {
-    dangerouslyUseHTMLString: true,
     showCancelButton: false,
     confirmButtonType: "danger",
     confirmButtonClass: "w-full",
@@ -305,7 +265,6 @@ async function removeRow(id: number, name: string) {
     t("tips.removeWarning", { module: t("page.roles"), data: name }),
     t("tips.confirm"),
     {
-      dangerouslyUseHTMLString: true,
       showCancelButton: false,
       confirmButtonType: "danger",
       confirmButtonClass: "w-full",
@@ -367,7 +326,7 @@ async function handleTransferChange(
 
       await load();
     } catch (error) {
-      ElMessage.error(t("message.error", { action: t("action.member") }));
+      ElMessage.error(t("message.error", { action: t("action.members") }));
       throw error;
     }
   }
@@ -529,24 +488,6 @@ function onActionSelected(row: Privilege) {
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')" />
       <ElTableColumn prop="code" :label="$t('label.code')" />
-      <ElTableColumn prop="members" :label="$t('label.members')">
-        <template #default="scope">
-          <div class="flex items-center">
-            <ElAvatarGroup
-              collapse-avatars
-              :max-collapse-avatars="3"
-              collapse-avatars-tooltip
-            >
-              <ElAvatar
-                v-for="member in scope.row.members"
-                :key="member.id"
-                :alt="member.fullName"
-                :src="`https://cdn.leafage.top/${member.username}`"
-              />
-            </ElAvatarGroup>
-          </div>
-        </template>
-      </ElTableColumn>
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
         <template #default="scope">
           <ElBadge
@@ -574,96 +515,61 @@ function onActionSelected(row: Privilege) {
               height="1.25em"
             />{{ $t("action.modify") }}
           </ElButton>
-          <ElButton
-            v-if="scope.row.enabled && hasAction($route.name, 'disable')"
-            title="disable"
-            :type="actionTypes['disable']"
-            link
-            @click="disableRow(scope.row)"
-          >
-            <Icon
-              :icon="actionIcon('disable')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.disable") }}
-          </ElButton>
-          <ElButton
-            v-else-if="hasAction($route.name, 'enable')"
-            title="enable"
-            :type="actionTypes['enable']"
-            link
-            @click="enableRow(scope.row)"
-          >
-            <Icon
-              :icon="actionIcon('enable')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.enable") }}
-          </ElButton>
-          <ElButton
-            v-if="hasAction($route.name, 'remove')"
-            title="remove"
-            :type="actionTypes['remove']"
-            link
-            @click="removeRow(scope.row.id, scope.row.name)"
-          >
-            <Icon
-              :icon="actionIcon('remove')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.remove") }}
-          </ElButton>
-          <ElDropdown
-            v-if="
-              scope.row.enabled &&
-              (hasAction($route.name, 'member') ||
-                hasAction($route.name, 'authorize'))
-            "
-            trigger="click"
-            class="ml-2"
-          >
-            <ElButton link>
+          <template v-if="!scope.row.builtIn">
+            <ElButton
+              v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+              title="disable"
+              :type="actionTypes['disable']"
+              link
+              @click="disableRow(scope.row)"
+            >
               <Icon
-                :icon="actionIcon('more')"
+                :icon="actionIcon('disable')"
                 width="1.25em"
                 height="1.25em"
-              />{{ $t("action.more") }}
+              />{{ $t("action.disable") }}
             </ElButton>
-            <template #dropdown>
-              <ElDropdownItem>
-                <ElButton
-                  v-if="hasAction($route.name, 'member')"
-                  title="member"
-                  :type="actionTypes['member']"
-                  link
-                  @click="memberRow(scope.row.id)"
-                >
-                  <Icon
-                    :icon="`material-symbols:${actionIcons['member']}-rounded`"
-                    width="1.25em"
-                    height="1.25em"
-                  />
-                  {{ $t("action.member") }}
-                </ElButton>
-              </ElDropdownItem>
-              <ElDropdownItem>
-                <ElButton
-                  v-if="hasAction($route.name, 'authorize')"
-                  title="authorize"
-                  :type="actionTypes['authorize']"
-                  link
-                  @click="authorizeRow(scope.row.id)"
-                >
-                  <Icon
-                    :icon="`material-symbols:${actionIcons['authorize']}-rounded`"
-                    width="1.25em"
-                    height="1.25em"
-                  />
-                  {{ $t("action.authorize") }}
-                </ElButton>
-              </ElDropdownItem>
-            </template>
-          </ElDropdown>
+            <ElButton
+              v-else-if="hasAction($route.name, 'enable')"
+              title="enable"
+              :type="actionTypes['enable']"
+              link
+              @click="enableRow(scope.row)"
+            >
+              <Icon
+                :icon="actionIcon('enable')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.enable") }}
+            </ElButton>
+            <ElButton
+              v-if="hasAction($route.name, 'remove')"
+              title="remove"
+              :type="actionTypes['remove']"
+              link
+              @click="removeRow(scope.row.id, scope.row.name)"
+            >
+              <Icon
+                :icon="actionIcon('remove')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.remove") }}
+            </ElButton>
+          </template>
+          <ElButton
+            v-if="hasAction($route.name, 'authorize')"
+            title="authorize"
+            :type="actionTypes['authorize']"
+            link
+            @click="authorizeRow(scope.row.id)"
+          >
+            <Icon
+              :icon="`material-symbols:${actionIcons['authorize']}-rounded`"
+              width="1.25em"
+              height="1.25em"
+            />
+            {{ $t("action.authorize") }}
+          </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>
@@ -707,6 +613,7 @@ function onActionSelected(row: Privilege) {
           <ElFormItem :label="$t('label.code')" prop="code">
             <ElInput
               v-model="form.code"
+              :disabled="form.builtIn"
               @input="
                 form.code = form.code.toUpperCase().replace(/[^A-Z]/g, '')
               "
@@ -737,7 +644,11 @@ function onActionSelected(row: Privilege) {
   </ElDialog>
 
   <!-- member -->
-  <ElDialog v-model="relationVisible" :title="$t('action.member')" width="40em">
+  <ElDialog
+    v-model="relationVisible"
+    :title="$t('action.members')"
+    width="40em"
+  >
     <div style="text-align: center">
       <ElTransfer
         v-model="relations"

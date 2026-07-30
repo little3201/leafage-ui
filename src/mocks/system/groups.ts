@@ -32,7 +32,7 @@ for (let i = 1; i < 5; i++) {
   const row: Role = {
     id: i,
     name: "Role_" + i,
-    members: users.filter((_, index) => index < randomInt(5)),
+    code: "ROLE_" + i,
     enabled: i % 3 > 0
   };
   roles.push(row);

@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { User } from "@/types";
-import { applyFilters, randomInt } from "../util";
+import { applyFilters } from "../util";
 
 const datas: User[] = [];
 
@@ -11,10 +11,6 @@ for (let i = 1; i < 6; i++) {
     username: ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][i],
     fullName: "Name_" + i,
     email: "use***" + "@**t.com",
-    status:
-      ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        randomInt(5)
-      ] || "unknown",
     enabled: i % 2 > 0
   };
   datas.push(row);
@@ -101,14 +97,6 @@ export const usersHandlers = [
     }
   }),
   http.patch(`/api${SERVER_URL.USER}/:id/disable`, ({ params }) => {
-    const { id } = params;
-    if (id) {
-      return HttpResponse.json(true);
-    } else {
-      return HttpResponse.error();
-    }
-  }),
-  http.patch(`/api${SERVER_URL.USER}/:id/unlock`, ({ params }) => {
     const { id } = params;
     if (id) {
       return HttpResponse.json(true);

@@ -76,6 +76,7 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTransfer: typeof import('element-plus/es')['ElTransfer']
     ElTree: typeof import('element-plus/es')['ElTree']
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     EssentialList: typeof import('./src/components/EssentialList.vue')['default']
     LanguageSelector: typeof import('./src/components/LanguageSelector.vue')['default']

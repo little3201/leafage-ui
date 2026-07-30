@@ -20,6 +20,14 @@ export const retrieveUsers = (
 };
 
 /**
+ * Retrieve privileges for a specific row
+ * @returns realtion data
+ */
+export const retrieveUserRoles = (id: number) => {
+  return api.get(`${SERVER_URL.USER}/${id}/roles`);
+};
+
+/**
  * Fetch a specific row
  * @param id Row ID
  * @returns Row data
@@ -66,15 +74,6 @@ export const disableUser = (id: number) => {
 };
 
 /**
- * Unlock an existing row
- * @param id Row ID
- * @returns Unlock result
- */
-export const unlockUser = (id: number) => {
-  return api.patch(`${SERVER_URL.USER}/${id}/unlock`);
-};
-
-/**
  * Remove a row
  * @param id Row ID
  * @returns Deletion status
@@ -90,4 +89,23 @@ export const removeUser = (id: number) => {
  */
 export const importUsers = (file: File) => {
   return api.postForm(`${SERVER_URL.USER}/import`, { file: file });
+};
+
+/**
+ * Relation roles for a specific row
+ * @param id Row ID
+ * @param roleIds Role ids
+ */
+export const addRoles = (id: number, roleIds: number[]) => {
+  return api.patch(`${SERVER_URL.USER}/${id}/roles`, roleIds);
+};
+
+/**
+ * Remove members for a specific row
+ * @param id Row ID
+ * @param roleIds Role ids
+ */
+export const removeRoles = (id: number, roleIds: number[]) => {
+  const params = roleIds ? { roleIds: roleIds.join(",") } : {};
+  return api.delete(`${SERVER_URL.USER}/${id}/roles`, { params });
 };

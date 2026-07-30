@@ -107,7 +107,7 @@ export default {
     unread: "Unread",
     mode: "Mode",
     sender: "Sender",
-    receiver: "Receiver",
+    targets: "Targets",
     publishedAt: "Published At",
     yes: "Yes",
     no: "No",
@@ -172,6 +172,7 @@ export default {
     members: "Retrieve Members",
     addMembers: "Add Members",
     removeMembers: "Remove Members",
+    role: "Role",
     roles: "Retrieve Roles",
     addRoles: "Add Roles",
     removeRoles: "Remove Roles"
@@ -244,7 +245,7 @@ export default {
 
     confirm: "Are you sure ?",
     removeWarning:
-      "This action cannot be undone. This will permanently remove the <strong>{module}/{data}</strong>.",
+      "This action cannot be undone. This will permanently remove the [{module}/{data}].",
     removeButtonText: "I understand, remove it.",
     disableWarning:
       "After disabling the data, the current data and associated data will be unavailable.",
@@ -253,10 +254,10 @@ export default {
       "This action cannot be undone. This will permanently remove all items.",
     clearButtonText: "I understand, clear all.",
     publishWarning:
-      "After clicking OK, the current message <strong>{data}</strong> will be immediately sent to the recipient.",
-    publishButtonText: "I'm sure, release immediately.",
+      "After clicking OK, the current message [{data}] will be published immediately.",
+    publishButtonText: "I'm sure, published immediately.",
     revokeWarning:
-      "After clicking OK, the current message <strong>{data}</strong> will be revoked immediately, read message cannot be revoked.",
+      "After clicking OK, the current message [{data}] will be revoked immediately, read message cannot be revoked.",
     revokeButtonText: "I'm sure, revoke immediately.",
     revokeTimeoutText:
       "The message was sent over 30 minutes ago, so it can't be undone.",
