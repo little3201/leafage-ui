@@ -19,8 +19,10 @@ const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 })
 });
 
-router.beforeEach(async (to, from) => {
-  if (["/login"].includes(to.path)) return true;
+router.beforeEach(async to => {
+  if (to.path === "/login") {
+    return true;
+  }
 
   const userStore = useUserStore();
 
@@ -28,7 +30,7 @@ router.beforeEach(async (to, from) => {
   if (!userStore.username) {
     try {
       const res = await getUserInfo();
-      if (res && res.data) {
+      if (res?.data) {
         userStore.setUserinfo(res.data.sub, res.data.name, res.data.email);
       }
     } catch {
@@ -42,7 +44,7 @@ router.beforeEach(async (to, from) => {
   if (!userStore.privileges.length) {
     try {
       const res = await retrievePrivilegeTree();
-      if (res && res.data) {
+      if (res?.data) {
         userStore.setPrivileges(res.data);
       }
     } catch {
@@ -54,24 +56,17 @@ router.beforeEach(async (to, from) => {
 
   // 动态注册路由
   if (!userStore.routesAdded) {
-    generateRoutes(userStore.privileges).forEach(route => {
+    const asyncRoutes = generateRoutes(userStore.privileges);
+
+    asyncRoutes.forEach(route => {
       router.addRoute("home", route);
     });
 
-    if (!router.hasRoute("ErrorNotFound")) {
-      router.addRoute({
-        path: "/:cacheAll(.*)*",
-        name: "ErrorNotFound",
-        component: () => import("@/pages/ErrorNotFound.vue")
-      });
-    }
-
     userStore.routesAdded = true;
+
+    return to.fullPath;
   }
 
-  if (!from.name && to.matched.length === 0) {
-    return { path: to.fullPath, replace: true, query: to.query, hash: to.hash };
-  }
   return true;
 });
 

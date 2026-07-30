@@ -63,12 +63,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import("@/pages/legal/IndexPage.vue")
       },
       {
-        path: "/privacy",
+        path: "privacy",
         name: "privacy",
         component: () => import("@/pages/legal/privacy/IndexPage.vue")
       },
       {
-        path: "/terms",
+        path: "terms",
         name: "terms",
         component: () => import("@/pages/legal/terms/IndexPage.vue")
       }
@@ -78,5 +78,10 @@ export const routes: RouteRecordRaw[] = [
     path: "/login",
     name: "login",
     component: () => import("@/pages/LoginPage.vue")
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "ErrorNotFound",
+    component: () => import("@/pages/ErrorNotFound.vue")
   }
 ];

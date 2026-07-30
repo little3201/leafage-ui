@@ -60,7 +60,11 @@ const receiverText = computed(() => {
   }
 
   return data.value.receivers
-    .map((receiver: string) => `${receiver}`)
+    .map((receiver: User | string) =>
+      typeof receiver === "string"
+        ? receiver
+        : receiver.fullName || receiver.username || receiver.email
+    )
     .join(", ");
 });
 
@@ -127,9 +131,12 @@ async function readRow(row: MessageInbox, clearQuery = true) {
     await load();
   }
   if (clearQuery && route.query.messageId) {
-    router.replace({
-      query: {}
-    });
+    // router.replace({
+    //   query: {}
+    // });
+    if (document.visibilityState === "visible") {
+      router.replace({ query: {} });
+    }
   }
 }
 

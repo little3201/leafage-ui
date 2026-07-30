@@ -63,7 +63,10 @@ async function onSubmit() {
       await api.get(SERVER_URL.LOGIN);
 
       ElMessage.success(t("message.success", { action: t("action.signin") }));
-      await router.replace("/");
+      // await router.replace("/");
+      if (document.visibilityState === "visible") {
+        router.replace("/");
+      }
     } catch (error) {
       ElMessage.error(t("message.error", { action: t("action.signin") }));
       throw error;
