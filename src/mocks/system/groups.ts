@@ -1,14 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type {
-  Group,
-  GroupMembers,
-  GroupPrivileges,
-  GroupRoles,
-  Role,
-  TreeNode,
-  User
-} from "@/types";
+import type { Group, GroupPrivileges, Role, TreeNode, User } from "@/types";
 import { applyFilters, randomInt } from "../util";
 
 const datas: Group[] = [];
@@ -44,33 +36,13 @@ for (let i = 1; i < 28; i++) {
     id: i,
     superiorId: superiorId,
     name: "Group_" + i,
-    members: users.filter((_, index) => index < randomInt(5)),
-    roles: roles.filter((_, index) => index < randomInt(5)),
+    members: users.filter(
+      (item, index) => item.enabled && index < randomInt(5)
+    ),
+    roles: roles.filter((item, index) => item.enabled && index < randomInt(5)),
     enabled: i % 3 > 0
   };
   datas.push(row);
-}
-
-const members: GroupMembers[] = [];
-
-for (let i = 1; i < 14; i++) {
-  const row: GroupMembers = {
-    id: i,
-    username: "username" + i,
-    groupId: i
-  };
-  members.push(row);
-}
-
-const groupRoles: GroupRoles[] = [];
-
-for (let i = 1; i < 14; i++) {
-  const row: GroupRoles = {
-    id: i,
-    roleId: i,
-    groupId: i
-  };
-  groupRoles.push(row);
 }
 
 const privileges: GroupPrivileges[] = [];
@@ -136,7 +108,7 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/members`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const filtered = members.filter(item => item.groupId === Number(id));
+      const filtered = datas.find(item => (item.id = Number(id)))?.members;
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json([]);
@@ -145,7 +117,7 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/roles`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const filtered = groupRoles.filter(item => item.groupId === Number(id));
+      const filtered = datas.find(item => (item.id = Number(id)))?.roles;
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json([]);

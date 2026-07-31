@@ -10,18 +10,6 @@ export interface Group extends AudtiMetadata {
   enabled?: boolean;
 }
 
-export interface GroupMembers {
-  id: number;
-  groupId: number;
-  username: string;
-}
-
-export interface GroupRoles {
-  id: number;
-  groupId: number;
-  roleId: number;
-}
-
 export interface GroupPrivileges {
   id: number;
   groupId: number;

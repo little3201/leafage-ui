@@ -1,22 +1,43 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { User } from "@/types";
-import { applyFilters } from "../util";
+import type { User, Role } from "@/types";
+import { applyFilters, randomInt } from "../util";
 
 const datas: User[] = [];
+const roles: Role[] = [];
+
+for (let i = 1; i < 5; i++) {
+  const row: Role = {
+    id: i,
+    name: "Role_" + i,
+    code: "ROLE_" + i,
+    enabled: i % 3 > 0
+  };
+  roles.push(row);
+}
 
 for (let i = 1; i < 6; i++) {
   const row: User = {
     id: i,
-    username: ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][i],
+    username: ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][i - 1],
     fullName: "Name_" + i,
     email: "use***" + "@**t.com",
+    roles: roles.filter((item, index) => item.enabled && index < randomInt(5)),
     enabled: i % 2 > 0
   };
   datas.push(row);
 }
 
 export const usersHandlers = [
+  http.get(`/api${SERVER_URL.USER}/:id/roles`, ({ params }) => {
+    const { id } = params;
+    if (id) {
+      const filtered = datas.find(item => (item.id = Number(id)))?.roles;
+      return HttpResponse.json(filtered);
+    } else {
+      return HttpResponse.json([]);
+    }
+  }),
   http.get(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {
@@ -105,28 +126,25 @@ export const usersHandlers = [
     }
   }),
   http.patch(
-    `/api${SERVER_URL.USER}/privileges/:privilegeId`,
+    `/api${SERVER_URL.USER}/:id/roles`,
     async ({ params, request }) => {
+      const { id } = params;
       const data = await request.json();
-      const { privilegeId } = params;
-      if (privilegeId && data) {
+      if (id && data) {
         return HttpResponse.json();
       } else {
         return HttpResponse.error();
       }
     }
   ),
-  http.delete(
-    `/api${SERVER_URL.USER}/:username/privileges/:privilegeId`,
-    ({ params }) => {
-      const { username, privilegeId } = params;
-      if (username && privilegeId) {
-        return HttpResponse.json();
-      } else {
-        return HttpResponse.error();
-      }
+  http.delete(`/api${SERVER_URL.USER}/:id/roles`, ({ params }) => {
+    const { username, privilegeId } = params;
+    if (username && privilegeId) {
+      return HttpResponse.json();
+    } else {
+      return HttpResponse.error();
     }
-  ),
+  }),
   http.delete(`/api${SERVER_URL.USER}/:id`, ({ params }) => {
     // All request path params are provided in the "params"
     // argument of the response resolver.

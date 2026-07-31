@@ -27,16 +27,18 @@ export function applyFilters<T>(datas: T[], filtersDsl?: string | null): T[] {
   if (!filtersDsl) {
     return datas;
   }
+
   const filters = parseFilterString(filtersDsl);
-  if (filters.length === 0) return datas;
+  if (filters.length === 0) {
+    return datas;
+  }
 
   return datas.filter(item => {
     return filters.every(f => {
       const fieldValue = item[f.field as keyof T];
-      const val = f.value;
 
-      // 类型安全转换
       let cmpValue: string | number | boolean;
+
       if (fieldValue instanceof Date) {
         cmpValue = fieldValue.toISOString();
       } else if (
@@ -46,53 +48,86 @@ export function applyFilters<T>(datas: T[], filtersDsl?: string | null): T[] {
       ) {
         cmpValue = fieldValue;
       } else if (fieldValue == null) {
-        cmpValue = ""; // null/undefined 用空字符串处理
+        cmpValue = "";
       } else {
         return true;
       }
 
+      // 根据字段实际类型转换过滤值
+      const val = convertFilterValue(f.value, fieldValue);
+
       switch (f.op) {
         case "eq":
-          return cmpValue == val;
+          return cmpValue === val;
+
         case "neq":
-          return cmpValue != val;
+          return cmpValue !== val;
+
         case "like":
         case "ilike":
-          if (typeof cmpValue !== "string") return false;
-          return cmpValue.toLowerCase().includes(val.toLowerCase());
+          if (typeof cmpValue !== "string") {
+            return false;
+          }
+          return cmpValue.toLowerCase().includes(String(val).toLowerCase());
+
         case "gt":
           return Number(cmpValue) > Number(val);
+
         case "gte":
           return Number(cmpValue) >= Number(val);
+
         case "lt":
           return Number(cmpValue) < Number(val);
+
         case "lte":
           return Number(cmpValue) <= Number(val);
+
         case "in":
-          return val.split(",").includes(String(cmpValue));
+          return f.value.split(",").includes(String(cmpValue));
+
         case "notIn":
-          return !val.split(",").includes(String(cmpValue));
+          return !f.value.split(",").includes(String(cmpValue));
+
         case "between": {
-          const [start, end] = val.split(",");
+          const [start, end] = f.value.split(",");
           return (
             Number(cmpValue) >= Number(start) && Number(cmpValue) <= Number(end)
           );
         }
+
         case "notBetween": {
-          const [start, end] = val.split(",");
+          const [start, end] = f.value.split(",");
           return (
             Number(cmpValue) < Number(start) || Number(cmpValue) > Number(end)
           );
         }
-        case "isNull":
+
+        case "null":
           return fieldValue == null;
-        case "isNotNull":
+
+        case "nonnull":
           return fieldValue != null;
+
         default:
           return true;
       }
     });
   });
+}
+
+function convertFilterValue(
+  value: string,
+  fieldValue: unknown
+): string | number | boolean {
+  if (typeof fieldValue === "boolean") {
+    return value === "true";
+  }
+
+  if (typeof fieldValue === "number") {
+    return Number(value);
+  }
+
+  return value;
 }
 
 export function randomInt(max: number): number {

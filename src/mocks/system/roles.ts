@@ -26,7 +26,7 @@ for (let i = 1; i < 28; i++) {
     name: "Role_" + i,
     code: "ROLE_" + i,
     builtIn: i < 2,
-    enabled: i % 3 > 0
+    enabled: i % 2 > 0
   };
   datas.push(data);
 }

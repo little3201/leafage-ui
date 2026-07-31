@@ -10,13 +10,6 @@ export interface User extends AudtiMetadata {
   enabled?: boolean;
 }
 
-export interface UserPrivileges {
-  id: number;
-  username: string;
-  privilegeId: number;
-  actions?: string[];
-}
-
 export interface Userinfo {
   username: string;
   fullName: string;

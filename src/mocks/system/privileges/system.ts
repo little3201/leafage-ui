@@ -25,7 +25,8 @@ export const nodes_system: Privilege[] = [
       "remove",
       "import",
       "export",
-      "relation",
+      "role",
+      "member",
       "authorize",
       "enable",
       "disable"
@@ -47,7 +48,7 @@ export const nodes_system: Privilege[] = [
       "export",
       "enable",
       "disable",
-      "unlock"
+      "role"
     ],
     count: 0,
     enabled: randomInt(2) > 0
@@ -74,7 +75,6 @@ export const nodes_system: Privilege[] = [
       "remove",
       "import",
       "export",
-      "relation",
       "authorize",
       "enable",
       "disable"
@@ -124,7 +124,8 @@ export const tree_system: PrivilegeTreeNode[] = [
             "remove",
             "import",
             "export",
-            "relation",
+            "role",
+            "member",
             "authorize",
             "enable",
             "disable"
@@ -145,7 +146,7 @@ export const tree_system: PrivilegeTreeNode[] = [
             "export",
             "enable",
             "disable",
-            "unlock"
+            "role"
           ]
         }
       },
@@ -161,7 +162,6 @@ export const tree_system: PrivilegeTreeNode[] = [
             "remove",
             "import",
             "export",
-            "relation",
             "authorize",
             "enable",
             "disable"
