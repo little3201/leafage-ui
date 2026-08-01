@@ -5,8 +5,7 @@ import type {
   Privilege,
   PrivilegeAction,
   PrivilegeTreeNode,
-  RolePrivileges,
-  UserPrivileges
+  RolePrivileges
 } from "@/types";
 import { applyFilters, randomInt } from "../../util";
 import { root_system, nodes_system, tree_system } from "./system";
@@ -114,18 +113,6 @@ for (let i = 1; i < 25; i++) {
     };
     privilegeActions.push(row);
   }
-}
-
-const users: UserPrivileges[] = [];
-
-for (let i = 1; i < 28; i++) {
-  const row: UserPrivileges = {
-    id: i,
-    privilegeId: i < 15 ? i : i - 14,
-    username: "username" + i,
-    actions: ["create", "modify", "remove", "import", "export"]
-  };
-  users.push(row);
 }
 
 export const privilegesHandlers = [

@@ -22,9 +22,9 @@ for (let i = 1; i < 18; i++) {
         "application/pdf",
         "application/zip",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "application/vnd.ms-excel"
       ][random] || "",
-    size: randomInt(10000000),
+    size: randomInt(99999999),
     path: random > 5 ? "" : "/path/to/test" + i,
     directory: random === 6 ? true : false,
     enabled: i % 2 > 0,

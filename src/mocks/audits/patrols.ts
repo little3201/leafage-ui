@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
 import type { SafetyPatrol } from "@/types";
-import { applyFilters, randomInt } from "../util";
+import { applyFilters } from "../util";
 
 const datas: SafetyPatrol[] = [];
 
@@ -11,10 +11,6 @@ for (let i = 1; i < 6; i++) {
     username: ["admin", "zhangsan", "lisi", "wangmazi", "guangtouqiang"][i],
     fullName: "Name_" + i,
     email: "use***" + "@**t.com",
-    status:
-      ["ACTIVE", "LOCKED", "EXPIRED", "CREDENTIALS_EXPIRED", "DISABLED"][
-        randomInt(5)
-      ] || "unknown",
     role: "audit",
     enabled: i % 2 > 0
   };
