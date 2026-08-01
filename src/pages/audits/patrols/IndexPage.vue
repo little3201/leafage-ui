@@ -10,7 +10,7 @@ import {
   removeSafetyPatrol,
   retrieveSafetyPatrols
 } from "@/api/audits/patrols";
-import { actionTypes, userStatus } from "@/constants";
+import { actionTypes } from "@/constants";
 import type { SafetyPatrol, Filter, Pagination } from "@/types";
 import { actionIcon, exportToCSV, hasAction } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
@@ -328,14 +328,6 @@ async function removeRow(id: number, username: string) {
         :label="$t('label.email')"
       />
       <ElTableColumn prop="role" :label="$t('label.role')" />
-      <ElTableColumn prop="status" :label="$t('label.status')" sortable>
-        <template #default="scope">
-          <ElBadge is-dot :type="userStatus[scope.row.status]" class="mr-1" />
-          <ElText :type="userStatus[scope.row.status]">{{
-            scope.row.status
-          }}</ElText>
-        </template>
-      </ElTableColumn>
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
         <template #default="scope">
           <ElBadge
