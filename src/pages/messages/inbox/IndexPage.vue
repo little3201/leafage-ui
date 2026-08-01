@@ -15,13 +15,7 @@ import {
   readAllMessageInbox
 } from "@/api/messages/inbox";
 import { fetchMessage } from "@/api/messages";
-import type {
-  Filter,
-  Pagination,
-  Message,
-  MessageInbox,
-  MessageTarget
-} from "@/types";
+import type { Filter, Pagination, Message, MessageInbox } from "@/types";
 import { actionIcon } from "@/utils";
 import { onMounted, reactive, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";

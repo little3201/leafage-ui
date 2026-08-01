@@ -77,11 +77,8 @@ const totalSize = computed(() =>
   statistics.value.reduce((sum, item) => sum + item.size, 0)
 );
 
-onMounted(async () => {
-  await load();
-
-  const res = await statisticsFile();
-  statistics.value = res.data;
+onMounted(() => {
+  loadData();
 });
 
 /**
@@ -114,10 +111,27 @@ async function load() {
   }
 }
 
+async function loadStatistics() {
+  try {
+    const res = await statisticsFile();
+    statistics.value = res.data;
+  } catch (error) {
+    statistics.value = [];
+    throw error;
+  }
+}
+
+async function loadData() {
+  uploadLoading.value = false;
+  await load();
+  await loadStatistics();
+}
+
 /**
  * 创建文件夹
  */
 function saveDirectory() {
+  form.value = { ...initialValues };
   visible.value = true;
 }
 
@@ -126,7 +140,7 @@ function saveDirectory() {
  * @param id 主键
  */
 function showRow(row: FileRecord) {
-  form.value = row ? { ...row } : { ...initialValues };
+  form.value = { ...row };
 
   detailsVisible.value = true;
 }
@@ -197,6 +211,7 @@ async function downloadRow(id: number, name: string, type: string) {
  * 提交
  */
 function onUpload(options: UploadRequestOptions) {
+  uploadLoading.value = true;
   return uploadFile(options.file, currentRowId.value);
 }
 
@@ -219,7 +234,7 @@ async function removeRow(id: number, name: string) {
   ).then(async () => {
     try {
       await removeFile(id);
-      await load();
+      await loadData();
 
       ElMessage.success(t("message.success", { action: t("action.remove") }));
     } catch (error) {
@@ -247,7 +262,7 @@ async function onSubmit(formEl: FormInstance) {
           action: t("action.create")
         })
       );
-      await load();
+      await loadData();
     } catch (error) {
       ElMessage.error(
         t("message.error", {
@@ -296,6 +311,7 @@ async function handleBreadcrumbClick(index: number) {
 }
 
 function onUploadError() {
+  uploadLoading.value = false;
   ElMessage.error(t("message.error", { action: t("action.upload") }));
 }
 </script>
@@ -421,14 +437,14 @@ function onUploadError() {
             </ElButton>
             <ElUpload
               multiple
-              :auto-upload="false"
+              :show-file-list="false"
               :http-request="onUpload"
-              :on-success="() => load()"
+              :on-success="() => loadData()"
               :on-error="onUploadError"
             >
               <ElButton
                 v-if="hasAction($route.name, 'upload')"
-                v-loading="uploadLoading"
+                :loading="uploadLoading"
                 title="upload"
                 type="primary"
               >
@@ -579,7 +595,7 @@ function onUploadError() {
   <!-- form -->
   <ElDialog
     v-model="visible"
-    :title="form.id ? $t('action.modify') : $t('action.create')"
+    :title="$t('action.create')"
     :show-close="false"
     width="400"
   >
