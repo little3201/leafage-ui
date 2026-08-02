@@ -327,7 +327,6 @@ async function removeRow(id: number, username: string) {
         prop="email"
         :label="$t('label.email')"
       />
-      <ElTableColumn prop="role" :label="$t('label.role')" />
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
         <template #default="scope">
           <ElBadge

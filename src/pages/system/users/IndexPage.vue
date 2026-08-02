@@ -624,7 +624,7 @@ async function handleTransferRoleChange(
   </ElDialog>
 
   <!-- roles -->
-  <ElDialog v-model="roleVisible" :title="$t('action.roles')" width="600">
+  <ElDialog v-model="roleVisible" :title="$t('action.role')" width="600">
     <div style="text-align: center">
       <ElTransfer
         v-model="userRoles"

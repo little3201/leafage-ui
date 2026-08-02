@@ -932,7 +932,7 @@ const rowSelected = (row: Privilege) => {
   </ElDialog>
 
   <!-- members -->
-  <ElDialog v-model="memberVisible" :title="$t('action.members')" width="600">
+  <ElDialog v-model="memberVisible" :title="$t('action.member')" width="600">
     <div style="text-align: center">
       <ElTransfer
         v-model="groupMembers"
@@ -946,7 +946,7 @@ const rowSelected = (row: Privilege) => {
   </ElDialog>
 
   <!-- roles -->
-  <ElDialog v-model="roleVisible" :title="$t('action.roles')" width="600">
+  <ElDialog v-model="roleVisible" :title="$t('action.role')" width="600">
     <div style="text-align: center">
       <ElTransfer
         v-model="groupRoles"

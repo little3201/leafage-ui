@@ -12,7 +12,7 @@ import {
 } from "@/api/scheduler";
 import { actionTypes, shceduleStatus, shceduleStatusIcon } from "@/constants";
 import type { Filter, Pagination, Scheduler } from "@/types";
-import { actionIcon, exportToCSV, formatDuration, hasAction } from "@/utils";
+import { actionIcon, loadIcon, hasAction } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -40,8 +40,7 @@ const formRef = ref<FormInstance>();
 const initialValues: Scheduler = {
   id: null,
   name: "",
-  task: "",
-  corn: ""
+  cronExpression: ""
 };
 const form = ref<Scheduler>({ ...initialValues });
 
@@ -268,8 +267,40 @@ async function removeRow(id: number, name: string, startTime: string) {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')" />
-      <ElTableColumn prop="task" :label="$t('label.task')" />
-      <ElTableColumn prop="corn" :label="$t('label.corn')" />
+      <ElTableColumn
+        prop="lastExecuteTime"
+        :label="$t('label.lastExecuteTime')"
+      />
+      <ElTableColumn
+        prop="cronExpression"
+        :label="$t('label.cronExpression')"
+      />
+      <ElTableColumn
+        prop="status"
+        :label="$t('label.status')"
+        align="center"
+        sortable
+      >
+        <template #default="scope">
+          <ElTag
+            v-if="scope.row.status"
+            :type="shceduleStatus[scope.row.status]"
+            round
+          >
+            <Icon
+              :icon="loadIcon(shceduleStatusIcon[scope.row.status])"
+              :class="[scope.row.status === 'RUNNING' ? 'spin' : '', 'mr-1']"
+              width="1.25em"
+              height="1.25em"
+            />
+            {{ scope.row.status }}
+          </ElTag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn
+        prop="nextExecuteTime"
+        :label="$t('label.nextExecuteTime')"
+      />
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
         <template #default="scope">
           <ElBadge
@@ -377,22 +408,14 @@ async function removeRow(id: number, name: string, startTime: string) {
         </ElCol>
       </ElRow>
       <ElRow :gutter="20">
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.task')" prop="task">
+        <ElCol>
+          <ElFormItem :label="$t('label.cronExpression')" prop="cronExpression">
             <ElInput
-              v-model="form.task"
+              v-model="form.cronExpression"
               :placeholder="
-                $t('placeholder.inputText', { field: $t('label.task') })
-              "
-            />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem :label="$t('label.corn')" prop="corn">
-            <ElInput
-              v-model="form.corn"
-              :placeholder="
-                $t('placeholder.inputText', { field: $t('label.corn') })
+                $t('placeholder.inputText', {
+                  field: $t('label.cronExpression')
+                })
               "
             />
           </ElFormItem>
