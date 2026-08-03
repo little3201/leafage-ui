@@ -1,6 +1,6 @@
 import { api } from "@/boot/axios";
 import { SERVER_URL } from "@/constants";
-import type { Filter, Pagination, Privilege, PrivilegeAction } from "@/types";
+import type { Filter, Pagination, Privilege, PrivilegeActions } from "@/types";
 import { dealFilters } from "@/utils";
 
 /**
@@ -68,7 +68,7 @@ export const fetchPrivilegeAction = (id: number, actionId: number) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const createPrivilegeAction = (id: number, row: PrivilegeAction) => {
+export const createPrivilegeAction = (id: number, row: PrivilegeActions) => {
   return api.post(`${SERVER_URL.PRIVILEGE}/${id}/actions`, row);
 };
 
@@ -88,7 +88,7 @@ export const modifyPrivilege = (id: number, row: Privilege) => {
  * @param row Updated row data
  * @returns Modified row
  */
-export const modifyPrivilegeAction = (id: number, row: PrivilegeAction) => {
+export const modifyPrivilegeAction = (id: number, row: PrivilegeActions) => {
   return api.put(`${SERVER_URL.PRIVILEGE}/${id}/actions/${row.id}`, row);
 };
 

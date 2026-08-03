@@ -1,13 +1,7 @@
 import { http, HttpResponse } from "msw";
-import { actionTypes, SERVER_URL } from "@/constants";
-import type {
-  GroupPrivileges,
-  Privilege,
-  PrivilegeAction,
-  PrivilegeTreeNode,
-  RolePrivileges
-} from "@/types";
-import { applyFilters, randomInt } from "../../util";
+import { SERVER_URL } from "@/constants";
+import type { Privilege, PrivilegeTreeNode } from "@/types";
+import { applyFilters } from "../../util";
 import { root_system, nodes_system, tree_system } from "./system";
 import { root_messages, nodes_messages, tree_messages } from "./messages";
 import { root_logs, nodes_logs, tree_logs } from "./logs";
@@ -60,89 +54,10 @@ const treeNodes: PrivilegeTreeNode[] = [
   ...tree_audits
 ];
 
-const privilegeActions: PrivilegeAction[] = [];
-const actions: string[] = [
-  "create",
-  "modify",
-  "remove",
-  "clear",
-  "import",
-  "export",
-  "upload",
-  "download",
-  "unlock",
-  "relation",
-  "authorize",
-  "config",
-  "execute"
-];
-
-const roles: RolePrivileges[] = [];
-
-for (let i = 1; i < 28; i++) {
-  const row: RolePrivileges = {
-    id: i,
-    privilegeId: i < 15 ? i : i - 14,
-    roleId: i,
-    actions: ["create", "modify", "remove", "import", "export"]
-  };
-  roles.push(row);
-}
-
-const groups: GroupPrivileges[] = [];
-
-for (let i = 1; i < 28; i++) {
-  const row: GroupPrivileges = {
-    id: i,
-    privilegeId: i < 15 ? i : i - 14,
-    groupId: i,
-    actions: ["create", "modify", "remove", "import", "export"]
-  };
-  groups.push(row);
-}
-
-for (let i = 1; i < 25; i++) {
-  const count = randomInt(actions.length) + 1;
-  for (let j = 1; j <= count; j++) {
-    const row: PrivilegeAction = {
-      id: j + 1,
-      privilegeId: i,
-      name: actions[j - 1],
-      type: actionTypes[actions[j - 1]] || null,
-      enabled: randomInt(2) > 0
-    };
-    privilegeActions.push(row);
-  }
-}
-
 export const privilegesHandlers = [
   http.get(`/api${SERVER_URL.PRIVILEGE}/tree`, () => {
     return HttpResponse.json(treeNodes);
   }),
-  http.get(`/api${SERVER_URL.PRIVILEGE}/:id/actions`, ({ params }) => {
-    const { id } = params;
-    if (id) {
-      return HttpResponse.json(
-        privilegeActions.filter(item => item.privilegeId === Number(id))
-      );
-    }
-    return HttpResponse.json();
-  }),
-  http.get(
-    `/api${SERVER_URL.PRIVILEGE}/:id/actions/:actionId`,
-    ({ params }) => {
-      const { id, actionId } = params;
-      if (id && actionId) {
-        return HttpResponse.json(
-          privilegeActions.filter(
-            item =>
-              item.privilegeId === Number(id) && item.id === Number(actionId)
-          )[0]
-        );
-      }
-      return HttpResponse.json();
-    }
-  ),
   http.get(`/api${SERVER_URL.PRIVILEGE}/:id`, ({ params }) => {
     const { id } = params;
     if (id) {

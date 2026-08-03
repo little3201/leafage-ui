@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Role, RolePrivileges, User } from "@/types";
+import type { Role, PrivilegeActions, User } from "@/types";
 import { applyFilters, randomInt } from "../util";
 
 const datas: Role[] = [];
@@ -31,13 +31,13 @@ for (let i = 1; i < 28; i++) {
   datas.push(data);
 }
 
-const privileges: RolePrivileges[] = [];
+const privileges: PrivilegeActions[] = [];
 
 for (let i = 2; i < 17; i++) {
-  const row: RolePrivileges = {
-    id: i,
+  const row: PrivilegeActions = {
+    id: datas[randomInt(datas.length - 1)].id || 1,
+    name: "Privilege_" + i,
     privilegeId: i,
-    roleId: i,
     actions: ["create", "modify", "remove", "import", "export"]
   };
   privileges.push(row);
@@ -47,7 +47,7 @@ export const rolesHandlers = [
   http.get(`/api${SERVER_URL.ROLE}/:id/privileges`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const filtered = privileges.filter(item => item.roleId === Number(id));
+      const filtered = privileges.filter(item => item.id === Number(id));
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json([]);
@@ -140,24 +140,11 @@ export const rolesHandlers = [
     }
   }),
   http.patch(
-    `/api${SERVER_URL.ROLE}/:id/privileges/:privilegeId`,
-    ({ params, request }) => {
-      const { id, privilegeId } = params;
-      const searchParams = new URL(request.url).searchParams;
-      const action = searchParams.get("action");
-      if (id && privilegeId && action) {
-        return HttpResponse.json();
-      } else {
-        return HttpResponse.error();
-      }
-    }
-  ),
-  http.patch(
-    `/api${SERVER_URL.ROLE}/privileges/:privilegeId`,
+    `/api${SERVER_URL.ROLE}/:id/privileges`,
     async ({ params, request }) => {
-      const data = await request.json();
-      const { privilegeId } = params;
-      if (privilegeId && data) {
+      const { id } = params;
+      const newData = (await request.json()) as PrivilegeActions[];
+      if (id && newData) {
         return HttpResponse.json();
       } else {
         return HttpResponse.error();

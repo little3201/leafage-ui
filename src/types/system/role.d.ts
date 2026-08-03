@@ -6,10 +6,3 @@ export interface Role extends AudtiMetadata {
   builtIn?: boolean;
   enabled?: boolean;
 }
-
-export interface RolePrivileges {
-  id: number;
-  roleId: number;
-  privilegeId: number;
-  actions?: string[];
-}

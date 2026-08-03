@@ -1,6 +1,6 @@
 import { api } from "@/boot/axios";
 import { SERVER_URL } from "@/constants";
-import type { Filter, Group, Pagination } from "@/types";
+import type { Filter, Group, Pagination, PrivilegeActions } from "@/types";
 import { dealFilters } from "@/utils";
 
 /**
@@ -145,21 +145,13 @@ export const removeRoles = (id: number, roleIds: number[]) => {
 };
 
 /**
- * Relation privileges for a specific row
+ * Authorize
  * @param id Row ID
  * @param privilegeId Privilege id
  * @param action Action
  */
-export const addPrivilege = (
-  id: number,
-  privilegeId: number,
-  action?: string
-) => {
-  return api.patch(
-    `${SERVER_URL.GROUP}/${id}/privileges/${privilegeId}`,
-    {},
-    { params: { action } }
-  );
+export const authorize = (id: number, authorities: PrivilegeActions[]) => {
+  return api.patch(`${SERVER_URL.GROUP}/${id}/privileges`, authorities);
 };
 
 /**

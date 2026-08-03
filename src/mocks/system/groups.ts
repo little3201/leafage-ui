@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { SERVER_URL } from "@/constants";
-import type { Group, GroupPrivileges, Role, TreeNode, User } from "@/types";
+import type { Group, PrivilegeActions, Role, TreeNode, User } from "@/types";
 import { applyFilters, randomInt } from "../util";
 
 const datas: Group[] = [];
@@ -45,12 +45,12 @@ for (let i = 1; i < 28; i++) {
   datas.push(row);
 }
 
-const privileges: GroupPrivileges[] = [];
+const privileges: PrivilegeActions[] = [];
 
 for (let i = 2; i < 17; i++) {
-  const row: GroupPrivileges = {
+  const row: PrivilegeActions = {
     id: i,
-    groupId: i,
+    name: "Privilege_" + i,
     privilegeId: i,
     actions: ["create", "modify", "remove", "import", "export"]
   };
@@ -126,7 +126,7 @@ export const groupsHandlers = [
   http.get(`/api${SERVER_URL.GROUP}/:id/privileges`, ({ params }) => {
     const { id } = params;
     if (id) {
-      const filtered = privileges.filter(item => item.groupId === Number(id));
+      const filtered = privileges.filter(item => item.id === Number(id));
       return HttpResponse.json(filtered);
     } else {
       return HttpResponse.json([]);
@@ -241,12 +241,11 @@ export const groupsHandlers = [
     }
   ),
   http.patch(
-    `/api${SERVER_URL.GROUP}/:id/privileges/:privilegeId`,
-    ({ params, request }) => {
-      const { id, privilegeId } = params;
-      const searchParams = new URL(request.url).searchParams;
-      const action = searchParams.get("action");
-      if (id && privilegeId && action) {
+    `/api${SERVER_URL.GROUP}/:id/privileges`,
+    async ({ params, request }) => {
+      const { id } = params;
+      const newData = (await request.json()) as PrivilegeActions[];
+      if (id && newData) {
         return HttpResponse.json();
       } else {
         return HttpResponse.error();

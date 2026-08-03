@@ -4,43 +4,28 @@ import type {
   FormInstance,
   FormRules,
   TableInstance,
-  TransferDataItem,
-  TransferDirection,
-  TransferKey,
   UploadRequestOptions
 } from "element-plus";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
-  addMembers,
-  addPrivilege,
+  authorize,
   createRole,
   disableRole,
   enableRole,
   importRoles,
   modifyRole,
-  removeMembers,
-  removePrivilege,
   removeRole,
   retrieveRolePrivileges,
   retrieveRoles
 } from "@/api/system/roles";
 import { actionIcons, actionTypes } from "@/constants";
-import type {
-  Filter,
-  Pagination,
-  Privilege,
-  PrivilegeTreeNode,
-  Role,
-  User,
-  RolePrivileges
-} from "@/types";
-import { actionIcon, exportToCSV, hasAction, pageIcon } from "@/utils";
-import { useUserStore } from "@/stores/user";
-import { onMounted, reactive, ref, nextTick } from "vue";
+import type { Filter, Pagination, PrivilegeActions, Role } from "@/types";
+import { actionIcon, exportToCSV, hasAction } from "@/utils";
+import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import AuthorizeConfig from "../privileges/AuthorizeConfig.vue";
 
 const { t } = useI18n();
-const userStore = useUserStore();
 
 const loading = ref<boolean>(false);
 const datas = ref<Array<Role>>([]);
@@ -52,22 +37,12 @@ const pagination = reactive<Pagination>({
   size: 10
 });
 
-const authorizeTableRef = ref<TableInstance>();
 const saveLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
 
-const relationVisible = ref<boolean>(false);
-const members = ref<Array<TransferDataItem>>([]);
-const relations = ref<Array<string>>([]);
-
+const authorizeRef = ref<InstanceType<typeof AuthorizeConfig>>();
 const authorizeVisible = ref<boolean>(false);
-const authorities = ref<
-  Array<{
-    privilegeId: number;
-    actions: string[];
-  }>
->([]);
-const authoritiesMap = reactive<Record<number, string[]>>({});
+const authorities = ref<Array<PrivilegeActions>>([]);
 
 const importLoading = ref<boolean>(false);
 const exportLoading = ref<boolean>(false);
@@ -144,21 +119,16 @@ async function authorizeRow(id: number) {
   authorities.value = [];
   form.value.id = id;
 
-  const res = await retrieveRolePrivileges(id);
-  authorities.value = res.data.map((row: RolePrivileges) => {
-    authoritiesMap[row.privilegeId] = row.actions || [];
-    return { privilegeId: row.privilegeId, actions: row.actions };
-  });
+  try {
+    const res = await retrieveRolePrivileges(id);
+    authorities.value = res.data;
+  } catch (error) {
+    authorities.value = [];
+
+    throw error;
+  }
 
   authorizeVisible.value = true;
-
-  await nextTick();
-
-  authorizeTableRef.value?.clearSelection();
-
-  res.data.forEach((row: RolePrivileges) => {
-    authorizeTableRef.value?.toggleRowSelection({ id: row.privilegeId }, true);
-  });
 }
 
 /**
@@ -307,97 +277,23 @@ function onUpload(options: UploadRequestOptions) {
 }
 
 /**
- * transfer事件
- * @param value 数据
- * @param direction 方向
+ * 授权提交
  */
-async function handleTransferChange(
-  value: TransferKey[],
-  direction: TransferDirection,
-  movedKeys: TransferKey[]
-) {
-  if (form.value.id) {
-    try {
-      if (direction === "right") {
-        await addMembers(form.value.id, value as string[]);
-      } else if (movedKeys.length) {
-        await removeMembers(form.value.id, movedKeys as string[]);
-      }
-
-      await load();
-    } catch (error) {
-      ElMessage.error(t("message.error", { action: t("action.members") }));
-      throw error;
-    }
-  }
-}
-
-async function handleActionsCheck(
-  privilegeId: number,
-  selectedActions: string[]
-) {
+async function onAuthorizeSubmit() {
   if (!form.value.id) return;
 
-  // 查找对应 privilegeId 的对象
-  const keyIndex = authorities.value.findIndex(
-    a => a.privilegeId === privilegeId
-  );
+  const authorities = authorizeRef.value?.checkedAuthorities();
+  if (!authorities) return;
 
   try {
-    if (keyIndex >= 0) {
-      // 如果已存在该 privilegeId 对应的数据
-      const existingAction = authorities.value[keyIndex];
-      if (existingAction) {
-        for (const item of selectedActions) {
-          const itemIndex = existingAction.actions.indexOf(item);
-          if (itemIndex === -1) {
-            // 如果 actions 中没有该 item，则添加
-            existingAction.actions.push(item);
-            await addPrivilege(form.value.id, privilegeId, item);
-          }
-        }
+    await authorize(form.value.id, authorities);
 
-        // 移除已取消选择的 actions
-        for (const existingItem of existingAction.actions) {
-          if (!selectedActions.includes(existingItem)) {
-            existingAction.actions.splice(
-              existingAction.actions.indexOf(existingItem),
-              1
-            );
-            await removePrivilege(form.value.id, privilegeId, existingItem);
-          }
-        }
-      }
-    } else {
-      // 如果不存在该 privilegeId，新增数据
-      authorities.value.push({ privilegeId, actions: selectedActions });
-      await addPrivilege(form.value.id, privilegeId, selectedActions.join(","));
-    }
+    authorizeVisible.value = false;
+    ElMessage.success(t("message.success", { action: t("action.authorize") }));
   } catch (error) {
     ElMessage.error(t("message.error", { action: t("action.authorize") }));
     throw error;
   }
-}
-
-async function onRowSelect(
-  selection: PrivilegeTreeNode[],
-  row: PrivilegeTreeNode
-) {
-  if (!form.value.id || !row.id) return;
-  const selected = selection.some(item => item.id === row.id);
-
-  if (selected) {
-    await addPrivilege(form.value.id, row.id);
-  } else {
-    await removePrivilege(form.value.id, row.id);
-  }
-}
-
-function onActionSelected(row: Privilege) {
-  if (!authorizeTableRef.value) return false;
-
-  const selectedRows = authorizeTableRef.value.getSelectionRows();
-  return selectedRows.some(selectedRow => selectedRow.id === row.id);
 }
 </script>
 
@@ -643,67 +539,33 @@ function onActionSelected(row: Privilege) {
     </template>
   </ElDialog>
 
-  <!-- member -->
-  <ElDialog
-    v-model="relationVisible"
-    :title="$t('action.members')"
-    width="40em"
-  >
-    <div style="text-align: center">
-      <ElTransfer
-        v-model="relations"
-        :props="{ key: 'username', label: 'fullName' }"
-        :titles="[$t('label.unselected'), $t('label.selected')]"
-        filterable
-        :data="members"
-        @change="handleTransferChange"
-      />
-    </div>
-  </ElDialog>
-
   <!-- authorize -->
   <ElDialog
     v-model="authorizeVisible"
     :title="$t('action.authorize')"
-    width="80em"
+    :show-close="false"
   >
-    <ElTable
-      ref="authorizeTableRef"
-      :data="userStore.privileges"
-      row-key="id"
-      @select="onRowSelect"
-      table-layout="auto"
-    >
-      <ElTableColumn type="selection" />
-      <ElTableColumn prop="name" :label="$t('label.name')">
-        <template #default="scope">
-          <Icon
-            :icon="pageIcon(scope.row.name)"
-            style="vertical-align: -3.5px"
-            width="1.25em"
-            height="1.25em"
-            class="mr-2"
-          />
-          {{ scope.row.name ? $t(`page.${scope.row.name}`) : "" }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="actions" :label="$t('label.actions')">
-        <template #default="scope">
-          <ElCheckboxGroup
-            v-model="authoritiesMap[scope.row.id]"
-            :disabled="!onActionSelected(scope.row)"
-            @change="handleActionsCheck(scope.row.id, $event)"
-          >
-            <ElCheckbox
-              v-for="(item, index) in scope.row.meta.actions"
-              :key="index"
-              :label="$t(`action.${item}`)"
-              :value="item"
-            />
-          </ElCheckboxGroup>
-        </template>
-      </ElTableColumn>
-    </ElTable>
+    <AuthorizeConfig
+      ref="authorizeRef"
+      :target-id="form.id"
+      :selected="authorities"
+    />
+    <template #footer>
+      <ElButton title="cancel" @click="authorizeVisible = false">
+        <Icon :icon="actionIcon('cancel')" width="1.25em" height="1.25em" />{{
+          $t("action.cancel")
+        }}
+      </ElButton>
+      <ElButton
+        title="submit"
+        type="primary"
+        :loading="saveLoading"
+        @click="onAuthorizeSubmit()"
+      >
+        <Icon :icon="actionIcon('submit')" width="1.25em" height="1.25em" />
+        {{ $t("action.submit") }}
+      </ElButton>
+    </template>
   </ElDialog>
 </template>
 

@@ -378,7 +378,7 @@ function handleInputConfirm() {
             height="1.25em"
             class="mr-2"
           />
-          {{ scope.row.name ? $t(`page.${scope.row.name}`) : "" }}
+          {{ $t(`page.${scope.row.name}`) }}
         </template>
       </ElTableColumn>
       <ElTableColumn prop="path" :label="$t('label.path')" />

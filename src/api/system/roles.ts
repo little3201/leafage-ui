@@ -1,6 +1,6 @@
 import { api } from "@/boot/axios";
 import { SERVER_URL } from "@/constants";
-import type { Filter, Pagination, Role } from "@/types";
+import type { Filter, Pagination, Role, PrivilegeActions } from "@/types";
 import { dealFilters } from "@/utils";
 
 /**
@@ -17,14 +17,6 @@ export const retrieveRoles = (
   return api.get(SERVER_URL.ROLE, {
     params: { ...pagination, page: pagination.page - 1, filters }
   });
-};
-
-/**
- * Retrieve members for a specific row
- * @returns tree data
- */
-export const retrieveRoleMembers = (id: number) => {
-  return api.get(`${SERVER_URL.ROLE}/${id}/members`);
 };
 
 /**
@@ -92,56 +84,12 @@ export const removeRole = (id: number) => {
 };
 
 /**
- * Relation members for a specific row
+ * Authorize
  * @param id Row ID
- * @param usernames usernames
+ * @param authorities PrivilegeActions
  */
-export const addMembers = (id: number, usernames: string[]) => {
-  return api.patch(`${SERVER_URL.ROLE}/${id}/members`, usernames);
-};
-
-/**
- * Remove members for a specific row
- * @param id Row ID
- * @param usernames usernames
- */
-export const removeMembers = (id: number, usernames: string[]) => {
-  const params = usernames ? { usernames: usernames.join(",") } : {};
-  return api.delete(`${SERVER_URL.ROLE}/${id}/members`, { params });
-};
-
-/**
- * Relation privileges for a specific row
- * @param id Row ID
- * @param privilegeId Privilege id
- * @param action Action
- */
-export const addPrivilege = (
-  id: number,
-  privilegeId: number,
-  action?: string
-) => {
-  return api.patch(
-    `${SERVER_URL.ROLE}/${id}/privileges/${privilegeId}`,
-    {},
-    { params: { action } }
-  );
-};
-
-/**
- * Remove privileges for a specific row
- * @param id Row ID
- * @param privilegeId Privilege id
- * @param action Action
- */
-export const removePrivilege = (
-  id: number,
-  privilegeId: number,
-  action?: string
-) => {
-  return api.delete(`${SERVER_URL.ROLE}/${id}/privileges/${privilegeId}`, {
-    params: { action }
-  });
+export const authorize = (id: number, authorities: PrivilegeActions[]) => {
+  return api.patch(`${SERVER_URL.ROLE}/${id}/privileges`, authorities);
 };
 
 /**

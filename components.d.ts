@@ -15,6 +15,7 @@ declare module 'vue' {
     ChartView: typeof import('./src/components/ChartView.vue')['default']
     CodeRender: typeof import('./src/components/CodeRender.vue')['default']
     DocRender: typeof import('./src/components/DocRender.vue')['default']
+    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElAvatarGroup: typeof import('element-plus/es')['ElAvatarGroup']

@@ -12,13 +12,6 @@ export interface Privilege extends AudtiMetadata {
   hasChildren?: boolean;
 }
 
-export interface PrivilegeAction extends AudtiMetadata {
-  privilegeId: number | null;
-  name: string;
-  type: string | null;
-  enabled: boolean;
-}
-
 export interface PrivilegeTreeNode extends TreeNode {
   meta: {
     path: string;
@@ -27,4 +20,11 @@ export interface PrivilegeTreeNode extends TreeNode {
     actions?: string[];
   };
   children?: PrivilegeTreeNode[];
+}
+
+export interface PrivilegeActions {
+  id: number;
+  privilegeId: number;
+  name: string;
+  actions: string[];
 }
