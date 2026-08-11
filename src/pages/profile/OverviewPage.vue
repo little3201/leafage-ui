@@ -1,30 +1,45 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import { globalIcons } from "@/constants";
+import { ElMessage } from "element-plus";
 import type { User } from "@/types";
 import { actionIcon, loadIcon } from "@/utils";
+import { modifyUser } from "@/api/system/users";
 import { useUserStore } from "@/stores/user";
 import { reactive, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const userStore = useUserStore();
 
-const initialValues: User = {
-  id: null,
-  username: userStore.username,
-  fullName: userStore.fullName,
-  email: userStore.email
-};
-const form = ref<User>({ ...initialValues });
+const user = userStore.user as User;
+const form = ref({ ...user });
 
-const state = reactive({
-  email: false,
-  fullName: false
-});
+const editing = ref<keyof User | null>(null);
 
 const items = [
   { name: "Github", link: null },
   { name: "Gitee", link: "example@example.com" }
 ];
+
+function cancel() {
+  form.value = { ...user };
+  editing.value = null;
+}
+
+async function save() {
+  if (!form.value.id) return;
+
+  try {
+    const res = await modifyUser(form.value.id, form.value);
+    userStore.setUser(res.data);
+
+    editing.value = null;
+    ElMessage.success(t("message.success", { action: t("action.modify") }));
+  } catch (error) {
+    ElMessage.error(t("message.error", { action: t("action.modify") }));
+  }
+}
 </script>
 
 <template>
@@ -47,7 +62,7 @@ const items = [
     </div>
 
     <div class="inline-flex flex-col ml-8 mt-1">
-      <ElForm label-width="auto">
+      <ElForm label-width="auto" :model="form">
         <ElRow>
           <ElCol :span="20">
             <ElFormItem :label="$t('label.username')" prop="username">
@@ -75,7 +90,7 @@ const items = [
                   $t('placeholder.inputText', { field: $t('label.fullName') })
                 "
                 :maxLength="50"
-                :disabled="!state.fullName"
+                :disabled="editing !== 'fullName'"
               />
               <p class="mb-0 mt-1 text-xs text-gray-500"
                 >Get important notifications about you or activity you've
@@ -84,24 +99,22 @@ const items = [
             </ElFormItem>
           </ElCol>
           <ElCol :span="4">
+            <template v-if="editing === 'fullName'">
+              <ElButton link type="primary" class="mt-2 ml-4" @click="save()">
+                {{ $t("action.save") }}
+              </ElButton>
+              <ElButton link type="default" class="mt-2 ml-4" @click="cancel()">
+                {{ $t("action.cancel") }}
+              </ElButton>
+            </template>
             <ElButton
+              v-else
               link
               type="primary"
               class="mt-2 ml-4"
-              @click="state.fullName = !state.fullName"
+              @click="editing = 'fullName'"
             >
-              {{
-                state.fullName ? $t("action.save") : $t("action.modify")
-              }}</ElButton
-            >
-            <ElButton
-              v-if="state.fullName"
-              link
-              type="default"
-              class="mt-2 ml-4"
-              @click="state.fullName = !state.fullName"
-            >
-              {{ $t("action.cancel") }}
+              {{ $t("action.modify") }}
             </ElButton>
           </ElCol>
         </ElRow>
@@ -115,7 +128,7 @@ const items = [
                   $t('placeholder.inputText', { field: $t('label.email') })
                 "
                 :maxLength="50"
-                :disabled="!state.email"
+                :disabled="editing !== 'email'"
               />
               <p class="mb-0 mt-1 text-xs text-gray-500"
                 >Get important notifications about you or activity you've
@@ -124,22 +137,22 @@ const items = [
             </ElFormItem>
           </ElCol>
           <ElCol :span="4">
+            <template v-if="editing === 'email'">
+              <ElButton link type="primary" class="mt-2 ml-4" @click="save()">
+                {{ $t("action.save") }}
+              </ElButton>
+              <ElButton link type="default" class="mt-2 ml-4" @click="cancel()">
+                {{ $t("action.cancel") }}
+              </ElButton>
+            </template>
             <ElButton
+              v-else
               link
               type="primary"
               class="mt-2 ml-4"
-              @click="state.email = !state.email"
+              @click="editing = 'email'"
             >
-              {{ state.email ? $t("action.save") : $t("action.modify") }}
-            </ElButton>
-            <ElButton
-              v-if="state.email"
-              link
-              type="default"
-              class="mt-2 ml-4"
-              @click="state.email = !state.email"
-            >
-              {{ $t("action.cancel") }}
+              {{ $t("action.modify") }}
             </ElButton>
           </ElCol>
         </ElRow>

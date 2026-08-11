@@ -6,14 +6,6 @@ export interface User extends AudtiMetadata {
   username: string;
   fullName: string;
   email: string;
-  roles?: Role[] | number[];
+  roles?: Role[];
   enabled?: boolean;
-}
-
-export interface Userinfo {
-  username: string;
-  fullName: string;
-  email: string;
-  privileges: PrivilegeTreeNode[];
-  routesAdded: boolean;
 }

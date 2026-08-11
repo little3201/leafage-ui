@@ -5,7 +5,6 @@ const SERVER_PREFIX = {
 
 // 接口请求路径
 export const SERVER_URL = {
-  USERINFO: "/userinfo", // 用户信息
   LOGIN: "/login", // login
   LOGOUT: "/logout", // 登出
 

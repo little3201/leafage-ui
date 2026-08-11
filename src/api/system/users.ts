@@ -28,12 +28,11 @@ export const retrieveUserRoles = (id: number) => {
 };
 
 /**
- * Fetch a specific row
- * @param id Row ID
- * @returns Row data
+ * Fetch current user info
+ * @returns User data
  */
-export const fetchUser = (id: number) => {
-  return api.get(`${SERVER_URL.USER}/${id}`);
+export const fetchMe = () => {
+  return api.get(`${SERVER_URL.USER}/me`);
 };
 
 /**

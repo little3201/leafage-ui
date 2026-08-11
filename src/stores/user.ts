@@ -1,11 +1,15 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import type { Userinfo, PrivilegeTreeNode } from "@/types";
+import type { User, PrivilegeTreeNode } from "@/types";
+
+interface UserState {
+  user: User | null;
+  privileges: PrivilegeTreeNode[];
+  routesAdded: boolean;
+}
 
 export const useUserStore = defineStore("user", {
-  state: (): Userinfo => ({
-    username: "",
-    fullName: "",
-    email: "",
+  state: (): UserState => ({
+    user: null,
     privileges: [],
     routesAdded: false
   }),
@@ -30,14 +34,16 @@ export const useUserStore = defineStore("user", {
     }
   },
   actions: {
-    setUserinfo(username: string, fullName: string, email: string) {
-      this.username = username;
-      this.fullName = fullName;
-      this.email = email;
+    setUser(user: User) {
+      this.user = user;
     },
 
     setPrivileges(privileges: PrivilegeTreeNode[]) {
       this.privileges = privileges;
+    },
+
+    setRoutesAdded(value: boolean) {
+      this.routesAdded = value;
     }
   }
 });

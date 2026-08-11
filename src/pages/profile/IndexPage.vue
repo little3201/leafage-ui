@@ -5,11 +5,14 @@ import { useUserStore } from "@/stores/user";
 import { useAppStore } from "@/stores/app";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { ElAvatar } from "element-plus";
+import { storeToRefs } from "pinia";
+import { ElAvatar, ElTag } from "element-plus";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
 const { currentRoute } = useRouter();
+
+const { user } = storeToRefs(userStore);
 
 const items = ref([
   { name: "overview", icon: "overview-outline", router: "" },
@@ -30,18 +33,28 @@ const items = ref([
       <ElCard body-class="flex items-center">
         <ElAvatar
           :size="80"
-          :alt="userStore.fullName"
-          :src="`https://cdn.leafage.top/${userStore.username}`"
+          :alt="user?.fullName"
+          :src="`https://cdn.leafage.top/${user?.username}`"
         />
-        <div class="ml-4 flex-1">
+        <div class="mx-4">
           <span class="text-lg my-1">
-            {{ userStore.fullName }}
+            {{ user?.fullName }}
           </span>
 
-          <div class="text-sm text-(--el-text-color-secondary) space-x-2">
-            <span>Username: {{ userStore.username }}</span>
-            <span>Email: {{ userStore.email }}</span>
+          <div class="text-sm text-(--el-text-color-secondary)">
+            {{ user?.email }}
           </div>
+        </div>
+
+        <div class="flex-1">
+          <ElTag
+            v-for="(item, index) in user?.roles"
+            :key="index"
+            type="primary"
+            class="mr-2"
+          >
+            {{ item.name }}
+          </ElTag>
         </div>
 
         <div class="inline-flex flex-col items-center">

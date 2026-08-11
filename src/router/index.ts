@@ -2,7 +2,8 @@ import { retrievePrivilegeTree } from "@/api/system/privileges";
 import type { PrivilegeTreeNode } from "@/types";
 import { useUserStore } from "@/stores/user";
 import type { RouteRecordRaw } from "vue-router";
-import { signIn, getUserInfo } from "@/api/authentication";
+import { signIn } from "@/api/authentication";
+import { fetchMe } from "@/api/system/users";
 import { createRouter, createWebHistory } from "vue-router";
 import { routes } from "./routes";
 import Cookies from "js-cookie";
@@ -27,11 +28,11 @@ router.beforeEach(async to => {
   const userStore = useUserStore();
 
   // 加载用户信息
-  if (!userStore.username) {
+  if (!userStore.user) {
     try {
-      const res = await getUserInfo();
+      const res = await fetchMe();
       if (res?.data) {
-        userStore.setUserinfo(res.data.sub, res.data.name, res.data.email);
+        userStore.setUser(res.data);
       }
     } catch {
       userStore.$reset();

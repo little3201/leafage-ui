@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 import logo from "@/assets/logo.svg";
 import EssentialList from "@/components/EssentialList.vue";
@@ -9,6 +8,7 @@ import ThemeToogle from "@/components/ThemeToogle.vue";
 import { globalIcons } from "@/constants";
 import { loadIcon, pageIcon } from "@/utils";
 import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import MessagePanel from "@/components/MessagePanel.vue";
 
@@ -16,7 +16,8 @@ const { currentRoute } = useRouter();
 const userStore = useUserStore();
 
 const appTitle = import.meta.env.VITE_APP_TITLE;
-const appVersion = import.meta.env.VITE_APP_VERSION;
+
+const { user } = storeToRefs(userStore);
 
 function logout() {
   userStore.$reset();
@@ -41,21 +42,21 @@ function logout() {
         <ElDropdown trigger="click" class="cursor-pointer">
           <div class="inline-flex items-center">
             <ElAvatar
-              :alt="userStore.fullName"
-              :src="`https://cdn.leafage.top/${userStore.username}`"
+              :alt="user?.fullName"
+              :src="`https://cdn.leafage.top/${user?.username}`"
             />
-            <span class="ml-2 text-white">{{ userStore.fullName }}</span>
+            <span class="ml-2 text-white">{{ user?.fullName }}</span>
           </div>
           <template #dropdown>
             <div class="flex items-center space-x-2 p-4">
               <ElAvatar
-                :alt="userStore.fullName"
-                :src="`https://cdn.leafage.top/${userStore.username}`"
+                :alt="user?.fullName"
+                :src="`https://cdn.leafage.top/${user?.username}`"
               />
               <div class="inline-flex flex-col">
-                <span>{{ userStore.fullName }}</span>
+                <span>{{ user?.fullName }}</span>
                 <span class="text-xs text-(--el-text-color-secondary)">{{
-                  userStore.username
+                  user?.username
                 }}</span>
               </div>
             </div>
@@ -150,7 +151,7 @@ function logout() {
       >
     </div>
     <span class="text-sm text-(--el-text-color-regular)"
-      >Copyright &copy; 2018-{{ new Date().getFullYear() }} Leafage. All Rights
+      >Copyright &copy; 2019-{{ new Date().getFullYear() }} Leafage. All Rights
       Reserved.</span
     >
   </ElFooter>

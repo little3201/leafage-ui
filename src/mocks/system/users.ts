@@ -29,6 +29,10 @@ for (let i = 1; i < 6; i++) {
 }
 
 export const usersHandlers = [
+  http.get(`/api${SERVER_URL.USER}/me`, () => {
+    const filtered = datas.find(item => item.username === "admin");
+    return HttpResponse.json(filtered);
+  }),
   http.get(`/api${SERVER_URL.USER}/:id/roles`, ({ params }) => {
     const { id } = params;
     if (id) {
