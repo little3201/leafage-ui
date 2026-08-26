@@ -24,7 +24,7 @@
           <div flat rounded>
             <q-avatar size="md">
               <img
-                :src="`https://cdn.leafage.top/${userStore.username}`"
+                :src="`https://vslthblsdjamyfpiclmj.supabase.co/storage/v1/object/public/oss/${userStore.username}.jpg`"
                 alt="avatar"
               />
             </q-avatar>
@@ -71,7 +71,7 @@
           </q-item-section>
         </q-item>
 
-        <template v-for="link in userStore.privileges" :key="link.id">
+        <template v-for="link in userStore.privileges" :key="link.id!">
           <EssentialList
             v-if="link.children && link.children.length > 0"
             :essentialLink="link"
