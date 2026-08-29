@@ -60,5 +60,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="container" class="h-125" />
+  <div ref="container" style="height: 600px" />
 </template>

@@ -1,53 +1,40 @@
 <script lang="ts" setup>
-import { Richtext, locales } from "@dhtmlx/richtext";
+import { DocxEditor, useDocxSource } from "@docx-editor.dev/vue";
+import type { DocxEditorRef } from "@docx-editor.dev/vue";
+import { en, zhCN } from "@docx-editor.dev/i18n";
+import type { PartialLocaleStrings } from "@docx-editor.dev/i18n";
 import { useAppStore } from "@/stores/app";
 import { storeToRefs } from "pinia";
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { ref, computed } from "vue";
 
-import "@dhtmlx/richtext/dist/richtext.css";
+import "@docx-editor.dev/vue/styles.css";
 
-const appStore = useAppStore();
 const props = defineProps<{
-  data: string;
+  path: string;
   readOnly?: boolean;
 }>();
+const locales: { [key: string]: PartialLocaleStrings } = {
+  "zh-CN": zhCN,
+  "zh-TW": zhCN,
+  "en-US": en
+};
+const appStore = useAppStore();
+const { theme, locale } = storeToRefs(appStore);
 
-const { locale } = storeToRefs(appStore);
-const container = ref<HTMLElement | null>(null);
-const editor = ref();
+const editorRef = ref<DocxEditorRef | null>(null);
+const { document } = useDocxSource(() => props.path);
 
-watch(locale, (newVal, oldVal) => {
-  if (newVal !== oldVal) {
-    editor.value.setLocale(locales.cn);
-  }
-});
-
-watch(
-  () => props.data,
-  (newVal, oldVal) => {
-    if (!container.value || !newVal) return;
-    //避免深度监听造成的死循环
-    if (JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
-
-    editor.value.setValue(newVal);
-  },
-  { deep: true }
-);
-
-onMounted(() => {
-  if (container.value && props.data) {
-    editor.value = new Richtext(container.value, {
-      menubar: true,
-      layoutMode: "document"
-    });
-  }
-});
-
-onBeforeUnmount(() => {
-  editor.value.destructor();
-});
+const title = computed(() => props.path);
+const mode = computed(() => (props.readOnly ? "view" : "edit"));
 </script>
 
 <template>
-  <div ref="container" class="h-125" />
+  <DocxEditor
+    ref="editorRef"
+    :document="document ? document : 'blank'"
+    :title="title"
+    :mode="mode"
+    :i18n="locales[locale || 'zh-CN']"
+    :color-mode="theme === 'dark' ? 'dark' : 'light'"
+  />
 </template>
