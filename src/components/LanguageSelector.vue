@@ -8,6 +8,7 @@ import { useAppStore } from "@/stores/app";
 
 const appStore = useAppStore();
 const { locale } = useI18n({ useScope: "global" });
+locale.value = appStore.locale;
 
 function changeLang(lang: string) {
   locale.value = lang;
