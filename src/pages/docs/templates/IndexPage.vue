@@ -13,8 +13,8 @@
             <q-input
               outlined
               dense
-              v-model="form.title"
-              :label="$t('label.database')"
+              v-model="form.name"
+              :label="$t('label.name')"
               lazy-rules
               :rules="[
                 val => (val && val.length > 0) || $t('placeholder.inputText')
@@ -43,8 +43,15 @@
     </q-dialog>
 
     <q-dialog v-model="configVisible" persistent>
-      <q-card class="full-width" style="max-width: 60em">
-        <SheetRender :data="[]" />
+      <q-card class="full-width" style="max-width: 80em">
+        <q-card-section style="height: 60vh">
+          <SheetRender v-if="form.type === 'EXCEL'" :data="[]" />
+          <DocRender
+            v-else-if="form.type === 'WORD'"
+            :title="form.name"
+            :data="'blank'"
+          />
+        </q-card-section>
 
         <q-card-actions align="right">
           <q-btn
@@ -84,7 +91,7 @@
           dense
           debounce="300"
           filled
-          v-model="filter.title!.value"
+          v-model="filter.name!.value"
           clearable
           style="max-width: 200px"
           placeholder="Search"
@@ -164,7 +171,7 @@
             round
             color="primary"
             :icon="actionIcon('config')"
-            @click="configRow(props.row.id)"
+            @click="configRow(props.row)"
           />
           <q-btn
             title="remove"
@@ -184,14 +191,15 @@
 
 <script setup lang="ts">
 import {
-  createReport,
-  fetchReport,
-  modifyReport,
-  removeReport,
-  retrieveReports
-} from "@/api/docs/reports";
+  createTemplate,
+  fetchTemplate,
+  modifyTemplate,
+  removeTemplate,
+  retrieveTemplates
+} from "@/api/docs/templates";
+import DocRender from "@/components/DocRender.vue";
 import SheetRender from "@/components/SheetRender.vue";
-import type { Report, Filter, Pagination } from "@/types";
+import type { Template, Filter, Pagination } from "@/types";
 import { exportTable, actionIcon } from "@/utils";
 import type { QTable, QTableColumn, QTableProps } from "quasar";
 import { Notify } from "quasar";
@@ -205,18 +213,19 @@ const configVisible = ref<boolean>(false);
 const importVisible = ref<boolean>(false);
 
 const tableRef = ref<QTable>();
-const rows = ref<Array<Report>>([]);
-const filter = reactive<Filter<Report>>({
-  title: { op: "eq", value: undefined }
+const rows = ref<Array<Template>>([]);
+const filter = reactive<Filter<Template>>({
+  name: { op: "eq", value: undefined }
 });
 const loading = ref<boolean>(false);
 
-const initialValues: Report = {
+const initialValues: Template = {
   id: null,
-  title: "",
-  schemaId: null
+  name: "",
+  type: "WORD",
+  version: 1
 };
-const form = ref<Report>({ ...initialValues });
+const form = ref<Template>({ ...initialValues });
 
 const pagination = ref({
   sortBy: "",
@@ -226,14 +235,15 @@ const pagination = ref({
   rowsNumber: 0
 });
 
-const columns: QTableColumn<Report>[] = [
+const columns: QTableColumn<Template>[] = [
   {
-    name: "title",
-    label: "title",
+    name: "name",
+    label: "name",
     align: "left",
-    field: "title",
+    field: "name",
     sortable: true
   },
+  { name: "type", label: "type", align: "left", field: "type" },
   { name: "version", label: "version", align: "left", field: "version" },
   { name: "id", label: "actions", field: "id" }
 ];
@@ -258,7 +268,7 @@ async function onRequest(
   }
 
   try {
-    const res = await retrieveReports(params, filter);
+    const res = await retrieveTemplates(params, filter);
     pagination.value.page = page;
     pagination.value.rowsPerPage = rowsPerPage;
     pagination.value.sortBy = sortBy;
@@ -284,7 +294,7 @@ async function saveRow(id?: number) {
   form.value = { ...initialValues };
   if (id) {
     try {
-      const res = await fetchReport(id);
+      const res = await fetchTemplate(id);
       form.value = res.data;
     } catch (error) {
       form.value = { ...initialValues };
@@ -294,7 +304,8 @@ async function saveRow(id?: number) {
   visible.value = true;
 }
 
-async function configRow(id: number) {
+async function configRow(row: Template) {
+  form.value = { ...row };
   configVisible.value = true;
 }
 
@@ -304,7 +315,7 @@ function importRow() {
 
 async function removeRow(id: number) {
   try {
-    await removeReport(id);
+    await removeTemplate(id);
     refresh();
     Notify.create({
       message: t("message.success", { action: t("action.remove") }),
@@ -322,9 +333,9 @@ async function removeRow(id: number) {
 async function onSubmit() {
   try {
     if (form.value.id) {
-      await modifyReport(form.value.id, form.value);
+      await modifyTemplate(form.value.id, form.value);
     } else {
-      await createReport(form.value);
+      await createTemplate(form.value);
     }
     // Close the dialog after submitting
     visible.value = false;

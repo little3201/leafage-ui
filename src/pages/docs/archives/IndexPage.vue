@@ -14,7 +14,7 @@
               outlined
               dense
               v-model="form.title"
-              :label="$t('label.database')"
+              :label="$t('label.title')"
               lazy-rules
               :rules="[
                 val => (val && val.length > 0) || $t('placeholder.inputText')
@@ -45,7 +45,7 @@
     <q-dialog v-model="configVisible" persistent>
       <q-card class="full-width" style="max-width: 80em">
         <q-card-section style="height: 60vh">
-          <DocRender :path="''" />
+          <DocRender :title="form.title" :data="'blank'" />
         </q-card-section>
 
         <q-card-actions align="right">
@@ -166,7 +166,7 @@
             round
             color="primary"
             :icon="actionIcon('config')"
-            @click="configRow(props.row.body)"
+            @click="configRow(props.row)"
           />
           <q-btn
             title="remove"
@@ -296,8 +296,8 @@ async function saveRow(id?: number) {
   visible.value = true;
 }
 
-async function configRow(body: string) {
-  form.value.body = body;
+async function configRow(row: Archive) {
+  form.value = { ...row };
   configVisible.value = true;
 }
 

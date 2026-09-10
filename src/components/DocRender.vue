@@ -10,7 +10,8 @@ import { ref, computed } from "vue";
 import "@docx-editor.dev/vue/styles.css";
 
 const props = defineProps<{
-  path: string;
+  title: string;
+  data: ArrayBuffer | Uint8Array | "blank";
   readOnly?: boolean;
 }>();
 const locales: { [key: string]: PartialLocaleStrings } = {
@@ -22,16 +23,16 @@ const appStore = useAppStore();
 const { theme, locale } = storeToRefs(appStore);
 
 const editorRef = ref<DocxEditorRef | null>(null);
-const { document } = useDocxSource(() => props.path);
 
-const title = computed(() => props.path);
-const mode = computed(() => (props.readOnly ? "view" : "edit"));
+const mode = computed<"view" | "edit">(() =>
+  props.readOnly ? "view" : "edit"
+);
 </script>
 
 <template>
   <DocxEditor
     ref="editorRef"
-    :document="document ? document : 'blank'"
+    :document="data"
     :title="title"
     :mode="mode"
     :i18n="locales[locale || 'zh-CN']"
