@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DocxEditor, useDocxSource } from "@docx-editor.dev/vue";
+import { DocxEditor } from "@docx-editor.dev/vue";
 import type { DocxEditorRef } from "@docx-editor.dev/vue";
 import { en, zhCN } from "@docx-editor.dev/i18n";
 import type { PartialLocaleStrings } from "@docx-editor.dev/i18n";

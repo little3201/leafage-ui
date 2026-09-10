@@ -24,34 +24,16 @@
 </template>
 
 <script setup lang="ts">
-import type { QuasarLanguage } from "quasar";
-import { useQuasar } from "quasar";
 import { useAppStore } from "@/stores/app";
-import languages from "quasar/lang/index.json";
 import { loadIcon } from "@/utils";
+import { langOptions } from "@/lang";
 import { globalIcons } from "@/constants";
-import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 
-const $q = useQuasar();
 const appStore = useAppStore();
 const { locale } = useI18n({ useScope: "global" });
+// init the language
 locale.value = appStore.locale;
-const modules = import.meta.glob(
-  "../../node_modules/quasar/lang/(en-US|zh-CN|zh-TW).js"
-);
-
-const langOptions = languages
-  .filter(lang => ["en-US", "zh-CN", "zh-TW"].includes(lang.isoName))
-  .map(lang => ({ label: lang.nativeName, value: lang.isoName }));
-
-watch(locale, async val => {
-  const loadLangModule = modules[`../../node_modules/quasar/lang/${val}.js`];
-  if (loadLangModule) {
-    const langModule = await loadLangModule();
-    $q.lang.set((langModule as { default: QuasarLanguage }).default);
-  }
-});
 
 function changeLocale(lang: string) {
   locale.value = lang;
