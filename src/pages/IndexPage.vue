@@ -1,10 +1,10 @@
 <template>
   <q-page padding>
-    <div class="row q-pb-lg q-gutter-lg">
+    <div class="row q-pb-md q-gutter-md">
       <div class="col-8">
         <q-card
           flat
-          class="q-mb-lg text-white"
+          class="q-mb-md text-white"
           style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
         >
           <q-card-section class="flex items-center">
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <div class="row q-gutter-lg">
+    <div class="row q-gutter-md">
       <div class="col-8">
         <q-card flat>
           <q-card-section>
