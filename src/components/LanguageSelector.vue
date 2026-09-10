@@ -5,12 +5,9 @@ import { globalIcons } from "@/constants";
 import { loadIcon } from "@/utils";
 import { useI18n } from "vue-i18n";
 import { useAppStore } from "@/stores/app";
-import { ElPopper } from "element-plus";
 
 const appStore = useAppStore();
-
 const { locale } = useI18n({ useScope: "global" });
-locale.value = appStore.locale;
 
 function changeLang(lang: string) {
   locale.value = lang;
