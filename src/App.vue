@@ -6,10 +6,10 @@ import { computed } from "vue";
 import { useAppStore } from "@/stores/app";
 
 const appStore = useAppStore();
-const locales: Record<string, typeof en> = {
-  "en-US": en,
+const locales: Record<string, typeof zhCN | typeof zhTW | typeof en> = {
   "zh-CN": zhCN,
-  "zh-TW": zhTW
+  "zh-TW": zhTW,
+  "en-US": en
 };
 const lang = computed(() => {
   return locales[appStore.locale];
