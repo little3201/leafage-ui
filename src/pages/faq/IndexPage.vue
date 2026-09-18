@@ -12,7 +12,7 @@
               placeholder="搜索问题..."
             >
               <template #prepend>
-                <q-icon name="sym_r_search" />
+                <q-icon :name="actionIcon('search')" />
               </template>
             </q-input>
           </q-form>
@@ -70,6 +70,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { actionIcon } from "@/utils";
 
 const searchQuery = ref("");
 const faqList = [

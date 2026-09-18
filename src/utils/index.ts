@@ -3,6 +3,7 @@ export * from "./file";
 export * from "./pkce";
 export * from "./request";
 export * from "./format";
+export * from "./icon";
 
 export function visibleArray<T>(array: T[], count: number): T[] {
   if (array?.length) {

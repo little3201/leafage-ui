@@ -13,6 +13,7 @@ for (let i = 1; i < 28; i++) {
     owner: "Owner_Name_" + i,
     schemaId: random,
     version: random,
+    body: "This is body ...",
     lastModifiedDate: new Date()
   };
   datas.push(row);

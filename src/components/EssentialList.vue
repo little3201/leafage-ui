@@ -17,7 +17,7 @@
         :parent-path="pathResolve(parentPath, link.meta.path)"
       />
 
-      <q-item v-else :to="pathResolve(parentPath, link.meta.path)">
+      <q-item exact v-else :to="pathResolve(parentPath, link.meta.path)">
         <q-item-section side>
           <q-icon :name="`sym_r_${pageIcons[link.name]}`" />
         </q-item-section>

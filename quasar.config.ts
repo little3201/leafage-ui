@@ -53,7 +53,8 @@ export default defineConfig(ctx => {
       // publicPath: '/',
       defineEnv: {
         API: "/api",
-        CLIENT_ID: "pkce-client"
+        CLIENT_ID: "pkce-client",
+        APP_TITLE: "Leafage"
       },
       // ignorePublicFolder: true,
       // minify: false,

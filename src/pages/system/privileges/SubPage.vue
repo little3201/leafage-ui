@@ -140,7 +140,7 @@
               flat
               round
               color="primary"
-              icon="sym_r_edit"
+              :icon="actionIcon('modify')"
               @click="saveRow(col.value)"
             />
           </div>
@@ -226,7 +226,7 @@ import {
 } from "@/api/system/privileges";
 import { actionTypes, pageIcons } from "@/constants";
 import type { Dictionary, Privilege } from "@/types";
-import { visibleArray } from "@/utils";
+import { visibleArray, actionIcon } from "@/utils";
 import type { QTable, QTableColumn } from "quasar";
 import { Notify } from "quasar";
 import { onMounted, ref } from "vue";

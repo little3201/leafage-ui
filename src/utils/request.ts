@@ -6,17 +6,19 @@ import type { Filter } from "@/types";
  * @param {string} path - The child path
  * @returns {string} - The resolved path
  */
-export function pathResolve(
-  parentPath: string | undefined,
-  path: string | undefined
-): string {
-  if (!path) {
-    return "";
-  }
+export function pathResolve(parentPath: string, path: string): string {
+  if (!parentPath && !path) return "";
+  if (!path) return parentPath.replace(/\/+$/, "");
   const childPath = path.startsWith("/") ? path : `/${path}`;
-  return `${parentPath}${childPath}`.replaceAll("//", "/").trim();
+  const fullPath = parentPath + childPath;
+  return fullPath.replaceAll("//", "/").trim();
 }
 
+/**
+ * 处理过滤参数
+ * @param filters 过滤条件
+ * @returns 处理后的过滤参数
+ */
 export function dealFilters<T>(filters?: Filter<T>): string | undefined {
   if (!filters || Object.keys(filters).length === 0) {
     return undefined;

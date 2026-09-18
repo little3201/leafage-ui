@@ -3,7 +3,7 @@
     flat
     round
     dense
-    :icon="$q.dark.isActive ? 'sym_r_dark_mode' : 'sym_r_light_mode'"
+    :icon="loadIcon(globalIcons[$q.dark.isActive ? 'dark' : 'light'])"
     @click="handleChange(!$q.dark.isActive)"
   />
 </template>
@@ -11,6 +11,8 @@
 <script setup lang="ts">
 import { useQuasar } from "quasar";
 import { useAppStore } from "@/stores/app";
+import { loadIcon } from "@/utils";
+import { globalIcons } from "@/constants";
 
 const $q = useQuasar();
 const appStore = useAppStore();

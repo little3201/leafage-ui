@@ -7,7 +7,7 @@
             <div class="text-h6">{{ $t("page.files") }}</div>
             <q-space />
             <q-btn
-              icon="sym_r_close"
+              :icon="actionIcon('cancel')"
               flat
               round
               dense
@@ -198,10 +198,12 @@
               debounce="300"
               filled
               v-model="filter.name!.value"
+              clearable
+              style="max-width: 200px"
               placeholder="Search"
             >
               <template v-slot:append>
-                <q-icon name="sym_r_search" />
+                <q-icon :name="actionIcon('search')" />
               </template>
             </q-input>
             <q-btn
@@ -212,7 +214,7 @@
               color="primary"
               class="q-mx-sm"
               :disable="loading"
-              icon="sym_r_refresh"
+              :icon="actionIcon('refresh')"
               @click="refresh"
             />
             <q-btn
@@ -221,7 +223,7 @@
               padding="xs"
               color="primary"
               :disable="loading"
-              icon="sym_r_upload"
+              :icon="actionIcon('upload')"
               @click="uploadRow"
             />
           </template>
@@ -283,7 +285,7 @@
                 flat
                 round
                 color="primary"
-                icon="sym_r_download"
+                :icon="actionIcon('download')"
                 @click="downloadRow(props.row.id)"
               />
               <q-btn
@@ -292,7 +294,7 @@
                 flat
                 round
                 color="negative"
-                icon="sym_r_delete"
+                :icon="actionIcon('remove')"
                 @click="removeRow(props.row.id)"
                 class="q-ml-sm"
               />
@@ -316,6 +318,7 @@ import { useUserStore } from "@/stores/user";
 import type { FileRecord, Filter, Pagination } from "@/types";
 import type { QTable, QTableColumn, QTableProps } from "quasar";
 import { date, format, Notify } from "quasar";
+import { actionIcon } from "@/utils";
 import { onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 

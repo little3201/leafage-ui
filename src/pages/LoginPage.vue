@@ -189,11 +189,8 @@
 <script setup lang="ts">
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import ThemeToogle from "@/components/ThemeToogle.vue";
-import { useQuasar } from "quasar";
 import { signIn } from "@/api/authentication";
 import { ref } from "vue";
-
-const $q = useQuasar();
 
 const showPwd = ref<boolean>(true);
 const loading = ref<boolean>(false);

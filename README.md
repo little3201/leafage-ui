@@ -38,10 +38,10 @@
 ## 页面预览
 
 **light模式**
-<img src="https://cdn.leafage.top/preview-light.jpeg" alt="light" />
+<img src="https://vslthblsdjamyfpiclmj.supabase.co/storage/v1/object/public/oss/preview-light.jpeg" alt="light" />
 
 **dark模式**
-<img src="https://cdn.leafage.top/preview-dark.jpeg" alt="dark" />
+<img src="https://vslthblsdjamyfpiclmj.supabase.co/storage/v1/object/public/oss/preview-dark.jpeg" alt="dark" />
 
 ### 目录结构
 
