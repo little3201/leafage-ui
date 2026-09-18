@@ -11,9 +11,9 @@ import "element-plus/theme-chalk/src/message.scss";
 import { i18n } from "./boot/i18n";
 import router from "./router";
 import pinia from "./stores";
-import { prepareApp } from "./boot/msw-browser.ts";
+import { prepareApp } from "./boot/msw-browser";
 
-if (!import.meta.env.DEV) {
+if (import.meta.env.DEV) {
   await prepareApp();
 }
 

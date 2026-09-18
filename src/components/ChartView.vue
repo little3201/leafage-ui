@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useEventListener } from "@vueuse/core";
-import type { ApexOptions, ApexLocale } from "apexcharts";
+import type { ApexChart, ApexOptions, ApexLocale } from "apexcharts";
 import en from "apexcharts/dist/locales/en.json";
 import zhCN from "apexcharts/dist/locales/zh-cn.json";
 import zhTW from "apexcharts/dist/locales/zh-tw.json";
-import ApexCharts from "apexcharts";
+import ApexCharts from "apexcharts/core";
+import "apexcharts/line";
 import { isNumber } from "@/utils";
 import { useAppStore } from "@/stores/app";
 import { storeToRefs } from "pinia";
@@ -31,7 +32,7 @@ const props = withDefaults(
 );
 
 const elRef = ref<HTMLElement | null>(null);
-let chart: ApexCharts;
+let chart: ApexChart | null = null;
 
 const { theme, locale } = storeToRefs(appStore);
 const isDark = ref<boolean>(
