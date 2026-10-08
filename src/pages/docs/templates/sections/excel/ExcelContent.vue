@@ -115,10 +115,10 @@ async function onSubmit(row: SectionData) {
         :prop="field.field"
         :label="field.name"
       >
-        <template #default="{ row }">
+        <template #default="{ row, $index }">
           <ElFormItem
             v-if="editable[row.id]"
-            :prop="`fields.${scope.$index}.${row.data[field.field]}`"
+            :prop="`fields.${$index}.${row.data[field.field]}`"
             :rules="[{ required: row.required, trigger: 'blur' }]"
           >
             <ElInput v-model="row.data[field.field]" />

@@ -9,7 +9,7 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit",
+    "type-check": "vue-tsc --noEmit",
     "lint": "oxfmt && oxlint --fix",
     "lint:check": "oxfmt --check && oxlint",
     "lint:lint-staged": "lint-staged",

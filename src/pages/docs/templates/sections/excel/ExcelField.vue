@@ -124,10 +124,10 @@ async function onSubmit(row: SectionField) {
     >
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
-        <template #default="{ row }">
+        <template #default="{ row, $index }">
           <ElFormItem
             v-if="editable[row.id]"
-            :prop="`fields.${scope.$index}.name`"
+            :prop="`fields.${$index}.name`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
             <ElInput v-model="row.name" style="width: 100px" />
@@ -136,10 +136,10 @@ async function onSubmit(row: SectionField) {
         </template>
       </ElTableColumn>
       <ElTableColumn prop="field" :label="$t('label.field')">
-        <template #default="{ row }">
+        <template #default="{ row, $index }">
           <ElFormItem
             v-if="editable[row.id]"
-            :prop="`fields.${scope.$index}.field`"
+            :prop="`fields.${$index}.field`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
             <ElInput
@@ -152,10 +152,10 @@ async function onSubmit(row: SectionField) {
         </template>
       </ElTableColumn>
       <ElTableColumn prop="type" :label="$t('label.type')">
-        <template #default="{ row }">
+        <template #default="{ row, $index }">
           <ElFormItem
             v-if="editable[row.id]"
-            :prop="`fields.${scope.$index}.type`"
+            :prop="`fields.${$index}.type`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
             <ElSelect
@@ -173,10 +173,10 @@ async function onSubmit(row: SectionField) {
         </template>
       </ElTableColumn>
       <ElTableColumn prop="length" :label="$t('label.length')">
-        <template #default="{ row }">
+        <template #default="{ row, $index }">
           <ElFormItem
             v-if="editable[row.id]"
-            :prop="`fields.${scope.$index}.length`"
+            :prop="`fields.${$index}.length`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
             <ElInput
@@ -198,9 +198,9 @@ async function onSubmit(row: SectionField) {
         </template>
       </ElTableColumn>
       <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
-        <template #default="{ row }">
+        <template #default="{ row, $index }">
           <div class="items-center w-15">
-            <template v-if="editable[scope.$index]">
+            <template v-if="editable[$index]">
               <ElButton
                 v-loading="saveLoading"
                 title="confirm"
@@ -222,7 +222,7 @@ async function onSubmit(row: SectionField) {
                 size="small"
                 type="danger"
                 plain
-                @click="cancelRow(scope.$index)"
+                @click="cancelRow($index)"
               >
                 <Icon
                   :icon="actionIcon('cancel')"
@@ -238,7 +238,7 @@ async function onSubmit(row: SectionField) {
                 size="small"
                 type="primary"
                 plain
-                @click="modifyRow(scope.$index)"
+                @click="modifyRow($index)"
               >
                 <Icon
                   :icon="actionIcon('modify')"

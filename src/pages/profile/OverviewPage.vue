@@ -6,7 +6,7 @@ import type { User } from "@/types";
 import { actionIcon, loadIcon } from "@/utils";
 import { modifyUser } from "@/api/system/users";
 import { useUserStore } from "@/stores/user";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

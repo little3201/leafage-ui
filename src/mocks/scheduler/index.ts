@@ -9,8 +9,7 @@ for (let i = 1; i < 28; i++) {
   const row: Scheduler = {
     id: i,
     name: "Name_" + i,
-    task: "Task_" + i,
-    corn: "0 0 0 0 0 0",
+    cronExpression: "0 0 0 0 0 0",
     enabled: i % 3 > 0
   };
   datas.push(row);
