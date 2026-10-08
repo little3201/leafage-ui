@@ -108,7 +108,7 @@ function initUniver(documentData: Partial<IDocumentData>) {
   const data = props.readOnly
     ? { ...documentData, disabled: true }
     : documentData;
-  univerAPI.createUniverDoc(data);
+  univerAPI.createDocument(data);
 
   univerInstance = univer;
   univerAPIInstance = univerAPI;
@@ -137,7 +137,7 @@ function save() {
   const document = univerAPIInstance.getActiveDocument();
   if (!document) return;
 
-  return document.getSnapshot();
+  return document.save();
 }
 </script>
 
