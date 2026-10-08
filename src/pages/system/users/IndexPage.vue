@@ -413,18 +413,18 @@ async function handleTransferRoleChange(
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="username" :label="$t('label.username')" sortable>
-        <template #default="scope">
+        <template #default="{ row }">
           <div class="flex items-center space-x-2">
             <ElAvatar
-              :alt="scope.row.fullName"
-              :src="`https://cdn.leafage.top/${scope.row.username}`"
+              :alt="row.fullName"
+              :src="`https://cdn.leafage.top/${row.username}`"
             />
             <div class="inline-flex flex-col">
               <span class="text-sm">
-                {{ scope.row.fullName }}
+                {{ row.fullName }}
               </span>
               <span class="text-xs text-(--el-text-color-secondary)">{{
-                scope.row.username
+                row.username
               }}</span>
             </div>
           </div>
@@ -436,9 +436,9 @@ async function handleTransferRoleChange(
         :label="$t('label.email')"
       />
       <ElTableColumn prop="roles" :label="$t('label.roles')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElTag
-            v-for="(item, index) in visibleArray<Role>(scope.row.roles, 3)"
+            v-for="(item, index) in visibleArray<Role>(row.roles, 3)"
             :key="index"
             type="primary"
             class="mr-2"
@@ -446,15 +446,15 @@ async function handleTransferRoleChange(
             {{ item.name }}
           </ElTag>
           <ElPopover
-            v-if="scope.row.roles && scope.row.roles.length > 3"
+            v-if="row.roles && row.roles.length > 3"
             placement="top-start"
             trigger="hover"
           >
             <template #reference>
-              <ElTag type="primary"> +{{ scope.row.roles.length - 3 }} </ElTag>
+              <ElTag type="primary"> +{{ row.roles.length - 3 }} </ElTag>
             </template>
             <ElTag
-              v-for="(item, index) in scope.row.roles.slice(3)"
+              v-for="(item, index) in row.roles.slice(3)"
               :key="index"
               :type="actionTypes[item]"
               class="mb-2 mr-2"
@@ -465,25 +465,25 @@ async function handleTransferRoleChange(
         </template>
       </ElTableColumn>
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-        <template #default="scope">
+        <template #default="{ row }">
           <ElBadge
             is-dot
-            :type="scope.row.enabled ? 'success' : 'info'"
+            :type="row.enabled ? 'success' : 'info'"
             class="mr-1"
           />
-          <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-            scope.row.enabled ? $t("label.yes") : $t("label.no")
+          <ElText :type="row.enabled ? 'success' : 'info'">{{
+            row.enabled ? $t("label.yes") : $t("label.no")
           }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
             title="modify"
             :type="actionTypes['modify']"
             link
-            @click="saveRow(scope.row)"
+            @click="saveRow(row)"
           >
             <Icon
               :icon="actionIcon('modify')"
@@ -492,11 +492,11 @@ async function handleTransferRoleChange(
             />{{ $t("action.modify") }}
           </ElButton>
           <ElButton
-            v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+            v-if="row.enabled && hasAction($route.name, 'disable')"
             title="disable"
             :type="actionTypes['disable']"
             link
-            @click="disableRow(scope.row)"
+            @click="disableRow(row)"
           >
             <Icon
               :icon="actionIcon('disable')"
@@ -509,7 +509,7 @@ async function handleTransferRoleChange(
             title="enable"
             :type="actionTypes['enable']"
             link
-            @click="enableRow(scope.row)"
+            @click="enableRow(row)"
           >
             <Icon
               :icon="actionIcon('enable')"
@@ -522,7 +522,7 @@ async function handleTransferRoleChange(
             title="roles"
             :type="actionTypes['role']"
             link
-            @click="configRole(scope.row.id)"
+            @click="configRole(row.id)"
           >
             <Icon :icon="actionIcon('role')" width="1.25em" height="1.25em" />
             {{ $t("action.role") }}
@@ -532,7 +532,7 @@ async function handleTransferRoleChange(
             title="remove"
             :type="actionTypes['remove']"
             link
-            @click="removeRow(scope.row.id, scope.row.username)"
+            @click="removeRow(row.id, row.username)"
           >
             <Icon
               :icon="actionIcon('remove')"

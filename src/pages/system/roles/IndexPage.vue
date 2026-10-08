@@ -385,25 +385,25 @@ async function onAuthorizeSubmit() {
       <ElTableColumn prop="name" :label="$t('label.name')" />
       <ElTableColumn prop="code" :label="$t('label.code')" />
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-        <template #default="scope">
+        <template #default="{ row }">
           <ElBadge
             is-dot
-            :type="scope.row.enabled ? 'success' : 'info'"
+            :type="row.enabled ? 'success' : 'info'"
             class="mr-1"
           />
-          <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-            scope.row.enabled ? $t("label.yes") : $t("label.no")
+          <ElText :type="row.enabled ? 'success' : 'info'">{{
+            row.enabled ? $t("label.yes") : $t("label.no")
           }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
             title="modify"
             :type="actionTypes['modify']"
             link
-            @click="saveRow(scope.row)"
+            @click="saveRow(row)"
           >
             <Icon
               :icon="actionIcon('modify')"
@@ -411,13 +411,13 @@ async function onAuthorizeSubmit() {
               height="1.25em"
             />{{ $t("action.modify") }}
           </ElButton>
-          <template v-if="!scope.row.builtIn">
+          <template v-if="!row.builtIn">
             <ElButton
-              v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+              v-if="row.enabled && hasAction($route.name, 'disable')"
               title="disable"
               :type="actionTypes['disable']"
               link
-              @click="disableRow(scope.row)"
+              @click="disableRow(row)"
             >
               <Icon
                 :icon="actionIcon('disable')"
@@ -430,7 +430,7 @@ async function onAuthorizeSubmit() {
               title="enable"
               :type="actionTypes['enable']"
               link
-              @click="enableRow(scope.row)"
+              @click="enableRow(row)"
             >
               <Icon
                 :icon="actionIcon('enable')"
@@ -443,7 +443,7 @@ async function onAuthorizeSubmit() {
               title="remove"
               :type="actionTypes['remove']"
               link
-              @click="removeRow(scope.row.id, scope.row.name)"
+              @click="removeRow(row.id, row.name)"
             >
               <Icon
                 :icon="actionIcon('remove')"
@@ -457,7 +457,7 @@ async function onAuthorizeSubmit() {
             title="authorize"
             :type="actionTypes['authorize']"
             link
-            @click="authorizeRow(scope.row.id)"
+            @click="authorizeRow(row.id)"
           >
             <Icon
               :icon="`material-symbols:${actionIcons['authorize']}-rounded`"

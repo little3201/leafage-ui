@@ -339,23 +339,18 @@ async function onSectionSave() {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="title" :label="$t('label.title')">
-        <template #default="scope">
-          <ElButton
-            title="details"
-            type="primary"
-            link
-            @click="showRow(scope.row)"
-          >
-            {{ scope.row.title }}
+        <template #default="{ row }">
+          <ElButton title="details" type="primary" link @click="showRow(row)">
+            {{ row.title }}
           </ElButton>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="version" :label="$t('label.version')">
-        <template #default="scope"> V{{ scope.row.version }} </template>
+        <template #default="{ row }"> V{{ row.version }} </template>
       </ElTableColumn>
       <ElTableColumn prop="schemaId" :label="$t('label.template')">
-        <template #default="scope">
-          {{ scope.row.schemaId ? formatSchemas(scope.row.schemaId) : "-" }}
+        <template #default="{ row }">
+          {{ row.schemaId ? formatSchemas(row.schemaId) : "-" }}
         </template>
       </ElTableColumn>
       <ElTableColumn prop="owner" :label="$t('label.owner')" />
@@ -364,22 +359,22 @@ async function onSectionSave() {
         :label="$t('label.lastModifiedDate')"
         sortable
       >
-        <template #default="scope">
+        <template #default="{ row }">
           {{
-            scope.row.lastModifiedDate
-              ? dayjs(scope.row.lastModifiedDate).format("YYYY-MM-DD HH:mm")
+            row.lastModifiedDate
+              ? dayjs(row.lastModifiedDate).format("YYYY-MM-DD HH:mm")
               : "-"
           }}
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
             title="modify"
             :type="actionTypes['modify']"
             link
-            @click="saveRow(scope.row)"
+            @click="saveRow(row)"
           >
             <Icon
               :icon="actionIcon('modify')"
@@ -392,7 +387,7 @@ async function onSectionSave() {
             title="section"
             :type="actionTypes['section']"
             link
-            @click="configSection(scope.row.id)"
+            @click="configSection(row.id)"
           >
             <Icon
               :icon="actionIcon('section')"
@@ -406,7 +401,7 @@ async function onSectionSave() {
             title="remove"
             :type="actionTypes['remove']"
             link
-            @click="removeRow(scope.row.id, scope.row.title)"
+            @click="removeRow(row.id, row.title)"
           >
             <Icon
               :icon="actionIcon('remove')"

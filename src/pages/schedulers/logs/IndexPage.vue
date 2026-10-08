@@ -224,20 +224,15 @@ async function clearRows() {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
-        <template #default="scope">
-          <ElButton
-            title="name"
-            type="primary"
-            link
-            @click="showRow(scope.row)"
-          >
-            {{ scope.row.name }}
+        <template #default="{ row }">
+          <ElButton title="name" type="primary" link @click="showRow(row)">
+            {{ row.name }}
           </ElButton>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="startTime" :label="$t('label.startTime')" sortable>
-        <template #default="scope">
-          {{ dayjs(scope.row.startTime).format("YYYY-MM-DD HH:mm") }}
+        <template #default="{ row }">
+          {{ dayjs(row.startTime).format("YYYY-MM-DD HH:mm") }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -246,21 +241,21 @@ async function clearRows() {
         align="center"
         sortable
       >
-        <template #default="scope">
-          <ElTag :type="shceduleStatus[scope.row.status]" round>
+        <template #default="{ row }">
+          <ElTag :type="shceduleStatus[row.status]" round>
             <Icon
-              :icon="loadIcon(shceduleStatusIcon[scope.row.status])"
-              :class="[scope.row.status === 'RUNNING' ? 'spin' : '', 'mr-1']"
+              :icon="loadIcon(shceduleStatusIcon[row.status])"
+              :class="[row.status === 'RUNNING' ? 'spin' : '', 'mr-1']"
               width="1.25em"
               height="1.25em"
             />
-            {{ scope.row.status }}
+            {{ row.status }}
           </ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="duration" :label="$t('label.duration')">
-        <template #default="scope">
-          {{ scope.row.duration ? formatDuration(scope.row.duration) : "-" }}
+        <template #default="{ row }">
+          {{ row.duration ? formatDuration(row.duration) : "-" }}
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -268,20 +263,18 @@ async function clearRows() {
         :label="$t('label.nextExecuteTime')"
         sortable
       >
-        <template #default="scope">
-          {{ dayjs(scope.row.nextExecuteTime).format("YYYY-MM-DD HH:mm") }}
+        <template #default="{ row }">
+          {{ dayjs(row.nextExecuteTime).format("YYYY-MM-DD HH:mm") }}
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'remove')"
             title="remove"
             :type="actionTypes['remove']"
             link
-            @click="
-              removeRow(scope.row.id, scope.row.name, scope.row.startTime)
-            "
+            @click="removeRow(row.id, row.name, row.startTime)"
           >
             <Icon
               :icon="actionIcon('remove')"

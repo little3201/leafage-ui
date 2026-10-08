@@ -370,22 +370,22 @@ function handleInputConfirm() {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
-        <template #default="scope">
+        <template #default="{ row }">
           <Icon
-            :icon="pageIcon(scope.row.name)"
+            :icon="pageIcon(row.name)"
             style="vertical-align: -3.5px"
             width="1.25em"
             height="1.25em"
             class="mr-2"
           />
-          {{ $t(`page.${scope.row.name}`) }}
+          {{ $t(`page.${row.name}`) }}
         </template>
       </ElTableColumn>
       <ElTableColumn prop="path" :label="$t('label.path')" />
       <ElTableColumn prop="actions" :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElTag
-            v-for="(item, index) in visibleArray<string>(scope.row.actions, 3)"
+            v-for="(item, index) in visibleArray<string>(row.actions, 3)"
             :key="index"
             :type="actionTypes[item]"
             class="mr-2"
@@ -399,17 +399,15 @@ function handleInputConfirm() {
             {{ $t(`action.${item}`) }}
           </ElTag>
           <ElPopover
-            v-if="scope.row.actions && scope.row.actions.length > 3"
+            v-if="row.actions && row.actions.length > 3"
             placement="top-start"
             trigger="hover"
           >
             <template #reference>
-              <ElTag type="primary">
-                +{{ scope.row.actions.length - 3 }}
-              </ElTag>
+              <ElTag type="primary"> +{{ row.actions.length - 3 }} </ElTag>
             </template>
             <ElTag
-              v-for="(item, index) in scope.row.actions.slice(3)"
+              v-for="(item, index) in row.actions.slice(3)"
               :key="index"
               :type="actionTypes[item]"
               class="mb-2 mr-2"
@@ -426,25 +424,25 @@ function handleInputConfirm() {
         </template>
       </ElTableColumn>
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-        <template #default="scope">
+        <template #default="{ row }">
           <ElBadge
             is-dot
-            :type="scope.row.enabled ? 'success' : 'info'"
+            :type="row.enabled ? 'success' : 'info'"
             class="mr-1"
           />
-          <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-            scope.row.enabled ? $t("label.yes") : $t("label.no")
+          <ElText :type="row.enabled ? 'success' : 'info'">{{
+            row.enabled ? $t("label.yes") : $t("label.no")
           }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
             title="modify"
             :type="actionTypes['modify']"
             link
-            @click="saveRow(scope.row)"
+            @click="saveRow(row)"
           >
             <Icon
               :icon="actionIcon('modify')"
@@ -453,11 +451,11 @@ function handleInputConfirm() {
             />{{ $t("action.modify") }}
           </ElButton>
           <ElButton
-            v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+            v-if="row.enabled && hasAction($route.name, 'disable')"
             title="disable"
             :type="actionTypes['disable']"
             link
-            @click="disableRow(scope.row)"
+            @click="disableRow(row)"
           >
             <Icon
               :icon="actionIcon('disable')"
@@ -470,7 +468,7 @@ function handleInputConfirm() {
             title="enable"
             :type="actionTypes['enable']"
             link
-            @click="enableRow(scope.row)"
+            @click="enableRow(row)"
           >
             <Icon
               :icon="actionIcon('enable')"

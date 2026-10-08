@@ -472,22 +472,22 @@ function onUploadError() {
             :label="$t('label.name')"
             sortable
           >
-            <template #default="scope">
+            <template #default="{ row }">
               <ElButton
                 title="name"
-                :type="scope.row.directory ? 'default' : 'primary'"
+                :type="row.directory ? 'default' : 'primary'"
                 link
-                @click="onRowClick(scope.row)"
+                @click="onRowClick(row)"
               >
                 <span>
-                  {{ scope.row.name }}
+                  {{ row.name }}
                 </span>
               </ElButton>
             </template>
           </ElTableColumn>
           <ElTableColumn prop="size" :label="$t('label.size')" sortable>
-            <template #default="scope">
-              {{ formatFileSize(scope.row.size) }}
+            <template #default="{ row }">
+              {{ formatFileSize(row.size) }}
             </template>
           </ElTableColumn>
           <ElTableColumn
@@ -496,14 +496,14 @@ function onUploadError() {
             :label="$t('label.contentType')"
           />
           <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-            <template #default="scope">
+            <template #default="{ row }">
               <ElBadge
                 is-dot
-                :type="scope.row.enabled ? 'success' : 'info'"
+                :type="row.enabled ? 'success' : 'info'"
                 class="mr-1"
               />
-              <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-                scope.row.enabled ? $t("label.yes") : $t("label.no")
+              <ElText :type="row.enabled ? 'success' : 'info'">{{
+                row.enabled ? $t("label.yes") : $t("label.no")
               }}</ElText>
             </template>
           </ElTableColumn>
@@ -513,23 +513,23 @@ function onUploadError() {
             :label="$t('label.lastModifiedDate')"
             sortable
           >
-            <template #default="scope">
+            <template #default="{ row }">
               {{
-                scope.row.lastModifiedDate
-                  ? dayjs(scope.row.lastModifiedDate).format("YYYY-MM-DD HH:mm")
+                row.lastModifiedDate
+                  ? dayjs(row.lastModifiedDate).format("YYYY-MM-DD HH:mm")
                   : "-"
               }}
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('label.actions')">
-            <template #default="scope">
-              <template v-if="scope.row.directory === false">
+            <template #default="{ row }">
+              <template v-if="row.directory === false">
                 <ElButton
-                  v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+                  v-if="row.enabled && hasAction($route.name, 'disable')"
                   title="disable"
                   :type="actionTypes['disable']"
                   link
-                  @click="disableRow(scope.row)"
+                  @click="disableRow(row)"
                 >
                   <Icon
                     :icon="actionIcon('disable')"
@@ -542,7 +542,7 @@ function onUploadError() {
                   title="enable"
                   :type="actionTypes['enable']"
                   link
-                  @click="enableRow(scope.row)"
+                  @click="enableRow(row)"
                 >
                   <Icon
                     :icon="actionIcon('enable')"
@@ -551,13 +551,11 @@ function onUploadError() {
                   />{{ $t("action.enable") }}
                 </ElButton>
                 <ElButton
-                  v-if="scope.row.enabled && hasAction($route.name, 'download')"
+                  v-if="row.enabled && hasAction($route.name, 'download')"
                   title="download"
                   type="success"
                   link
-                  @click="
-                    downloadRow(scope.row.id, scope.row.name, scope.row.type)
-                  "
+                  @click="downloadRow(row.id, row.name, row.type)"
                 >
                   <Icon
                     :icon="actionIcon('download')"
@@ -571,7 +569,7 @@ function onUploadError() {
                 title="remove"
                 :type="actionTypes['remove']"
                 link
-                @click="removeRow(scope.row.id, scope.row.name)"
+                @click="removeRow(row.id, row.name)"
               >
                 <Icon
                   :icon="actionIcon('remove')"

@@ -305,18 +305,18 @@ async function removeRow(id: number, username: string) {
     >
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="username" :label="$t('label.username')" sortable>
-        <template #default="scope">
+        <template #default="{ row }">
           <div class="flex items-center space-x-2">
             <ElAvatar
               alt="avatar"
-              :src="`https://cdn.leafage.top/${scope.row.username}`"
+              :src="`https://cdn.leafage.top/${row.username}`"
             />
             <div class="inline-flex flex-col">
               <span class="text-sm">
-                {{ scope.row.fullName }}
+                {{ row.fullName }}
               </span>
               <span class="text-xs text-(--el-text-color-secondary)">{{
-                scope.row.username
+                row.username
               }}</span>
             </div>
           </div>
@@ -328,25 +328,25 @@ async function removeRow(id: number, username: string) {
         :label="$t('label.email')"
       />
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-        <template #default="scope">
+        <template #default="{ row }">
           <ElBadge
             is-dot
-            :type="scope.row.enabled ? 'success' : 'info'"
+            :type="row.enabled ? 'success' : 'info'"
             class="mr-1"
           />
-          <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-            scope.row.enabled ? $t("label.yes") : $t("label.no")
+          <ElText :type="row.enabled ? 'success' : 'info'">{{
+            row.enabled ? $t("label.yes") : $t("label.no")
           }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
             title="modify"
             :type="actionTypes['modify']"
             link
-            @click="saveRow(scope.row)"
+            @click="saveRow(row)"
           >
             <Icon
               :icon="actionIcon('modify')"
@@ -355,11 +355,11 @@ async function removeRow(id: number, username: string) {
             />{{ $t("action.modify") }}
           </ElButton>
           <ElButton
-            v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+            v-if="row.enabled && hasAction($route.name, 'disable')"
             title="disable"
             :type="actionTypes['disable']"
             link
-            @click="disableRow(scope.row)"
+            @click="disableRow(row)"
           >
             <Icon
               :icon="actionIcon('disable')"
@@ -372,7 +372,7 @@ async function removeRow(id: number, username: string) {
             title="enable"
             :type="actionTypes['enable']"
             link
-            @click="enableRow(scope.row)"
+            @click="enableRow(row)"
           >
             <Icon
               :icon="actionIcon('enable')"
@@ -385,7 +385,7 @@ async function removeRow(id: number, username: string) {
             title="remove"
             :type="actionTypes['remove']"
             link
-            @click="removeRow(scope.row.id, scope.row.username)"
+            @click="removeRow(row.id, row.username)"
           >
             <Icon
               :icon="actionIcon('remove')"

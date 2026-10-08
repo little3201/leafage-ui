@@ -402,26 +402,21 @@ async function onSectionSave() {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
-        <template #default="scope">
-          <ElButton
-            title="details"
-            type="primary"
-            link
-            @click="showRow(scope.row)"
-          >
-            {{ scope.row.name }}
+        <template #default="{ row }">
+          <ElButton title="details" type="primary" link @click="showRow(row)">
+            {{ row.name }}
           </ElButton>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="type" :label="$t('label.type')">
-        <template #default="scope">
-          <ElTag :type="templateTypes[scope.row.type]">
-            {{ scope.row.type }}
+        <template #default="{ row }">
+          <ElTag :type="templateTypes[row.type]">
+            {{ row.type }}
           </ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="version" :label="$t('label.version')">
-        <template #default="scope"> V{{ scope.row.version }} </template>
+        <template #default="{ row }"> V{{ row.version }} </template>
       </ElTableColumn>
       <ElTableColumn
         prop="status"
@@ -429,22 +424,20 @@ async function onSectionSave() {
         align="center"
         sortable
       >
-        <template #default="scope">
-          <ElBadge is-dot :type="schemaStatus[scope.row.status]" class="mr-1" />
-          <ElText :type="schemaStatus[scope.row.status]">{{
-            scope.row.status
-          }}</ElText>
+        <template #default="{ row }">
+          <ElBadge is-dot :type="schemaStatus[row.status]" class="mr-1" />
+          <ElText :type="schemaStatus[row.status]">{{ row.status }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-        <template #default="scope">
+        <template #default="{ row }">
           <ElBadge
             is-dot
-            :type="scope.row.enabled ? 'success' : 'info'"
+            :type="row.enabled ? 'success' : 'info'"
             class="mr-1"
           />
-          <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-            scope.row.enabled ? $t("label.yes") : $t("label.no")
+          <ElText :type="row.enabled ? 'success' : 'info'">{{
+            row.enabled ? $t("label.yes") : $t("label.no")
           }}</ElText>
         </template>
       </ElTableColumn>
@@ -453,24 +446,24 @@ async function onSectionSave() {
         :label="$t('label.lastModifiedDate')"
         sortable
       >
-        <template #default="scope">
+        <template #default="{ row }">
           {{
-            scope.row.lastModifiedDate
-              ? dayjs(scope.row.lastModifiedDate).format("YYYY-MM-DD HH:mm")
+            row.lastModifiedDate
+              ? dayjs(row.lastModifiedDate).format("YYYY-MM-DD HH:mm")
               : "-"
           }}
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
-          <template v-if="scope.row.status !== 'ARCHIVED'">
-            <template v-if="scope.row.status === 'PUBLISHED'">
+        <template #default="{ row }">
+          <template v-if="row.status !== 'ARCHIVED'">
+            <template v-if="row.status === 'PUBLISHED'">
               <ElButton
-                v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+                v-if="row.enabled && hasAction($route.name, 'disable')"
                 title="disable"
                 :type="actionTypes['disable']"
                 link
-                @click="disableRow(scope.row)"
+                @click="disableRow(row)"
               >
                 <Icon
                   :icon="actionIcon('disable')"
@@ -483,7 +476,7 @@ async function onSectionSave() {
                 title="enable"
                 :type="actionTypes['enable']"
                 link
-                @click="enableRow(scope.row)"
+                @click="enableRow(row)"
               >
                 <Icon
                   :icon="actionIcon('enable')"
@@ -492,11 +485,11 @@ async function onSectionSave() {
                 />{{ $t("action.enable") }}
               </ElButton>
               <ElButton
-                v-if="scope.row.enabled && hasAction($route.name, 'archive')"
+                v-if="row.enabled && hasAction($route.name, 'archive')"
                 title="archive"
                 :type="actionTypes['archive']"
                 link
-                @click="archiveRow(scope.row.id)"
+                @click="archiveRow(row.id)"
               >
                 <Icon
                   :icon="actionIcon('archive')"
@@ -505,13 +498,13 @@ async function onSectionSave() {
                 />{{ $t("action.archive") }}
               </ElButton>
             </template>
-            <template v-if="scope.row.status === 'DRAFT'">
+            <template v-if="row.status === 'DRAFT'">
               <ElButton
                 v-if="hasAction($route.name, 'modify')"
                 title="modify"
                 :type="actionTypes['modify']"
                 link
-                @click="saveRow(scope.row)"
+                @click="saveRow(row)"
               >
                 <Icon
                   :icon="actionIcon('modify')"
@@ -520,11 +513,11 @@ async function onSectionSave() {
                 />{{ $t("action.modify") }}
               </ElButton>
               <ElButton
-                v-if="scope.row.enabled && hasAction($route.name, 'section')"
+                v-if="row.enabled && hasAction($route.name, 'section')"
                 title="section"
                 type="success"
                 link
-                @click="configSection(scope.row.id, scope.row.type)"
+                @click="configSection(row.id, row.type)"
               >
                 <Icon
                   :icon="actionIcon('section')"
@@ -533,11 +526,11 @@ async function onSectionSave() {
                 />{{ $t("action.section") }}
               </ElButton>
               <ElButton
-                v-if="scope.row.enabled && hasAction($route.name, 'publish')"
+                v-if="row.enabled && hasAction($route.name, 'publish')"
                 title="publish"
                 type="success"
                 link
-                @click="publishRow(scope.row)"
+                @click="publishRow(row)"
               >
                 <Icon
                   :icon="actionIcon('publish')"
@@ -550,7 +543,7 @@ async function onSectionSave() {
                 title="remove"
                 :type="actionTypes['remove']"
                 link
-                @click="removeRow(scope.row.id, scope.row.name)"
+                @click="removeRow(row.id, row.name)"
               >
                 <Icon
                   :icon="actionIcon('remove')"

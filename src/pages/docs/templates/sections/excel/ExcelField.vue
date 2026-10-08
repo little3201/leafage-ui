@@ -124,81 +124,81 @@ async function onSubmit(row: SectionField) {
     >
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="name" :label="$t('label.name')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElFormItem
-            v-if="editable[scope.row.id]"
+            v-if="editable[row.id]"
             :prop="`fields.${scope.$index}.name`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
-            <ElInput v-model="scope.row.name" style="width: 100px" />
+            <ElInput v-model="row.name" style="width: 100px" />
           </ElFormItem>
-          <span v-else>{{ scope.row.name }}</span>
+          <span v-else>{{ row.name }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="field" :label="$t('label.field')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElFormItem
-            v-if="editable[scope.row.id]"
+            v-if="editable[row.id]"
             :prop="`fields.${scope.$index}.field`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
             <ElInput
-              v-if="editable[scope.row.id]"
-              v-model="scope.row.field"
+              v-if="editable[row.id]"
+              v-model="row.field"
               style="width: 100px"
             />
-            <span v-else>{{ scope.row.field }}</span>
+            <span v-else>{{ row.field }}</span>
           </ElFormItem>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="type" :label="$t('label.type')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElFormItem
-            v-if="editable[scope.row.id]"
+            v-if="editable[row.id]"
             :prop="`fields.${scope.$index}.type`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
             <ElSelect
-              v-if="editable[scope.row.id]"
-              v-model="scope.row.type"
-              :disabled="scope.row.id !== null"
+              v-if="editable[row.id]"
+              v-model="row.type"
+              :disabled="row.id !== null"
               :options="fieldTypes"
               :placeholder="
                 $t('placeholder.selectText', { field: $t('label.type') })
               "
               style="width: 100px"
             />
-            <span v-else>{{ scope.row.type }}</span>
+            <span v-else>{{ row.type }}</span>
           </ElFormItem>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="length" :label="$t('label.length')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElFormItem
-            v-if="editable[scope.row.id]"
+            v-if="editable[row.id]"
             :prop="`fields.${scope.$index}.length`"
             :rules="[{ required: true, trigger: 'blur' }]"
           >
             <ElInput
-              v-if="editable[scope.row.id]"
-              v-model="scope.row.length"
+              v-if="editable[row.id]"
+              v-model="row.length"
               style="width: 100px"
             />
           </ElFormItem>
-          <span v-else>{{ scope.row.length }}</span>
+          <span v-else>{{ row.length }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="required" :label="$t('label.required')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElSwitch
-            :disabled="!editable[scope.row.id]"
-            v-model="scope.row.required"
+            :disabled="!editable[row.id]"
+            v-model="row.required"
             size="small"
           />
         </template>
       </ElTableColumn>
       <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <div class="items-center w-15">
             <template v-if="editable[scope.$index]">
               <ElButton
@@ -208,7 +208,7 @@ async function onSubmit(row: SectionField) {
                 size="small"
                 type="success"
                 plain
-                @click="onSubmit(scope.row)"
+                @click="onSubmit(row)"
               >
                 <Icon
                   :icon="actionIcon('submit')"
@@ -252,7 +252,7 @@ async function onSubmit(row: SectionField) {
                 size="small"
                 type="danger"
                 plain
-                @click="removeRow(scope.row.id, scope.row.name)"
+                @click="removeRow(row.id, row.name)"
               >
                 <Icon
                   :icon="actionIcon('remove')"

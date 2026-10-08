@@ -218,15 +218,11 @@ async function clearRows() {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="url" :label="$t('label.url')" sortable>
-        <template #default="scope">
-          <ElButton title="url" type="primary" link @click="showRow(scope.row)">
-            {{ scope.row.url }}
-            <ElTag
-              :type="httpTypes[scope.row.httpMethod]"
-              size="small"
-              class="ml-2"
-            >
-              {{ scope.row.httpMethod }}
+        <template #default="{ row }">
+          <ElButton title="url" type="primary" link @click="showRow(row)">
+            {{ row.url }}
+            <ElTag :type="httpTypes[row.httpMethod]" size="small" class="ml-2">
+              {{ row.httpMethod }}
             </ElTag>
           </ElButton>
         </template>
@@ -237,8 +233,8 @@ async function clearRows() {
         prop="params"
         :label="$t('label.params')"
       >
-        <template #default="scope">
-          <ElText class="w-56" truncated>{{ scope.row.params }}</ElText>
+        <template #default="{ row }">
+          <ElText class="w-56" truncated>{{ row.params }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -246,46 +242,44 @@ async function clearRows() {
         prop="body"
         :label="$t('label.request.body')"
       >
-        <template #default="scope">
-          <ElText class="w-56" truncated>{{ scope.row.body }}</ElText>
+        <template #default="{ row }">
+          <ElText class="w-56" truncated>{{ row.body }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="response" :label="$t('label.response')">
-        <template #default="scope">
-          <ElText class="w-56" truncated>{{ scope.row.response }}</ElText>
+        <template #default="{ row }">
+          <ElText class="w-56" truncated>{{ row.response }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
       <ElTableColumn prop="statusCode" :label="$t('label.statusCode')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElTag
-            v-if="scope.row.statusCode >= 200 && scope.row.statusCode < 300"
+            v-if="row.statusCode >= 200 && row.statusCode < 300"
             type="success"
             round
           >
-            {{ scope.row.statusCode }}
+            {{ row.statusCode }}
           </ElTag>
-          <ElTag v-else-if="scope.row.statusCode >= 500" type="warning" round>
-            {{ scope.row.statusCode }}
+          <ElTag v-else-if="row.statusCode >= 500" type="warning" round>
+            {{ row.statusCode }}
           </ElTag>
-          <ElTag v-else type="danger" round>{{ scope.row.statusCode }}</ElTag>
+          <ElTag v-else type="danger" round>{{ row.statusCode }}</ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="duration" :label="$t('label.duration')">
-        <template #default="scope">
-          {{ scope.row.duration ? formatDuration(scope.row.duration) : "-" }}
+        <template #default="{ row }">
+          {{ row.duration ? formatDuration(row.duration) : "-" }}
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'remove')"
             title="remove"
             :type="actionTypes['remove']"
             link
-            @click="
-              removeRow(scope.row.id, scope.row.httpMethod, scope.row.url)
-            "
+            @click="removeRow(row.id, row.httpMethod, row.url)"
           >
             <Icon
               :icon="actionIcon('remove')"

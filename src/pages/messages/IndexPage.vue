@@ -442,49 +442,42 @@ async function handleChange(value: string) {
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="title" :label="$t('label.title')" />
       <ElTableColumn prop="type" :label="$t('label.type')">
-        <template #default="scope">
-          <ElTag>{{ scope.row.type }}</ElTag>
+        <template #default="{ row }">
+          <ElTag>{{ row.type }}</ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="scope" :label="$t('label.scope')">
-        <template #default="scope">
-          <ElBadge
-            is-dot
-            :type="messageScopeTypes[scope.row.scope]"
-            class="mr-1"
-          />
-          <ElText :type="messageScopeTypes[scope.row.scope]">
-            {{ scope.row.scope }}
+        <template #default="{ row }">
+          <ElBadge is-dot :type="messageScopeTypes[row.scope]" class="mr-1" />
+          <ElText :type="messageScopeTypes[row.scope]">
+            {{ row.scope }}
           </ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="targets" :label="$t('label.targets')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElTag
-            v-for="(item, index) in visibleArray<MessageTarget>(
-              scope.row.targets,
-              3
-            )"
+            v-for="(item, index) in visibleArray<MessageTarget>(row.targets, 3)"
             :key="index"
-            :type="messageScopeTypes[scope.row.scope]"
+            :type="messageScopeTypes[row.scope]"
             class="mr-2"
           >
             {{ item.name }}
           </ElTag>
           <ElPopover
-            v-if="scope.row.targets && scope.row.targets.length > 3"
+            v-if="row.targets && row.targets.length > 3"
             placement="top-start"
             trigger="hover"
           >
             <template #reference>
-              <ElTag :type="messageScopeTypes[scope.row.scope]">
-                +{{ scope.row.targets.length - 3 }}
+              <ElTag :type="messageScopeTypes[row.scope]">
+                +{{ row.targets.length - 3 }}
               </ElTag>
             </template>
             <ElTag
-              v-for="(item, index) in scope.row.targets.slice(3)"
+              v-for="(item, index) in row.targets.slice(3)"
               :key="index"
-              :type="messageScopeTypes[scope.row.scope]"
+              :type="messageScopeTypes[row.scope]"
               class="mb-2 mr-2"
             >
               {{ item.name }}
@@ -503,35 +496,31 @@ async function handleChange(value: string) {
         align="center"
         sortable
       >
-        <template #default="scope">
-          <ElBadge
-            is-dot
-            :type="messageStatus[scope.row.status]"
-            class="mr-1"
-          />
-          <ElText :type="messageStatus[scope.row.status]">
-            {{ scope.row.status }}
+        <template #default="{ row }">
+          <ElBadge is-dot :type="messageStatus[row.status]" class="mr-1" />
+          <ElText :type="messageStatus[row.status]">
+            {{ row.status }}
           </ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="publishedAt" :label="$t('label.publishedAt')">
-        <template #default="scope">
+        <template #default="{ row }">
           {{
-            scope.row.publishedAt
-              ? dayjs(scope.row.publishedAt).format("YYYY-MM-DD HH:mm")
+            row.publishedAt
+              ? dayjs(row.publishedAt).format("YYYY-MM-DD HH:mm")
               : "-"
           }}
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
-          <template v-if="scope.row.status !== 'PUBLISHED'">
+        <template #default="{ row }">
+          <template v-if="row.status !== 'PUBLISHED'">
             <ElButton
               v-if="hasAction($route.name, 'modify')"
               title="modify"
               :type="actionTypes['modify']"
               link
-              @click="saveRow(scope.row)"
+              @click="saveRow(row)"
             >
               <Icon
                 :icon="actionIcon('modify')"
@@ -540,14 +529,11 @@ async function handleChange(value: string) {
               />{{ $t("action.modify") }}
             </ElButton>
             <ElButton
-              v-if="
-                scope.row.status === 'DRAFT' &&
-                hasAction($route.name, 'publish')
-              "
+              v-if="row.status === 'DRAFT' && hasAction($route.name, 'publish')"
               title="modify"
               :type="actionTypes['publish']"
               link
-              @click="publishRow(scope.row)"
+              @click="publishRow(row)"
             >
               <Icon
                 :icon="actionIcon('publish')"
@@ -560,9 +546,7 @@ async function handleChange(value: string) {
               title="remove"
               :type="actionTypes['remove']"
               link
-              @click="
-                removeRow(scope.row.id, scope.row.name, scope.row.startTime)
-              "
+              @click="removeRow(row.id, row.name, row.startTime)"
             >
               <Icon
                 :icon="actionIcon('remove')"
@@ -573,8 +557,8 @@ async function handleChange(value: string) {
           </template>
           <template
             v-if="
-              scope.row.status === 'PUBLISHED' &&
-              dayjs(new Date()).diff(scope.row.publishedAt, 'minute') <= 30
+              row.status === 'PUBLISHED' &&
+              dayjs(new Date()).diff(row.publishedAt, 'minute') <= 30
             "
           >
             <ElButton
@@ -582,7 +566,7 @@ async function handleChange(value: string) {
               title="revoke"
               :type="actionTypes['revoke']"
               link
-              @click="revokeRow(scope.row)"
+              @click="revokeRow(row)"
             >
               <Icon
                 :icon="actionIcon('revoke')"

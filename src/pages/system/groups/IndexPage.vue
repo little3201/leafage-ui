@@ -648,7 +648,7 @@ async function onAuthorizeSubmit() {
           <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
           <ElTableColumn prop="name" :label="$t('label.name')" />
           <ElTableColumn prop="members" :label="$t('label.members')">
-            <template #default="scope">
+            <template #default="{ row }">
               <div class="flex items-center">
                 <ElAvatarGroup
                   collapse-avatars
@@ -656,7 +656,7 @@ async function onAuthorizeSubmit() {
                   collapse-avatars-tooltip
                 >
                   <ElAvatar
-                    v-for="member in scope.row.members"
+                    v-for="member in row.members"
                     :key="member.id"
                     :alt="member.fullName"
                     :src="`https://cdn.leafage.top/${member.username}`"
@@ -666,9 +666,9 @@ async function onAuthorizeSubmit() {
             </template>
           </ElTableColumn>
           <ElTableColumn prop="roles" :label="$t('label.roles')">
-            <template #default="scope">
+            <template #default="{ row }">
               <ElTag
-                v-for="(item, index) in visibleArray<Role>(scope.row.roles, 3)"
+                v-for="(item, index) in visibleArray<Role>(row.roles, 3)"
                 :key="index"
                 type="primary"
                 class="mr-2"
@@ -676,17 +676,15 @@ async function onAuthorizeSubmit() {
                 {{ item.name }}
               </ElTag>
               <ElPopover
-                v-if="scope.row.roles && scope.row.roles.length > 3"
+                v-if="row.roles && row.roles.length > 3"
                 placement="top-start"
                 trigger="hover"
               >
                 <template #reference>
-                  <ElTag type="primary">
-                    +{{ scope.row.roles.length - 3 }}
-                  </ElTag>
+                  <ElTag type="primary"> +{{ row.roles.length - 3 }} </ElTag>
                 </template>
                 <ElTag
-                  v-for="(item, index) in scope.row.roles.slice(3)"
+                  v-for="(item, index) in row.roles.slice(3)"
                   :key="index"
                   :type="actionTypes[item]"
                   class="mb-2 mr-2"
@@ -697,25 +695,25 @@ async function onAuthorizeSubmit() {
             </template>
           </ElTableColumn>
           <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
-            <template #default="scope">
+            <template #default="{ row }">
               <ElBadge
                 is-dot
-                :type="scope.row.enabled ? 'success' : 'info'"
+                :type="row.enabled ? 'success' : 'info'"
                 class="mr-1"
               />
-              <ElText :type="scope.row.enabled ? 'success' : 'info'">{{
-                scope.row.enabled ? $t("label.yes") : $t("label.no")
+              <ElText :type="row.enabled ? 'success' : 'info'">{{
+                row.enabled ? $t("label.yes") : $t("label.no")
               }}</ElText>
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('label.actions')">
-            <template #default="scope">
+            <template #default="{ row }">
               <ElButton
                 v-if="hasAction($route.name, 'modify')"
                 title="modify"
                 :type="actionTypes['modify']"
                 link
-                @click="saveRow(scope.row)"
+                @click="saveRow(row)"
               >
                 <Icon
                   :icon="actionIcon('modify')"
@@ -724,11 +722,11 @@ async function onAuthorizeSubmit() {
                 />{{ $t("action.modify") }}
               </ElButton>
               <ElButton
-                v-if="scope.row.enabled && hasAction($route.name, 'disable')"
+                v-if="row.enabled && hasAction($route.name, 'disable')"
                 title="disable"
                 :type="actionTypes['disable']"
                 link
-                @click="disableRow(scope.row)"
+                @click="disableRow(row)"
               >
                 <Icon
                   :icon="actionIcon('disable')"
@@ -741,7 +739,7 @@ async function onAuthorizeSubmit() {
                 title="enable"
                 :type="actionTypes['enable']"
                 link
-                @click="enableRow(scope.row)"
+                @click="enableRow(row)"
               >
                 <Icon
                   :icon="actionIcon('enable')"
@@ -754,7 +752,7 @@ async function onAuthorizeSubmit() {
                 title="remove"
                 :type="actionTypes['remove']"
                 link
-                @click="removeRow(scope.row.id, scope.row.name)"
+                @click="removeRow(row.id, row.name)"
               >
                 <Icon
                   :icon="actionIcon('remove')"
@@ -765,7 +763,7 @@ async function onAuthorizeSubmit() {
               </ElButton>
               <ElDropdown
                 v-if="
-                  scope.row.enabled &&
+                  row.enabled &&
                   (hasAction($route.name, 'member') ||
                     hasAction($route.name, 'authorize'))
                 "
@@ -785,7 +783,7 @@ async function onAuthorizeSubmit() {
                       title="members"
                       :type="actionTypes['member']"
                       link
-                      @click="configMember(scope.row.id)"
+                      @click="configMember(row.id)"
                     >
                       <Icon
                         :icon="actionIcon('member')"
@@ -800,7 +798,7 @@ async function onAuthorizeSubmit() {
                       title="roles"
                       :type="actionTypes['role']"
                       link
-                      @click="configRole(scope.row.id)"
+                      @click="configRole(row.id)"
                     >
                       <Icon
                         :icon="actionIcon('role')"
@@ -815,7 +813,7 @@ async function onAuthorizeSubmit() {
                       title="authorize"
                       :type="actionTypes['authorize']"
                       link
-                      @click="authorizeRow(scope.row.id)"
+                      @click="authorizeRow(row.id)"
                     >
                       <Icon
                         :icon="`material-symbols:${actionIcons['authorize']}-rounded`"

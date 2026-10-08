@@ -115,19 +115,19 @@ async function onSubmit(row: SectionData) {
         :prop="field.field"
         :label="field.name"
       >
-        <template #default="scope">
+        <template #default="{ row }">
           <ElFormItem
-            v-if="editable[scope.row.id]"
-            :prop="`fields.${scope.$index}.${scope.row.data[field.field]}`"
-            :rules="[{ required: scope.row.required, trigger: 'blur' }]"
+            v-if="editable[row.id]"
+            :prop="`fields.${scope.$index}.${row.data[field.field]}`"
+            :rules="[{ required: row.required, trigger: 'blur' }]"
           >
-            <ElInput v-model="scope.row.data[field.field]" />
+            <ElInput v-model="row.data[field.field]" />
           </ElFormItem>
-          <span v-else>{{ scope.row.data[field.field] }}</span>
+          <span v-else>{{ row.data[field.field] }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn v-if="!readOnly" :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <div class="items-center w-15">
             <ElButton
               title="remove"
@@ -135,7 +135,7 @@ async function onSubmit(row: SectionData) {
               size="small"
               type="danger"
               plain
-              @click="removeRow(scope.row.id)"
+              @click="removeRow(row.id)"
             >
               <Icon
                 :icon="actionIcon('cancel')"
@@ -144,14 +144,14 @@ async function onSubmit(row: SectionData) {
               />
             </ElButton>
             <ElButton
-              v-if="editable[scope.row.id]"
+              v-if="editable[row.id]"
               v-loading="saveLoading"
               title="confirm"
               circle
               size="small"
               type="success"
               plain
-              @click="onSubmit(scope.row)"
+              @click="onSubmit(row)"
             >
               <Icon
                 :icon="actionIcon('submit')"
@@ -166,7 +166,7 @@ async function onSubmit(row: SectionData) {
               size="small"
               type="primary"
               plain
-              @click="modifyRow(scope.row.id)"
+              @click="modifyRow(row.id)"
             >
               <Icon
                 :icon="actionIcon('modify')"

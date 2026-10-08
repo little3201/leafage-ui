@@ -150,22 +150,17 @@ function showRow(row: AuditLog) {
     >
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="module" :label="$t('label.module')" sortable>
-        <template #default="scope">
-          <ElButton
-            title="module"
-            type="primary"
-            link
-            @click="showRow(scope.row)"
-          >
-            {{ $t(`page.${scope.row.module}`) }}
+        <template #default="{ row }">
+          <ElButton title="module" type="primary" link @click="showRow(row)">
+            {{ $t(`page.${row.module}`) }}
           </ElButton>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="action" :label="$t('label.actions')" sortable>
-        <template #default="scope">
-          <ElBadge is-dot :type="actionTypes[scope.row.action]" class="mr-1" />
-          <ElText :type="actionTypes[scope.row.action]">{{
-            $t(`action.${scope.row.action}`)
+        <template #default="{ row }">
+          <ElBadge is-dot :type="actionTypes[row.action]" class="mr-1" />
+          <ElText :type="actionTypes[row.action]">{{
+            $t(`action.${row.action}`)
           }}</ElText>
         </template>
       </ElTableColumn>
@@ -175,8 +170,8 @@ function showRow(row: AuditLog) {
         prop="oldValue"
         :label="$t('label.oldValue')"
       >
-        <template #default="scope">
-          <ElText class="w-56" truncated>{{ scope.row.oldValue }}</ElText>
+        <template #default="{ row }">
+          <ElText class="w-56" truncated>{{ row.oldValue }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -184,30 +179,27 @@ function showRow(row: AuditLog) {
         prop="newValue"
         :label="$t('label.newValue')"
       >
-        <template #default="scope">
-          <ElText class="w-56" truncated>{{ scope.row.newValue }}</ElText>
+        <template #default="{ row }">
+          <ElText class="w-56" truncated>{{ row.newValue }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
       <ElTableColumn prop="status" :label="$t('label.status')" sortable>
-        <template #default="scope">
-          <ElTag
-            :type="scope.row.status === 'SUCCEED' ? 'success' : 'danger'"
-            round
-          >
+        <template #default="{ row }">
+          <ElTag :type="row.status === 'SUCCEED' ? 'success' : 'danger'" round>
             <Icon
-              :icon="loadIcon(logStatusIcon[scope.row.status])"
+              :icon="loadIcon(logStatusIcon[row.status])"
               class="mr-1"
               width="1.25em"
               height="1.25em"
             />
-            {{ scope.row.status }}
+            {{ row.status }}
           </ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="duration" :label="$t('label.duration')">
-        <template #default="scope">
-          {{ formatDuration(scope.row.duration) }}
+        <template #default="{ row }">
+          {{ formatDuration(row.duration) }}
         </template>
       </ElTableColumn>
     </ElTable>

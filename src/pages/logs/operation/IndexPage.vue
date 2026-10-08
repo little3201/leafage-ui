@@ -225,14 +225,9 @@ async function clearRows() {
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
       <ElTableColumn prop="module" :label="$t('label.module')" sortable>
-        <template #default="scope">
-          <ElButton
-            title="module"
-            type="primary"
-            link
-            @click="showRow(scope.row)"
-          >
-            {{ $t(`page.${scope.row.module}`) }}
+        <template #default="{ row }">
+          <ElButton title="module" type="primary" link @click="showRow(row)">
+            {{ $t(`page.${row.module}`) }}
           </ElButton>
         </template>
       </ElTableColumn>
@@ -242,10 +237,10 @@ async function clearRows() {
         :label="$t('label.actions')"
         sortable
       >
-        <template #default="scope">
-          <ElBadge is-dot :type="actionTypes[scope.row.action]" class="mr-1" />
-          <ElText :type="actionTypes[scope.row.action]">{{
-            $t(`action.${scope.row.action}`)
+        <template #default="{ row }">
+          <ElBadge is-dot :type="actionTypes[row.action]" class="mr-1" />
+          <ElText :type="actionTypes[row.action]">{{
+            $t(`action.${row.action}`)
           }}</ElText>
         </template>
       </ElTableColumn>
@@ -255,38 +250,31 @@ async function clearRows() {
         :label="$t('label.targetId')"
       />
       <ElTableColumn prop="params" :label="$t('label.params')">
-        <template #default="scope">
-          <ElText class="w-20 2xl:w-56" truncated>{{
-            scope.row.params
-          }}</ElText>
+        <template #default="{ row }">
+          <ElText class="w-20 2xl:w-56" truncated>{{ row.params }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="response" :label="$t('label.response')">
-        <template #default="scope">
-          <ElText class="w-20 2xl:w-56" truncated>{{
-            scope.row.response
-          }}</ElText>
+        <template #default="{ row }">
+          <ElText class="w-20 2xl:w-56" truncated>{{ row.response }}</ElText>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="status" :label="$t('label.status')" sortable>
-        <template #default="scope">
-          <ElTag
-            :type="scope.row.status == 'SUCCEED' ? 'success' : 'warning'"
-            round
-          >
+        <template #default="{ row }">
+          <ElTag :type="row.status == 'SUCCEED' ? 'success' : 'warning'" round>
             <Icon
-              :icon="loadIcon(logStatusIcon[scope.row.status])"
+              :icon="loadIcon(logStatusIcon[row.status])"
               class="mr-1"
               width="1.25em"
               height="1.25em"
             />
-            {{ scope.row.status }}
+            {{ row.status }}
           </ElTag>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="duration" :label="$t('label.duration')">
-        <template #default="scope">
-          {{ scope.row.duration ? formatDuration(scope.row.duration) : "-" }}
+        <template #default="{ row }">
+          {{ row.duration ? formatDuration(row.duration) : "-" }}
         </template>
       </ElTableColumn>
       <ElTableColumn prop="operator" :label="$t('label.operator')" sortable />
@@ -296,22 +284,22 @@ async function clearRows() {
         :label="$t('label.operatedAt')"
         sortable
       >
-        <template #default="scope">
+        <template #default="{ row }">
           {{
-            scope.row.operatedAt
-              ? dayjs(scope.row.operatedAt).format("YYYY-MM-DD HH:mm")
+            row.operatedAt
+              ? dayjs(row.operatedAt).format("YYYY-MM-DD HH:mm")
               : "-"
           }}
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('label.actions')">
-        <template #default="scope">
+        <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'remove')"
             title="remove"
             :type="actionTypes['remove']"
             link
-            @click="removeRow(scope.row.id, scope.row.module, scope.row.action)"
+            @click="removeRow(row.id, row.module, row.action)"
           >
             <Icon
               :icon="actionIcon('remove')"
