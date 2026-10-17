@@ -75,7 +75,6 @@ function initUniver(workbookData: Partial<IWorkbookData>) {
 
   // 重新创建
   const { univer, univerAPI } = createUniver({
-    darkMode: theme.value === "dark",
     locale: locales[locale.value] || LocaleType.ZH_CN,
     locales: {
       [LocaleType.ZH_CN]: mergeLocales(UniverPresetSheetsCoreZhCN),
@@ -92,6 +91,7 @@ function initUniver(workbookData: Partial<IWorkbookData>) {
   });
 
   univerAPI.createWorkbook(workbookData || {});
+  univerAPI.toggleDarkMode(theme.value === "dark");
 
   univerInstance = univer;
   univerAPIInstance = univerAPI;
