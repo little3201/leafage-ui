@@ -80,10 +80,10 @@ watch(
 /**
  * tree过滤
  */
-const filterNode = (value: string, data: { [key: string]: string }) => {
+function filterNode(value: string, data: { [key: string]: string }) {
   if (!value) return true;
   return data.name?.includes(value) ?? false;
-};
+}
 
 /**
  * node 变化

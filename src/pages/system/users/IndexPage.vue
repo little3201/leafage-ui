@@ -39,6 +39,7 @@ const pagination = reactive<Pagination>({
   page: 1,
   size: 10
 });
+const avatarUrl = "http://cdn.leafage.top";
 
 const saveLoading = ref<boolean>(false);
 const visible = ref<boolean>(false);
@@ -90,6 +91,10 @@ const rules = reactive<FormRules<typeof form>>({
 onMounted(async () => {
   await load();
 });
+
+function getAvatarUrl(username: string) {
+  return `${avatarUrl}/${username}`;
+}
 
 /**
  * 分页变化
@@ -415,10 +420,7 @@ async function handleTransferRoleChange(
       <ElTableColumn prop="username" :label="$t('label.username')">
         <template #default="{ row }">
           <div class="flex items-center space-x-2">
-            <ElAvatar
-              :alt="row.fullName"
-              :src="`https://cdn.leafage.top/${row.username}`"
-            />
+            <ElAvatar :src="getAvatarUrl(row.username)" />
             <div class="inline-flex flex-col">
               <span class="text-sm">
                 {{ row.fullName }}

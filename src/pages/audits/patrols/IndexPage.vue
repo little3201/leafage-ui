@@ -31,6 +31,7 @@ const pagination = reactive<Pagination>({
   size: 10,
   descending: true
 });
+const avatarUrl = "http://cdn.leafage.top";
 
 const filter = reactive<Filter<SafetyPatrol>>({
   username: { op: "eq", value: undefined }
@@ -73,6 +74,10 @@ const rules = reactive<FormRules<typeof form>>({
 onMounted(async () => {
   await load();
 });
+
+function getAvatarUrl(username: string) {
+  return `${avatarUrl}/${username}`;
+}
 
 /**
  * 分页变化
@@ -307,10 +312,7 @@ async function removeRow(id: number, username: string) {
       <ElTableColumn prop="username" :label="$t('label.username')" sortable>
         <template #default="{ row }">
           <div class="flex items-center space-x-2">
-            <ElAvatar
-              alt="avatar"
-              :src="`https://cdn.leafage.top/${row.username}`"
-            />
+            <ElAvatar :alt="row.fullName" :src="getAvatarUrl(row.username)" />
             <div class="inline-flex flex-col">
               <span class="text-sm">
                 {{ row.fullName }}

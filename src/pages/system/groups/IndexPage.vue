@@ -58,6 +58,7 @@ const pagination = reactive<Pagination>({
   page: 1,
   size: 10
 });
+const avatarUrl = "http://cdn.leafage.top";
 
 const treeRef = ref<TreeInstance>();
 const treeLoading = ref<boolean>(false);
@@ -119,13 +120,17 @@ watch(
   }
 );
 
+function getAvatarUrl(username: string) {
+  return `${avatarUrl}/${username}`;
+}
+
 /**
  * tree过滤
  */
-const filterNode = (value: string, data: { [key: string]: string }) => {
+function filterNode(value: string, data: { [key: string]: string }) {
   if (!value) return true;
   return data.name?.includes(value) ?? false;
-};
+}
 
 /**
  * node 变化
@@ -664,7 +669,7 @@ async function onAuthorizeSubmit() {
                     v-for="member in row.members"
                     :key="member.id"
                     :alt="member.fullName"
-                    :src="`https://cdn.leafage.top/${member.username}`"
+                    :src="getAvatarUrl(member.username)"
                   />
                 </ElAvatarGroup>
               </div>
