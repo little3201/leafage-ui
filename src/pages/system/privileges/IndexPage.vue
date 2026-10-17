@@ -435,7 +435,7 @@ function handleInputConfirm() {
           }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')">
+      <ElTableColumn :label="$t('label.actions')" width="140">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"

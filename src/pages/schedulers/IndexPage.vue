@@ -309,7 +309,7 @@ async function removeRow(id: number, name: string, startTime: string) {
           }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')">
+      <ElTableColumn :label="$t('label.actions')" width="200">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"

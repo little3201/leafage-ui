@@ -412,7 +412,7 @@ async function handleTransferRoleChange(
     >
       <ElTableColumn type="selection" />
       <ElTableColumn type="index" :label="$t('label.serial')" width="55" />
-      <ElTableColumn prop="username" :label="$t('label.username')" sortable>
+      <ElTableColumn prop="username" :label="$t('label.username')">
         <template #default="{ row }">
           <div class="flex items-center space-x-2">
             <ElAvatar
@@ -476,7 +476,7 @@ async function handleTransferRoleChange(
           }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')">
+      <ElTableColumn :label="$t('label.actions')" width="280">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"

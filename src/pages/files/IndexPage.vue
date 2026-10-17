@@ -521,7 +521,7 @@ function onUploadError() {
               }}
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('label.actions')">
+          <ElTableColumn :label="$t('label.actions')" width="200">
             <template #default="{ row }">
               <template v-if="row.directory === false">
                 <ElButton

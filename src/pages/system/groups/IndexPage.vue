@@ -131,16 +131,21 @@ const filterNode = (value: string, data: { [key: string]: string }) => {
  * node 变化
  * @param data node节点
  */
-async function onCurrentChange(data: TreeNode) {
+async function onNodeClick(data: TreeNode) {
   if (treeSelected.value === String(data.id)) {
-    return;
+    treeSelected.value = "";
+    filter.superiorId = {
+      op: "eq",
+      value: null
+    };
+  } else {
+    treeSelected.value = String(data.id);
+    filter.superiorId = {
+      op: "eq",
+      value: data.id
+    };
   }
-  treeSelected.value = String(data.id);
-  if (filter.superiorId) {
-    filter.superiorId.value = treeSelected.value
-      ? Number(treeSelected.value)
-      : null;
-  }
+
   pagination.page = 1;
   await load();
 }
@@ -545,7 +550,7 @@ async function onAuthorizeSubmit() {
           highlight-current
           :props="{ label: 'name', isLeaf: 'isLeaf' }"
           :filter-node-method="filterNode"
-          @current-change="onCurrentChange"
+          @node-click="onNodeClick"
         >
         </ElTree>
       </ElCard>
@@ -706,7 +711,7 @@ async function onAuthorizeSubmit() {
               }}</ElText>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('label.actions')">
+          <ElTableColumn :label="$t('label.actions')" width="280">
             <template #default="{ row }">
               <ElButton
                 v-if="hasAction($route.name, 'modify')"

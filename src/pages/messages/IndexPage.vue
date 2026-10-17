@@ -381,7 +381,7 @@ async function onSubmit(formEl: FormInstance) {
  * select change
  * @param value selected value
  */
-async function handleChange(value: string) {
+async function onChange(value: string) {
   form.value.targets = [];
   if (value !== "ALL") {
     searchTargets("");
@@ -512,7 +512,7 @@ async function handleChange(value: string) {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')">
+      <ElTableColumn :label="$t('label.actions')" width="200">
         <template #default="{ row }">
           <template v-if="row.status !== 'PUBLISHED'">
             <ElButton
@@ -631,7 +631,7 @@ async function handleChange(value: string) {
             <ElSelect
               v-model="form.scope"
               :disabled="form.id != undefined"
-              @change="handleChange"
+              @change="onChange"
             >
               <ElOption
                 v-for="(_, value) in messageScopeTypes"

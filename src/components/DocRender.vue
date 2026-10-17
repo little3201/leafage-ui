@@ -79,6 +79,7 @@ function initUniver(documentData: Partial<IDocumentData>) {
 
   // 重新创建
   const { univer, univerAPI } = createUniver({
+    darkMode: theme.value === "dark",
     locale: locales[locale.value] || LocaleType.ZH_CN,
     locales: {
       [LocaleType.ZH_CN]: mergeLocales(
@@ -108,7 +109,6 @@ function initUniver(documentData: Partial<IDocumentData>) {
     ? { ...documentData, disabled: true }
     : documentData;
   univerAPI.createDocument(data);
-  univerAPI.toggleDarkMode(theme.value === "dark");
 
   univerInstance = univer;
   univerAPIInstance = univerAPI;

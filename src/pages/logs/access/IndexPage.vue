@@ -272,7 +272,7 @@ async function clearRows() {
           {{ row.duration ? formatDuration(row.duration) : "-" }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')">
+      <ElTableColumn :label="$t('label.actions')" width="50">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'remove')"
