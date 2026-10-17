@@ -58,7 +58,7 @@ const pagination = reactive<Pagination>({
   page: 1,
   size: 10
 });
-const avatarUrl = "http://cdn.leafage.top";
+const avatarUrl = "http://cdn.leafage.top/";
 
 const treeRef = ref<TreeInstance>();
 const treeLoading = ref<boolean>(false);
@@ -119,10 +119,6 @@ watch(
     treeRef.value!.filter(val);
   }
 );
-
-function getAvatarUrl(username: string) {
-  return `${avatarUrl}/${username}`;
-}
 
 /**
  * tree过滤
@@ -669,7 +665,7 @@ async function onAuthorizeSubmit() {
                     v-for="member in row.members"
                     :key="member.id"
                     :alt="member.fullName"
-                    :src="getAvatarUrl(member.username)"
+                    :src="avatarUrl + member.username"
                   />
                 </ElAvatarGroup>
               </div>
