@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useEventListener } from "@vueuse/core";
-import type { ApexChart, ApexOptions, ApexLocale } from "apexcharts";
+import type { ApexOptions, ApexLocale } from "apexcharts";
 import en from "apexcharts/dist/locales/en.json";
 import zhCN from "apexcharts/dist/locales/zh-cn.json";
 import zhTW from "apexcharts/dist/locales/zh-tw.json";
@@ -32,7 +32,7 @@ const props = withDefaults(
 );
 
 const elRef = ref<HTMLElement | null>(null);
-let chart: ApexChart | null = null;
+let chart: InstanceType<typeof ApexCharts> | null = null;
 
 const { theme, locale } = storeToRefs(appStore);
 const isDark = ref<boolean>(

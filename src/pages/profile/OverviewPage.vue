@@ -18,7 +18,7 @@ const form = ref({ ...user });
 const editing = ref<keyof User | null>(null);
 
 const items = [
-  { name: "Github", link: null },
+  { name: "Github", link: "#" },
   { name: "Gitee", link: "example@example.com" }
 ];
 
@@ -164,8 +164,8 @@ async function save() {
     <h3>Third accouts authorize</h3>
     <ul class="mt-4 pl-0">
       <li
-        v-for="item in items"
-        :key="item.name"
+        v-for="(item, index) in items"
+        :key="index"
         class="flex justify-between p-4 hover:bg-neutral-200 rounded-md"
       >
         <div>
@@ -178,12 +178,9 @@ async function save() {
                 height="1.25em"
                 class="mx-3"
               />
-              <ElLink
-                type="primary"
-                href="https://www.gitee.com/"
-                target="_blank"
-                >{{ item.link }}</ElLink
-              >
+              <ElLink type="primary" :href="item.link" target="_blank">{{
+                item.link
+              }}</ElLink>
             </template>
           </div>
           <p class="mb-0 mt-1 text-xs text-(--el-text-color-secondary)">
@@ -194,9 +191,9 @@ async function save() {
             }}
           </p>
         </div>
-        <ElButton link :type="item.link ? 'danger' : 'primary'">{{
-          item.link ? "解绑" : "绑定"
-        }}</ElButton>
+        <ElButton link :type="item.link ? 'danger' : 'primary'">
+          {{ item.link ? "解绑" : "绑定" }}
+        </ElButton>
       </li>
     </ul>
   </div>

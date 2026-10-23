@@ -109,7 +109,7 @@ function logout() {
           class="mr-2"
         />{{ $t("page.home") }}
       </ElMenuItem>
-      <template v-for="link in userStore.privileges" :key="link.id">
+      <template v-for="(link, index) in userStore.privileges" :key="index">
         <EssentialList
           v-if="link.children && link.children.length > 0"
           :essentialLink="link"

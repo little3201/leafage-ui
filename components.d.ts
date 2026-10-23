@@ -11,6 +11,7 @@ export {};
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AvatarTest: typeof import('./src/components/AvatarTest.vue')['default']
     CalendarEvent: typeof import('./src/components/CalendarEvent.vue')['default']
     ChartView: typeof import('./src/components/ChartView.vue')['default']
     CodeRender: typeof import('./src/components/CodeRender.vue')['default']

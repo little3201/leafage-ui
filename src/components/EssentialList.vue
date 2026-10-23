@@ -25,7 +25,7 @@ withDefaults(
       />
       {{ $t(`page.${essentialLink.name}`) }}
     </template>
-    <template v-for="link in essentialLink.children" :key="link.id">
+    <template v-for="(link, index) in essentialLink.children" :key="index">
       <EssentialList
         v-if="link.children && link.children.length > 0"
         :essentialLink="link"
