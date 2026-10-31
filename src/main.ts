@@ -11,10 +11,10 @@ import "element-plus/theme-chalk/src/message.scss";
 import { i18n } from "./boot/i18n";
 import router from "./router";
 import pinia from "./stores";
-import { prepareApp } from "./boot/msw-browser";
+import { enableMock } from "./boot/msw-browser";
 
-if (import.meta.env.DEV) {
-  await prepareApp();
+if (!import.meta.env.DEV) {
+  await enableMock();
 }
 
 const app = createApp(App);
