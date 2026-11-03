@@ -370,7 +370,7 @@ function formatSchemas(cellValue: number): string {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="240">
+      <ElTableColumn :label="$t('label.actions')" width="250">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"

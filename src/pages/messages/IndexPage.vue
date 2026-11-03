@@ -512,7 +512,7 @@ async function onChange(value: string) {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="260">
+      <ElTableColumn :label="$t('label.actions')" width="270">
         <template #default="{ row }">
           <template v-if="row.status !== 'PUBLISHED'">
             <ElButton

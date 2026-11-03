@@ -496,7 +496,7 @@ function onUpload(options: UploadRequestOptions) {
           </ElTableColumn>
           <ElTableColumn
             :label="$t('label.actions')"
-            :width="filter.superiorId?.value ? 260 : 50"
+            :width="filter.superiorId?.value ? 270 : 50"
           >
             <template #default="{ row }">
               <ElButton

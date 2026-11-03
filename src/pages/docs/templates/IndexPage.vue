@@ -455,7 +455,7 @@ async function onSectionSave() {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="240">
+      <ElTableColumn :label="$t('label.actions')" width="250">
         <template #default="{ row }">
           <template v-if="row.status !== 'ARCHIVED'">
             <template v-if="row.status === 'PUBLISHED'">
