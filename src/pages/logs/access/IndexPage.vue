@@ -246,11 +246,6 @@ async function clearRows() {
           <ElText class="w-56" truncated>{{ row.body }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="response" :label="$t('label.response')">
-        <template #default="{ row }">
-          <ElText class="w-56" truncated>{{ row.response }}</ElText>
-        </template>
-      </ElTableColumn>
       <ElTableColumn prop="ip" :label="$t('label.ip')" sortable />
       <ElTableColumn prop="statusCode" :label="$t('label.statusCode')">
         <template #default="{ row }">
@@ -272,7 +267,7 @@ async function clearRows() {
           {{ row.duration ? formatDuration(row.duration) : "-" }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="50">
+      <ElTableColumn :label="$t('label.actions')" width="100">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'remove')"

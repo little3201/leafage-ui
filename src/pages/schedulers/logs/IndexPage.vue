@@ -267,7 +267,7 @@ async function clearRows() {
           {{ dayjs(row.nextExecuteTime).format("YYYY-MM-DD HH:mm") }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="50">
+      <ElTableColumn :label="$t('label.actions')" width="100">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'remove')"

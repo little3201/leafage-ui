@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import type {
+  ElDropdownItem,
   FormInstance,
   FormRules,
   TableInstance,
@@ -454,7 +455,7 @@ async function onSectionSave() {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="140">
+      <ElTableColumn :label="$t('label.actions')" width="240">
         <template #default="{ row }">
           <template v-if="row.status !== 'ARCHIVED'">
             <template v-if="row.status === 'PUBLISHED'">
@@ -513,32 +514,6 @@ async function onSectionSave() {
                 />{{ $t("action.modify") }}
               </ElButton>
               <ElButton
-                v-if="row.enabled && hasAction($route.name, 'section')"
-                title="section"
-                type="success"
-                link
-                @click="configSection(row.id, row.type)"
-              >
-                <Icon
-                  :icon="actionIcon('section')"
-                  width="1.25em"
-                  height="1.25em"
-                />{{ $t("action.section") }}
-              </ElButton>
-              <ElButton
-                v-if="row.enabled && hasAction($route.name, 'publish')"
-                title="publish"
-                type="success"
-                link
-                @click="publishRow(row)"
-              >
-                <Icon
-                  :icon="actionIcon('publish')"
-                  width="1.25em"
-                  height="1.25em"
-                />{{ $t("action.publish") }}
-              </ElButton>
-              <ElButton
                 v-if="hasAction($route.name, 'remove')"
                 title="remove"
                 :type="actionTypes['remove']"
@@ -551,6 +526,45 @@ async function onSectionSave() {
                   height="1.25em"
                 />{{ $t("action.remove") }}
               </ElButton>
+              <ElDropdown v-if="row.enabled" trigger="click" class="ml-2">
+                <ElButton link>
+                  <Icon
+                    :icon="actionIcon('more')"
+                    width="1.25em"
+                    height="1.25em"
+                  />{{ $t("action.more") }}
+                </ElButton>
+                <template #dropdown>
+                  <ElDropdownItem v-if="hasAction($route.name, 'section')">
+                    <ElButton
+                      title="section"
+                      type="success"
+                      link
+                      @click="configSection(row.id, row.type)"
+                    >
+                      <Icon
+                        :icon="actionIcon('section')"
+                        width="1.25em"
+                        height="1.25em"
+                      />{{ $t("action.section") }}
+                    </ElButton>
+                  </ElDropdownItem>
+                  <ElDropdownItem v-if="hasAction($route.name, 'publish')">
+                    <ElButton
+                      title="publish"
+                      type="success"
+                      link
+                      @click="publishRow(row)"
+                    >
+                      <Icon
+                        :icon="actionIcon('publish')"
+                        width="1.25em"
+                        height="1.25em"
+                      />{{ $t("action.publish") }}
+                    </ElButton>
+                  </ElDropdownItem>
+                </template>
+              </ElDropdown>
             </template>
           </template>
         </template>

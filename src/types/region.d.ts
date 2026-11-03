@@ -4,7 +4,7 @@ export interface Region extends AudtiMetadata {
   name: string;
   superiorId: number | null;
   areaCode?: number;
-  postalCode?: number;
+  zipCode?: number;
   enabled?: boolean;
   count?: number;
   isLeaf?: boolean;

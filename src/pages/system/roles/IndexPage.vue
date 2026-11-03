@@ -396,7 +396,7 @@ async function onAuthorizeSubmit() {
           }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="280">
+      <ElTableColumn :label="$t('label.actions')" width="240">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
@@ -413,32 +413,6 @@ async function onAuthorizeSubmit() {
           </ElButton>
           <template v-if="!row.builtIn">
             <ElButton
-              v-if="row.enabled && hasAction($route.name, 'disable')"
-              title="disable"
-              :type="actionTypes['disable']"
-              link
-              @click="disableRow(row)"
-            >
-              <Icon
-                :icon="actionIcon('disable')"
-                width="1.25em"
-                height="1.25em"
-              />{{ $t("action.disable") }}
-            </ElButton>
-            <ElButton
-              v-else-if="hasAction($route.name, 'enable')"
-              title="enable"
-              :type="actionTypes['enable']"
-              link
-              @click="enableRow(row)"
-            >
-              <Icon
-                :icon="actionIcon('enable')"
-                width="1.25em"
-                height="1.25em"
-              />{{ $t("action.enable") }}
-            </ElButton>
-            <ElButton
               v-if="hasAction($route.name, 'remove')"
               title="remove"
               :type="actionTypes['remove']"
@@ -452,20 +426,62 @@ async function onAuthorizeSubmit() {
               />{{ $t("action.remove") }}
             </ElButton>
           </template>
-          <ElButton
-            v-if="hasAction($route.name, 'authorize')"
-            title="authorize"
-            :type="actionTypes['authorize']"
-            link
-            @click="authorizeRow(row.id)"
-          >
-            <Icon
-              :icon="`material-symbols:${actionIcons['authorize']}-rounded`"
-              width="1.25em"
-              height="1.25em"
-            />
-            {{ $t("action.authorize") }}
-          </ElButton>
+          <ElDropdown trigger="click" class="ml-2">
+            <ElButton link>
+              <Icon
+                :icon="actionIcon('more')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.more") }}
+            </ElButton>
+            <template #dropdown>
+              <ElDropdownItem
+                v-if="row.enabled && hasAction($route.name, 'disable')"
+              >
+                <ElButton
+                  title="disable"
+                  :type="actionTypes['disable']"
+                  link
+                  @click="disableRow(row)"
+                >
+                  <Icon
+                    :icon="actionIcon('disable')"
+                    width="1.25em"
+                    height="1.25em"
+                  />{{ $t("action.disable") }}
+                </ElButton>
+              </ElDropdownItem>
+              <ElDropdownItem v-else-if="hasAction($route.name, 'enable')">
+                <ElButton
+                  title="enable"
+                  :type="actionTypes['enable']"
+                  link
+                  @click="enableRow(row)"
+                >
+                  <Icon
+                    :icon="actionIcon('enable')"
+                    width="1.25em"
+                    height="1.25em"
+                  />{{ $t("action.enable") }}
+                </ElButton>
+              </ElDropdownItem>
+              <ElDropdownItem v-if="hasAction($route.name, 'authorize')">
+                <ElButton
+                  title="authorize"
+                  :type="actionTypes['authorize']"
+                  link
+                  @click="authorizeRow(row.id)"
+                >
+                  <Icon
+                    :icon="`material-symbols:${actionIcons['authorize']}-rounded`"
+                    width="1.25em"
+                    height="1.25em"
+                  />
+                  {{ $t("action.authorize") }}
+                </ElButton>
+              </ElDropdownItem>
+            </template>
+          </ElDropdown>
         </template>
       </ElTableColumn>
     </ElTable>

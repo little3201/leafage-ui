@@ -254,11 +254,6 @@ async function clearRows() {
           <ElText class="w-20 2xl:w-56" truncated>{{ row.params }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="response" :label="$t('label.response')">
-        <template #default="{ row }">
-          <ElText class="w-20 2xl:w-56" truncated>{{ row.response }}</ElText>
-        </template>
-      </ElTableColumn>
       <ElTableColumn prop="status" :label="$t('label.status')" sortable>
         <template #default="{ row }">
           <ElTag :type="row.status == 'SUCCEED' ? 'success' : 'warning'" round>
@@ -292,7 +287,7 @@ async function clearRows() {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="50">
+      <ElTableColumn :label="$t('label.actions')" width="100">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'remove')"
