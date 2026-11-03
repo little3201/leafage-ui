@@ -187,7 +187,7 @@ export default {
     docs: "Docs",
     reports: "Reports",
     archives: "Archives",
-    templates: "Schemas",
+    templates: "Templates",
     sections: "Sections",
     messages: "Messages",
     sent: "Sent",
