@@ -98,16 +98,21 @@ function filterNode(value: string, data: { [key: string]: string }) {
  * node 变化
  * @param data node节点
  */
-async function onCurrentChange(data: TreeNodeData) {
+async function onNodeClick(data: TreeNodeData) {
   if (treeSelected.value === String(data.id)) {
-    return;
+    treeSelected.value = "";
+    filter.superiorId = {
+      op: "eq",
+      value: null
+    };
+  } else {
+    treeSelected.value = String(data.id);
+    filter.superiorId = {
+      op: "eq",
+      value: data.id
+    };
   }
-  treeSelected.value = String(data.id);
-  if (filter.superiorId) {
-    filter.superiorId.value = treeSelected.value
-      ? Number(treeSelected.value)
-      : null;
-  }
+
   pagination.page = 1;
   await load();
 }
@@ -365,7 +370,7 @@ async function removeRow(id: number, name: string) {
           highlight-current
           :props="{ label: 'name', isLeaf: 'isLeaf' }"
           :filter-node-method="filterNode"
-          @current-change="onCurrentChange"
+          @node-click="onNodeClick"
         >
         </ElTree>
       </ElCard>
