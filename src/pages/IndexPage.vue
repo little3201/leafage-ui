@@ -1,36 +1,26 @@
 <template>
   <q-page padding>
+    <q-card flat class="q-mb-md">
+      <q-card-section>
+        <div class="text-h6">应用中心 </div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none q-gutter-md">
+        <q-btn title="create" size="xl" color="primary" label="文档中心" />
+        <q-btn
+          title="create"
+          size="xl"
+          color="primary"
+          label="开发工具"
+        /><q-btn title="create" size="xl" color="primary" label="主数据" />
+      </q-card-section>
+    </q-card>
+
     <div class="row q-pb-md q-gutter-md">
       <div class="col-8">
-        <q-card
-          flat
-          class="q-mb-md text-white"
-          style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-        >
-          <q-card-section class="flex items-center">
-            <div class="q-ml-md">
-              <p class="text-h3">管理员</p>
-
-              <div class="text-subtitle1">
-                <span>欢迎回来</span>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-
         <q-card flat>
           <q-card-section>
-            <div class="text-h6">应用中心 </div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none q-gutter-md">
-            <q-btn title="create" size="xl" color="primary" label="文档中心" />
-            <q-btn
-              title="create"
-              size="xl"
-              color="primary"
-              label="开发工具"
-            /><q-btn title="create" size="xl" color="primary" label="主数据" />
+            <chart-view :options="lineOptionsData" />
           </q-card-section>
         </q-card>
       </div>
@@ -41,25 +31,13 @@
           </q-card-section>
 
           <q-card-section>
-            <q-date v-model="date" today-btn :locale="{ ...locale.date }" />
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-
-    <div class="row q-gutter-md">
-      <div class="col-8">
-        <q-card flat>
-          <q-card-section>
-            <chart-view :options="lineOptionsData" />
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <div class="col">
-        <q-card flat>
-          <q-card-section>
-            <div class="text-h6">通知公告</div>
+            <q-date
+              v-model="date"
+              flat
+              bordered
+              today-btn
+              :locale="{ ...locale.date }"
+            />
           </q-card-section>
         </q-card>
       </div>
