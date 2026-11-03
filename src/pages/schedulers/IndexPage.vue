@@ -309,7 +309,7 @@ async function removeRow(id: number, name: string, startTime: string) {
           }}</ElText>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="200">
+      <ElTableColumn :label="$t('label.actions')" width="260">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
@@ -325,6 +325,18 @@ async function removeRow(id: number, name: string, startTime: string) {
             />{{ $t("action.modify") }}
           </ElButton>
           <ElButton
+            v-if="hasAction($route.name, 'remove')"
+            title="remove"
+            :type="actionTypes['remove']"
+            link
+            @click="removeRow(row.id, row.name, row.startTime)"
+          >
+            <Icon
+              :icon="actionIcon('remove')"
+              width="1.25em"
+              height="1.25em"
+            />{{ $t("action.remove") }} </ElButton
+          ><ElButton
             v-if="row.enabled && hasAction($route.name, 'disable')"
             title="disable"
             :type="actionTypes['disable']"
@@ -349,19 +361,6 @@ async function removeRow(id: number, name: string, startTime: string) {
               width="1.25em"
               height="1.25em"
             />{{ $t("action.enable") }}
-          </ElButton>
-          <ElButton
-            v-if="hasAction($route.name, 'remove')"
-            title="remove"
-            :type="actionTypes['remove']"
-            link
-            @click="removeRow(row.id, row.name, row.startTime)"
-          >
-            <Icon
-              :icon="actionIcon('remove')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.remove") }}
           </ElButton>
         </template>
       </ElTableColumn>

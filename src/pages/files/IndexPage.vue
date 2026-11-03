@@ -490,11 +490,6 @@ function onUploadError() {
               {{ formatFileSize(row.size) }}
             </template>
           </ElTableColumn>
-          <ElTableColumn
-            show-overflow-tooltip
-            prop="contentType"
-            :label="$t('label.contentType')"
-          />
           <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
             <template #default="{ row }">
               <ElBadge
@@ -521,49 +516,8 @@ function onUploadError() {
               }}
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('label.actions')" width="200">
+          <ElTableColumn :label="$t('label.actions')" width="280">
             <template #default="{ row }">
-              <template v-if="row.directory === false">
-                <ElButton
-                  v-if="row.enabled && hasAction($route.name, 'disable')"
-                  title="disable"
-                  :type="actionTypes['disable']"
-                  link
-                  @click="disableRow(row)"
-                >
-                  <Icon
-                    :icon="actionIcon('disable')"
-                    width="1.25em"
-                    height="1.25em"
-                  />{{ $t("action.disable") }}
-                </ElButton>
-                <ElButton
-                  v-else-if="hasAction($route.name, 'enable')"
-                  title="enable"
-                  :type="actionTypes['enable']"
-                  link
-                  @click="enableRow(row)"
-                >
-                  <Icon
-                    :icon="actionIcon('enable')"
-                    width="1.25em"
-                    height="1.25em"
-                  />{{ $t("action.enable") }}
-                </ElButton>
-                <ElButton
-                  v-if="row.enabled && hasAction($route.name, 'download')"
-                  title="download"
-                  type="success"
-                  link
-                  @click="downloadRow(row.id, row.name, row.type)"
-                >
-                  <Icon
-                    :icon="actionIcon('download')"
-                    width="1.25em"
-                    height="1.25em"
-                  />{{ $t("action.download") }}
-                </ElButton>
-              </template>
               <ElButton
                 v-if="hasAction($route.name, 'remove')"
                 title="remove"
@@ -578,6 +532,47 @@ function onUploadError() {
                 />
                 {{ $t("action.remove") }}
               </ElButton>
+              <ElButton
+                v-if="row.enabled && hasAction($route.name, 'disable')"
+                title="disable"
+                :type="actionTypes['disable']"
+                link
+                @click="disableRow(row)"
+              >
+                <Icon
+                  :icon="actionIcon('disable')"
+                  width="1.25em"
+                  height="1.25em"
+                />{{ $t("action.disable") }}
+              </ElButton>
+              <ElButton
+                v-else-if="hasAction($route.name, 'enable')"
+                title="enable"
+                :type="actionTypes['enable']"
+                link
+                @click="enableRow(row)"
+              >
+                <Icon
+                  :icon="actionIcon('enable')"
+                  width="1.25em"
+                  height="1.25em"
+                />{{ $t("action.enable") }}
+              </ElButton>
+              <template v-if="row.directory === false">
+                <ElButton
+                  v-if="row.enabled && hasAction($route.name, 'download')"
+                  title="download"
+                  type="success"
+                  link
+                  @click="downloadRow(row.id, row.name, row.type)"
+                >
+                  <Icon
+                    :icon="actionIcon('download')"
+                    width="1.25em"
+                    height="1.25em"
+                  />{{ $t("action.download") }}
+                </ElButton>
+              </template>
             </template>
           </ElTableColumn>
         </ElTable>

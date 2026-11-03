@@ -67,7 +67,7 @@ export default {
     failure: "失敗",
     column: "列",
     areaCode: "區號",
-    postalCode: "郵編",
+    zipCode: "郵編",
     enabled: "是否可用",
     size: "大小",
     length: "長度",

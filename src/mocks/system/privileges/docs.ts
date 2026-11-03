@@ -36,6 +36,7 @@ export const nodes_docs: Privilege[] = [
       "import",
       "export",
       "section",
+      "publish",
       "enable",
       "disable"
     ],
@@ -95,6 +96,7 @@ export const tree_docs: PrivilegeTreeNode[] = [
             "import",
             "export",
             "section",
+            "publish",
             "enable",
             "disable"
           ]

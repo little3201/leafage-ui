@@ -12,7 +12,7 @@ for (let i = 1; i < 99; i++) {
     superiorId: i > 33 ? superiorId : null,
     name: "Region_" + i,
     areaCode: randomInt(100),
-    postalCode: randomInt(3000),
+    zipCode: randomInt(3000),
     enabled: i % 3 > 0,
     count: i > 33 ? 0 : randomInt(5) + 1
   };

@@ -13,7 +13,7 @@ import router from "./router";
 import pinia from "./stores";
 import { enableMock } from "./boot/msw-browser";
 
-if (!import.meta.env.DEV) {
+if (import.meta.env.DEV) {
   await enableMock();
 }
 

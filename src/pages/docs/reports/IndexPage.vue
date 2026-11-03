@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import type {
+  ElDropdownItem,
   FormInstance,
   FormRules,
   TableInstance,
@@ -369,7 +370,7 @@ function formatSchemas(cellValue: number): string {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="280">
+      <ElTableColumn :label="$t('label.actions')" width="240">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
@@ -385,26 +386,6 @@ function formatSchemas(cellValue: number): string {
             />{{ $t("action.modify") }}
           </ElButton>
           <ElButton
-            v-if="hasAction($route.name, 'field')"
-            title="config"
-            :type="actionTypes['field']"
-            link
-            @click="configSection(row.id)"
-          >
-            <Icon :icon="actionIcon('field')" width="1.25em" height="1.25em" />
-            {{ $t("action.field") }}
-          </ElButton>
-          <ElButton
-            v-if="hasAction($route.name, 'data')"
-            title="data"
-            :type="actionTypes['data']"
-            link
-            @click="configData(row.id)"
-          >
-            <Icon :icon="actionIcon('data')" width="1.25em" height="1.25em" />
-            {{ $t("action.data") }}
-          </ElButton>
-          <ElButton
             v-if="hasAction($route.name, 'remove')"
             title="remove"
             :type="actionTypes['remove']"
@@ -417,6 +398,47 @@ function formatSchemas(cellValue: number): string {
               height="1.25em"
             />{{ $t("action.remove") }}
           </ElButton>
+          <ElDropdown trigger="click" class="ml-2">
+            <ElButton link>
+              <Icon
+                :icon="actionIcon('more')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.more") }}
+            </ElButton>
+            <template #dropdown>
+              <ElDropdownItem v-if="hasAction($route.name, 'field')">
+                <ElButton
+                  title="config"
+                  :type="actionTypes['field']"
+                  link
+                  @click="configSection(row.id)"
+                >
+                  <Icon
+                    :icon="actionIcon('field')"
+                    width="1.25em"
+                    height="1.25em"
+                  />
+                  {{ $t("action.field") }}
+                </ElButton>
+              </ElDropdownItem>
+              <ElDropdownItem v-if="hasAction($route.name, 'data')">
+                <ElButton
+                  title="data"
+                  :type="actionTypes['data']"
+                  link
+                  @click="configData(row.id)"
+                >
+                  <Icon
+                    :icon="actionIcon('data')"
+                    width="1.25em"
+                    height="1.25em"
+                  />
+                  {{ $t("action.data") }}
+                </ElButton></ElDropdownItem
+              >
+            </template>
+          </ElDropdown>
         </template>
       </ElTableColumn>
     </ElTable>

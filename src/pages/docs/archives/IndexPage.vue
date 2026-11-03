@@ -367,7 +367,7 @@ async function onSectionSave() {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="200">
+      <ElTableColumn :label="$t('label.actions')" width="260">
         <template #default="{ row }">
           <ElButton
             v-if="hasAction($route.name, 'modify')"
@@ -383,6 +383,19 @@ async function onSectionSave() {
             />{{ $t("action.modify") }}
           </ElButton>
           <ElButton
+            v-if="hasAction($route.name, 'remove')"
+            title="remove"
+            :type="actionTypes['remove']"
+            link
+            @click="removeRow(row.id, row.title)"
+          >
+            <Icon
+              :icon="actionIcon('remove')"
+              width="1.25em"
+              height="1.25em"
+            />{{ $t("action.remove") }}
+          </ElButton>
+          <ElButton
             v-if="hasAction($route.name, 'section')"
             title="section"
             :type="actionTypes['section']"
@@ -395,19 +408,6 @@ async function onSectionSave() {
               height="1.25em"
             />
             {{ $t("action.section") }}
-          </ElButton>
-          <ElButton
-            v-if="hasAction($route.name, 'remove')"
-            title="remove"
-            :type="actionTypes['remove']"
-            link
-            @click="removeRow(row.id, row.title)"
-          >
-            <Icon
-              :icon="actionIcon('remove')"
-              width="1.25em"
-              height="1.25em"
-            />{{ $t("action.remove") }}
           </ElButton>
         </template>
       </ElTableColumn>

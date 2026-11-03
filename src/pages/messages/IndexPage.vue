@@ -512,7 +512,7 @@ async function onChange(value: string) {
           }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('label.actions')" width="200">
+      <ElTableColumn :label="$t('label.actions')" width="260">
         <template #default="{ row }">
           <template v-if="row.status !== 'PUBLISHED'">
             <ElButton
@@ -529,19 +529,6 @@ async function onChange(value: string) {
               />{{ $t("action.modify") }}
             </ElButton>
             <ElButton
-              v-if="row.status === 'DRAFT' && hasAction($route.name, 'publish')"
-              title="modify"
-              :type="actionTypes['publish']"
-              link
-              @click="publishRow(row)"
-            >
-              <Icon
-                :icon="actionIcon('publish')"
-                width="1.25em"
-                height="1.25em"
-              />{{ $t("action.publish") }}
-            </ElButton>
-            <ElButton
               v-if="hasAction($route.name, 'remove')"
               title="remove"
               :type="actionTypes['remove']"
@@ -553,6 +540,19 @@ async function onChange(value: string) {
                 width="1.25em"
                 height="1.25em"
               />{{ $t("action.remove") }}
+            </ElButton>
+            <ElButton
+              v-if="row.status === 'DRAFT' && hasAction($route.name, 'publish')"
+              title="modify"
+              :type="actionTypes['publish']"
+              link
+              @click="publishRow(row)"
+            >
+              <Icon
+                :icon="actionIcon('publish')"
+                width="1.25em"
+                height="1.25em"
+              />{{ $t("action.publish") }}
             </ElButton>
           </template>
           <template

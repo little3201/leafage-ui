@@ -496,7 +496,7 @@ function onUpload(options: UploadRequestOptions) {
           </ElTableColumn>
           <ElTableColumn
             :label="$t('label.actions')"
-            :width="filter.superiorId?.value ? 200 : 50"
+            :width="filter.superiorId?.value ? 260 : 50"
           >
             <template #default="{ row }">
               <ElButton
@@ -513,6 +513,20 @@ function onUpload(options: UploadRequestOptions) {
                 />{{ $t("action.modify") }}
               </ElButton>
               <template v-if="row.superiorId">
+                <ElButton
+                  v-if="hasAction($route.name, 'remove')"
+                  title="remove"
+                  :type="actionTypes['remove']"
+                  link
+                  @click="removeRow(row.id, row.name)"
+                >
+                  <Icon
+                    :icon="actionIcon('remove')"
+                    width="1.25em"
+                    height="1.25em"
+                  />
+                  {{ $t("action.remove") }}
+                </ElButton>
                 <ElButton
                   v-if="row.enabled && hasAction($route.name, 'disable')"
                   title="disable"
@@ -538,20 +552,6 @@ function onUpload(options: UploadRequestOptions) {
                     width="1.25em"
                     height="1.25em"
                   />{{ $t("action.enable") }}
-                </ElButton>
-                <ElButton
-                  v-if="hasAction($route.name, 'remove')"
-                  title="remove"
-                  :type="actionTypes['remove']"
-                  link
-                  @click="removeRow(row.id, row.name)"
-                >
-                  <Icon
-                    :icon="actionIcon('remove')"
-                    width="1.25em"
-                    height="1.25em"
-                  />
-                  {{ $t("action.remove") }}
                 </ElButton>
               </template>
             </template>

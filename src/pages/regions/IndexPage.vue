@@ -472,11 +472,7 @@ async function removeRow(id: number, name: string) {
             :label="$t('label.areaCode')"
             sortable
           />
-          <ElTableColumn
-            prop="postalCode"
-            :label="$t('label.postalCode')"
-            sortable
-          />
+          <ElTableColumn prop="zipCode" :label="$t('label.zipCode')" sortable />
           <ElTableColumn prop="enabled" :label="$t('label.enabled')" sortable>
             <template #default="{ row }">
               <ElBadge
@@ -489,7 +485,7 @@ async function removeRow(id: number, name: string) {
               }}</ElText>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('label.actions')" width="200">
+          <ElTableColumn :label="$t('label.actions')" width="260">
             <template #default="{ row }">
               <ElButton
                 v-if="hasAction($route.name, 'modify')"
@@ -503,6 +499,20 @@ async function removeRow(id: number, name: string) {
                   width="1.25em"
                   height="1.25em"
                 />{{ $t("action.modify") }}
+              </ElButton>
+              <ElButton
+                v-if="hasAction($route.name, 'remove')"
+                title="remove"
+                :type="actionTypes['remove']"
+                link
+                @click="removeRow(row.id, row.name)"
+              >
+                <Icon
+                  :icon="actionIcon('remove')"
+                  width="1.25em"
+                  height="1.25em"
+                />
+                {{ $t("action.remove") }}
               </ElButton>
               <ElButton
                 v-if="row.enabled && hasAction($route.name, 'disable')"
@@ -529,20 +539,6 @@ async function removeRow(id: number, name: string) {
                   width="1.25em"
                   height="1.25em"
                 />{{ $t("action.enable") }}
-              </ElButton>
-              <ElButton
-                v-if="hasAction($route.name, 'remove')"
-                title="remove"
-                :type="actionTypes['remove']"
-                link
-                @click="removeRow(row.id, row.name)"
-              >
-                <Icon
-                  :icon="actionIcon('remove')"
-                  width="1.25em"
-                  height="1.25em"
-                />
-                {{ $t("action.remove") }}
               </ElButton>
             </template>
           </ElTableColumn>
@@ -596,11 +592,11 @@ async function removeRow(id: number, name: string) {
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem :label="$t('label.postalCode')" prop="postalCode">
+          <ElFormItem :label="$t('label.zipCode')" prop="zipCode">
             <ElInput
-              v-model="form.postalCode"
+              v-model="form.zipCode"
               :placeholder="
-                $t('placeholder.inputText', { field: $t('label.postalCode') })
+                $t('placeholder.inputText', { field: $t('label.zipCode') })
               "
             />
           </ElFormItem>
